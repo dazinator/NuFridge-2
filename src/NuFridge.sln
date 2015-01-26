@@ -22,6 +22,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Plugins.OctopusDep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.PluginBase", "NuFridge.PluginBase\NuFridge.PluginBase.csproj", "{B3BC6F73-30CD-4521-88FB-310300105BBF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ciao", "Ciao", "{BC30ADE2-A030-450E-815F-EE922476A4D2}"
+	ProjectSection(SolutionItems) = preProject
+		Ciao.proj = Ciao.proj
+		Ciao.props = Ciao.props
+		Ciao.targets = Ciao.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
