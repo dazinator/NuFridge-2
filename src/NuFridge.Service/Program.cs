@@ -5,8 +5,8 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading;
 using Amib.Threading;
+using NuFridge.Common;
 using NuFridge.DataAccess.Repositories;
-using NuFridge.Service.Feed;
 
 namespace NuFridge.Service
 {

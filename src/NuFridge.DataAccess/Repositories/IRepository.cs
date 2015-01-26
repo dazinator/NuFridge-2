@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using NuFridge.DataAccess.Entity;
+using NuFridge.DataAccess.Model;
 
 namespace NuFridge.DataAccess.Repositories
 {

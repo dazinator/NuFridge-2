@@ -1,32 +1,16 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Builders;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using NuFridge.DataAccess.Connection;
-using NuFridge.DataAccess.Entity;
-using System.Data.Entity;
-using NuFridge.DataAccess.CCNetEntity;
-using NuFridge.DataAccess.Entity.Feeds;
 using NuFridge.DataAccess.Model;
 
 namespace NuFridge.DataAccess.Repositories
 {
     public class NuFridgeContext : DbContext
     {
-        public DbSet<CCNetProject> CCNetProjects { get; set; }
-        //  public DbSet<FeedEntity> Feeds { get; set; }
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<FeedGroup> FeedGroups { get; set; }
-        // public DbSet<AccountEntity> Accounts { get; set; }
-        public DbSet<AccountInviteEntity> AccountInvites { get; set; }
-        public DbSet<ExcludedPackageEntity> ExcludedPackages { get; set; }
-        public DbSet<ImportPackagesHistoryEntity> ImportPackagesHistory { get; set; }
-        public DbSet<RetentionPolicyEntity> RetentionPolicy { get; set; }
-        public DbSet<RetentionPolicyHistoryEntity> RetentionPolicyHistory { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -115,7 +99,7 @@ namespace NuFridge.DataAccess.Repositories
             }
         }
 
-        public IQueryable<TEntity> Get(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
+        public IQueryable<TEntity> Get(Expression<Func<TEntity, bool>> predicate)
         {
             using (var context = new NuFridgeContext())
             {

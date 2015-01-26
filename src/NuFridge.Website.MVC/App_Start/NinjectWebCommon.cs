@@ -1,18 +1,17 @@
 ﻿
 
-using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-using Ninject;
-using Ninject.Web.Common;
-using NuFridge.Common.Helpers;
-using NuFridge.Common.Manager;
-using NuFridge.DataAccess.Model;
-using NuFridge.DataAccess.Repositories;
 using System;
 using System.Web;
 using System.Web.Http;
+using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+using Ninject;
+using Ninject.Web.Common;
+using NuFridge.DataAccess.Model;
+using NuFridge.DataAccess.Repositories;
+using NuFridge.Website.MVC.App_Start;
 
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NuFridge.Website.MVC.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NuFridge.Website.MVC.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(NinjectWebCommon), "Stop")]
 
 namespace NuFridge.Website.MVC.App_Start
 {
@@ -63,13 +62,8 @@ namespace NuFridge.Website.MVC.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<IRepository<Feed>>().To<MongoDbRepository<Feed>>().When(request => ConfigHelper.GetDatabaseSystemName() == "Mongo");
-            kernel.Bind<IRepository<Feed>>().To<SqlCompactRepository<Feed>>().When(request => ConfigHelper.GetDatabaseSystemName() == "Sql Compact");
-            
-            kernel.Bind<IRepository<FeedGroup>>().To<MongoDbRepository<FeedGroup>>().When(request => ConfigHelper.GetDatabaseSystemName() == "Mongo");
-            kernel.Bind<IRepository<FeedGroup>>().To<SqlCompactRepository<FeedGroup>>().When(request => ConfigHelper.GetDatabaseSystemName() == "Sql Compact");
-                       
-            kernel.Bind<FeedManager>().ToSelf();
+            kernel.Bind<IRepository<Feed>>().To<SqlCompactRepository<Feed>>();
+            kernel.Bind<IRepository<FeedGroup>>().To<SqlCompactRepository<FeedGroup>>();
         }
     }
 }

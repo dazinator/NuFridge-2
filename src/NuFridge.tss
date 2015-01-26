@@ -1,2 +1,23 @@
 <?xml version="1.0"?>
-<ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ArrayOfArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\Feed\NuGetFeedSettings.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\Program.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\app.config</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.PluginBase\IPackagePublishReceiver.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\Feed\NuGetFeed.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\LogCapture.cs</string>
+    </ArrayOfString>
+  </ArrayOfArrayOfString>
+</ArrayOfArrayOfArrayOfString>
