@@ -62,12 +62,16 @@
     <Content Include="ViewModels\ExampleModel.js" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NuFridge.Common\NuFridge.Common.csproj">
+      <Project>{edf3ae48-9747-45ad-8ab5-5d83f0822701}</Project>
+      <Name>NuFridge.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NuFridge.DataAccess\NuFridge.DataAccess.csproj">
       <Project>{81da5570-9dd9-4281-8d94-ca5edde46144}</Project>
       <Name>NuFridge.DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\NuFridge.Website.MVC\NuFridge.Website.MVC.csproj">
-      <Project>{701F44F8-E838-4EA0-9581-0F9C96E823A8}</Project>
+      <Project>{701f44f8-e838-4ea0-9581-0f9c96e823a8}</Project>
       <Name>NuFridge.Website.MVC</Name>
     </ProjectReference>
   </ItemGroup>
