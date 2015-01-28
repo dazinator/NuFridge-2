@@ -58,5 +58,14 @@
     <ArrayOfString>
       <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\Jobs\ImportPackagesJob.cs</string>
     </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.PluginBase\app.config</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\packages.config</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>Source Control Explorer - Disconnected</string>
+    </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>
