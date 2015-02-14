@@ -2,70 +2,37 @@
 <ArrayOfArrayOfArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ArrayOfArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Model\Feed.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Repositories\SqlCompactRepository.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\NuGetFeed.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\CustomStartup.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\NuGetFeedSettings.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC\Controllers\DurandalViewController.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC\Controllers\HomeController.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Model\IEntityBase.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Model\FeedGroup.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Repositories\IRepository.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC\App_Start\NinjectWebCommon.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC\App_Start\DurandalBundleConfig.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Tests\ImportPackagesJobTests.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Tests\SqlCompactRepositoryTest.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC.Tests\Repositories\FeedRepositoryTest.cs</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\app.config</string>
-    </ArrayOfString>
-    <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\Program.cs</string>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\Jobs\ImportPackagesJob.cs</string>
     </ArrayOfString>
     <ArrayOfString>
       <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Plugins.OctopusDeploy\Plugin.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\Jobs\ImportPackagesJob.cs</string>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\Program.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.PluginBase\app.config</string>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Service\app.config</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\packages.config</string>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Website.MVC.Tests\Repositories\FeedRepositoryTest.cs</string>
     </ArrayOfString>
     <ArrayOfString>
-      <string>Source Control Explorer - Disconnected</string>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Tests\SqlCompactRepositoryTest.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Tests\ImportPackagesJobTests.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\NuGetFeedSettings.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\CustomStartup.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.Common\NuGetFeed.cs</string>
+    </ArrayOfString>
+    <ArrayOfString>
+      <string>C:\Users\luke.skinner\NuFridge\src\NuFridge.DataAccess\Repositories\SqlCompactRepository.cs</string>
     </ArrayOfString>
   </ArrayOfArrayOfString>
 </ArrayOfArrayOfArrayOfString>

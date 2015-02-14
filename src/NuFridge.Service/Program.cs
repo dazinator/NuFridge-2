@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading;
-using Amib.Threading;
 using NuFridge.Common;
-using NuFridge.DataAccess.Repositories;
+using NuFridge.Service.Api;
 
 namespace NuFridge.Service
 {
@@ -14,160 +9,107 @@ namespace NuFridge.Service
 
     public class Program
     {
-
+        private static WebApiManager WebApiManager { get; set; }
+        private static FeedManager FeedManager { get; set; }
 
         public const string ServiceName = "NuFridge Service";
 
-        public class Service : ServiceBase
+        public Program()
         {
-            public Service()
-            {
-                ServiceName = Program.ServiceName;
-            }
-
-            protected override void OnStart(string[] args)
-            {
-                Program.Start();
-            }
-
-            protected override void OnStop()
-            {
-                Program.Stop();
-            }
+            WebApiManager = new WebApiManager();
+            FeedManager = new FeedManager();
         }
-
-
-        static List<NuGetFeed> FeedServices { get; set; }
-        static SmartThreadPool ThreadPool { get; set; }
 
         static void Main(string[] args)
         {
             if (!Environment.UserInteractive)
-                // running as service
+            {
                 using (var service = new Service())
+                {
                     ServiceBase.Run(service);
+                }
+            }
             else
             {
-                // running as console app
                 Start();
 
                 Console.WriteLine("Press the <enter> key to quit.");
 
                 Console.ReadLine();
 
-
-
                 Stop();
             }
-
-           
         }
 
-        //TODO API Key
-        static void Start()
+        static bool ValidateConfig(ServiceConfiguration config)
         {
-            Console.WriteLine("NuFridge Service");
+            Console.WriteLine("Validating config file.");
 
+            var result = config.Validate();
 
-            Console.WriteLine("Connecting to the database.");
-
-            IRepository<DataAccess.Model.Feed> feedRepository = new SqlCompactRepository<DataAccess.Model.Feed>();
-
-            Console.WriteLine("Getting a list of feeds.");
-
-            var feeds = feedRepository.GetAll();
-
-            var rootPath = @"C:\inetpub\wwwroot\NuFridge\Feeds\";
-
-            ThreadPool = new SmartThreadPool();
-
-            FeedServices = new List<NuGetFeed>();
-
-            List<IWorkItemResult> disposeResults = new List<IWorkItemResult>();
-
-            foreach (var feedEntity in feeds)
+            if (!result.Success)
             {
-                NuGetFeed feedService = new NuGetFeed();
+                Console.WriteLine("The config file is not valid.");
 
-                feedService.NewPackageDetected += delegate(object sender, EventArgs args)
+                if (result.Exception != null)
                 {
-                    var t = 1;
-                };
-
-                var feedPath = rootPath + feedEntity.Name;
-
-                var disposeResult = ThreadPool.QueueWorkItem<string, string, string>(feedService.Start, feedEntity.Name, feedPath, "http://*:82/Feeds/" + feedEntity.Name);
-
-                FeedServices.Add(feedService);
-
-                disposeResults.Add(disposeResult);
-                break;
+                    Console.WriteLine("Error message: " + result.Exception.Message);
+                }
+                return false;
             }
+
+            return true;
+        }
 
         
 
-            StartCheck(disposeResults);
-        }
-
-        static void Stop()
+        public static void Start()
         {
-            Dispose();
-        }
+            Console.WriteLine("NuFridge Service");
 
-        static void StartCheck(List<IWorkItemResult> disposeResults)
-        {
-            int total = disposeResults.Count();
-            int remaining = total;
+            ServiceConfiguration config = new ServiceConfiguration();
 
-            foreach (var disposeResult in disposeResults)
+            if (!ValidateConfig(config))
             {
-                if (disposeResult.IsCompleted || disposeResult.IsCanceled)
-                {
-                    remaining--;
-                }
+                return;
             }
 
-            if (remaining != 0)
-            {
-                Thread.Sleep(500);
-                StartCheck(disposeResults);
-            } 
+            WebApiManager = new WebApiManager();
+            WebApiManager.Start(config);
+
+            FeedManager = new FeedManager();
+            FeedManager.Start(config);
+
         }
 
-        static void DisposeCheck(List<IWorkItemResult> disposeResults)
+        public static void Stop()
         {
-            Console.WriteLine("Waiting for all feeds to stop.");
-
-            int total = disposeResults.Count();
-            int remaining = total;
-
-            foreach (var disposeResult in disposeResults)
+            if (WebApiManager != null)
             {
-                if (disposeResult.IsCompleted || disposeResult.IsCanceled)
-                {
-                    remaining--;
-                }
+                WebApiManager.Dispose();
             }
 
-            if (remaining != 0)
+            if (FeedManager != null)
             {
-                Thread.Sleep(500);
-                DisposeCheck(disposeResults);
+                FeedManager.Dispose();
             }
         }
-
-        static void Dispose()
+    }
+    public class Service : ServiceBase
+    {
+        public Service()
         {
-            List<IWorkItemResult> disposeResults = new List<IWorkItemResult>();
+            ServiceName = Program.ServiceName;
+        }
 
-            foreach (var feedService in FeedServices)
-            {
-                var disposeResult = ThreadPool.QueueWorkItem(feedService.Dispose);
+        protected override void OnStart(string[] args)
+        {
+            Program.Start();
+        }
 
-                disposeResults.Add(disposeResult);
-            }
-
-            DisposeCheck(disposeResults);
+        protected override void OnStop()
+        {
+            Program.Stop();
         }
     }
 }

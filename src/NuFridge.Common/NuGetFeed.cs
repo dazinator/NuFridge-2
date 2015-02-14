@@ -1,7 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Reactive;
+using System.Reactive.Linq;
 using Autofac;
 using Microsoft.Owin.Hosting;
 using NuFridge.Common.NuGet.Lucene.Web;
+using NuFridge.DataAccess.Model;
 using NuGet.Lucene;
 using NuGet.Lucene.Events;
 using NuGet.Lucene.Web;
@@ -13,6 +17,13 @@ namespace NuFridge.Common
 {
     public class NuGetFeed : IDisposable
     {
+        private ServiceConfiguration Config { get; set; }
+
+        public NuGetFeed(ServiceConfiguration config)
+        {
+            Config = config;
+        }
+
         private CustomStartup startup;
         private IDisposable webapp;
         private IContainer container;
@@ -32,38 +43,35 @@ namespace NuFridge.Common
             }
         }
 
-        public void ConfigureEvents()
+        public IObservable<IndexUpdateEvent> PackagesAdded
         {
-            var controller = container.Resolve<ILucenePackageRepository>();
-
-            controller.Indexer.PackagesAdded.Subscribe(delegate(IndexUpdateEvent @event)
+            get
             {
-                
-            });
+                var controller = container.Resolve<ILucenePackageRepository>();
 
-            controller.Indexer.PackagesDeleted.Subscribe(delegate(IndexUpdateEvent @event)
-            {
-                
-            });
-
-            controller.Indexer.PackagesDownloaded.Subscribe(delegate(IndexUpdateEvent @event)
-            {
-                
-            });
+                return controller.Indexer.PackagesAdded;
+            }
         }
 
-        public void Start(string feedName, string feedDirectory, string baseAddress)
+        public IObservable<IndexUpdateEvent> PackagesDeleted
         {
-            Console.WriteLine("Starting " + feedName + " feed at " + baseAddress + ".");
+            get
+            {
+                var controller = container.Resolve<ILucenePackageRepository>();
 
-            BaseAddress = baseAddress;
-            FeedDirectory = feedDirectory;
-            webapp = WebApp.Start(baseAddress, WebAppStartup);
-
-            Console.WriteLine("Successfully started " + feedName + " feed.");
+                return controller.Indexer.PackagesDeleted;
+            }
         }
 
-       
+        public IObservable<IndexUpdateEvent> PackagesDownloaded
+        {
+            get
+            {
+                var controller = container.Resolve<ILucenePackageRepository>();
+
+                return controller.Indexer.PackagesDownloaded;
+            }
+        }
 
         public string BaseAddress { get; private set; }
         public string FeedDirectory { get; private set; }
@@ -74,10 +82,6 @@ namespace NuFridge.Common
 
             controller.Optimize();
         }
-
-        public EventHandler<EventArgs> NewPackageDetected;
-
-
 
         public void SynchronizePackages()
         {
@@ -98,7 +102,7 @@ namespace NuFridge.Common
 
         public virtual INuGetWebApiSettings CreateSettings()
         {
-            var settings = new NuGetFeedSettings(FeedDirectory);
+            var settings = new NuGetFeedSettings(Config, FeedDirectory);
 
             return settings;
         }
@@ -107,6 +111,20 @@ namespace NuFridge.Common
         {
             container = startup.CreateDefaultContainer(app);
             return container;
+        }
+
+        public void Start(Feed feed)
+        {
+            var baseAddress = string.Format("{0}{1}", Config.FeedWebBinding, feed.Name);
+            var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
+
+            Console.WriteLine("Starting " + feed.Name + " feed at " + baseAddress + ".");
+
+            BaseAddress = baseAddress;
+            FeedDirectory = feedDirectory;
+            webapp = WebApp.Start(baseAddress, WebAppStartup);
+
+            Console.WriteLine("Successfully started " + feed.Name + " feed.");
         }
     }
 }

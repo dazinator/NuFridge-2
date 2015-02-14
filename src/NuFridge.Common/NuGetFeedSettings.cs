@@ -11,26 +11,19 @@ namespace NuFridge.Common
     {
         public class NuGetFeedSettings : INuGetWebApiSettings
         {
-            public const string DefaultAppSettingPrefix = "NuGet.Lucene.Web:";
             public const string BlankAppSettingPrefix = "";
 
             public const string DefaultRoutePathPrefix = "api/";
 
-            private readonly string prefix;
+
             private readonly System.Collections.Specialized.NameValueCollection settings;
             private readonly System.Collections.Specialized.NameValueCollection roleMappings;
             private string FeedDirectory { get; set; }
+            private ServiceConfiguration Config { get; set; }
 
-            public NuGetFeedSettings(string feedDirectory)
-                : this(DefaultAppSettingPrefix, feedDirectory)
+            public NuGetFeedSettings(ServiceConfiguration config, string feedDirectory)
             {
-            }
-
-
-
-            public NuGetFeedSettings(string prefix, string feedDirectory)
-            {
-                this.prefix = prefix;
+                this.Config = config;
                 this.settings = settings;
                 this.roleMappings = roleMappings ?? new NameValueCollection();
 
@@ -59,7 +52,7 @@ namespace NuFridge.Common
 
             public string LocalAdministratorApiKey
             {
-                get { return "Temp"; }
+                get { return Config.ApiKey; }
             }
 
             public bool AllowAnonymousPackageChanges
@@ -119,7 +112,7 @@ namespace NuFridge.Common
 
             public string ToolsPath
             {
-                get { return ""; }
+                get { return Config.DebuggingToolsPath; }
             }
 
             public bool KeepSourcesCompressed
@@ -129,17 +122,17 @@ namespace NuFridge.Common
 
             public bool SynchronizeOnStart
             {
-                get { return true; }
+                get { return Config.SynchronizeOnStart; }
             }
 
             public bool EnablePackageFileWatcher
             {
-                get { return true; }
+                get { return Config.EnablePackageFileWatcher; }
             }
 
             public bool GroupPackageFilesById
             {
-                get { return true; }
+                get { return Config.GroupPackageFilesById; }
             }
 
             public string LucenePackagesIndexPath
@@ -160,7 +153,15 @@ namespace NuFridge.Common
 
             public PackageOverwriteMode PackageOverwriteMode
             {
-                get { return global::NuGet.Lucene.PackageOverwriteMode.Allow; }
+                get
+                {
+                    if (Config.AllowPackageOverwrite)
+                    {
+                        return PackageOverwriteMode.Allow;
+                    }
+
+                    return PackageOverwriteMode.Deny;
+                }
             }
 
             public string LuceneUsersIndexPath
