@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Common;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Data.SqlServerCe;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using NuFridge.DataAccess.Model;
@@ -9,6 +14,46 @@ namespace NuFridge.DataAccess.Repositories
 {
     public class NuFridgeContext : DbContext
     {
+        public NuFridgeContext()
+            : base("DefaultConnection")
+        {
+            var connection = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+
+            var updatedConnection = connection.Replace("|DataDirectory|",
+                AppDomain.CurrentDomain.GetData("APPBASE").ToString());
+
+            var sqlBuilder = new SqlConnectionStringBuilder(updatedConnection);
+
+
+            string databasePath = sqlBuilder.DataSource;
+            if (!Path.IsPathRooted(databasePath))
+            {
+                var assemblyPath = System.Reflection.Assembly.GetEntryAssembly().Location;
+                var assemblyFolder = Directory.GetParent(assemblyPath).FullName;
+
+                databasePath = Path.Combine(assemblyFolder, databasePath);
+
+
+            }
+
+            if (!File.Exists(databasePath))
+            {
+                using (var objCeEngine = new SqlCeEngine(connection))
+                {
+                    if (!objCeEngine.Verify())
+                    {
+                        var databaseFolder = Directory.GetParent(databasePath);
+                        if (!databaseFolder.Exists)
+                        {
+                            Directory.CreateDirectory(databaseFolder.FullName);
+                        }
+
+                        objCeEngine.CreateDatabase();
+                    }
+                }
+            }
+        }
+
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<FeedGroup> FeedGroups { get; set; }
 
