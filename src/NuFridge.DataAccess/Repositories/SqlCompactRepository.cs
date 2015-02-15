@@ -17,51 +17,48 @@ namespace NuFridge.DataAccess.Repositories
         public NuFridgeContext()
             : base("DefaultConnection")
         {
+            //Get the SQL CE connection string
             var connection = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
+            //Replace data directory with the current working folder
             var updatedConnection = connection.Replace("|DataDirectory|",
                 AppDomain.CurrentDomain.GetData("APPBASE").ToString());
 
+            //Parse connection string
             var sqlBuilder = new SqlConnectionStringBuilder(updatedConnection);
 
-
+            //Get file path
             string databasePath = sqlBuilder.DataSource;
+
+            //If the path is not absolute
             if (!Path.IsPathRooted(databasePath))
             {
                 var assemblyPath = System.Reflection.Assembly.GetEntryAssembly().Location;
                 var assemblyFolder = Directory.GetParent(assemblyPath).FullName;
 
                 databasePath = Path.Combine(assemblyFolder, databasePath);
-
-
             }
 
+            //If the database file does not exist
             if (!File.Exists(databasePath))
             {
                 using (var objCeEngine = new SqlCeEngine(connection))
                 {
-                    if (!objCeEngine.Verify())
+                    //Create database folder if it does not exist
+                    var databaseFolder = Directory.GetParent(databasePath);
+                    if (!databaseFolder.Exists)
                     {
-                        var databaseFolder = Directory.GetParent(databasePath);
-                        if (!databaseFolder.Exists)
-                        {
-                            Directory.CreateDirectory(databaseFolder.FullName);
-                        }
-
-                        objCeEngine.CreateDatabase();
+                        Directory.CreateDirectory(databaseFolder.FullName);
                     }
+
+                    //Create the SQL CE database
+                    objCeEngine.CreateDatabase();
                 }
             }
         }
 
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<FeedGroup> FeedGroups { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            //   modelBuilder.Entity<AccountEntity>().HasKey(a=>a.)
-            base.OnModelCreating(modelBuilder);
-        }
     }
 
     /// <summary>
