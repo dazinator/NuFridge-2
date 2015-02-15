@@ -279,7 +279,9 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>robocopy "$(SolutionDir)app" "$(TargetDir)app" /MIR</PostBuildEvent>
+    <PostBuildEvent>robocopy "$(SolutionDir)app" "$(TargetDir)app" /MIR
+IF %25ERRORLEVEL%25 GEQ 8 exit 1
+exit 0</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\packages\OctoPack.3.0.41\tools\OctoPack.targets" Condition="Exists('..\..\packages\OctoPack.3.0.41\tools\OctoPack.targets')" />
   <Target Name="EnsureOctoPackImported" BeforeTargets="BeforeBuild" Condition="'$(OctoPackImported)' == ''">
