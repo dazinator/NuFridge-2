@@ -11,9 +11,6 @@
     <releaseNotes></releaseNotes>
   </metadata>
   <files>
-    <file src="*.dll" target="" />
-    <file src="NuFridge.Service.exe" target="" />
-    <file src="NuFridge.Service.exe.config" target="" />
-    <file src="app\*.*" target="app" />
+    <file src="*.*" target="app" />
   </files>
 </package>
