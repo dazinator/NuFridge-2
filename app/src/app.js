@@ -11,7 +11,7 @@ export class App {
         { route: ['','dashboard'],  moduleId: 'dashboard',      nav: true, title:'Dashboard' },
         { route: 'feeds',        moduleId: 'feeds',       nav: true, title: 'Feeds' },
 	    { route: 'settings', moduleId: 'settings', nav: true, title: 'Settings'},
-		{ route: 'install', moduleId: 'install', nav: false, title: 'Install NuFridge' }
+		{route: 'feeds/:id/detail', moduleId: 'addeditfeed', nav: false, title: 'Edit Feed' }
       ]);
     });
   }
