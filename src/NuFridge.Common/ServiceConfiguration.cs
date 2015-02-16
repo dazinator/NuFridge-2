@@ -13,7 +13,7 @@ namespace NuFridge.Common
         private const string EnablePackageFileWatcherKey = "NuFridge.Feeds.EnablePackageFileWatcher";
         private const string GroupPackageFilesByIdKey = "NuFridge.Feeds.GroupPackageFilesById";
         private const string ApiKeyKey = "NuFridge.Feeds.ApiKey";
-        public const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
+        private const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
         private const string ApiWebBindingKey = "NuFridge.Api.WebBinding";
 
         private bool? _allowPackageOverwrite;
@@ -165,6 +165,11 @@ namespace NuFridge.Common
             if (!Directory.Exists(appPath))
             {
                 return new ConfigurationValidateResult(new DirectoryNotFoundException(string.Format("Could not find the application at '{0}'.", appPath)));
+            }
+
+            if (ConfigurationManager.ConnectionStrings[ConnectionStringName] == null)
+            {
+                return new ConfigurationValidateResult(new Exception(string.Format("Invalid value for '{0}' app setting.", ConnectionStringNameKey)));
             }
 
             return new ConfigurationValidateResult();

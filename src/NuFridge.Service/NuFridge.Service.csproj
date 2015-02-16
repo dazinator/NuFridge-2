@@ -37,7 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Api\Controllers\FeedController.cs" />
+    <Compile Include="Api\Controllers\FeedsController.cs" />
     <Compile Include="Api\ApiStartup.cs" />
     <Compile Include="Api\WebApiManager.cs" />
     <Compile Include="FeedManager.cs" />
