@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.ModelConfiguration.Configuration;
 using System.ServiceProcess;
 using NuFridge.Common;
 using NuFridge.Service.Api;
@@ -31,7 +32,7 @@ namespace NuFridge.Service
             }
             else
             {
-                Start();
+                Start(args);
 
                 Console.WriteLine("Press the <enter> key to quit.");
 
@@ -63,11 +64,11 @@ namespace NuFridge.Service
 
         
 
-        public static void Start()
+        public static void Start(string[] args)
         {
             Console.WriteLine("NuFridge Service");
 
-            ServiceConfiguration config = new ServiceConfiguration();
+            var config = new ServiceConfiguration();
 
             if (!ValidateConfig(config))
             {
@@ -104,7 +105,7 @@ namespace NuFridge.Service
 
         protected override void OnStart(string[] args)
         {
-            Program.Start();
+            Program.Start(args);
         }
 
         protected override void OnStop()
