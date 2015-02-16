@@ -113,7 +113,7 @@ namespace NuFridge.Common
             return container;
         }
 
-        public void Start(Feed feed)
+        public bool Start(Feed feed)
         {
             var baseAddress = string.Format("{0}{1}", Config.FeedWebBinding, feed.Name);
             var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
@@ -122,9 +122,23 @@ namespace NuFridge.Common
 
             BaseAddress = baseAddress;
             FeedDirectory = feedDirectory;
-            webapp = WebApp.Start(baseAddress, WebAppStartup);
 
-            Console.WriteLine("Successfully started " + feed.Name + " feed.");
+            try
+            {
+                webapp = WebApp.Start(baseAddress, WebAppStartup);
+
+                Console.WriteLine("Successfully started " + feed.Name + " feed.");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Failed to start " + feed.Name + ": " + ex.Message);
+
+                return false;
+            }
+
+
         }
     }
 }
