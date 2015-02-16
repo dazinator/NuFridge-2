@@ -11,6 +11,6 @@
     <releaseNotes></releaseNotes>
   </metadata>
   <files>
-    <file src="*.*" target="app" />
+    <file src="bin\Release\app\*.*"  />
   </files>
 </package>
