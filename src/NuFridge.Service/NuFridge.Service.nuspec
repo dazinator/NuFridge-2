@@ -1,16 +1,19 @@
 <package>
   <metadata>
     <id>NuFridge.Service</id>
-    <version>1.0.45</version>
+    <version>1.0.0</version>
     <authors>NuFridge</authors>
     <owners>NuFridge</owners>
     <licenseUrl>https://github.com/lukeskinner/NuFridge/blob/master/Licence.txt</licenseUrl>
-    <projectUrl>www.nufridge.com</projectUrl>
+    <projectUrl>http://www.nufridge.com</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A free NuGet package management server.</description>
     <releaseNotes></releaseNotes>
   </metadata>
   <files>
-    <file src="bin\Release\app\*.*"  />
+    <file src="bin\Release\*.dll" target="" />
+    <file src="bin\Release\NuFridge.Service.exe" target="" />
+    <file src="bin\Release\NuFridge.Service.exe.config" target="" />
+    <file src="bin\Release\app\**" target="app" />
   </files>
 </package>
