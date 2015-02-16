@@ -1,21 +1,7 @@
-export class Welcome{
+export class Feeds{
   constructor(){
-    this.heading = 'Feeds';
-    this.firstName = 'John';
-    this.lastName = 'Doe';
-  }
-
-  get fullName(){
-    return `${this.firstName} ${this.lastName}`;
-  }
-
-  welcome(){
-    alert(`Welcome, ${this.fullName}!`);
-  }
-}
-
-export class UpperValueConverter {
-  toView(value){
-    return value && value.toUpperCase();
+alert("abc");
+    this.heading = 'Feedsa';
+    this.feeds = [];
   }
 }

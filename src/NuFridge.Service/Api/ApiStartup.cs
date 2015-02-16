@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,8 @@ namespace NuFridge.Service.Api
             var currentDirectory = Directory.GetParent(currentAssemblyPath);
 
             var appPath = Path.Combine(currentDirectory.FullName, "app");
+
+            appPath = ConfigurationManager.AppSettings["NuFridge.WebsitePath"];
 
             var physicalFileSystem = new PhysicalFileSystem(appPath);
             var options = new FileServerOptions

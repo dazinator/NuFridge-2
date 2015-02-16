@@ -1,4 +1,4 @@
-export class Welcome{
+export class Dashboard{
   constructor(){
     this.heading = 'Dashboard';
     this.firstName = 'John';
