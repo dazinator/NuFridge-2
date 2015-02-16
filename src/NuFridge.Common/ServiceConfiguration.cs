@@ -167,11 +167,6 @@ namespace NuFridge.Common
                 return new ConfigurationValidateResult(new DirectoryNotFoundException(string.Format("Could not find the application at '{0}'.", appPath)));
             }
 
-            if (ConfigurationManager.ConnectionStrings[ConnectionStringName] == null)
-            {
-                return new ConfigurationValidateResult(new Exception(string.Format("Invalid value for '{0}' app setting.", ConnectionStringNameKey)));
-            }
-
             return new ConfigurationValidateResult();
         }
 
