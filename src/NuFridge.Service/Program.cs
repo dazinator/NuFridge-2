@@ -95,22 +95,24 @@ namespace NuFridge.Service
                 FeedManager.Dispose();
             }
         }
-    }
-    public class Service : ServiceBase
-    {
-        public Service()
-        {
-            ServiceName = Program.ServiceName;
-        }
 
-        protected override void OnStart(string[] args)
+        public class Service : ServiceBase
         {
-            Program.Start(args);
-        }
+            public Service()
+            {
+                ServiceName = Program.ServiceName;
+            }
 
-        protected override void OnStop()
-        {
-            Program.Stop();
+            protected override void OnStart(string[] args)
+            {
+                Program.Start(args);
+            }
+
+            protected override void OnStop()
+            {
+                Program.Stop();
+            }
         }
     }
+
 }
