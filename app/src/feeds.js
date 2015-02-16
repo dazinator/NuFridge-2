@@ -1,13 +1,22 @@
+import {Router} from 'aurelia-router';
+
 export class Feeds{
+static inject() { return [Router]; }
 
-
-  constructor(){
+  constructor(router){
     this.heading = 'Feeds';
-    this.feeds = [];
+    this.feeds = []; 
+    this.routerInstance = router;
   }
+
+editFeed(feed)
+{
+this.routerInstance.navigate("feeds/" + feed.Id + "/detail");
+}
 
   activate(){
 var self = this;
+
 
 	return $.ajax({
     	type: "GET", url: "/api/feeds",
