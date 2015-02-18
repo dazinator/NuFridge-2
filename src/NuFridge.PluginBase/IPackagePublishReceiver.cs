@@ -6,6 +6,6 @@ namespace NuFridge.Service.Plugin
 {
     public interface IPackagePublishReceiver
     {
-        void Execute(List<LucenePackage> packages);
+        void Execute(List<PackagePublishData> packages);
     }
 }

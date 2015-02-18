@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.ModelConfiguration.Configuration;
+using System.IO;
 using System.ServiceProcess;
-
 using NuFridge.Service.Api;
-using NuFridge.Service.Authentication;
-using NuFridge.Service.Data;
 using NuFridge.Service.Data.Repositories;
 using NuFridge.Service.Feeds;
+using NuFridge.Service.Plugin;
+using NuFridge.Service.Plugins;
 
 namespace NuFridge.Service
 {
-
-
     public class Program
     {
         private static WebApiManager WebApiManager { get; set; }
@@ -113,5 +109,4 @@ namespace NuFridge.Service
             }
         }
     }
-
 }

@@ -61,13 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPackagePublishReceiver.cs" />
+    <Compile Include="PackagePublishData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NuFridge.Service\NuFridge.Service.csproj">
-      <Project>{0cd12809-4154-4854-a894-9ae2ef297714}</Project>
-      <Name>NuFridge.Service</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

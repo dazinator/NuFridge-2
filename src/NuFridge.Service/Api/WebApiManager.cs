@@ -23,7 +23,7 @@ namespace NuFridge.Service.Api
 
         public void Start(ServiceConfiguration config)
         {
-            Console.WriteLine("Starting website");
+            Console.WriteLine("Starting website.");
 
             string baseAddress = config.ApiWebBinding;
 

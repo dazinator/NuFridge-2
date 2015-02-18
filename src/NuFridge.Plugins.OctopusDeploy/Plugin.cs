@@ -8,9 +8,10 @@ namespace NuFridge.Plugins.OctopusDeploy
 {
     public class Plugin : IPackagePublishReceiver 
     {
-        public void Execute(List<NuGet.Lucene.LucenePackage> packages)
+
+        public void Execute(List<PackagePublishData> packages)
         {
-            //Do something
+            throw new NotImplementedException();
         }
     }
 }
