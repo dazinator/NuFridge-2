@@ -1,21 +1,28 @@
-export class Welcome{
-  constructor(){
+import {Router} from 'aurelia-router';
+
+export class Feeds{
+static inject() { return [Router]; }
+
+  constructor(router){
     this.heading = 'Feeds';
-    this.firstName = 'John';
-    this.lastName = 'Doe';
+    this.feeds = []; 
+    this.routerInstance = router;
   }
 
-  get fullName(){
-    return `${this.firstName} ${this.lastName}`;
-  }
-
-  welcome(){
-    alert(`Welcome, ${this.fullName}!`);
-  }
+editFeed(feed)
+{
+this.routerInstance.navigate("feeds/" + feed.Id + "/detail");
 }
 
-export class UpperValueConverter {
-  toView(value){
-    return value && value.toUpperCase();
+  activate(){
+var self = this;
+
+
+	return $.ajax({
+    	type: "GET", url: "/api/feeds",
+    	success: function (data) {
+        	self.feeds = data;
+    	}
+	});
   }
 }
