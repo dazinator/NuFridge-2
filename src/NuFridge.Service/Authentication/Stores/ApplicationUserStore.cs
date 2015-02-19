@@ -8,7 +8,7 @@ using NuFridge.Service.Data.Repositories;
 
 namespace NuFridge.Service.Authentication.Stores
 {
-    public class ApplicationUserStore : IUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserRoleStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>
+    public class ApplicationUserStore : IUserEmailStore<ApplicationUser, string>, IUserRoleStore<ApplicationUser, string>, IUserPasswordStore<ApplicationUser, string>
     {
         private NuFridgeContext _context;
         private ApplicationRoleStore _roleManager = new ApplicationRoleStore();

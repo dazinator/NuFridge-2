@@ -4,7 +4,7 @@ using NuFridge.Service.Authentication.Stores;
 
 namespace NuFridge.Service.Authentication.Managers
 {
-    public class UserManager : UserManager<ApplicationUser>
+    public class UserManager : UserManager<ApplicationUser, string>
     {
         public UserManager() : base(new ApplicationUserStore())
         {
