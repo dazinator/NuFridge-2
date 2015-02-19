@@ -87,7 +87,7 @@ namespace NuFridge.Service.Data.Repositories
             }
         }
 
-        public TEntity GetById(Guid id)
+        public TEntity GetById(string id)
         {
             using (var context = new NuFridgeContext(connectionString))
             {

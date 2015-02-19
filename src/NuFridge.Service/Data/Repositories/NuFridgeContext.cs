@@ -6,15 +6,19 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Data.SqlServerCe;
 using System.IO;
+using System.Reflection;
 using Microsoft.AspNet.Identity.EntityFramework;
-using NuFridge.Service.Authentication;
 using NuFridge.Service.Authentication.Model;
 using NuFridge.Service.Data.Model;
+using NuFridge.Service.Logging;
+using Configuration = NuFridge.Service.Migrations.Configuration;
 
 namespace NuFridge.Service.Data.Repositories
 {
     public class NuFridgeContext : IdentityDbContext<ApplicationUser, ApplicationRole, string, IdentityUserLogin, IdentityUserRole, IdentityUserClaim>
     {
+        private static readonly ILog Logger = LogProvider.For<NuFridgeContext>(); 
+
        // new public virtual IDbSet<ApplicationRole> Roles { get; set; }
 
         public virtual IDbSet<ApplicationGroup> Groups { get; set; }
@@ -22,23 +26,7 @@ namespace NuFridge.Service.Data.Repositories
         public NuFridgeContext(ConnectionStringSettings connectionStringSettings)
             : base(connectionStringSettings.ConnectionString)
         {
-            const string sqlServerCeProvideName = "System.Data.SqlServerCe.4.0";
-            const string sqlServerProviderName = "System.Data.SqlClient";
-
-
-
-            if (connectionStringSettings.ProviderName == sqlServerCeProvideName)
-            {
-                ConfigureSqlServerCeDatabase(connectionStringSettings.ConnectionString);
-            }
-            else if (connectionStringSettings.ProviderName == sqlServerProviderName)
-            {
-                ConfigureSqlServerDatabase(connectionStringSettings);
-            }
-            else
-            {
-                throw new InvalidOperationException(string.Format("The '{0}' provider is not supported for connecting to the database.", connectionStringSettings.ProviderName));
-            }
+            ConfigureSqlServerCeDatabase(connectionStringSettings.ConnectionString);
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -93,7 +81,7 @@ namespace NuFridge.Service.Data.Repositories
 
         public bool Upgrade()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<NuFridgeContext, Migrations.Configuration>());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<NuFridgeContext, Configuration>());
 
             try
             {
@@ -113,13 +101,13 @@ namespace NuFridge.Service.Data.Repositories
                 {
                     var ceException = baseException as SqlCeException;
 
-                    Console.WriteLine("Failed to perform database upgrade: " + ceException.Message);
-                    Console.WriteLine(baseException.StackTrace);
+                    Logger.Info("Failed to perform database upgrade: " + ceException.Message);
+                    Logger.Info(baseException.StackTrace);
                 }
                 else
                 {
-                    Console.WriteLine("Failed to perform database upgrade: " + baseException.Message);
-                    Console.WriteLine(baseException.StackTrace);
+                    Logger.Info("Failed to perform database upgrade: " + baseException.Message);
+                    Logger.Info(baseException.StackTrace);
                 }
 
                 return false;
@@ -128,14 +116,14 @@ namespace NuFridge.Service.Data.Repositories
 
         private void ProcessValidationException(DbEntityValidationException ex)
         {
-            Console.WriteLine("Failed to perform database upgrade:");
+            Logger.Info("Failed to perform database upgrade:");
 
             foreach (var entityError in ex.EntityValidationErrors)
             {
-                Console.WriteLine("Entity: " + entityError.Entry.Entity.GetType().Name);
+                Logger.Info("Entity: " + entityError.Entry.Entity.GetType().Name);
                 foreach (var validationError in entityError.ValidationErrors)
                 {
-                    Console.WriteLine("    " + validationError.ErrorMessage);
+                    Logger.Info("    " + validationError.ErrorMessage);
                 }
             }
         }
@@ -165,7 +153,7 @@ namespace NuFridge.Service.Data.Repositories
             //If the path is not absolute
             if (!Path.IsPathRooted(databasePath))
             {
-                var assemblyPath = System.Reflection.Assembly.GetEntryAssembly().Location;
+                var assemblyPath = Assembly.GetEntryAssembly().Location;
                 var assemblyFolder = Directory.GetParent(assemblyPath).FullName;
 
                 databasePath = Path.Combine(assemblyFolder, databasePath);
@@ -192,5 +180,4 @@ namespace NuFridge.Service.Data.Repositories
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<FeedGroup> FeedGroups { get; set; }
     }
-
 }

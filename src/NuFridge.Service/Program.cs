@@ -1,16 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.ServiceProcess;
 using NuFridge.Service.Api;
 using NuFridge.Service.Data.Repositories;
 using NuFridge.Service.Feeds;
-using NuFridge.Service.Plugin;
-using NuFridge.Service.Plugins;
+using NuFridge.Service.Logging;
 
 namespace NuFridge.Service
 {
     public class Program
     {
+        private static readonly ILog Logger = LogProvider.For<Program>(); 
+
         private static WebApiManager WebApiManager { get; set; }
         private static FeedManager FeedManager { get; set; }
 
@@ -35,7 +35,7 @@ namespace NuFridge.Service
             {
                 Start(args);
 
-                Console.WriteLine("Press the <enter> key to quit.");
+                Logger.Info("Press the <enter> key to quit.");
 
                 Console.ReadLine();
 
@@ -45,17 +45,17 @@ namespace NuFridge.Service
 
         static bool ValidateConfig(ServiceConfiguration config)
         {
-            Console.WriteLine("Validating config file.");
+            Logger.Info("Validating config file.");
 
             var result = config.Validate();
 
             if (!result.Success)
             {
-                Console.WriteLine("The config file is not valid.");
+                Logger.Info("The config file is not valid.");
 
                 if (result.Exception != null)
                 {
-                    Console.WriteLine("Error message: " + result.Exception.Message);
+                    Logger.Info("Error message: " + result.Exception.Message);
                 }
                 return false;
             }
@@ -65,7 +65,7 @@ namespace NuFridge.Service
 
         public static bool MigrateDatabase()
         {
-            Console.WriteLine("Executing database migrations.");
+            Logger.Info("Executing database migrations.");
 
             using (var context = new NuFridgeContext())
             {
@@ -75,7 +75,7 @@ namespace NuFridge.Service
 
         public static void Start(string[] args)
         {
-            Console.WriteLine("NuFridge Service");
+            Logger.Info("NuFridge Service");
 
             var config = new ServiceConfiguration();
 

@@ -1,6 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.OData;
 using NuFridge.Service.Data.Model;
 using NuFridge.Service.Data.Repositories;
 
@@ -16,31 +22,65 @@ namespace NuFridge.Service.Api.Controllers
             FeedRepository = new SqlCompactRepository<Feed>();
         }
 
-        // GET api/feeds 
-        public IEnumerable<Feed> Get()
+        [EnableQuery]
+        public HttpResponseMessage Get(string id = "")
         {
-            return FeedRepository.GetAll();
+            if (id != string.Empty)
+            {
+                return Request.CreateResponse(FeedRepository.GetAll().AsQueryable());
+            }
+
+            var feed = FeedRepository.GetById(id);
+
+            if (feed == null)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("No feed with ID = {0}", id)),
+                    ReasonPhrase = "Feed not found"
+                };
+                throw new HttpResponseException(resp);
+            }
+
+            return Request.CreateResponse(feed);
         }
 
-        // GET api/feeds/5 
-        public Feed Get(Guid id)
+        public HttpResponseMessage Post([FromBody]Feed feed)
         {
-            return FeedRepository.GetById(id);
+            FeedRepository.Insert(feed);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        // POST api/feeds
-        public void Post([FromBody]Feed value)
+        public HttpResponseMessage Put(string id, [FromBody]Feed feed)
         {
+            if (id != feed.Id)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Feed id does not match.");
+            }
+
+            FeedRepository.Update(feed);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        // PUT api/feeds/5 
-        public void Put(Guid id, [FromBody]Feed value)
+        public HttpResponseMessage Delete(string id)
         {
-        }
+            var feed = FeedRepository.GetById(id);
 
-        // DELETE api/feeds/5 
-        public void Delete(Guid id)
-        {
+            if (feed == null)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("No feed with ID = {0}", id)),
+                    ReasonPhrase = "Feed not found"
+                };
+                throw new HttpResponseException(resp);
+            }
+
+            FeedRepository.Delete(feed);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         } 
     }
 }

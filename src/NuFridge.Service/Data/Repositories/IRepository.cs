@@ -10,7 +10,7 @@ namespace NuFridge.Service.Data.Repositories
         bool Update(TEntity entity);
         bool Delete(TEntity entity);
         IList<TEntity> GetAll();
-        TEntity GetById(Guid id);
+        TEntity GetById(string id);
         DbContext Context { get;}
     }
 }

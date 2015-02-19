@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin.Hosting;
 using NuFridge.Service.Feeds;
+using NuFridge.Service.Logging;
 
 namespace NuFridge.Service.Api
 {
     public sealed class WebApiManager : IDisposable
     {
+        private static readonly ILog Logger = LogProvider.For<WebApiManager>(); 
+
         private IDisposable WebApiApp { get; set; }
 
         public void Dispose()
@@ -23,7 +26,7 @@ namespace NuFridge.Service.Api
 
         public void Start(ServiceConfiguration config)
         {
-            Console.WriteLine("Starting website.");
+            Logger.Info("Starting website.");
 
             string baseAddress = config.ApiWebBinding;
 

@@ -38,6 +38,10 @@
     <Reference Include="Microsoft.Web.XmlTransform">
       <HintPath>..\..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NuGet.Core, Version=2.8.50926.602, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NuGet.Core.2.8.3\lib\net40-Client\NuGet.Core.dll</HintPath>
@@ -48,7 +52,17 @@
     <Reference Include="NuGet.Lucene.Web">
       <HintPath>..\..\lib\NuGet.Lucene.Web.dll</HintPath>
     </Reference>
+    <Reference Include="Octopus.Client">
+      <HintPath>..\..\packages\Octopus.Client.2.6.2.845\lib\net40\Octopus.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Octopus.Platform">
+      <HintPath>..\..\packages\Octopus.Client.2.6.2.845\lib\net40\Octopus.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Sprache">
+      <HintPath>..\..\packages\Sprache.2.0.0.44\lib\portable-net4+netcore45+win8+wp8+sl5+MonoAndroid1+MonoTouch1\Sprache.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -61,14 +75,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NuFridge.PluginBase\NuFridge.PluginBase.csproj">
-      <Project>{b3bc6f73-30cd-4521-88fb-310300105bbf}</Project>
-      <Name>NuFridge.PluginBase</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NuFridge.Service\NuFridge.Service.csproj">
+      <Project>{0cd12809-4154-4854-a894-9ae2ef297714}</Project>
+      <Name>NuFridge.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NuFridge.Service.Data.Model;
 using NuFridge.Service.Data.Repositories;
-using NuFridge.Service.Plugin;
-using NuFridge.Service.Plugins;
-using NuGet.Lucene.Events;
+using NuFridge.Service.Logging;
 
 namespace NuFridge.Service.Feeds
 {
     public sealed class FeedManager : IDisposable
     {
+        private static readonly ILog Logger = LogProvider.For<FeedManager>(); 
+
         List<NuGetFeed> FeedServices { get; set; }
 
         public FeedManager()
@@ -27,46 +26,10 @@ namespace NuFridge.Service.Feeds
             }
         }
 
-        private IEnumerable<Lazy<IPackagePublishReceiver>> PackagePublishRecievers { get; set; }
-
-        private void LoadPlugins()
-        {
-            PackagePublishRecievers = new List<Lazy<IPackagePublishReceiver>>();
-
-            Console.WriteLine("Loading NuGet feed plugins.");
-
-            const string pluginFolder = "Plugins";
-
-            if (!Directory.Exists(pluginFolder))
-            {
-                Directory.CreateDirectory(pluginFolder);
-            }
-            else
-            {
-                var files = Directory.GetFiles(pluginFolder, "*.dll");
-
-                PackagePublishRecievers = PluginLoader.GetPlugins<IPackagePublishReceiver>(files);
-            }
-        }
-
-        private void ConfigureEvents(NuGetFeed feed)
-        {
-            feed.PackagesAdded.Subscribe(delegate(IndexUpdateEvent eve)
-            {
-                var publishDataResults = eve.Packages.Select(package => new PackagePublishData {Id = package.Id}).ToList();
-
-                foreach (var receiver in PackagePublishRecievers)
-                {
-                    receiver.Value.Execute(publishDataResults);
-                }
-            });
-        }
 
         public void Start(ServiceConfiguration config)
         {
-            LoadPlugins();
-
-            Console.WriteLine("Starting NuGet feeds.");
+            Logger.Info("Starting NuGet feeds.");
 
             IRepository<Feed> feedRepository = new SqlCompactRepository<Feed>();
 
@@ -76,7 +39,7 @@ namespace NuFridge.Service.Feeds
 
             if (!feeds.Any())
             {
-                Console.WriteLine("No feeds found to start.");
+                Logger.Info("No feeds found to start.");
             }
             else
             {
@@ -87,13 +50,11 @@ namespace NuFridge.Service.Feeds
                     if (!feedService.Start(feedEntity))
                     {
                         success = false;
-                        Console.WriteLine("Failed to start " + feedEntity.Name + ".");
+                        Logger.Info("Failed to start " + feedEntity.Name + ".");
                         continue;
                     }
 
-                    ConfigureEvents(feedService);
-
-                    Console.WriteLine("Successfully started " + feedEntity.Name + ".");
+                    Logger.Info("Successfully started " + feedEntity.Name + ".");
 
                     FeedServices.Add(feedService);
                     break;
@@ -102,7 +63,7 @@ namespace NuFridge.Service.Feeds
 
             if (!success)
             {
-                Console.WriteLine("Warning: Not all feeds have successfully been started.");
+                Logger.Info("Warning: Not all feeds have successfully been started.");
             }
         }
     }

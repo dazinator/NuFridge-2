@@ -11,7 +11,7 @@ using Microsoft.Owin.Security.OAuth;
 using Microsoft.Owin.StaticFiles;
 using Newtonsoft.Json.Serialization;
 using NuFridge.Service.Api;
-using NuFridge.Service.Authentication;
+using NuFridge.Service.Api.Filters;
 using NuFridge.Service.Authentication.Providers;
 using Owin;
 
@@ -30,11 +30,11 @@ namespace NuFridge.Service.Api
 
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
-            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{id}", new { id = RouteParameter.Optional }
+            config.Routes.MapHttpRoute("NuFridge API", "api/{controller}/{id}", new { id = RouteParameter.Optional }
             );
 
             config.MapHttpAttributeRoutes();
-
+            config.Filters.Add(new ValidationActionFilter());
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
             jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

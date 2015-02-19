@@ -4,6 +4,7 @@ using Autofac;
 using Microsoft.Owin.Hosting;
 using NuFridge.Service.Data.Model;
 using NuFridge.Service.Feeds.NuGet.Lucene.Web;
+using NuFridge.Service.Logging;
 using NuGet.Lucene;
 using NuGet.Lucene.Events;
 using NuGet.Lucene.Web;
@@ -15,6 +16,8 @@ namespace NuFridge.Service.Feeds
 {
     public class NuGetFeed : IDisposable
     {
+        private static readonly ILog Logger = LogProvider.For<NuGetFeed>(); 
+
         private ServiceConfiguration Config { get; set; }
 
         public NuGetFeed(ServiceConfiguration config)
@@ -134,7 +137,7 @@ namespace NuFridge.Service.Feeds
             {
                 var baseException = ex.GetBaseException();
 
-                Console.WriteLine("Exception: " + baseException.Message);
+                Logger.Info("Exception: " + baseException.Message);
 
                 return false;
             }

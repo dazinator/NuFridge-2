@@ -24,11 +24,6 @@ namespace NuFridge.Service.Api.Controllers
         [Route("Register")]
         public async Task<IHttpActionResult> Register(ApplicationUser userModel, string password)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             IdentityResult result = await _repo.RegisterUser(userModel, password);
 
             IHttpActionResult errorResult = GetErrorResult(result);
@@ -41,15 +36,6 @@ namespace NuFridge.Service.Api.Controllers
             return Ok();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-  
-            }
-
-            base.Dispose(disposing);
-        }
 
         private IHttpActionResult GetErrorResult(IdentityResult result)
         {
