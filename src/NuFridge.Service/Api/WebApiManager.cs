@@ -31,6 +31,8 @@ namespace NuFridge.Service.Api
             string baseAddress = config.ApiWebBinding;
 
             WebApiApp = WebApp.Start<ApiStartup>(baseAddress);
+
+            
         }
     }
 }

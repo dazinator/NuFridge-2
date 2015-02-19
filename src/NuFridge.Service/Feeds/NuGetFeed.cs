@@ -130,6 +130,7 @@ namespace NuFridge.Service.Feeds
             try
             {
                 webapp = WebApp.Start(baseAddress, WebAppStartup);
+                
 
                 return true;
             }
