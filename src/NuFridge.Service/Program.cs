@@ -1,28 +1,20 @@
 ﻿using System;
 using System.ServiceProcess;
+using FluentScheduler;
 using NuFridge.Service.Api;
 using NuFridge.Service.Data.Repositories;
 using NuFridge.Service.Feeds;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Scheduler;
 
 namespace NuFridge.Service
 {
     public class Program
     {
-        private static readonly ILog Logger = LogProvider.For<Program>(); 
-
-        private static WebApiManager WebApiManager { get; set; }
-        private static FeedManager FeedManager { get; set; }
-
+        private static readonly ILog Logger = LogProvider.For<Program>();
         public const string ServiceName = "NuFridge Service";
 
-        public Program()
-        {
-            WebApiManager = new WebApiManager();
-            FeedManager = new FeedManager();
-        }
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (!Environment.UserInteractive)
             {
@@ -36,14 +28,13 @@ namespace NuFridge.Service
                 Start(args);
 
                 Logger.Info("Press the <enter> key to quit.");
-
                 Console.ReadLine();
 
                 Stop();
             }
         }
 
-        static bool ValidateConfig(ServiceConfiguration config)
+        private static bool ValidateConfig(ServiceConfiguration config)
         {
             Logger.Info("Validating config file.");
 
@@ -63,15 +54,6 @@ namespace NuFridge.Service
             return true;
         }
 
-        public static bool MigrateDatabase()
-        {
-            Logger.Info("Executing database migrations.");
-
-            using (var context = new NuFridgeContext())
-            {
-                return context.Upgrade();
-            }
-        }
 
         public static void Start(string[] args)
         {
@@ -84,29 +66,24 @@ namespace NuFridge.Service
                 return;
             }
 
-            if (!MigrateDatabase())
+            if (!NuFridgeContext.Upgrade())
             {
                 return;
             }
 
-            WebApiManager = new WebApiManager();
-            WebApiManager.Start(config);
-
-            FeedManager = new FeedManager();
-            FeedManager.Start(config);
+            WebApiManager.Instance().Start(config);
+            FeedManager.Instance().Start(config);
+            TaskScheduler.Instance().Start();
         }
+
+
 
         public static void Stop()
         {
-            if (WebApiManager != null)
-            {
-                WebApiManager.Dispose();
-            }
+            WebApiManager.Instance().Dispose();
+            FeedManager.Instance().Dispose();
 
-            if (FeedManager != null)
-            {
-                FeedManager.Dispose();
-            }
+            TaskScheduler.Instance().Dispose();
         }
     }
 }

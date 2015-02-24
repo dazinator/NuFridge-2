@@ -37,6 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Api\ApiLogger.cs" />
     <Compile Include="Api\Controllers\AccountController.cs" />
     <Compile Include="Api\Controllers\FeedsController.cs" />
     <Compile Include="Api\ApiStartup.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="Feeds\NuGetFeed.cs" />
     <Compile Include="Feeds\NuGetFeedSettings.cs" />
     <Compile Include="Feeds\ServiceConfiguration.cs" />
+    <Compile Include="Hosting\OwinConstants.cs" />
     <Compile Include="Logging\LibLog.cs" />
     <Compile Include="Migrations\201502181134555_Init.cs" />
     <Compile Include="Migrations\201502181134555_Init.Designer.cs">
@@ -80,6 +82,8 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheduler\TaskScheduler.cs" />
+    <Compile Include="Scheduler\Tasks\PackageRepositoryCleaner.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -98,6 +102,9 @@
     </Reference>
     <Reference Include="EntityFramework.SqlServerCompact">
       <HintPath>..\..\packages\EntityFramework.SqlServerCompact.6.1.2\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentScheduler">
+      <HintPath>..\..\packages\FluentScheduler.3.1.45\lib\net40\FluentScheduler.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>

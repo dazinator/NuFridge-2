@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <section>
 <br>
   <div class="container">
@@ -14,9 +14,9 @@
                         <li click.delegate="$parent.editFeed(feed)" class="list-group-item" repeat.for="feed of feeds">
 
                             <div>
-                                <label>
-                                    ${feed.Name}
-                                </label>
+                                <span>
+                                    ${feed.name}
+                                </span>
                             </div>
 
                         </li>

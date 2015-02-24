@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -15,7 +16,7 @@ namespace NuFridge.Service.Authentication.Stores
 
         public ApplicationUserStore()
         {
-            _context = new NuFridgeContext();
+            _context = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]);
 
         }
 

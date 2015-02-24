@@ -29,6 +29,12 @@ namespace NuFridge.Service.Data.Repositories
             ConfigureSqlServerCeDatabase(connectionStringSettings.ConnectionString);
         }
 
+        public NuFridgeContext()
+        {
+            ConfigureSqlServerCeDatabase(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+        }
+
+   
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             if (modelBuilder == null)
@@ -79,42 +85,50 @@ namespace NuFridge.Service.Data.Repositories
             entityTypeConfiguration1.Property((ApplicationRole r) => r.Name).IsRequired();
         }
 
-        public bool Upgrade()
+        public static bool Upgrade()
         {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<NuFridgeContext, Configuration>());
+            Logger.Info("Starting database upgrade.");
 
-            try
+            using (var context = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]))
             {
-                Database.Initialize(false);
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var baseException = ex.GetBaseException();
+                Database.SetInitializer(new MigrateDatabaseToLatestVersion<NuFridgeContext, Configuration>());
 
-                if (baseException is DbEntityValidationException)
+                try
                 {
-                    ProcessValidationException(baseException as DbEntityValidationException);
-                }
-                else if (baseException is SqlCeException)
-                {
-                    var ceException = baseException as SqlCeException;
+                    context.Database.Initialize(false);
 
-                    Logger.Info("Failed to perform database upgrade: " + ceException.Message);
-                    Logger.Info(baseException.StackTrace);
-                }
-                else
-                {
-                    Logger.Info("Failed to perform database upgrade: " + baseException.Message);
-                    Logger.Info(baseException.StackTrace);
-                }
+                    Logger.Info("Finished database upgrade.");
 
-                return false;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    var baseException = ex.GetBaseException();
+
+                    if (baseException is DbEntityValidationException)
+                    {
+                        ProcessValidationException(baseException as DbEntityValidationException);
+                    }
+                    else if (baseException is SqlCeException)
+                    {
+                        var ceException = baseException as SqlCeException;
+
+                        Logger.Info("Failed to perform database upgrade: " + ceException.Message);
+                        Logger.Info(baseException.StackTrace);
+                    }
+                    else
+                    {
+                        Logger.Info("Failed to perform database upgrade: " + baseException.Message);
+                        Logger.Info(baseException.StackTrace);
+                    }
+
+                    return false;
+                }
             }
         }
 
-        private void ProcessValidationException(DbEntityValidationException ex)
+        private static void ProcessValidationException(DbEntityValidationException ex)
         {
             Logger.Info("Failed to perform database upgrade:");
 
@@ -126,16 +140,6 @@ namespace NuFridge.Service.Data.Repositories
                     Logger.Info("    " + validationError.ErrorMessage);
                 }
             }
-        }
-
-        public NuFridgeContext()
-        {
-
-        }
-
-        private void ConfigureSqlServerDatabase(ConnectionStringSettings connectionStringSettings)
-        {
-
         }
 
         private void ConfigureSqlServerCeDatabase(string connectionString)
@@ -168,8 +172,11 @@ namespace NuFridge.Service.Data.Repositories
                     var databaseFolder = Directory.GetParent(databasePath);
                     if (!databaseFolder.Exists)
                     {
+                        Logger.Info("Creating a directory for the database at " + databaseFolder.FullName + ".");
                         Directory.CreateDirectory(databaseFolder.FullName);
                     }
+
+                    Logger.Info("Creating the SQL CE database at "+ databasePath + ".");
 
                     //Create the SQL CE database
                     objCeEngine.CreateDatabase();

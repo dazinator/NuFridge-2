@@ -25,9 +25,9 @@ namespace NuFridge.Service.Api.Controllers
         [EnableQuery]
         public HttpResponseMessage Get(string id = "")
         {
-            if (id != string.Empty)
+            if (id == string.Empty)
             {
-                return Request.CreateResponse(FeedRepository.GetAll().AsQueryable());
+                return Request.CreateResponse(FeedRepository.GetAll());
             }
 
             var feed = FeedRepository.GetById(id);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -14,7 +15,7 @@ namespace NuFridge.Service.Authentication.Managers
 
         private readonly UserManager _userManager = new UserManager();
 
-        private NuFridgeContext _db = new NuFridgeContext();
+        private NuFridgeContext _db = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]);
 
 
         public bool RoleExists(string name)

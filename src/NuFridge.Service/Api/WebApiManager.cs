@@ -11,12 +11,31 @@ namespace NuFridge.Service.Api
 {
     public sealed class WebApiManager : IDisposable
     {
-        private static readonly ILog Logger = LogProvider.For<WebApiManager>(); 
+        private static WebApiManager _instance;
+
+        protected WebApiManager()
+        {
+
+        }
+
+        public static WebApiManager Instance()
+        {
+            if (_instance == null)
+            {
+                _instance = new WebApiManager();
+            }
+
+            return _instance;
+        }
+
+        private static readonly ILog Logger = LogProvider.For<WebApiManager>();
 
         private IDisposable WebApiApp { get; set; }
 
         public void Dispose()
         {
+            Logger.Info("Stopping website.");
+
             if (WebApiApp != null)
             {
                 WebApiApp.Dispose();
@@ -26,13 +45,13 @@ namespace NuFridge.Service.Api
 
         public void Start(ServiceConfiguration config)
         {
-            Logger.Info("Starting website.");
+            Logger.Info("Starting website at " + config.ApiWebBinding + ".");
 
             string baseAddress = config.ApiWebBinding;
 
             WebApiApp = WebApp.Start<ApiStartup>(baseAddress);
 
-            
+
         }
     }
 }

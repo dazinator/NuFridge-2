@@ -98,7 +98,9 @@ namespace NuFridge.Service.Feeds
         public virtual void WebAppStartup(IAppBuilder app)
         {
             startup = new CustomStartup(this);
+            //app.Use(typeof(ApiLogger));
             startup.Configuration(app);
+ 
         }
 
         public virtual INuGetWebApiSettings CreateSettings()
@@ -116,7 +118,14 @@ namespace NuFridge.Service.Feeds
 
         public bool Start(Feed feed)
         {
-            var baseAddress = string.Format("{0}{1}", Config.FeedWebBinding, feed.Name);
+            var baseUrl = Config.FeedWebBinding;
+
+            if (!baseUrl.EndsWith("/"))
+            {
+                baseUrl += "/";
+            }
+
+            var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
             var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
 
             if (!Directory.Exists(feedDirectory))
@@ -142,8 +151,6 @@ namespace NuFridge.Service.Feeds
 
                 return false;
             }
-
-
         }
     }
 }

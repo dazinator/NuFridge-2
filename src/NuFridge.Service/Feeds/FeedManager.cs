@@ -9,17 +9,33 @@ namespace NuFridge.Service.Feeds
 {
     public sealed class FeedManager : IDisposable
     {
-        private static readonly ILog Logger = LogProvider.For<FeedManager>(); 
+        private static FeedManager _instance;
 
-        List<NuGetFeed> FeedServices { get; set; }
-
-        public FeedManager()
+        protected FeedManager()
         {
             FeedServices = new List<NuGetFeed>();
         }
 
+        public static FeedManager Instance()
+        {
+            if (_instance == null)
+            {
+                _instance = new FeedManager();
+            }
+
+            return _instance;
+        }
+
+        private static readonly ILog Logger = LogProvider.For<FeedManager>(); 
+
+        private List<NuGetFeed> FeedServices { get; set; }
+
+        public IEnumerable<NuGetFeed> RunningFeeds {get {return FeedServices;}} 
+
         public void Dispose()
         {
+            Logger.Info("Stopping NuGet feeds.");
+
             foreach (var feedService in FeedServices)
             {
                 feedService.Dispose();
@@ -50,11 +66,11 @@ namespace NuFridge.Service.Feeds
                     if (!feedService.Start(feedEntity))
                     {
                         success = false;
-                        Logger.Info("Failed to start " + feedEntity.Name + ".");
+                        Logger.Error("Failed to start " + feedEntity.Name + ".");
                         continue;
                     }
 
-                    Logger.Info("Successfully started " + feedEntity.Name + ".");
+                    Logger.Info("Successfully started " + feedService.BaseAddress + ".");
 
                     FeedServices.Add(feedService);
                     break;
@@ -63,7 +79,7 @@ namespace NuFridge.Service.Feeds
 
             if (!success)
             {
-                Logger.Info("Warning: Not all feeds have successfully been started.");
+                Logger.Warn("Not all feeds have successfully been started.");
             }
         }
     }

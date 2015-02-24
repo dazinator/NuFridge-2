@@ -10,5 +10,8 @@ namespace NuFridge.Service.Data.Model
         public string GroupId { get; set; }
 
         public string Name { get; set; }
+
+        public bool RunPackageCleaner { get; set; }
+        public int KeepXNumberOfPackageVersions { get; set; }
     }
 }

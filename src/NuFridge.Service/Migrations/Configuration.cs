@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using NuFridge.Service.Authentication;
@@ -13,7 +14,7 @@ namespace NuFridge.Service.Migrations
     internal sealed class Configuration : DbMigrationsConfiguration<NuFridgeContext>
     {
         IdentityManager _idManager = new IdentityManager();
-        NuFridgeContext _db = new NuFridgeContext();
+        NuFridgeContext _db = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]);
 
         public Configuration()
         {

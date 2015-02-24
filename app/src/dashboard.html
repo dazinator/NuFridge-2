@@ -5,44 +5,78 @@
         <div class="col-md-12">
     <h2>${heading}</h2>
 	
-	<p>To get started click on the Feeds page.</p>
+	<p if.bind="loggedIn">To get started click on the Feeds page.</p>
 
-<!-- <div class="container-fluid">
-    <div class="row-fluid">
-        <div class="col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        <span class="glyphicon glyphicon-bookmark"></span> Quick Shortcuts</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-xs-6 col-md-6">
-						   <div class="col-xs-6 col-md-6">
-                          <a href="#" class="btn btn-danger btn-lg btn-block" role="button"><span class="glyphicon glyphicon-list-alt"></span> <br/>Apps</a>
-                          <a href="#" class="btn btn-warning btn-lg btn-block" role="button"><span class="glyphicon glyphicon-bookmark"></span> <br/>Bookmarks</a>
-						  </div>
-						  	   <div class="col-xs-6 col-md-6">
-                          <a href="#" class="btn btn-danger btn-lg btn-block" role="button"><span class="glyphicon glyphicon-list-alt"></span> <br/>Apps</a>
-                          <a href="#" class="btn btn-warning btn-lg btn-block" role="button"><span class="glyphicon glyphicon-bookmark"></span> <br/>Bookmarks</a>
-						  </div>
-                        </div>
-                    <div class="col-xs-6 col-md-6">
-						   <div class="col-xs-6 col-md-6">
-                          <a href="#" class="btn btn-danger btn-lg btn-block" role="button"><span class="glyphicon glyphicon-list-alt"></span> <br/>Apps</a>
-                          <a href="#" class="btn btn-warning btn-lg btn-block" role="button"><span class="glyphicon glyphicon-bookmark"></span> <br/>Bookmarks</a>
-						  </div>
-						  	   <div class="col-xs-6 col-md-6">
-                          <a href="#" class="btn btn-danger btn-lg btn-block" role="button"><span class="glyphicon glyphicon-list-alt"></span> <br/>Apps</a>
-                          <a href="#" class="btn btn-warning btn-lg btn-block" role="button"><span class="glyphicon glyphicon-bookmark"></span> <br/>Bookmarks</a>
-						  </div>
-                        </div>
-                    </div>
-                </div>
+<div class="col-md-3" if.bind="!loggedIn">
+    <div class="panel member_signin">
+      <div class="panel-body">
+        <form role="form" class="loginform">
+          <div class="form-group">
+            <label for="exampleInputEmail1" class="sr-only">Email address</label>
+            <div class="input-group">
+              <input type="email" class="form-control" id="exampleInputEmail1" value.bind="username"                placeholder="Username">
             </div>
-        </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1" class="sr-only">Password</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="exampleInputPassword1" value.bind="password"
+                placeholder="Password">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-md login" click.delegate="loginClick()">LOG IN</button>
+        </form>
+        <p class="forgotpass"><a href="#" class="small">Forgot Password?</a></p>
+      </div>
     </div>
-</div> -->
+  </div>
 </div></div></div>
+<style>
+div.member_signin {
+    text-align: center;
+}
+
+div.member_signin  i.fa.fa-user {
+    color: #FFF;
+    background-color: #FFD202;
+    border-radius: 500px;
+    font-size: 36px;
+    padding: 15px 20px 15px 20px;
+}
+
+div.fa_user {
+    margin-top: -47px;
+    margin-bottom: 15px;
+}
+
+p.member {
+    font-size: 19px;
+    color: #888888;
+    margin-bottom: 20px;
+}
+
+button.login {
+    width: 100%;
+    text-transform: uppercase;
+}
+
+form.loginform div.input-group {
+    width: 100%;
+}
+
+form.loginform input[type="email"], form.loginform input[type="password"] {
+    color: #6C6C6C;
+    text-align: center;
+}
+
+p.forgotpass {
+    margin-top: 10px;
+}
+
+p.forgotpass a {
+    color: #F5683D;
+}
+</style>
   </section>
+ 
 </template>

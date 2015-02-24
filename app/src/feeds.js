@@ -8,6 +8,21 @@ static inject() { return [Router]; }
     this.feeds = []; 
     this.routerInstance = router;
   }
+  
+getCookie(c_name)
+    {
+     var i,x,y,ARRcookies=document.cookie.split(";");
+     for (i=0;i<ARRcookies.length;i++)
+     {
+      x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+      y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+      x=x.replace(/^\s+|\s+$/g,"");
+      if (x==c_name)
+      {
+       return unescape(y);
+      }
+     }
+    }
 
 editFeed(feed)
 {
@@ -20,6 +35,10 @@ var self = this;
 
 	return $.ajax({
     	type: "GET", url: "/api/feeds",
+		beforeSend: function (request)
+            {
+                request.setRequestHeader("Authorization", self.getCookie("accesstoken"));
+            },
     	success: function (data) {
         	self.feeds = data;
     	}
