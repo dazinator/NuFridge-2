@@ -34,11 +34,14 @@ namespace NuFridge.Service.Feeds
 
         public void Dispose()
         {
-            Logger.Info("Stopping NuGet feeds.");
-
-            foreach (var feedService in FeedServices)
+            if (FeedServices.Any())
             {
-                feedService.Dispose();
+                Logger.Info("Stopping NuGet feeds.");
+
+                foreach (var feedService in FeedServices)
+                {
+                    feedService.Dispose();
+                }
             }
         }
 

@@ -6,7 +6,7 @@ using NuFridge.Service.Data.Model;
 using NuFridge.Service.Feeds.NuGet.Lucene.Web;
 using NuFridge.Service.Logging;
 using NuGet.Lucene;
-using NuGet.Lucene.Events;
+//using NuGet.Lucene.Events;
 using NuGet.Lucene.Web;
 using NuGet.Lucene.Web.Controllers;
 using NuGet.Lucene.Web.Models;
@@ -44,35 +44,35 @@ namespace NuFridge.Service.Feeds
             }
         }
 
-        public IObservable<IndexUpdateEvent> PackagesAdded
-        {
-            get
-            {
-                var controller = container.Resolve<ILucenePackageRepository>();
+        //public IObservable<IndexUpdateEvent> PackagesAdded
+        //{
+        //    get
+        //    {
+        //        var controller = container.Resolve<ILucenePackageRepository>();
 
-                return controller.Indexer.PackagesAdded;
-            }
-        }
+        //        return controller.Indexer.PackagesAdded;
+        //    }
+        //}
 
-        public IObservable<IndexUpdateEvent> PackagesDeleted
-        {
-            get
-            {
-                var controller = container.Resolve<ILucenePackageRepository>();
+        //public IObservable<IndexUpdateEvent> PackagesDeleted
+        //{
+        //    get
+        //    {
+        //        var controller = container.Resolve<ILucenePackageRepository>();
 
-                return controller.Indexer.PackagesDeleted;
-            }
-        }
+        //        return controller.Indexer.PackagesDeleted;
+        //    }
+        //}
 
-        public IObservable<IndexUpdateEvent> PackagesDownloaded
-        {
-            get
-            {
-                var controller = container.Resolve<ILucenePackageRepository>();
+        //public IObservable<IndexUpdateEvent> PackagesDownloaded
+        //{
+        //    get
+        //    {
+        //        var controller = container.Resolve<ILucenePackageRepository>();
 
-                return controller.Indexer.PackagesDownloaded;
-            }
-        }
+        //        return controller.Indexer.PackagesDownloaded;
+        //    }
+        //}
 
         public string BaseAddress { get; private set; }
         public string FeedDirectory { get; private set; }

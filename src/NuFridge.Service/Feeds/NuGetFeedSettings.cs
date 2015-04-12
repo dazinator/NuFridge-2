@@ -16,7 +16,7 @@ namespace NuFridge.Service.Feeds
             public const string DefaultRoutePathPrefix = "api/";
 
 
-            private readonly System.Collections.Specialized.NameValueCollection settings;
+
             private readonly System.Collections.Specialized.NameValueCollection roleMappings;
             private string FeedDirectory { get; set; }
             private ServiceConfiguration Config { get; set; }
@@ -24,7 +24,6 @@ namespace NuFridge.Service.Feeds
             public NuGetFeedSettings(ServiceConfiguration config, string feedDirectory)
             {
                 this.Config = config;
-                this.settings = settings;
                 this.roleMappings = roleMappings ?? new NameValueCollection();
 
                 if (!Directory.Exists((feedDirectory)))

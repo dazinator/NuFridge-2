@@ -29,7 +29,6 @@
 // Define LIBLOG_PORTABLE conditional compilation symbol for PCL compatibility
 
 using System;
-using System;
 using System.Collections.Generic;
 using System.Collections.Generic;
 using System.Diagnostics;

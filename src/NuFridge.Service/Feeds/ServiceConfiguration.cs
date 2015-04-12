@@ -6,7 +6,7 @@ namespace NuFridge.Service.Feeds
 {
     public sealed class ServiceConfiguration
     {
-        private const string FeedWebBindingKey = "NuFridge.Feeds.WebBinding";
+        private const string FeedWebBindingKey = "NuFridge.Feeds.Binding";
         private const string FeedsHomeKey = "NuFridge.Feeds.Home";
         private const string DebuggingToolsPathKey = "NuFridge.DebuggingToolsPath";
         private const string SynchronizeOnStartKey = "NuFridge.Feeds.SynchronizeOnStart";
@@ -14,7 +14,7 @@ namespace NuFridge.Service.Feeds
         private const string GroupPackageFilesByIdKey = "NuFridge.Feeds.GroupPackageFilesById";
         private const string ApiKeyKey = "NuFridge.Feeds.ApiKey";
         private const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
-        private const string ApiWebBindingKey = "NuFridge.Api.WebBinding";
+        private const string ApiWebBindingKey = "NuFridge.AdministrationWebsite.Binding";
 
         private bool? _allowPackageOverwrite;
         public bool AllowPackageOverwrite

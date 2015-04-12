@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Service", "src\NuFridge.Service\NuFridge.Service.csproj", "{0CD12809-4154-4854-A894-9AE2EF297714}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ciao", "Ciao", "{BC30ADE2-A030-450E-815F-EE922476A4D2}"
@@ -18,16 +20,50 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3045A2
 		src\.nuget\packages.config = src\.nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website", "src\NuFridge.Website\NuFridge.Website.csproj", "{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.ControlPanel", "src\NuFridge.ControlPanel\NuFridge.ControlPanel.csproj", "{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|x86.ActiveCfg = Release|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

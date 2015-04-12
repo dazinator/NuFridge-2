@@ -34,10 +34,12 @@ namespace NuFridge.Service.Api
 
         public void Dispose()
         {
-            Logger.Info("Stopping website.");
+         
 
             if (WebApiApp != null)
             {
+                Logger.Info("Stopping website.");
+
                 WebApiApp.Dispose();
                 WebApiApp = null;
             }

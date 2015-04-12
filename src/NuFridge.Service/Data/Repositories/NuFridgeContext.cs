@@ -85,7 +85,7 @@ namespace NuFridge.Service.Data.Repositories
             entityTypeConfiguration1.Property((ApplicationRole r) => r.Name).IsRequired();
         }
 
-        public static bool Upgrade()
+        public static bool TryUpgrade()
         {
             Logger.Info("Starting database upgrade.");
 

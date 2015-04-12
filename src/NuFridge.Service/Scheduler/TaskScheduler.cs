@@ -11,9 +11,12 @@ namespace NuFridge.Service.Scheduler
     public class TaskScheduler : Registry, IDisposable
     {
         private static TaskScheduler _instance;
+        private static bool hasStarted { get; set; }
 
         protected TaskScheduler()
         {
+            hasStarted = false;
+
             Schedule<PackageRepositoryCleaner>().ToRunNow().AndEvery(1).Days().At(11, 00);
         }
 
@@ -42,20 +45,23 @@ namespace NuFridge.Service.Scheduler
 
         public void Dispose()
         {
-            Logger.Info("Stopping scheduled tasks.");
-
-            TaskManager.Stop();
-
-            int numberWaitingFor = 0;
-
-            while (TaskManager.RunningSchedules.Any())
+            if (hasStarted)
             {
-                if (numberWaitingFor != TaskManager.RunningSchedules.Count())
+                Logger.Info("Stopping scheduled tasks.");
+
+                TaskManager.Stop();
+
+                int numberWaitingFor = 0;
+
+                while (TaskManager.RunningSchedules.Any())
                 {
-                    numberWaitingFor = TaskManager.RunningSchedules.Count();
-                    Logger.Info(string.Format("Waiting for {0} scheduled tasks to finish.", numberWaitingFor));
+                    if (numberWaitingFor != TaskManager.RunningSchedules.Count())
+                    {
+                        numberWaitingFor = TaskManager.RunningSchedules.Count();
+                        Logger.Info(string.Format("Waiting for {0} scheduled tasks to finish.", numberWaitingFor));
+                    }
+                    Thread.Sleep(500);
                 }
-                Thread.Sleep(500);
             }
         }
     }

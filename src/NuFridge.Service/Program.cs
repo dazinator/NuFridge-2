@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.ServiceProcess;
 using FluentScheduler;
 using NuFridge.Service.Api;
@@ -66,16 +67,68 @@ namespace NuFridge.Service
                 return;
             }
 
-            if (!NuFridgeContext.Upgrade())
+            if (!NuFridgeContext.TryUpgrade())
             {
                 return;
             }
 
-            WebApiManager.Instance().Start(config);
-            FeedManager.Instance().Start(config);
-            TaskScheduler.Instance().Start();
+            try
+            {
+                WebApiManager.Instance().Start(config);
+            }
+            catch (Exception ex)
+            {
+                ProcessStartupException(ex);
+                Stop();
+                throw;
+            }
+
+            try
+            {
+                FeedManager.Instance().Start(config);
+            }
+            catch (Exception ex)
+            {
+                ProcessStartupException(ex);
+                Stop();
+                throw;
+            }
+
+            try
+            {
+                TaskScheduler.Instance().Start();
+            }
+            catch (Exception ex)
+            {
+                ProcessStartupException(ex);
+                Stop();
+                throw;
+            }
         }
 
+        public static void ProcessStartupException(Exception ex)
+        {
+            var baseException = ex.GetBaseException();
+
+            Logger.Error("There was an error starting NuFridge.");
+
+            if (baseException is HttpListenerException)
+            {
+                if (baseException.Message.ToLower().StartsWith("the process cannot access the file because it is being used by another process"))
+                {
+                    Logger.Error(string.Format("A port specified in the config file is already in use."));
+                }
+                else
+                {
+                    Logger.Error(baseException.Message + "\r\n" + ex.StackTrace);
+                }
+            }
+            else
+            {
+                Logger.Error("There was an unexpected error starting NuFridge.");
+                Logger.Error(baseException.Message + "\r\n" + ex.StackTrace);
+            }
+        }
 
 
         public static void Stop()
