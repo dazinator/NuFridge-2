@@ -10,10 +10,4 @@
     <description>A free NuGet package management server.</description>
     <releaseNotes></releaseNotes>
   </metadata>
-  <files>
-    <file src="bin\Release\*.dll" target="" />
-    <file src="bin\Release\NuFridge.Service.exe" target="" />
-    <file src="bin\Release\NuFridge.Service.exe.config" target="" />
-    <file src="bin\Release\app\**" target="app" />
-  </files>
 </package>
