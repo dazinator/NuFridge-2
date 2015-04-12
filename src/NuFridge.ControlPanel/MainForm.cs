@@ -286,7 +286,23 @@ namespace NuFridge.ControlPanel
                 });
 
                 service.Stop();
-                service.WaitForStatus(ServiceControllerStatus.Stopped);
+
+                try
+                {
+
+                    service.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 0, 30));
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    if (service.Status == ServiceControllerStatus.Stopped)
+                    {
+                        MessageBox.Show("There was a problem stopping the NuFridge Server Service. Please check the log files.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    MessageBox.Show("There was a problem stopping the NuFridge Server Service. The state of the service is currently '" + service.Status + "'.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
             }
 
             if (action == ServiceAction.Restart)
@@ -305,13 +321,21 @@ namespace NuFridge.ControlPanel
                 });
 
                 service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
-            }
 
-            Invoke((MethodInvoker)delegate
-            {
-                Cursor = Cursors.Default;
-            });
+                try
+                {
+                    service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
+                }
+                catch (System.ServiceProcess.TimeoutException)
+                {
+                    if (service.Status == ServiceControllerStatus.Stopped)
+                    {
+                        MessageBox.Show("There was a problem starting the NuFridge Server Service. Please check the log files.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    MessageBox.Show("There was a problem starting the NuFridge Server Service. The state of the service is currently '" + service.Status + "'.", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void DisableButton(MaterialRaisedButton btn, bool enabled)
@@ -330,6 +354,11 @@ namespace NuFridge.ControlPanel
 
         private void nufridgeServiceWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            Invoke((MethodInvoker)delegate
+            {
+                Cursor = Cursors.Default;
+            });
+
             var service = GetService();
 
             Invoke((MethodInvoker)delegate

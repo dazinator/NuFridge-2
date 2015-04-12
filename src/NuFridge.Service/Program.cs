@@ -35,7 +35,7 @@ namespace NuFridge.Service
             }
         }
 
-        private static bool ValidateConfig(ServiceConfiguration config)
+        private static void TryValidateConfig(ServiceConfiguration config)
         {
             Logger.Info("Validating config file.");
 
@@ -43,16 +43,19 @@ namespace NuFridge.Service
 
             if (!result.Success)
             {
-                Logger.Info("The config file is not valid.");
+                var message = "The config file is not valid.";
+
+                Logger.Error(message);
+
+
 
                 if (result.Exception != null)
                 {
-                    Logger.Info("Error message: " + result.Exception.Message);
+                    message = result.Exception.Message;
+                    Logger.Error("Error message: " + message);
                 }
-                return false;
+                throw new Exception(message);
             }
-
-            return true;
         }
 
 
@@ -62,19 +65,31 @@ namespace NuFridge.Service
 
             var config = new ServiceConfiguration();
 
-            if (!ValidateConfig(config))
+            try
             {
-                return;
+                TryValidateConfig(config);
             }
-
-            if (!NuFridgeContext.TryUpgrade())
+            catch (Exception ex)
             {
-                return;
+                ProcessStartupException(ex);
+                Stop();
+                throw;
             }
 
             try
             {
-                WebApiManager.Instance().Start(config);
+                NuFridgeContext.TryUpgrade();
+            }
+            catch (Exception ex)
+            {
+                ProcessStartupException(ex);
+                Stop();
+                throw;
+            }
+
+            try
+            {
+                //WebApiManager.Instance().Start(config);
             }
             catch (Exception ex)
             {

@@ -85,7 +85,7 @@ namespace NuFridge.Service.Data.Repositories
             entityTypeConfiguration1.Property((ApplicationRole r) => r.Name).IsRequired();
         }
 
-        public static bool TryUpgrade()
+        public static void TryUpgrade()
         {
             Logger.Info("Starting database upgrade.");
 
@@ -99,8 +99,6 @@ namespace NuFridge.Service.Data.Repositories
                     context.Database.Initialize(false);
 
                     Logger.Info("Finished database upgrade.");
-
-                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -114,16 +112,16 @@ namespace NuFridge.Service.Data.Repositories
                     {
                         var ceException = baseException as SqlCeException;
 
-                        Logger.Info("Failed to perform database upgrade: " + ceException.Message);
-                        Logger.Info(baseException.StackTrace);
+                        Logger.Error("Failed to perform database upgrade: " + ceException.Message);
+                        Logger.Error(baseException.StackTrace);
                     }
                     else
                     {
-                        Logger.Info("Failed to perform database upgrade: " + baseException.Message);
-                        Logger.Info(baseException.StackTrace);
+                        Logger.Error("Failed to perform database upgrade: " + baseException.Message);
+                        Logger.Error(baseException.StackTrace);
                     }
 
-                    return false;
+                    throw;
                 }
             }
         }
