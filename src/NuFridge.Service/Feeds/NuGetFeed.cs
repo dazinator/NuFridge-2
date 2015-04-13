@@ -118,6 +118,8 @@ namespace NuFridge.Service.Feeds
 
         public bool Start(Feed feed)
         {
+
+
             var baseUrl = Config.FeedWebBinding;
 
             if (!baseUrl.EndsWith("/"))
@@ -127,6 +129,8 @@ namespace NuFridge.Service.Feeds
 
             var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
             var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
+
+            Logger.Info("Starting " + feed.Name + " at " + feedDirectory);
 
             if (!Directory.Exists(feedDirectory))
             {

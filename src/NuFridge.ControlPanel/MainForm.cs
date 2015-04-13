@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -76,11 +77,11 @@ namespace NuFridge.ControlPanel
 
             var config = ConfigurationManager.OpenExeConfiguration(exePath);
 
-            hypWebsiteBinding.Text = config.AppSettings.Settings["NuFridge.AdministrationWebsite.Binding"].Value;
-            websiteUrl = hypWebsiteBinding.Text;
+            //hypWebsiteBinding.Text = config.AppSettings.Settings["NuFridge.AdministrationWebsite.Binding"].Value;
+            //websiteUrl = hypWebsiteBinding.Text;
 
-            hypFeedBinding.Text = config.AppSettings.Settings["NuFridge.Feeds.Binding"].Value;
-            feedUrl = hypFeedBinding.Text;
+            //hypFeedBinding.Text = config.AppSettings.Settings["NuFridge.Feeds.Binding"].Value;
+            //feedUrl = hypFeedBinding.Text;
 
             auBackend.UpdateAvailable +=auBackend_UpdateAvailable;
             auBackend.DownloadingFailed += auBackend_DownloadingFailed;
@@ -100,7 +101,7 @@ namespace NuFridge.ControlPanel
                 {
                     auBackend.ForceCheckForUpdate();
                 }
-            } 
+            }
         }
 
         void auBackend_UpdateSuccessful(object sender, SuccessArgs e)
@@ -175,10 +176,10 @@ namespace NuFridge.ControlPanel
 
                 btnUpdate.Enabled = true;
                 lblUpdatesAvailable.Text = "An update is available.";
-                txtWhatsNew.Text = auBackend.Changes;
-                lblWhatsNew.Text = "What's new in v" + auBackend.Version;
-                lblWhatsNew.Visible = true;
-                txtWhatsNew.Visible = true;
+                //txtWhatsNew.Text = auBackend.Changes;
+                //lblWhatsNew.Text = "What's new in v" + auBackend.Version;
+                //lblWhatsNew.Visible = true;
+                //txtWhatsNew.Visible = true;
             });
         }
 
@@ -290,7 +291,7 @@ namespace NuFridge.ControlPanel
                 try
                 {
 
-                    service.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 0, 30));
+                    service.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 2, 0));
                 }
                 catch (System.ServiceProcess.TimeoutException)
                 {
@@ -324,7 +325,7 @@ namespace NuFridge.ControlPanel
 
                 try
                 {
-                    service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 0, 30));
+                    service.WaitForStatus(ServiceControllerStatus.Running, new TimeSpan(0, 2, 0));
                 }
                 catch (System.ServiceProcess.TimeoutException)
                 {
@@ -338,7 +339,7 @@ namespace NuFridge.ControlPanel
             }
         }
 
-        private void DisableButton(MaterialRaisedButton btn, bool enabled)
+        private void DisableButton(MaterialFlatButton btn, bool enabled)
         {
             btn.Enabled = enabled;
 

@@ -76,7 +76,6 @@ namespace NuFridge.Service.Feeds
                     Logger.Info("Successfully started " + feedService.BaseAddress + ".");
 
                     FeedServices.Add(feedService);
-                    break;
                 }
             }
 
