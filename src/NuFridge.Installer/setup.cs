@@ -15,12 +15,12 @@ public class Script
         bool isDebug = false;
 #endif
 
-        var rootPath = GetPathToSrcFolder();
+        var rootPath = isDebug ? GetPathToSrcFolder() : args.Skip(1).First();
 
 
         Feature topLevelFeature = new Feature("NuFridge");
 
-        Version version = new Version(isDebug ? "1.0.0" : args.Single());
+        Version version = new Version(isDebug ? "1.0.0" : args.First());
         string nufridgeInstallFolder = @"%ProgramFiles%\NuFridge";
         string projectName = "NuFridge";
         Guid projectGuid = new Guid("13a9f73e-6b58-4dc5-ba8f-a006491450b2");
