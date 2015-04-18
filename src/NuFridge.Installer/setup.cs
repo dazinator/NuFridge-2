@@ -18,22 +18,24 @@ public class Script
        
 
         Feature topLevelFeature = new Feature("NuFridge");
-        Version version = new Version(isDebug ? "1.7" : args.Single());
+       
+        Version version = new Version(isDebug ? "1.0" : args.Single());
         string nufridgeInstallFolder = @"%ProgramFiles%\NuFridge";
         string projectName = "NuFridge";
         Guid projectGuid = new Guid("13a9f73e-6b58-4dc5-ba8f-a006491450b2");
         Guid projectUpgradeCode = new Guid("ae76838e-3ac2-4d3e-a28f-7293aec3b95d");
 
         Feature serviceFeature = new Feature("Windows Service", true, false);
+        serviceFeature.Attributes.Add("AllowAdvertise", "no");
         string windowsServiceName = "NuFridge Server Service";
         string serviceFileFolder = string.Format(@"..\..\..\NuFridge.Service\bin\{0}\*.*", isDebug ? "Debug" : "Release");
         Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt");
         topLevelFeature.Children.Add(serviceFeature);
 
         Feature controlPanelFeature = new Feature("Control Panel", true, true);
+        controlPanelFeature.Attributes.Add("AllowAdvertise", "no");
         string controlPanelFileFolder = string.Format(@"..\..\..\NuFridge.ControlPanel\bin\{0}\*.*", isDebug ? "Debug" : "Release");
-        Predicate<string> controlPanelFileFilter =
-            f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.");
+        Predicate<string> controlPanelFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.");
         topLevelFeature.Children.Add(controlPanelFeature);
 
         //Not in use yet
@@ -41,7 +43,7 @@ public class Script
         //topLevelFeature.Children.Add(websiteFeature);
 
         Project project = new Project(projectName,
-            new Dir(nufridgeInstallFolder,
+            new Dir(topLevelFeature, nufridgeInstallFolder,
                 new Dir("Service")
                 {
                     FileCollections = new Files[]
@@ -84,9 +86,6 @@ public class Script
             StartType = SvcStartType.auto,
             Description = string.Format("Version: {0}. Built on {1} by {2}.", version, DateTime.Now.ToShortDateString(), Environment.MachineName)
         };
-
-        project.Package.Id = "*";
-        
 
         project.MajorUpgradeStrategy = new MajorUpgradeStrategy
         {
