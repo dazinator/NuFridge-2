@@ -15,7 +15,7 @@ public class Script
         bool isDebug = false;
 #endif
 
-        var rootPath = isDebug ? GetPathToSrcFolder() : args.Skip(1).First();
+        var rootPath = GetPathToSrcFolder();
 
 
         Feature topLevelFeature = new Feature("NuFridge");
@@ -97,6 +97,11 @@ public class Script
         };
 
         Compiler.BuildMsi(project);
+
+        if (args.Count() == 2)
+        {
+            System.IO.File.Move("NuFridge.msi", args.Skip(1).First());
+        }
     }
 
     private static string GetPathToSrcFolder()
