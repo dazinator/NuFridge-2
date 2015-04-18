@@ -3,6 +3,9 @@ NuFridge is a package management server for NuGet which supports multiple feeds.
 
 The feeds are powered by https://github.com/themotleyfool/NuGet.Lucene.
 
+### Chat Room
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lukeskinner/NuFridge?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 ### Current Release
 https://github.com/lukeskinner/NuFridge/releases/latest
 
