@@ -15,10 +15,6 @@ public class Script
         bool isDebug = false;
 #endif
 
-        try
-        {
-
- 
         var rootPath = GetPathToSrcFolder();
 
 
@@ -101,12 +97,6 @@ public class Script
         };
 
         Compiler.BuildMsi(project);
-        }
-        catch (Exception ex)
-        {
-            System.IO.File.WriteAllText(@"C:\Program Files (x86)\NuFridge\Service\Logs\test.txt", ex.ToString());
-
-        }
     }
 
     private static string GetPathToSrcFolder()
