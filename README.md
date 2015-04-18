@@ -12,4 +12,9 @@ https://github.com/lukeskinner/NuFridge/releases/latest
 3. Run the .msi installer inside the unzipped contents.
 
 ### Screenshots
+##### Control Panel
 ![NuFridge Control Panel](https://www.nufridge.com/images/ControlPanel.png)
+##### Website - Feeds
+![NuFridge Control Panel](https://www.nufridge.com/images/Feeds.png)
+##### Website - Create Feed
+![NuFridge Control Panel](https://www.nufridge.com/images/CreateFeed.png)

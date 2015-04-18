@@ -114,10 +114,12 @@
   <ItemGroup>
     <Content Include="App\main.js" />
     <Content Include="App\viewmodels\feeds.js" />
+    <Content Include="App\viewmodels\addeditfeed.js" />
     <Content Include="App\viewmodels\profile.js" />
     <Content Include="App\viewmodels\settings.js" />
     <Content Include="App\viewmodels\shell.js" />
     <Content Include="App\viewmodels\home.js" />
+    <Content Include="App\views\addeditfeed.html" />
     <Content Include="App\views\feeds.html" />
     <Content Include="App\views\profile.html" />
     <Content Include="App\views\settings.html" />

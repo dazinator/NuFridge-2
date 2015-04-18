@@ -1,9 +1,10 @@
 ﻿define(function() {
     var ctor = function () {
-        this.displayName = 'Welcome to NuFridge!';
+        this.displayName = 'Create Feed';
     };
 
     ctor.prototype.activate = function () {
+
 
     }
 

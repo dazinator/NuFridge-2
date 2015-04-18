@@ -3,7 +3,7 @@
         this.displayName = 'Feeds';
     };
 
-    ctor.prototype.compositionComplete = function () {
+    ctor.prototype.activate = function () {
 
     }
 
