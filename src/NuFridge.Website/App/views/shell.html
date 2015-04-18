@@ -2,11 +2,15 @@
     <div class="nav-wrapper">
         <div class="container">
             <a href="#!" class="brand-logo">NuFridge</a>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="#"><i class="mdi-action-view-module"></i></a></li>
-                <li><a href="#"><i class="mdi-action-account-box"></i></a></li>
-                <li><a href="#"><i class="mdi-navigation-more-vert"></i></a></li>
+            <ul class="right hide-on-med-and-down" data-bind="foreach: router.navigationModel">
+                <li data-bind="css: { active: isActive }">
+                    <a data-bind="attr: { href: hash }, title: title"><i data-bind="css: $data.icon"></i></a>
+                </li>
             </ul>
+            <!--<li><a href="#" title="Home"><i class="mdi-action-home"></i></a></li>
+            <li><a href="#feeds" title="Feeds"><i class="mdi-navigation-apps"></i></a></li>
+            <li><a href="#profile" title="My Profile"><i class="mdi-action-account-box"></i></a></li>
+            <li><a href="#settings" title="Settings"><i class="mdi-action-settings-applications"></i></a></li>-->
         </div>
     </div>
 </nav>
