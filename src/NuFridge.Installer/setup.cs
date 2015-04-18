@@ -30,13 +30,13 @@ public class Script
         serviceFeature.Attributes.Add("AllowAdvertise", "no");
         string windowsServiceName = "NuFridge Server Service";
         string serviceFileFolder = string.Format(@"{0}NuFridge.Service\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
-        Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt");
+        Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt") && !f.EndsWith(".nupkg");
         topLevelFeature.Children.Add(serviceFeature);
 
         Feature controlPanelFeature = new Feature("Control Panel", true, true);
         controlPanelFeature.Attributes.Add("AllowAdvertise", "no");
         string controlPanelFileFolder = string.Format(@"{0}NuFridge.ControlPanel\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
-        Predicate<string> controlPanelFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.");
+        Predicate<string> controlPanelFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".nupkg");
         topLevelFeature.Children.Add(controlPanelFeature);
 
         //Not in use yet
