@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website", "src\NuF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.ControlPanel", "src\NuFridge.ControlPanel\NuFridge.ControlPanel.csproj", "{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Installer", "src\NuFridge.Installer\NuFridge.Installer.csproj", "{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,16 @@ Global
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

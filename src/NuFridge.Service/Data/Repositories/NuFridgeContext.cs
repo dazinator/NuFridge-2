@@ -128,14 +128,14 @@ namespace NuFridge.Service.Data.Repositories
 
         private static void ProcessValidationException(DbEntityValidationException ex)
         {
-            Logger.Info("Failed to perform database upgrade:");
+            Logger.Error("Failed to perform database upgrade:");
 
             foreach (var entityError in ex.EntityValidationErrors)
             {
-                Logger.Info("Entity: " + entityError.Entry.Entity.GetType().Name);
+                Logger.Error("Entity: " + entityError.Entry.Entity.GetType().Name);
                 foreach (var validationError in entityError.ValidationErrors)
                 {
-                    Logger.Info("    " + validationError.ErrorMessage);
+                    Logger.Error("    " + validationError.ErrorMessage);
                 }
             }
         }
