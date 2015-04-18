@@ -6,6 +6,9 @@ The feeds are powered by https://github.com/themotleyfool/NuGet.Lucene.
 ### Current Release
 https://github.com/lukeskinner/NuFridge/releases/latest
 
+### Prerequisites
+1. Install .NET Framework 4.5.1 (or higher)
+
 ### Installation
 1. Download the installer .zip file from the current release above.
 2. Unzip the .zip file.
