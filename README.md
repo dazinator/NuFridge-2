@@ -1,15 +1,15 @@
-**NuFridge is a package mangement server that supports hosting multiple NuGet feeds.**
+# NuFridge
+NuFridge is a package management server for NuGet which supports multiple feeds.
 
-The NuGet feeds are powered by: https://github.com/themotleyfool/NuGet.Lucene which means the NuGet feeds are lightning fast. 
+The feeds are powered by https://github.com/themotleyfool/NuGet.Lucene.
 
-## Features ##
- - Create and manage NuGet feeds from the website
- - View/download/upload NuGet packages from the website
+### Current Release
+https://github.com/lukeskinner/NuFridge/releases/latest
 
-## Documentation ##
-Coming soon.
+### Installation
+1. Download the installer .zip file from the current release above.
+2. Unzip the .zip file.
+3. Run the .msi installer inside the unzipped contents.
 
-## License ##
-Apache Version 2.0
-
-See Licence.txt
+### Screenshots
+![NuFridge Control Panel](https://www.nufridge.com/images/ControlPanel.png)
