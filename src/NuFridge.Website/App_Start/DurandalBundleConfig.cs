@@ -10,17 +10,14 @@ namespace NuFridge.Website {
 	  bundles.Add(
 		new ScriptBundle("~/Scripts/vendor")
 			.Include("~/Scripts/jquery-{version}.js")
-			.Include("~/Scripts/bootstrap.js")
+			.Include("~/Scripts/materialize.js")
 			.Include("~/Scripts/knockout-{version}.js")
 		);
 
       bundles.Add(
         new StyleBundle("~/Content/css")
           .Include("~/Content/ie10mobile.css")
-          .Include("~/Content/bootstrap.min.css")
-          .Include("~/Content/font-awesome.min.css")
-		  .Include("~/Content/durandal.css")
-          .Include("~/Content/starterkit.css")
+          .Include("~/Content/materialize.css")
         );
     }
 
