@@ -15,11 +15,16 @@ public class Script
         bool isDebug = false;
 #endif
 
-       
+        try
+        {
+
+ 
+        var rootPath = GetPathToSrcFolder();
+
 
         Feature topLevelFeature = new Feature("NuFridge");
-       
-        Version version = new Version(isDebug ? "1.0" : args.Single());
+
+        Version version = new Version(isDebug ? "1.0.0" : args.Single());
         string nufridgeInstallFolder = @"%ProgramFiles%\NuFridge";
         string projectName = "NuFridge";
         Guid projectGuid = new Guid("13a9f73e-6b58-4dc5-ba8f-a006491450b2");
@@ -28,13 +33,13 @@ public class Script
         Feature serviceFeature = new Feature("Windows Service", true, false);
         serviceFeature.Attributes.Add("AllowAdvertise", "no");
         string windowsServiceName = "NuFridge Server Service";
-        string serviceFileFolder = string.Format(@"..\..\..\NuFridge.Service\bin\{0}\*.*", isDebug ? "Debug" : "Release");
+        string serviceFileFolder = string.Format(@"{0}NuFridge.Service\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
         Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt");
         topLevelFeature.Children.Add(serviceFeature);
 
         Feature controlPanelFeature = new Feature("Control Panel", true, true);
         controlPanelFeature.Attributes.Add("AllowAdvertise", "no");
-        string controlPanelFileFolder = string.Format(@"..\..\..\NuFridge.ControlPanel\bin\{0}\*.*", isDebug ? "Debug" : "Release");
+        string controlPanelFileFolder = string.Format(@"{0}NuFridge.ControlPanel\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
         Predicate<string> controlPanelFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.");
         topLevelFeature.Children.Add(controlPanelFeature);
 
@@ -59,7 +64,7 @@ public class Script
                     }
                 })
             );
-            
+
 
         project.UI = WUI.WixUI_FeatureTree;
         project.GUID = projectGuid;
@@ -96,6 +101,28 @@ public class Script
         };
 
         Compiler.BuildMsi(project);
+        }
+        catch (Exception ex)
+        {
+            System.IO.File.WriteAllText(@"C:\Program Files (x86)\NuFridge\Service\Logs\test.txt", ex.ToString());
+
+        }
+    }
+
+    private static string GetPathToSrcFolder()
+    {
+        DirectoryInfo currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+        string path = string.Empty;
+
+        while (currentDirectory.Name.ToLower() != "src")
+        {
+            path += @"..\";
+
+            currentDirectory = Directory.GetParent(currentDirectory.FullName);
+        }
+
+        return path;
     }
 }
 

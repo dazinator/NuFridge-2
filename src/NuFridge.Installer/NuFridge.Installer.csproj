@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="setup.cs" />
     <None Include="packages.config" />
+    <None Include="wix\$(ProjectName).g.wxs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -63,10 +64,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.0.12.0\build\WixSharp.targets'))" />
-    <Error Condition="!Exists('..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets'))" />
   </Target>
-  <Import Project="..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.0.12.0\build\WixSharp.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -74,6 +72,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Import Project="..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets" Condition="Exists('..\..\packages\WixSharp.1.0.12.0\build\WixSharp.targets')" />
   <UsingTask AssemblyFile="..\..\packages\WixSharp.1.0.12.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
 </Project>
