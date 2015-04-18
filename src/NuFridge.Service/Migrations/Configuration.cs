@@ -1,25 +1,18 @@
 using System;
 using System.Configuration;
-using System.Data.Entity.Migrations;
+using System.Data.Entity;
 using System.Linq;
-using NuFridge.Service.Authentication;
 using NuFridge.Service.Authentication.Managers;
 using NuFridge.Service.Authentication.Model;
-using NuFridge.Service.Data;
 using NuFridge.Service.Data.Model;
 using NuFridge.Service.Data.Repositories;
 
 namespace NuFridge.Service.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<NuFridgeContext>
+    internal sealed class Configuration : CreateDatabaseIfNotExists<NuFridgeContext>
     {
-        IdentityManager _idManager = new IdentityManager();
-        NuFridgeContext _db = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]);
-
-        public Configuration()
-        {
-            AutomaticMigrationsEnabled = true;
-        }
+        readonly IdentityManager _idManager = new IdentityManager();
+        readonly NuFridgeContext _db = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]);
 
         protected override void Seed(NuFridgeContext context)
         {
@@ -102,8 +95,9 @@ namespace NuFridge.Service.Migrations
         }
 
 
-        string[] _adminRoleNames = new string[] { "Admin", "CanEditUser", "CanEditGroup", "CanEditRole", "CanEditFeed" };
-        string[] _userRoleNames = new string[] { "CanEditFeed" };
+        readonly string[] _adminRoleNames = new string[] { "Admin", "CanEditUser", "CanEditGroup", "CanEditRole", "CanEditFeed" };
+        readonly string[] _userRoleNames = new string[] { "CanEditFeed" };
+
         void AddRolesToGroups()
         {
             var allGroups = _db.Groups;

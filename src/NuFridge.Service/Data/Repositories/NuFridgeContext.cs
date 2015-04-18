@@ -26,12 +26,12 @@ namespace NuFridge.Service.Data.Repositories
         public NuFridgeContext(ConnectionStringSettings connectionStringSettings)
             : base(connectionStringSettings.ConnectionString)
         {
-            ConfigureSqlServerCeDatabase(connectionStringSettings.ConnectionString);
+           // ConfigureSqlServerCeDatabase(connectionStringSettings.ConnectionString);
         }
 
         public NuFridgeContext()
         {
-            ConfigureSqlServerCeDatabase(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+         
         }
 
    
@@ -89,14 +89,15 @@ namespace NuFridge.Service.Data.Repositories
         {
             Logger.Info("Starting database upgrade.");
 
-            using (var context = new NuFridgeContext(ConfigurationManager.ConnectionStrings["DefaultConnection"]))
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
+
+            using (var context = new NuFridgeContext(connectionString))
             {
-
-                Database.SetInitializer(new MigrateDatabaseToLatestVersion<NuFridgeContext, Configuration>());
-
                 try
                 {
-                    context.Database.Initialize(false);
+                    context.CreateDatabaseFolderIfNotExist();
+
+                    Database.SetInitializer(new Configuration());
 
                     Logger.Info("Finished database upgrade.");
                 }
@@ -140,10 +141,10 @@ namespace NuFridge.Service.Data.Repositories
             }
         }
 
-        private void ConfigureSqlServerCeDatabase(string connectionString)
+        private void CreateDatabaseFolderIfNotExist()
         {
             //Replace data directory with the current working folder
-            var updatedConnection = connectionString.Replace("|DataDirectory|",
+            var updatedConnection = Database.Connection.ConnectionString.Replace("|DataDirectory|",
                 AppDomain.CurrentDomain.GetData("APPBASE").ToString());
 
             //Parse connection string
@@ -161,24 +162,14 @@ namespace NuFridge.Service.Data.Repositories
                 databasePath = Path.Combine(assemblyFolder, databasePath);
             }
 
-            //If the database file does not exist
             if (!File.Exists(databasePath))
             {
-                using (var objCeEngine = new SqlCeEngine(connectionString))
-                {
-                    //Create database folder if it does not exist
                     var databaseFolder = Directory.GetParent(databasePath);
                     if (!databaseFolder.Exists)
                     {
                         Logger.Info("Creating a directory for the database at " + databaseFolder.FullName + ".");
                         Directory.CreateDirectory(databaseFolder.FullName);
                     }
-
-                    Logger.Info("Creating the SQL CE database at "+ databasePath + ".");
-
-                    //Create the SQL CE database
-                    objCeEngine.CreateDatabase();
-                }
             }
         }
 
