@@ -7,7 +7,7 @@ using NuFridge.Service.Repositories;
 
 namespace NuFridge.Service.Website.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class FeedsController : ApiController 
     {
         private IRepository<Feed> FeedRepository { get; set; }

@@ -48,7 +48,6 @@
     <Compile Include="Feeds\NuGetFeed.cs" />
     <Compile Include="Feeds\NuGetFeedSettings.cs" />
     <Compile Include="Feeds\ServiceConfiguration.cs" />
-    <Compile Include="Hosting\OwinConstants.cs" />
     <Compile Include="Logging\LibLog.cs" />
     <Compile Include="Migrations\201502181134555_Init.cs" />
     <Compile Include="Migrations\201502181134555_Init.Designer.cs">
@@ -81,6 +80,7 @@
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Website\Middleware\OwinConstants.cs" />
     <Compile Include="Website\WebisteStartupConfig.cs" />
     <Compile Include="Website\Controllers\AccountController.cs" />
     <Compile Include="Website\Controllers\FeedsController.cs" />
@@ -89,6 +89,8 @@
     <Compile Include="Website\WebsiteManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Website\Content\App\viewmodels\databinding\lucenefeed.js" />
+    <Content Include="Website\Content\App\viewmodels\databinding\lucenepackage.js" />
     <Content Include="Website\Content\font\material-design-icons\Material-Design-Icons.svg" />
     <Content Include="Website\Content\Scripts\almond-custom.js" />
     <Content Include="Website\Content\Scripts\bootstrap.js" />
@@ -113,6 +115,8 @@
     <Content Include="Website\Content\Scripts\jquery-1.9.1.min.js" />
     <Content Include="Website\Content\Scripts\knockout-3.1.0.debug.js" />
     <Content Include="Website\Content\Scripts\knockout-3.1.0.js" />
+    <Content Include="Website\Content\Scripts\knockout.validation.js" />
+    <Content Include="Website\Content\Scripts\knockout.mapping.js" />
     <Content Include="Website\Content\Scripts\materialize.js" />
     <Content Include="Website\Content\Scripts\r.js" />
     <Content Include="Website\Content\Scripts\require.js" />

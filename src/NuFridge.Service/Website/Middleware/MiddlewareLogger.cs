@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading.Tasks;
-using NuFridge.Service.Hosting;
 using NuFridge.Service.Logging;
 
 namespace NuFridge.Service.Website.Middleware
