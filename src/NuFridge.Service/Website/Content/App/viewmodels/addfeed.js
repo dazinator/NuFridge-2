@@ -27,7 +27,7 @@
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 $("#addFeedModal").closeModal();
-                alert('Errors are not handled yet.');
+                Materialize.toast(errorThrown, 7500);
             }
         });
     }

@@ -40,7 +40,7 @@
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 $("#deleteFeedModal").closeModal();
-                alert('Errors are not handled yet.');
+                Materialize.toast(errorThrown, 7500);
             }
         });
     }
@@ -63,7 +63,7 @@
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 $("#editFeedModal").closeModal();
-                alert('Errors are not handled yet.');
+                Materialize.toast(errorThrown, 7500);
             }
         });
     }
