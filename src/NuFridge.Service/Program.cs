@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Net;
 using System.ServiceProcess;
+using AutoMapper;
 using FluentScheduler;
 using NuFridge.Service.Feeds;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Model;
+using NuFridge.Service.Model.Dto;
 using NuFridge.Service.Repositories;
 using NuFridge.Service.Scheduler;
 using NuFridge.Service.Website;
@@ -98,6 +101,14 @@ namespace NuFridge.Service
                 throw;
             }
 
+            Mapper.CreateMap<ApplicationUser, DtoApplicationUser>()
+    .ForMember(x => x.Email, o => o.MapFrom(s => s.Email))
+    .ForMember(x => x.EmailConfirmed, o => o.MapFrom(s => s.EmailConfirmed))
+    .ForMember(x => x.FirstName, o => o.MapFrom(s => s.FirstName))
+    .ForMember(x => x.Id, o => o.MapFrom(s => s.Id))
+    .ForMember(x => x.LastName, o => o.MapFrom(s => s.LastName))
+    .ForMember(x => x.UserName, o => o.MapFrom(s => s.UserName));
+
             try
             {
                 FeedManager.Instance().StartAll(config);
@@ -108,6 +119,8 @@ namespace NuFridge.Service
                 Stop();
                 throw;
             }
+
+
 
             try
             {

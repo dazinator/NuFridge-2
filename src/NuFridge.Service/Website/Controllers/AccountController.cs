@@ -1,12 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
+using AutoMapper;
 using Microsoft.AspNet.Identity;
 using NuFridge.Service.Authentication.Managers;
 using NuFridge.Service.Model;
+using NuFridge.Service.Model.Dto;
 
 namespace NuFridge.Service.Website.Controllers
 {
-    [RoutePrefix("api/Account")]
     public class AccountController : ApiController
     {
         private IdentityManager _repo = null;
@@ -31,6 +35,28 @@ namespace NuFridge.Service.Website.Controllers
             }
 
             return Ok();
+        }
+
+        //TODO change once auth is fully implemented. This is not secure.
+        [AllowAnonymous]
+        [HttpGet]
+        public HttpResponseMessage Get(string id)
+        {
+            var user = _repo.FindByName(id).Result;
+
+            if (user == null)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
+                {
+                    Content = new StringContent(string.Format("No user with username = {0}", id)),
+                    ReasonPhrase = "User not found"
+                };
+                throw new HttpResponseException(resp);
+            }
+
+            var dtoUser = Mapper.Map<DtoApplicationUser>(user);
+
+            return Request.CreateResponse(dtoUser);
         }
 
 

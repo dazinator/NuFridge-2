@@ -29,8 +29,6 @@ namespace NuFridge.Service.Website.Controllers
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            var urlHelper = new UrlHelper(Request);
-
             var results = query
                 .Skip(pageSize*page)
                 .Take(pageSize)
@@ -61,31 +59,19 @@ namespace NuFridge.Service.Website.Controllers
             return Request.CreateResponse(feed);
         }
 
-        //[EnableQuery]
-        //public HttpResponseMessage Get(string id = "")
-        //{
-        //    if (id == string.Empty)
-        //    {
-        //        return Request.CreateResponse(FeedRepository.GetAll());
-        //    }
-
-        //    var feed = FeedRepository.GetById(id);
-
-        //    if (feed == null)
-        //    {
-        //        var resp = new HttpResponseMessage(HttpStatusCode.NotFound)
-        //        {
-        //            Content = new StringContent(string.Format("No feed with ID = {0}", id)),
-        //            ReasonPhrase = "Feed not found"
-        //        };
-        //        throw new HttpResponseException(resp);
-        //    }
-
-        //    return Request.CreateResponse(feed);
-        //}
-
         public HttpResponseMessage Post([FromBody]Feed feed)
         {
+            var existingFeedWithName = FeedRepository.GetAll().FirstOrDefault(fd => fd.Name == feed.Name);
+            if (existingFeedWithName != null)
+            {
+                var resp = new HttpResponseMessage(HttpStatusCode.Conflict)
+                {
+                    Content = new StringContent("A feed with the name " + feed.Name + " already exists."),
+                    ReasonPhrase = "A feed with the same name already exists."
+                };
+                throw new HttpResponseException(resp);
+            }
+
             FeedRepository.Insert(feed);
 
             FeedManager.Instance().Start(feed);
@@ -97,7 +83,28 @@ namespace NuFridge.Service.Website.Controllers
         {
             if (id != feed.Id)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Feed id does not match.");
+                var resp = new HttpResponseMessage(HttpStatusCode.BadRequest)
+                {
+                    Content = new StringContent("Feed id does not match."),
+                    ReasonPhrase = "Feed id does not match."
+                };
+                throw new HttpResponseException(resp);
+            }
+
+            var oldFeed = FeedRepository.GetById(id);
+
+            if (oldFeed.Name != feed.Name)
+            {
+                var existingFeedWithName = FeedRepository.GetAll().FirstOrDefault(fd => fd.Name == feed.Name);
+                if (existingFeedWithName != null)
+                {
+                    var resp = new HttpResponseMessage(HttpStatusCode.Conflict)
+                    {
+                        Content = new StringContent("A feed with the name " + feed.Name + " already exists."),
+                        ReasonPhrase = "A feed with the same name already exists."
+                    };
+                    throw new HttpResponseException(resp);
+                }
             }
 
             FeedManager.Instance().Stop(feed);

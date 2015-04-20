@@ -1,7 +1,7 @@
-﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router) {
+﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
     var ctor = function () {
         this.displayName = 'Create Feed';
-        this.feed = ko.observable(new LuceneFeed());
+        this.feed = ko.observable(luceneFeed());
     };
 
     ctor.prototype.activate = function () {

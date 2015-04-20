@@ -76,6 +76,7 @@
     <Compile Include="Model\ApplicationRoleGroup.cs" />
     <Compile Include="Model\ApplicationUser.cs" />
     <Compile Include="Model\ApplicationUserGroup.cs" />
+    <Compile Include="Model\Dto\DtoApplicationUser.cs" />
     <Compile Include="Model\Feed.cs" />
     <Compile Include="Model\FeedGroup.cs" />
     <Compile Include="Model\IEntityBase.cs" />
@@ -100,6 +101,7 @@
   <ItemGroup>
     <Content Include="Website\Content\App\viewmodels\databinding\lucenefeed.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\lucenepackage.js" />
+    <Content Include="Website\Content\App\viewmodels\databinding\user.js" />
     <Content Include="Website\Content\font\material-design-icons\Material-Design-Icons.svg" />
     <Content Include="Website\Content\Scripts\almond-custom.js" />
     <Content Include="Website\Content\Scripts\bootstrap.js" />
@@ -160,6 +162,12 @@
     <Content Include="Website\Content\Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -441,6 +449,7 @@
 Robocopy "$(ProjectDir)Website\Content" "$(TargetDir)Content" /MIR
 if %25errorlevel%25 leq 1 exit 0 else exit %25errorlevel%25</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -49,6 +49,13 @@ namespace NuFridge.Service.Authentication.Managers
             return user;
         }
 
+        public async Task<ApplicationUser> FindByName(string userName)
+        {
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+
+            return user;
+        }
+
         public bool AddUserToRole(string userId, string roleName)
         {
             var idResult = _userManager.AddToRole(userId, roleName);

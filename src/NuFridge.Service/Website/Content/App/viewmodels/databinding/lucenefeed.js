@@ -1,22 +1,9 @@
-﻿define(['knockoutvalidation'], function (validation) {
-
-
-    ko.validation.init({
-        registerExtenders: true,
-        insertMessages: false,
-    });
-
-    window.LuceneFeed = function (config) {
+﻿define(function () {
+    return function (config) {
         var self = this, data;
 
-        // your default structure goes here
         data = $.extend({
-            name: ko.observable("").extend({
-                required: true,
-                minLength: 4,
-                maxLength: 64,
-                pattern: { message: 'Only alphanumeric characters are allowed in the feed name', params: /^[A-Za-z\d\s]+$/ }
-            }),
+            name: ko.observable(""),
             id: ko.observable(),
             groupId: ko.observable(),
             runPackageCleaner: ko.observable(false),
@@ -25,22 +12,14 @@
             packages: ko.observableArray()
         }, config);
 
+        data = $.extend({
+            viewFeedUrl: function () {
+                return '#feeds/view/' + data.id;
+            }
+        }, data);
+
         ko.mapping.fromJS(data, {}, self);
 
-
-    };
-
-    window.LuceneFeed.mapping = {
-        create: function (options) {
-
-            var fd = new LuceneFeed(options.data);
-
-            fd.viewFeedUrl = ko.computed(function () {
-                return '#feeds/view/' + fd.id();
-            });
-
-            return fd;
-        }
-
+        return data;
     };
 });

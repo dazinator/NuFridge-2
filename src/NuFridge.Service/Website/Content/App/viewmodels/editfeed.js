@@ -1,7 +1,7 @@
-﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router) {
+﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
     var ctor = function () {
         this.displayName = 'Edit Feed';
-        this.feed = ko.observable(new LuceneFeed());
+        this.feed = ko.observable(luceneFeed());
     };
 
     ctor.prototype.activate = function () {
@@ -14,9 +14,17 @@
                 cache: false,
                 dataType: 'json'
             }).then(function (response) {
-                ko.mapping.fromJS(response, LuceneFeed.mapping, self.feed);
-            }).fail(function (response) {
-                alert("Errors are not handled yet.");
+
+                var mapping = {
+                    create: function (options) {
+                        return luceneFeed(options.data);
+                    }
+                };
+
+                ko.mapping.fromJS(response, mapping, self.feed);
+            }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+                router.navigate("#");
+                Materialize.toast(errorThrown, 7500);
             });
         } else {
             alert("This scenario is not handled.");

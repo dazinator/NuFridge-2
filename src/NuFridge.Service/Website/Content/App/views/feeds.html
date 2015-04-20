@@ -1,19 +1,45 @@
 ﻿<div class="container">
     <h4>
-        <span data-bind="text: displayName"></span>&nbsp;<a href="#feeds/create" class="btn-floating btn-small waves-effect waves-light blue"><i class="mdi-content-add"></i></a>
+        <span data-bind="text: displayName"></span>
     </h4>
-    <div class="collection" data-bind="foreach: feeds">
-        <a data-bind="href: viewFeedUrl, text: name" class="collection-item blue-text text-darken-1"></a>
-    </div>
-    <!-- ko if: pageCount() > 1 -->
     <div class="row">
-        <ul class="pagination">
-            <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>
-            <!-- ko foreach: new Array(pageCount()) -->
-            <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), blue: $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
-            <!-- /ko -->
-            <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
-        </ul>
+        <div class="col s12">
+            <ul class="tabs z-depth-1" style="width: 100%;" id="feedsTabs">
+                <li class="tab col s3" style="width: 100%;"><a href="#test1" class="active blue-text">All</a></li>
+            </ul>
+        </div>
     </div>
-    <!-- /ko -->
+
+
+    <div class="row">
+        <div id="test1" class="col s12">
+
+
+
+            <div class="collection" data-bind="foreach: feeds">
+                <a data-bind="href: viewFeedUrl()" class="collection-item blue-text text-darken-1">
+                    <span data-bind="text: name"></span>
+                    <span>Test</span>
+                </a>
+
+            </div>
+            <!-- ko if: pageCount() > 1 -->
+            <div class="row">
+                <ul class="pagination">
+                    <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>
+                    <!-- ko foreach: new Array(pageCount()) -->
+                    <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), blue: $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
+                    <!-- /ko -->
+                    <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
+                </ul>
+            </div>
+            <!-- /ko -->
+            <!--         <a href="#feeds/create" class="waves-effect waves-light btn blue">Create</a>-->
+        </div>
+
+
+    </div>
+
+
+
 </div>

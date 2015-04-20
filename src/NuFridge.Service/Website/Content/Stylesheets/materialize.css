@@ -5532,7 +5532,7 @@ small {
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #f6b2b5;
+    background-color: #2196F3 !important;
     will-change: left, right; }
 
 .tabs .tab {
