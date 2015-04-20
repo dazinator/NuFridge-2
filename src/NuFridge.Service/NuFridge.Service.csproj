@@ -61,7 +61,12 @@
     <Compile Include="Migrations\201502181343024_AddGroups.Designer.cs">
       <DependentUpon>201502181343024_AddGroups.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504200445443_FeedPackageCleanerColumns.cs" />
+    <Compile Include="Migrations\201504200445443_FeedPackageCleanerColumns.Designer.cs">
+      <DependentUpon>201504200445443_FeedPackageCleanerColumns.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\DbInitializer.cs" />
     <Compile Include="Model\ApplicationGroup.cs" />
     <Compile Include="Model\ApplicationRole.cs" />
     <Compile Include="Model\ApplicationRoleGroup.cs" />
@@ -388,6 +393,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201502181343024_AddGroups.resx">
       <DependentUpon>201502181343024_AddGroups.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504200445443_FeedPackageCleanerColumns.resx">
+      <DependentUpon>201504200445443_FeedPackageCleanerColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

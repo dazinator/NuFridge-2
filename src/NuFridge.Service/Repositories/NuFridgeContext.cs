@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.AspNet.Identity.EntityFramework;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Migrations;
 using NuFridge.Service.Model;
 using Configuration = NuFridge.Service.Migrations.Configuration;
 
@@ -90,13 +91,16 @@ namespace NuFridge.Service.Repositories
 
             var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"];
 
+
             using (var context = new NuFridgeContext(connectionString))
             {
                 try
                 {
                     context.CreateDatabaseFolderIfNotExist();
 
-                    Database.SetInitializer(new Configuration());
+                    Database.SetInitializer(new DbInitializer());
+
+                    context.Database.Initialize(true);
 
                     Logger.Info("Finished database upgrade.");
                 }
