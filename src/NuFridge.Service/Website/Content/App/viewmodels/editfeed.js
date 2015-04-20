@@ -26,16 +26,20 @@
     ctor.prototype.deleteClick = function () {
         var feed = this;
 
+        $("#deleteFeedModal").openModal();
+
         $.ajax({
             url: "/api/Feeds/" + feed.id(),
             type: 'DELETE',
             dataType: 'json',
             cache: false,
             success: function (result) {
+                $("#deleteFeedModal").closeModal();
                 router.navigate('#feeds');
                 Materialize.toast('The ' + feed.name() + ' feed was successfully deleted.', 7500);
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
+                $("#deleteFeedModal").closeModal();
                 alert('Errors are not handled yet.');
             }
         });

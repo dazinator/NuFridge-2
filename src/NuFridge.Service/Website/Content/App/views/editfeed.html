@@ -1,6 +1,6 @@
 ﻿<div class="container">
     <div class="row">
-        <h4 data-bind="text:displayName"></h4>
+        <h4 data-bind="text: displayName"></h4>
         <form class="col s12" data-bind="with: feed">
             <div class="row">
                 <div class="input-field ">
@@ -22,11 +22,16 @@
         </form>
     </div>
 
-     <div id="editFeedModal" class="modal">
-    <div class="modal-content">
-      <h4>Saving feed.</h4>
-        <p>Please wait while the feed is restarted.</p>
+    <div id="editFeedModal" class="modal">
+        <div class="modal-content">
+            <h4>Saving feed.</h4>
+            <p>Please wait while the feed is restarted.</p>
+        </div>
     </div>
-  </div>
+    <div id="deleteFeedModal" class="modal">
+        <div class="modal-content">
+            <h4>Deleting feed.</h4>
+            <p>Please wait while the feed is deleted.</p>
+        </div>
+    </div>
 </div>
-

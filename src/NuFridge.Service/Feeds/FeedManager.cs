@@ -71,6 +71,8 @@ namespace NuFridge.Service.Feeds
                 return false;
             }
 
+            Logger.Info("Stopping " + feed.Name + ".");
+
             service.Dispose();
             return true;
         }
