@@ -21,6 +21,7 @@
             groupId: ko.observable(),
             runPackageCleaner: ko.observable(false),
             keepXNumberOfPackageVersions: ko.observable(0),
+            apiKey: ko.observable(""),
             packages: ko.observableArray()
         }, config);
 

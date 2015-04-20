@@ -18,12 +18,7 @@ namespace NuFridge.Service.Scheduler.Tasks
 
             foreach (var feed in feedManager.RunningFeeds)
             {
-                var directory = feed.FeedDirectory;
 
-                if (Directory.Exists(directory))
-                {
-                    
-                }
             }
         }
     }

@@ -23,8 +23,28 @@
         }
     }
 
+    ctor.prototype.deleteClick = function () {
+        var feed = this;
+
+        $.ajax({
+            url: "/api/Feeds/" + feed.id(),
+            type: 'DELETE',
+            dataType: 'json',
+            cache: false,
+            success: function (result) {
+                router.navigate('#feeds');
+                Materialize.toast('The ' + feed.name() + ' feed was successfully deleted.', 7500);
+            },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+                alert('Errors are not handled yet.');
+            }
+        });
+    }
+
     ctor.prototype.updateClick = function () {
         var feed = this;
+
+        $("#editFeedModal").openModal();
 
         $.ajax({
             url: "/api/Feeds/" + feed.id(),
@@ -33,9 +53,12 @@
             dataType: 'json',
             cache: false,
             success: function (result) {
+                $("#editFeedModal").closeModal();
                 router.navigate('#feeds');
+                Materialize.toast('The ' + feed.name() + ' feed was successfully updated.', 7500);
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
+                $("#editFeedModal").closeModal();
                 alert('Errors are not handled yet.');
             }
         });

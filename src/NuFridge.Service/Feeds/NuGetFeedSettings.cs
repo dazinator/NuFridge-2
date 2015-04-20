@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using NuFridge.Service.Model;
 using NuGet.Lucene;
 using NuGet.Lucene.Web;
 
@@ -19,14 +20,40 @@ namespace NuFridge.Service.Feeds
 
             private readonly System.Collections.Specialized.NameValueCollection roleMappings;
             private string FeedDirectory { get; set; }
+            private string ApiKey { get; set; }
             private ServiceConfiguration Config { get; set; }
 
-            public NuGetFeedSettings(ServiceConfiguration config, string feedDirectory)
+            public NuGetFeedSettings(Feed feed)
             {
-                this.Config = config;
+                this.Config = new ServiceConfiguration();
                 this.roleMappings = roleMappings ?? new NameValueCollection();
 
-                FeedDirectory = feedDirectory;
+                FeedDirectory = Path.Combine(Config.FeedsHome, feed.Id);
+
+                if (!Directory.Exists(FeedDirectory))
+                {
+                    Directory.CreateDirectory(FeedDirectory);
+                }
+
+                if (!Directory.Exists(PackagesPath))
+                {
+                    Directory.CreateDirectory(PackagesPath);
+                }
+
+                if (!Directory.Exists(LucenePackagesIndexPath))
+                {
+                    Directory.CreateDirectory(LucenePackagesIndexPath);
+                }
+
+                if (!Directory.Exists(LuceneUsersIndexPath))
+                {
+                    Directory.CreateDirectory(LuceneUsersIndexPath);
+                }
+
+                if (!Directory.Exists(SymbolsPath))
+                {
+                    Directory.CreateDirectory(SymbolsPath);
+                }
             }
 
             public bool ShowExceptionDetails
@@ -46,7 +73,7 @@ namespace NuFridge.Service.Feeds
 
             public string LocalAdministratorApiKey
             {
-                get { return Config.ApiKey; }
+                get { return ApiKey; }
             }
 
             public bool AllowAnonymousPackageChanges

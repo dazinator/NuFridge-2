@@ -16,18 +16,9 @@ namespace NuFridge.Service.Feeds
 {
     public class NuGetFeed : IDisposable
     {
-        private static readonly ILog Logger = LogProvider.For<NuGetFeed>(); 
+        private static readonly ILog Logger = LogProvider.For<NuGetFeed>();
 
-        private ServiceConfiguration Config { get; set; }
-
-        public NuGetFeed(ServiceConfiguration config)
-        {
-            Config = config;
-        }
-
-        private CustomStartup startup;
         private IDisposable webapp;
-        private IContainer container;
 
         public void Dispose()
         {
@@ -35,12 +26,6 @@ namespace NuFridge.Service.Feeds
             {
                 webapp.Dispose();
                 webapp = null;
-            }
-
-            if (startup != null)
-            {
-                startup.WaitForShutdown(TimeSpan.FromMinutes(1));
-                startup = null;
             }
         }
 
@@ -74,49 +59,25 @@ namespace NuFridge.Service.Feeds
         //    }
         //}
 
-        public string BaseAddress { get; private set; }
-        public string FeedDirectory { get; private set; }
+        private Feed Feed { get; set; }
+        public string Id { get; private set; }
 
-        public void OptimizeIndexing()
+        private void WebAppStartup(IAppBuilder app)
         {
-            var controller = container.Resolve<IndexingController>();
-
-            controller.Optimize();
-        }
-
-        public void SynchronizePackages()
-        {
-            var controller = container.Resolve<IndexingController>();
-            
-            controller.Synchronize(new SynchronizationOptions()
-            {
-                Mode = SynchronizationMode.Incremental
-            });
-        }
-
-
-        public virtual void WebAppStartup(IAppBuilder app)
-        {
-            startup = new CustomStartup(this);
+            var startup = new CustomStartup(Feed);
             startup.Configuration(app);
         }
 
-        public virtual INuGetWebApiSettings CreateSettings()
-        {
-            var settings = new NuGetFeedSettings(Config, FeedDirectory);
 
-            return settings;
-        }
-
-        public virtual IContainer CreateContainer(IAppBuilder app)
-        {
-            container = startup.CreateDefaultContainer(app);
-            return container;
-        }
 
         public bool Start(Feed feed)
         {
-            var baseUrl = Config.FeedWebBinding;
+            Id = feed.Id;
+            Feed = feed;
+
+            var config = new ServiceConfiguration();
+
+            var baseUrl = config.FeedWebBinding;
 
             if (!baseUrl.EndsWith("/"))
             {
@@ -124,46 +85,13 @@ namespace NuFridge.Service.Feeds
             }
 
             var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
-            var feedDirectory = Path.Combine(Config.FeedsHome, feed.Id);
-
-            BaseAddress = baseAddress;
-            FeedDirectory = feedDirectory;
+            var feedDirectory = Path.Combine(config.FeedsHome, feed.Id);
 
             Logger.Info("Starting " + feed.Name + " at " + feedDirectory);
-
-            var settings = CreateSettings();
-
-            if (!Directory.Exists(feedDirectory))
-            {
-                Directory.CreateDirectory(feedDirectory);
-            }
-
-            if (!Directory.Exists(settings.PackagesPath))
-            {
-                Directory.CreateDirectory(settings.PackagesPath);
-            }
-
-            if (!Directory.Exists(settings.LucenePackagesIndexPath))
-            {
-                Directory.CreateDirectory(settings.LucenePackagesIndexPath);
-            }
-
-            if (!Directory.Exists(settings.LuceneUsersIndexPath))
-            {
-                Directory.CreateDirectory(settings.LuceneUsersIndexPath);
-            }
-
-            if (!Directory.Exists(settings.SymbolsPath))
-            {
-                Directory.CreateDirectory(settings.SymbolsPath);
-            }
-
-
 
             try
             {
                 webapp = WebApp.Start(baseAddress, WebAppStartup);
-                
 
                 return true;
             }
@@ -174,6 +102,10 @@ namespace NuFridge.Service.Feeds
                 Logger.Info("Exception: " + baseException.Message);
 
                 return false;
+            }
+            finally
+            {
+                Feed = null;
             }
         }
     }

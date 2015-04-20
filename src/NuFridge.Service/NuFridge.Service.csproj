@@ -65,6 +65,10 @@
     <Compile Include="Migrations\201504200445443_FeedPackageCleanerColumns.Designer.cs">
       <DependentUpon>201504200445443_FeedPackageCleanerColumns.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504200859451_AddApiKeyToFeed.cs" />
+    <Compile Include="Migrations\201504200859451_AddApiKeyToFeed.Designer.cs">
+      <DependentUpon>201504200859451_AddApiKeyToFeed.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\DbInitializer.cs" />
     <Compile Include="Model\ApplicationGroup.cs" />
@@ -396,6 +400,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201504200445443_FeedPackageCleanerColumns.resx">
       <DependentUpon>201504200445443_FeedPackageCleanerColumns.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504200859451_AddApiKeyToFeed.resx">
+      <DependentUpon>201504200859451_AddApiKeyToFeed.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

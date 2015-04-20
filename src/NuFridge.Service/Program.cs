@@ -100,7 +100,7 @@ namespace NuFridge.Service
 
             try
             {
-                FeedManager.Instance().Start(config);
+                FeedManager.Instance().StartAll(config);
             }
             catch (Exception ex)
             {

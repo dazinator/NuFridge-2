@@ -12,7 +12,6 @@ namespace NuFridge.Service.Feeds
         private const string SynchronizeOnStartKey = "NuFridge.Feeds.SynchronizeOnStart";
         private const string EnablePackageFileWatcherKey = "NuFridge.Feeds.EnablePackageFileWatcher";
         private const string GroupPackageFilesByIdKey = "NuFridge.Feeds.GroupPackageFilesById";
-        private const string ApiKeyKey = "NuFridge.Feeds.ApiKey";
         private const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
         private const string WebsiteBindingKey = "NuFridge.AdministrationWebsite.Binding";
 
@@ -31,15 +30,6 @@ namespace NuFridge.Service.Feeds
                 }
 
                 return _allowPackageOverwrite ?? (_allowPackageOverwrite = true).Value;
-            }
-        }
-
-        private string _apiKey;
-        public string ApiKey
-        {
-            get
-            {
-                return _apiKey ?? (_apiKey = ConfigurationManager.AppSettings[ApiKeyKey]);
             }
         }
 

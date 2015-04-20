@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using NuFridge.Service.Logging;
 using NuFridge.Service.Model;
 using NuFridge.Service.Repositories;
@@ -45,9 +47,39 @@ namespace NuFridge.Service.Feeds
             }
         }
 
-
-        public void Start(ServiceConfiguration config)
+        public bool Start(Feed feed)
         {
+            var config = new ServiceConfiguration();
+
+            NuGetFeed feedService = new NuGetFeed();
+
+            if (!feedService.Start(feed))
+            {
+                Logger.Error("Failed to start " + feed.Name + ".");
+                return false;
+            }
+
+            Logger.Info("Successfully started " + feed.Name + ".");
+            return true;
+        }
+
+        public bool Stop(Feed feed)
+        {
+            var service = FeedServices.FirstOrDefault(fd => fd.Id == feed.Id);
+            if (service == null)
+            {
+                return false;
+            }
+
+            service.Dispose();
+            return true;
+        }
+
+
+        public void StartAll(ServiceConfiguration config)
+        {
+            Thread.Sleep(10000);
+
             Logger.Info("Starting NuGet feeds.");
 
             IRepository<Feed> feedRepository = new SqlCompactRepository<Feed>();
@@ -62,21 +94,21 @@ namespace NuFridge.Service.Feeds
             }
             else
             {
-                foreach (var feedEntity in feeds)
+                Parallel.ForEach(feeds, feedEntity =>
                 {
-                    NuGetFeed feedService = new NuGetFeed(config);
+                    NuGetFeed feedService = new NuGetFeed();
 
                     if (!feedService.Start(feedEntity))
                     {
                         success = false;
                         Logger.Error("Failed to start " + feedEntity.Name + ".");
-                        continue;
+                        return;
                     }
 
-                    Logger.Info("Successfully started " + feedService.BaseAddress + ".");
+                    Logger.Info("Successfully started " + feedEntity.Name + ".");
 
                     FeedServices.Add(feedService);
-                }
+                });
             }
 
             if (!success)
