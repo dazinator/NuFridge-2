@@ -90,26 +90,138 @@ namespace NuFridge.Service.Website
                     return;
                 }
 
-                FileSystemWatcher watcher = new FileSystemWatcher();
-                watcher.Path = path;
-                watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.LastAccess;
-                watcher.Filter = "*.*";
-                watcher.IncludeSubdirectories = true;
-                watcher.Created += watcher_Changed;
-                watcher.Deleted += watcher_Deleted;
-                watcher.Renamed += watcher_Renamed;
-                watcher.Changed += watcher_Changed;
-                watcher.Error += watcher_Error;
-                watcher.EnableRaisingEvents = true;
+                FileSystemWatcher fileWatcher = new FileSystemWatcher();
+                fileWatcher.Path = path;
+                fileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.LastAccess;
+                fileWatcher.Filter = "*.*";
+                fileWatcher.IncludeSubdirectories = true;
+                fileWatcher.Created += fileWatcher_Changed;
+                fileWatcher.Deleted += fileWatcher_Deleted;
+                fileWatcher.Renamed += fileWatcher_Renamed;
+                fileWatcher.Changed += fileWatcher_Changed;
+                fileWatcher.Error += fileWatcher_Error;
+                fileWatcher.EnableRaisingEvents = true;
+
+                FileSystemWatcher directoryWatcher = new FileSystemWatcher();
+                directoryWatcher.Path = path;
+                directoryWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+                directoryWatcher.Filter = "*.*";
+                directoryWatcher.IncludeSubdirectories = true;
+                directoryWatcher.Created += directoryWatcher_Created;
+                directoryWatcher.Deleted += directoryWatcher_Deleted;
+                directoryWatcher.Renamed += directoryWatcher_Renamed;
+                directoryWatcher.Error += directoryWatcher_Error;
+                directoryWatcher.EnableRaisingEvents = true;
             }
         }
 
-        void watcher_Error(object sender, ErrorEventArgs e)
+        private void directoryWatcher_Error(object sender, ErrorEventArgs e)
         {
             Logger.Error("No longer watching website content changes: " + e.GetException());
         }
 
-        void watcher_Changed(object sender, FileSystemEventArgs e)
+        private void directoryWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            try
+            {
+                var srcOldFilePath = e.OldFullPath;
+                var srcNewFilePath = e.FullPath;
+
+                if (!Directory.Exists(srcNewFilePath))
+                {
+                    return;
+                }
+
+                var srcDirectory = FindApplicationFolder(Assembly.GetExecutingAssembly().GetName().Name);
+                var srcContentDirectory = Path.Combine(srcDirectory.FullName, "Website", "Content") + @"\";
+
+                string fileOldRelativePath = srcOldFilePath.Remove(0, srcContentDirectory.Length);
+
+                if (!srcNewFilePath.Contains(srcContentDirectory))
+                {
+                    return;
+                }
+
+                string fileNewRelativePath = srcNewFilePath.Remove(0, srcContentDirectory.Length);
+
+                var debugDirectory = Directory.GetCurrentDirectory();
+                var debugContentDirectory = Path.Combine(debugDirectory, "Content") + @"\";
+
+                var debugOldContentFilePath = Path.Combine(debugContentDirectory, fileOldRelativePath);
+                var debugNewContentFilePath = Path.Combine(debugContentDirectory, fileNewRelativePath);
+
+                Directory.Move(debugOldContentFilePath, debugNewContentFilePath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Failed to rename file: " + ex);
+            }
+        }
+
+        private void directoryWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                var srcFilePath = e.FullPath;
+
+                var srcDirectory = FindApplicationFolder(Assembly.GetExecutingAssembly().GetName().Name);
+                var srcContentDirectory = Path.Combine(srcDirectory.FullName, "Website", "Content") + @"\";
+
+                string fileRelativePath = srcFilePath.Remove(0, srcContentDirectory.Length);
+
+                var debugDirectory = Directory.GetCurrentDirectory();
+                var debugContentDirectory = Path.Combine(debugDirectory, "Content") + @"\";
+
+                var debugContentFilePath = Path.Combine(debugContentDirectory, fileRelativePath);
+
+                if (Directory.Exists(debugContentFilePath))
+                {
+                    Directory.Delete(debugContentFilePath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Failed to delete directory: " + ex);
+            }
+        }
+
+        private void directoryWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                var srcFilePath = e.FullPath;
+
+                if (!Directory.Exists(srcFilePath))
+                {
+                    return;
+                }
+
+                var srcDirectory = FindApplicationFolder(Assembly.GetExecutingAssembly().GetName().Name);
+                var srcContentDirectory = Path.Combine(srcDirectory.FullName, "Website", "Content") + @"\";
+
+                string fileRelativePath = srcFilePath.Remove(0, srcContentDirectory.Length);
+
+                var debugDirectory = Directory.GetCurrentDirectory();
+                var debugContentDirectory = Path.Combine(debugDirectory, "Content") + @"\";
+
+                var debugContentFilePath = Path.Combine(debugContentDirectory, fileRelativePath);
+                if (!Directory.Exists(debugContentFilePath))
+                {
+                    Directory.CreateDirectory(debugContentFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn("Failed to create directory: " + ex);
+            }
+        }
+
+        void fileWatcher_Error(object sender, ErrorEventArgs e)
+        {
+            Logger.Error("No longer watching website content changes: " + e.GetException());
+        }
+
+        void fileWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             try
             {
@@ -130,9 +242,16 @@ namespace NuFridge.Service.Website
 
                 var debugContentFilePath = Path.Combine(debugContentDirectory, fileRelativePath);
 
+                var debugNewContentFolderPath = Directory.GetParent(debugContentFilePath);
+
+                if (!debugNewContentFolderPath.Exists)
+                {
+                    debugNewContentFolderPath.Create();
+                }
+
                 using (var fs = new FileStream(srcFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (var fileStream = File.Open(debugContentFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
+                    using (var fileStream = File.Open(debugContentFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite))
                     {
                         fileStream.SetLength(0);
                         fs.Seek(0, SeekOrigin.Begin);
@@ -147,7 +266,7 @@ namespace NuFridge.Service.Website
 
         }
 
-        void watcher_Renamed(object sender, RenamedEventArgs e)
+        void fileWatcher_Renamed(object sender, RenamedEventArgs e)
         {
             try
             {
@@ -165,11 +284,24 @@ namespace NuFridge.Service.Website
                 string fileOldRelativePath = srcOldFilePath.Remove(0, srcContentDirectory.Length);
                 string fileNewRelativePath = srcNewFilePath.Remove(0, srcContentDirectory.Length);
 
+
+                if (!srcNewFilePath.Contains(srcContentDirectory))
+                {
+                    return;
+                }
+
                 var debugDirectory = Directory.GetCurrentDirectory();
                 var debugContentDirectory = Path.Combine(debugDirectory, "Content") + @"\";
 
                 var debugOldContentFilePath = Path.Combine(debugContentDirectory, fileOldRelativePath);
                 var debugNewContentFilePath = Path.Combine(debugContentDirectory, fileNewRelativePath);
+
+                var debugNewContentFolderPath = Directory.GetParent(debugNewContentFilePath);
+
+                if (!debugNewContentFolderPath.Exists)
+                {
+                    debugNewContentFolderPath.Create();
+                }
 
                 File.Move(debugOldContentFilePath, debugNewContentFilePath);
             }
@@ -179,7 +311,7 @@ namespace NuFridge.Service.Website
             }
         }
 
-        void watcher_Deleted(object sender, FileSystemEventArgs e)
+        void fileWatcher_Deleted(object sender, FileSystemEventArgs e)
         {
             try
             {
@@ -195,7 +327,10 @@ namespace NuFridge.Service.Website
 
                 var debugContentFilePath = Path.Combine(debugContentDirectory, fileRelativePath);
 
-                File.Delete(debugContentFilePath);
+                if (File.Exists(debugContentFilePath))
+                {
+                    File.Delete(debugContentFilePath);
+                }
             }
             catch (Exception ex)
             {
