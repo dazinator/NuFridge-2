@@ -56,7 +56,7 @@ namespace NuFridge.Service.Website.Controllers
 
             FeedRepository.Update(feed);
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.OK, feed);
         }
 
         public HttpResponseMessage Delete(string id)

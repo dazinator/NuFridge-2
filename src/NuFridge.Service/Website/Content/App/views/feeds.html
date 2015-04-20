@@ -3,7 +3,7 @@
         <span data-bind="text:displayName"></span>&nbsp;<a href="#feeds/create" class="btn-floating btn-small waves-effect waves-light blue"><i class="mdi-content-add"></i></a>
     </h4>
     <div class="collection" data-bind="foreach: feeds">
-        <a href="#!" class="collection-item blue-text text-darken-1">Default<span class="badge">0 packages</span></a>
+        <a data-bind="href: viewFeedUrl, text: name" class="collection-item blue-text text-darken-1"></a>
     </div>
     <div class="row">
         <ul class="pagination">

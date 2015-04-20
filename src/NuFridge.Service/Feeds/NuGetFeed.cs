@@ -124,7 +124,7 @@ namespace NuFridge.Service.Feeds
             }
 
             var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
-            var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
+            var feedDirectory = Path.Combine(Config.FeedsHome, feed.Id);
 
             BaseAddress = baseAddress;
             FeedDirectory = feedDirectory;
