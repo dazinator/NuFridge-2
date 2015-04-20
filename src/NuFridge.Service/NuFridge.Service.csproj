@@ -423,7 +423,8 @@
     if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
     xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
 
-xcopy "$(ProjectDir)Website\Content\*.*" "$(TargetDir)Content" /Y /I /E</PostBuildEvent>
+Robocopy "$(ProjectDir)Website\Content" "$(TargetDir)Content" /MIR
+if %25errorlevel%25 leq 1 exit 0 else exit %25errorlevel%25</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
