@@ -12,5 +12,9 @@
 
     }
 
+    ctor.prototype.updateClick = function () {
+        Materialize.toast('Not implemented.', 7500);
+    }
+
     return ctor;
 });

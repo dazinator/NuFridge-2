@@ -38,7 +38,7 @@
         $("#progressBar").attr("aria-busy", true);
 
         $.ajax({
-            url: "/api/Feeds?page=" + pageNumber,
+            url: "/api/Feeds?page=" + pageNumber + "&pageSize=10",
             cache: false,
             dataType: 'json'
         }).then(function (response) {

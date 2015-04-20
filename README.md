@@ -24,3 +24,5 @@ https://github.com/lukeskinner/NuFridge/releases/latest
 ![NuFridge Control Panel](https://www.nufridge.com/images/Feeds.png)
 ##### Website - Create Feed
 ![NuFridge Control Panel](https://www.nufridge.com/images/CreateFeed.png)
+##### Website - Profile
+![NuFridge Control Panel](https://www.nufridge.com/images/Profile.png)

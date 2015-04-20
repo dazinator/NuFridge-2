@@ -91,6 +91,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Website\Middleware\OwinConstants.cs" />
+    <Compile Include="Website\Middleware\ShutdownMiddleware.cs" />
     <Compile Include="Website\WebisteStartupConfig.cs" />
     <Compile Include="Website\Controllers\AccountController.cs" />
     <Compile Include="Website\Controllers\FeedsController.cs" />

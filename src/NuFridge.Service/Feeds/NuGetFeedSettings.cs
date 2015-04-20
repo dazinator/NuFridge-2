@@ -200,6 +200,17 @@ namespace NuFridge.Service.Feeds
                     return 0;
                 }
             }
+
+
+            public bool DisablePackageHash
+            {
+                get { return false; }
+            }
+
+            public bool IgnorePackageFiles
+            {
+                get { return false; }
+            }
         }
     }
 

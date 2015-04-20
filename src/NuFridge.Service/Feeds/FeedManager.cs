@@ -42,7 +42,7 @@ namespace NuFridge.Service.Feeds
 
                 foreach (var feedService in FeedServices)
                 {
-                    feedService.Dispose();
+                    feedService.Stop();
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace NuFridge.Service.Feeds
 
             Logger.Info("Stopping " + feed.Name + ".");
 
-            service.Dispose();
+            service.Stop();
 
             FeedServices.Remove(service);
 
@@ -109,6 +109,8 @@ namespace NuFridge.Service.Feeds
                         Logger.Error("Failed to start " + feedEntity.Name + ".");
                         return;
                     }
+
+
 
                     Logger.Info("Successfully started " + feedEntity.Name + ".");
 

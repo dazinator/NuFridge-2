@@ -1,6 +1,6 @@
 ﻿define(function() {
     var ctor = function () {
-        this.displayName = 'Welcome to NuFridge!';
+        this.displayName = 'Welcome!';
     };
 
     ctor.prototype.activate = function () {
