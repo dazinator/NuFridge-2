@@ -78,8 +78,6 @@ namespace NuFridge.Service.Feeds
 
         public void StartAll(ServiceConfiguration config)
         {
-            Thread.Sleep(10000);
-
             Logger.Info("Starting NuGet feeds.");
 
             IRepository<Feed> feedRepository = new SqlCompactRepository<Feed>();
