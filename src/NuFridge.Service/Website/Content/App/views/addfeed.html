@@ -1,12 +1,11 @@
 ﻿<div class="container">
     <div class="row">
         <h4 data-bind="text:displayName"></h4>
-
-        <form class="col s12">
+        <form class="col s12" data-bind="with: feed">
             <div class="row">
                 <div class="input-field ">
                     <i class="mdi-action-label prefix"></i>
-                    <input id="icon_prefix" type="text">
+                    <input id="icon_prefix" type="text" data-bind="value: name">
                     <label for="icon_prefix">Feed Name</label>
                 </div>
             </div>
@@ -18,7 +17,7 @@
                 </div>
             </div>
             <div class="row">
-                <a class="waves-effect waves-light btn blue">Create</a>
+                <a class="waves-effect waves-light btn blue" data-bind="click: $root.createClick">Create</a>
             </div>
         </form>
     </div>

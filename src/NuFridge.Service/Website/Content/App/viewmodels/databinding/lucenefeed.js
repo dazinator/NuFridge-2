@@ -19,8 +19,8 @@
             }),
             id: ko.observable(),
             groupId: ko.observable(),
-            runPackageCleaner: ko.observable(),
-            keepXNumberOfPackageVersions: ko.observable(),
+            runPackageCleaner: ko.observable(false),
+            keepXNumberOfPackageVersions: ko.observable(0),
             packages: ko.observableArray()
         }, config);
 
@@ -35,7 +35,7 @@
             var fd = new LuceneFeed(options.data);
 
             fd.viewFeedUrl = ko.computed(function () {
-                return '#feeds/' + fd.id();
+                return '#feeds/view/' + fd.id();
             });
 
             return fd;

@@ -44,7 +44,7 @@ namespace NuFridge.Service.Website.Controllers
         {
             FeedRepository.Insert(feed);
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.OK, feed);
         }
 
         public HttpResponseMessage Put(string id, [FromBody]Feed feed)
