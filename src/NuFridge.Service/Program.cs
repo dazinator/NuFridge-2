@@ -2,11 +2,11 @@
 using System.Net;
 using System.ServiceProcess;
 using FluentScheduler;
-using NuFridge.Service.Api;
-using NuFridge.Service.Data.Repositories;
 using NuFridge.Service.Feeds;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Repositories;
 using NuFridge.Service.Scheduler;
+using NuFridge.Service.Website;
 
 namespace NuFridge.Service
 {
@@ -89,7 +89,7 @@ namespace NuFridge.Service
 
             try
             {
-                //WebApiManager.Instance().Start(config);
+                WebsiteManager.Instance().Start(config);
             }
             catch (Exception ex)
             {
@@ -148,7 +148,7 @@ namespace NuFridge.Service
 
         public static void Stop()
         {
-            WebApiManager.Instance().Dispose();
+            WebsiteManager.Instance().Dispose();
             FeedManager.Instance().Dispose();
 
             TaskScheduler.Instance().Dispose();

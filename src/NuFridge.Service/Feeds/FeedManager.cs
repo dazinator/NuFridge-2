@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NuFridge.Service.Data.Model;
-using NuFridge.Service.Data.Repositories;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Model;
+using NuFridge.Service.Repositories;
 
 namespace NuFridge.Service.Feeds
 {

@@ -14,7 +14,7 @@ namespace NuFridge.Service.Feeds
         private const string GroupPackageFilesByIdKey = "NuFridge.Feeds.GroupPackageFilesById";
         private const string ApiKeyKey = "NuFridge.Feeds.ApiKey";
         private const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
-        private const string ApiWebBindingKey = "NuFridge.AdministrationWebsite.Binding";
+        private const string WebsiteBindingKey = "NuFridge.AdministrationWebsite.Binding";
 
         private bool? _allowPackageOverwrite;
         public bool AllowPackageOverwrite
@@ -106,12 +106,12 @@ namespace NuFridge.Service.Feeds
             }
         }
 
-        private string _apiWebBinding;
-        public string ApiWebBinding
+        private string _websiteBinding;
+        public string WebsiteBinding
         {
             get
             {
-                return _apiWebBinding ?? (_apiWebBinding = ConfigurationManager.AppSettings[ApiWebBindingKey]);
+                return _websiteBinding ?? (_websiteBinding = ConfigurationManager.AppSettings[WebsiteBindingKey]);
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
-using NuFridge.Service.Authentication.Model;
 using NuFridge.Service.Authentication.Stores;
+using NuFridge.Service.Model;
 
 namespace NuFridge.Service.Authentication.Managers
 {

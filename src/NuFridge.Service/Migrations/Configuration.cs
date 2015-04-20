@@ -3,9 +3,8 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using NuFridge.Service.Authentication.Managers;
-using NuFridge.Service.Authentication.Model;
-using NuFridge.Service.Data.Model;
-using NuFridge.Service.Data.Repositories;
+using NuFridge.Service.Model;
+using NuFridge.Service.Repositories;
 
 namespace NuFridge.Service.Migrations
 {

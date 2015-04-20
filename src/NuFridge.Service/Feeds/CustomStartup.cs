@@ -7,7 +7,6 @@ namespace NuFridge.Service.Feeds
     public class CustomStartup : Startup
     {
         readonly  NuGetFeed feed;
-
         public CustomStartup(NuGetFeed feed)
         {
             this.feed = feed;

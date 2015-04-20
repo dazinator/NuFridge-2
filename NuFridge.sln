@@ -20,8 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3045A2
 		src\.nuget\packages.config = src\.nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website", "src\NuFridge.Website\NuFridge.Website.csproj", "{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.ControlPanel", "src\NuFridge.ControlPanel\NuFridge.ControlPanel.csproj", "{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Installer", "src\NuFridge.Installer\NuFridge.Installer.csproj", "{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}"
@@ -46,16 +44,6 @@ Global
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0CD12809-4154-4854-A894-9AE2EF297714}.Release|x86.ActiveCfg = Release|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EA5CBF28-7A8D-4127-8B6B-DC2A6F5D29F0}.Release|x86.ActiveCfg = Release|Any CPU
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B2EF5F2-9F8F-4837-BB75-7C2ECBE1C3DA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

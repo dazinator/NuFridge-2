@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using NuFridge.Service.Authentication.Model;
-using NuFridge.Service.Data.Repositories;
+using NuFridge.Service.Model;
+using NuFridge.Service.Repositories;
 
 namespace NuFridge.Service.Authentication.Managers
 {

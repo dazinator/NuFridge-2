@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Owin.Security.OAuth;
 using NuFridge.Service.Authentication.Managers;
-using NuFridge.Service.Authentication.Model;
+using NuFridge.Service.Model;
 
 namespace NuFridge.Service.Authentication.Providers
 {

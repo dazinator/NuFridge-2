@@ -2,9 +2,9 @@
 using System.IO;
 using Autofac;
 using Microsoft.Owin.Hosting;
-using NuFridge.Service.Data.Model;
 using NuFridge.Service.Feeds.NuGet.Lucene.Web;
 using NuFridge.Service.Logging;
+using NuFridge.Service.Model;
 using NuGet.Lucene;
 //using NuGet.Lucene.Events;
 using NuGet.Lucene.Web;
@@ -98,9 +98,7 @@ namespace NuFridge.Service.Feeds
         public virtual void WebAppStartup(IAppBuilder app)
         {
             startup = new CustomStartup(this);
-            //app.Use(typeof(ApiLogger));
             startup.Configuration(app);
- 
         }
 
         public virtual INuGetWebApiSettings CreateSettings()
@@ -118,8 +116,6 @@ namespace NuFridge.Service.Feeds
 
         public bool Start(Feed feed)
         {
-
-
             var baseUrl = Config.FeedWebBinding;
 
             if (!baseUrl.EndsWith("/"))
@@ -130,15 +126,39 @@ namespace NuFridge.Service.Feeds
             var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
             var feedDirectory = Path.Combine(Config.FeedsHome, feed.Name);
 
+            BaseAddress = baseAddress;
+            FeedDirectory = feedDirectory;
+
             Logger.Info("Starting " + feed.Name + " at " + feedDirectory);
+
+            var settings = CreateSettings();
 
             if (!Directory.Exists(feedDirectory))
             {
                 Directory.CreateDirectory(feedDirectory);
             }
 
-            BaseAddress = baseAddress;
-            FeedDirectory = feedDirectory;
+            if (!Directory.Exists(settings.PackagesPath))
+            {
+                Directory.CreateDirectory(settings.PackagesPath);
+            }
+
+            if (!Directory.Exists(settings.LucenePackagesIndexPath))
+            {
+                Directory.CreateDirectory(settings.LucenePackagesIndexPath);
+            }
+
+            if (!Directory.Exists(settings.LuceneUsersIndexPath))
+            {
+                Directory.CreateDirectory(settings.LuceneUsersIndexPath);
+            }
+
+            if (!Directory.Exists(settings.SymbolsPath))
+            {
+                Directory.CreateDirectory(settings.SymbolsPath);
+            }
+
+
 
             try
             {

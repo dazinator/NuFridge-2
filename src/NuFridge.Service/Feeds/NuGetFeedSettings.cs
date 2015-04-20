@@ -26,11 +26,6 @@ namespace NuFridge.Service.Feeds
                 this.Config = config;
                 this.roleMappings = roleMappings ?? new NameValueCollection();
 
-                if (!Directory.Exists((feedDirectory)))
-                {
-                    throw new DirectoryNotFoundException("Could not find a directory at " + feedDirectory);
-                }
-
                 FeedDirectory = feedDirectory;
             }
 
