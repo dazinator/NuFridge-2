@@ -1,7 +1,14 @@
 ﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
     var ctor = function () {
-        this.displayName = 'Edit Feed';
+        var self = this;
+
         this.feed = ko.observable(luceneFeed());
+        this.displayName = ko.computed(function() {
+            if (self.feed()) {
+                return self.feed().name();
+            }
+            return '';
+        });
     };
 
     ctor.prototype.activate = function () {
@@ -22,6 +29,7 @@
                 };
 
                 ko.mapping.fromJS(response, mapping, self.feed);
+                self.displayName('Edit ' + self.feed().name);
             }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
                 router.navigate("#");
                 Materialize.toast(errorThrown, 7500);
@@ -74,6 +82,10 @@
                 Materialize.toast(errorThrown, 7500);
             }
         });
+    }
+
+    ctor.prototype.compositionComplete = function () {
+        $('#viewFeedTabs').tabs();
     }
 
     return ctor;
