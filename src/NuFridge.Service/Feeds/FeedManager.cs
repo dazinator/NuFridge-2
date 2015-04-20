@@ -59,6 +59,8 @@ namespace NuFridge.Service.Feeds
                 return false;
             }
 
+            FeedServices.Add(feedService);
+
             Logger.Info("Successfully started " + feed.Name + ".");
             return true;
         }
