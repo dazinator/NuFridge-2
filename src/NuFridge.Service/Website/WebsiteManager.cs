@@ -34,8 +34,6 @@ namespace NuFridge.Service.Website
 
         public void Dispose()
         {
-
-
             if (WebsiteDisposable != null)
             {
                 Logger.Info("Stopping website.");
