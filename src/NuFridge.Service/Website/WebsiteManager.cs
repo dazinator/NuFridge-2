@@ -16,7 +16,7 @@ namespace NuFridge.Service.Website
         protected WebsiteManager()
         {
 
-        }
+        } 
 
         public static WebsiteManager Instance()
         {
