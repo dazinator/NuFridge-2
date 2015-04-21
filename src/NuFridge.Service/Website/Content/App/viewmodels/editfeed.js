@@ -1,14 +1,12 @@
-﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
+﻿define(['plugins/router', 'databinding/LuceneFeed', 'databinding/lucenepackage'], function (router, luceneFeed, lucenePackage) {
     var ctor = function () {
         var self = this;
 
         this.feed = ko.observable(luceneFeed());
-        this.displayName = ko.computed(function() {
-            if (self.feed()) {
-                return self.feed().name();
-            }
-            return '';
-        });
+        this.packages = ko.observableArray();
+        this.pageCount = ko.observable(1);
+        this.currentPage = ko.observable(0);
+        this.displayName = ko.observable('');
     };
 
     ctor.prototype.activate = function () {
@@ -29,7 +27,8 @@
                 };
 
                 ko.mapping.fromJS(response, mapping, self.feed);
-                self.displayName('Edit ' + self.feed().name);
+                self.displayName('Edit ' + self.feed().name());
+                self.loadPackages();
             }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
                 router.navigate("#");
                 Materialize.toast(errorThrown, 7500);
@@ -37,6 +36,37 @@
         } else {
             alert("This scenario is not handled.");
         }
+    }
+
+    ctor.prototype.loadPackages = function (pageNumber) {
+        var self = this;
+
+        if (!pageNumber) {
+            pageNumber = 0;
+        } else {
+            if (pageNumber == self.currentPage()) {
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=10",
+            cache: false,
+            dataType: 'json'
+        }).then(function (response) {
+            self.pageCount(response.totalPages);
+            self.currentPage(pageNumber);
+
+            var mapping = {
+                create: function (options) {
+                    return lucenePackage(options.data);
+                }
+            };
+
+            ko.mapping.fromJS(response.results, mapping, self.packages);
+        }).fail(function (response) {
+            alert("Errors are not handled yet.");
+        });
     }
 
     ctor.prototype.deleteClick = function () {

@@ -77,6 +77,7 @@
     <Compile Include="Model\ApplicationUser.cs" />
     <Compile Include="Model\ApplicationUserGroup.cs" />
     <Compile Include="Model\Dto\DtoApplicationUser.cs" />
+    <Compile Include="Model\Dto\DtoPackage.cs" />
     <Compile Include="Model\Feed.cs" />
     <Compile Include="Model\FeedGroup.cs" />
     <Compile Include="Model\IEntityBase.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Website\Controllers\FeedPackagesController.cs" />
     <Compile Include="Website\Middleware\OwinConstants.cs" />
     <Compile Include="Website\Middleware\ShutdownMiddleware.cs" />
     <Compile Include="Website\WebisteStartupConfig.cs" />

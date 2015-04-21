@@ -1,12 +1,13 @@
 ﻿<div class="container">
 
-    <h4 data-bind="text: displayName"></h4>
+    <h4 data-bind="text: displayName()"></h4>
 
     <div class="row">
         <div class="col s12">
             <ul class="tabs z-depth-1" style="width: 100%;" id="viewFeedTabs">
-                <li class="tab col s3" style="width: 50%;"><a href="#test1" class="active blue-text">Overview</a></li>
-                <li class="tab col s3" style="width: 50%;"><a class="blue-text" href="#test2">Settings</a></li>
+                <li class="tab col s3" style="width: 33%;"><a href="#test1" class="active blue-text">Overview</a></li>
+                <li class="tab col s3" style="width: 33%;"><a class="blue-text" href="#test2">Packages</a></li>
+                <li class="tab col s3" style="width: 33%;"><a class="blue-text" href="#test3">Settings</a></li>
             </ul>
         </div>
     </div>
@@ -20,6 +21,20 @@
     </div>
 
     <div id="test2" class="col s12">
+        <div class="row">
+            <div class="col s12">
+                <ul class="collection" data-bind="foreach: packages">
+                    <li class="collection-item">
+                        <h5 data-bind="text: id"></h5>
+                        <blockquote data-bind="text: description"></blockquote>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="test3" class="col s12">
         <div class="row">
             <form class="col s12" data-bind="with: feed">
 

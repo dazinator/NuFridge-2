@@ -10,6 +10,7 @@ using NuFridge.Service.Model.Dto;
 using NuFridge.Service.Repositories;
 using NuFridge.Service.Scheduler;
 using NuFridge.Service.Website;
+using NuGet;
 
 namespace NuFridge.Service
 {
@@ -108,6 +109,8 @@ namespace NuFridge.Service
     .ForMember(x => x.Id, o => o.MapFrom(s => s.Id))
     .ForMember(x => x.LastName, o => o.MapFrom(s => s.LastName))
     .ForMember(x => x.UserName, o => o.MapFrom(s => s.UserName));
+
+            Mapper.CreateMap<IPackage, DtoPackage>();
 
             try
             {

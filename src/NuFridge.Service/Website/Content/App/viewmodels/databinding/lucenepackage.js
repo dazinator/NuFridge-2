@@ -1,8 +1,7 @@
-﻿define(['plugins/router'], function (router) {
-    window.LucenePackage = function (config) {
+﻿define(function() {
+    return function(config) {
         var self = this, data;
 
-        // your default structure goes here
         data = $.extend({
             title: ko.observable(),
             created: ko.observable(),
@@ -28,18 +27,9 @@
             published: ko.observable(),
         }, config);
 
+
         ko.mapping.fromJS(data, {}, self);
 
-
-    };
-
-    window.LucenePackage.mapping = {
-        create: function (options) {
-            var po = new LucenePackage(options.data);
-            po.ViewUrl = ko.computed(function () {
-                return '#feeds/view/' + router.activeInstruction().params[0] + "/package/" + po.id();
-            });
-            return po;
-        }
+        return data;
     };
 });
