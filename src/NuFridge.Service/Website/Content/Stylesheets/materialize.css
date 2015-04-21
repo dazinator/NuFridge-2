@@ -7933,8 +7933,8 @@ nav [role="progressbar"][aria-busy="true"] {
   padding-top: 8px;
   width: 100%;
   background-color: #159756;
-  -webkit-animation: preloader-background linear 7.5s infinite;
-          animation: preloader-background linear 7.5s infinite;
+  -webkit-animation: preloader-background linear 4.0s infinite;
+          animation: preloader-background linear 4.0s infinite;
 }
 nav [role="progressbar"][aria-busy="true"]::before, nav [role="progressbar"][aria-busy="true"]::after {
   display: block;
@@ -7944,8 +7944,8 @@ nav [role="progressbar"][aria-busy="true"]::before, nav [role="progressbar"][ari
   width: 0;
   height: 8px;
   background: #afa;
-  -webkit-animation: preloader-front linear 7.5s infinite;
-          animation: preloader-front linear 7.5s infinite;
+  -webkit-animation: preloader-front linear 4.0s infinite;
+          animation: preloader-front linear 4.0s infinite;
   content: '';
 }
 nav [role="progressbar"][aria-busy="true"]::before {

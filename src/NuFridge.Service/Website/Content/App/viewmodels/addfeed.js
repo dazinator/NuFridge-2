@@ -9,6 +9,10 @@
 
     }
 
+    ctor.prototype.compositionComplete = function () {
+        $("#progressBar").attr("aria-busy", false);
+    }
+
     ctor.prototype.createClick = function () {
         var feed = this;
 

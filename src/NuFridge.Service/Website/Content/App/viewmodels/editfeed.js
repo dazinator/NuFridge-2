@@ -7,6 +7,7 @@
         this.pageCount = ko.observable(1);
         this.currentPage = ko.observable(0);
         this.displayName = ko.observable('');
+        this.pageSize = ko.observable(5);
     };
 
     ctor.prototype.activate = function () {
@@ -50,7 +51,7 @@
         }
 
         $.ajax({
-            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=5",
+            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=" + self.pageSize(),
             cache: false,
             dataType: 'json'
         }).then(function (response) {
@@ -114,8 +115,46 @@
         });
     }
 
-    ctor.prototype.compositionComplete = function () {
+    ctor.prototype.changePageSize = function(data, event) {
+        var self = this;
+
+        var target;
+
+        if (event.target) {
+            target = event.target;
+        }
+        else if (event.srcElement) {
+            target = event.srcElement;
+        }
+
+        if (target.nodeType == 3) {
+            target = target.parentNode;
+        }
+
+        var newPageSize = parseInt($(target).text());
+
+        self.pageSize(newPageSize);
+
+        $(".viewFeedsPageSize").text(newPageSize + ' Packages Per Page');
+
+        self.loadPackages(0);
+    }
+
+    ctor.prototype.compositionComplete = function() {
+
         $('#viewFeedTabs').tabs();
+        $('.viewFeedsPageSize').dropdown({
+                inDuration: 300,
+                outDuration: 225,
+                constrain_width: true, // Does not change width of dropdown to that of the activator
+                hover: false, // Activate on hover
+                gutter: 0, // Spacing from edge
+                belowOrigin: true // Displays dropdown below the button
+            }
+        );
+
+            $("#progressBar").attr("aria-busy", false);
+        
     }
 
     ctor.prototype.goToPage = function (pageNumber) {

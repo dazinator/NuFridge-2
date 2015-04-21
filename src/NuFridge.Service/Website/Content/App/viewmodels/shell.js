@@ -12,7 +12,7 @@
             ]).buildNavigationModel();
 
             router.on('router:navigation:complete').then(function() {
-                $("#progressBar").attr("aria-busy", false);
+
             });
 
             router.on('router:navigation:processing').then(function () {

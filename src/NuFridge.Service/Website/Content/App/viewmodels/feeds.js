@@ -17,13 +17,6 @@
         self.loadFeeds(self.currentPage() - 1);
     }
 
-    ctor.prototype.compositionComplete = function () {
-        var self = this;
-        if (!self.feedsLoaded()) {
-            $("#progressBar").attr("aria-busy", true);
-        }
-    }
-
     ctor.prototype.loadFeeds = function(pageNumber) {
         var self = this;
 
@@ -35,7 +28,7 @@
             }
         }
 
-        $("#progressBar").attr("aria-busy", true);
+ 
 
         $.ajax({
             url: "/api/Feeds?page=" + pageNumber + "&pageSize=10",
@@ -54,10 +47,10 @@
 
             ko.mapping.fromJS(response.results, mapping, self.feeds);
 
-            $("#progressBar").attr("aria-busy", false);
+
         }).fail(function (response) {
             self.feedsLoaded(true);
-            $("#progressBar").attr("aria-busy", false);
+
             alert("Errors are not handled yet.");
         });
     }
@@ -85,7 +78,7 @@
     }
 
     ctor.prototype.compositionComplete = function () {
-        $('#feedsTabs').tabs();
+        $("#progressBar").attr("aria-busy", false);
     }
 
     return ctor;

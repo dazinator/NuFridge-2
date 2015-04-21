@@ -6,6 +6,9 @@
 
     ctor.prototype.compositionComplete = function() {
         $('#profileTabs').tabs();
+
+            $("#progressBar").attr("aria-busy", false);
+        
     }
 
     ctor.prototype.activate = function () {

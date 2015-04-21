@@ -6,9 +6,8 @@
     ctor.prototype.activate = function () {
 
     }
-
     ctor.prototype.compositionComplete = function () {
-
+        $("#progressBar").attr("aria-busy", false);
     }
 
     return ctor;

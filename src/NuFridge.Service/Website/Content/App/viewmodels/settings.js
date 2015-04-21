@@ -10,6 +10,8 @@
             selectYears: 15 // Creates a dropdown of 15 years to control year
         });
 
+            $("#progressBar").attr("aria-busy", false);
+        
     }
 
     ctor.prototype.updateClick = function () {
