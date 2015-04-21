@@ -28,7 +28,9 @@ namespace NuFridge.Service.Feeds
                 this.Config = new ServiceConfiguration();
                 this.roleMappings = roleMappings ?? new NameValueCollection();
 
-                FeedDirectory = Path.Combine(Config.FeedsHome, feed.Id);
+                FeedDirectory = Path.GetFullPath(Path.Combine(Config.FeedsHome, feed.Id));
+
+               
 
                 if (!Directory.Exists(FeedDirectory))
                 {

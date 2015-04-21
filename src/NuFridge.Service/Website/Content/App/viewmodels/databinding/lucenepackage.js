@@ -1,8 +1,8 @@
 ﻿define(function() {
     return function(config) {
-        var self = this, data;
+        var self = {};
 
-        data = $.extend({
+        var data = $.extend({
             title: ko.observable(),
             created: ko.observable(),
             downloadCount: ko.observable(),

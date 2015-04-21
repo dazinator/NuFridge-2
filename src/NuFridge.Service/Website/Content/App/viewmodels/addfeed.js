@@ -17,7 +17,7 @@
         $.ajax({
             url: "/api/Feeds",
             type: 'POST',
-            data: feed,
+            data: ko.toJS(feed),
             dataType: 'json',
             cache: false,
             success: function (result) {

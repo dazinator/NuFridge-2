@@ -50,7 +50,7 @@
         }
 
         $.ajax({
-            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=10",
+            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=5",
             cache: false,
             dataType: 'json'
         }).then(function (response) {
@@ -99,7 +99,7 @@
         $.ajax({
             url: "/api/Feeds/" + feed.id(),
             type: 'PUT',
-            data: feed,
+            data: ko.toJS(feed),
             dataType: 'json',
             cache: false,
             success: function (result) {
@@ -116,6 +116,32 @@
 
     ctor.prototype.compositionComplete = function () {
         $('#viewFeedTabs').tabs();
+    }
+
+    ctor.prototype.goToPage = function (pageNumber) {
+        var self = this;
+
+        self.loadPackages(pageNumber);
+    }
+
+    ctor.prototype.nextPage = function (data, event) {
+        var self = this;
+
+        if ($(event.target).closest("li").hasClass("disabled")) {
+            return;
+        }
+
+        self.loadPackages(self.currentPage() + 1);
+    }
+
+    ctor.prototype.previousPage = function () {
+        var self = this;
+
+        if ($(event.target).closest("li").hasClass("disabled")) {
+            return;
+        }
+
+        self.loadPackages(self.currentPage() - 1);
     }
 
     return ctor;

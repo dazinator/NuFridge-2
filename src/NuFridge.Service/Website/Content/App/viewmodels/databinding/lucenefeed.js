@@ -1,6 +1,6 @@
 ﻿define(function () {
     return function (config) {
-        var self = this, data;
+        var self = {}, data;
 
         data = $.extend({
             name: ko.observable(""),
