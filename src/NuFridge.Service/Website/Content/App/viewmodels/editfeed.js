@@ -2,12 +2,22 @@
     var ctor = function () {
         var self = this;
 
-        this.feed = ko.observable(luceneFeed());
-        this.packages = ko.observableArray();
-        this.pageCount = ko.observable(1);
-        this.currentPage = ko.observable(0);
-        this.displayName = ko.observable('');
-        this.pageSize = ko.observable(5);
+        self.feed = ko.observable(luceneFeed());
+        self.packages = ko.observableArray();
+        self.pageCount = ko.observable(1);
+        self.currentPage = ko.observable(0);
+        self.displayName = ko.observable('');
+        self.pageSize = ko.observable(5);
+        self.searchTerm = ko.observable('');
+        self.searchTimeout = null;
+        self.isSearching = ko.observable(false);
+        self.searchSubscription = null;
+        self.searchTerm.subscribe(function () {
+            clearTimeout(self.searchTimeout);
+            self.searchTimeout = setTimeout(function () {
+                self.loadPackages();
+            }, 500);
+        });
     };
 
     ctor.prototype.activate = function () {
@@ -42,16 +52,38 @@
     ctor.prototype.loadPackages = function (pageNumber) {
         var self = this;
 
+        clearTimeout(self.searchTimeout);
+
+        if (self.searchSubscription) {
+            self.searchSubscription.dispose();
+            self.searchSubscription = null;
+        }
+
+        if (self.isSearching()) {
+
+            self.searchSubscription = self.isSearching.subscribe(function (hasLoaded) {
+                if (hasLoaded == true) {
+                    self.loadPackages(pageNumber);
+                }
+            });
+
+            return;
+        }
+
+        self.isSearching(true);
+
         if (!pageNumber) {
             pageNumber = 0;
-        } else {
-            if (pageNumber == self.currentPage()) {
-                return;
-            }
+        }
+
+        var url = "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=" + self.pageSize();
+
+        if (self.searchTerm() != '') {
+            url += "&searchTerm=" + self.searchTerm();
         }
 
         $.ajax({
-            url: "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=" + self.pageSize(),
+            url: url,
             cache: false,
             dataType: 'json'
         }).then(function (response) {
@@ -65,8 +97,11 @@
             };
 
             ko.mapping.fromJS(response.results, mapping, self.packages);
+
+            self.isSearching(false);
         }).fail(function (response) {
             alert("Errors are not handled yet.");
+            self.isSearching(false);
         });
     }
 
@@ -115,7 +150,7 @@
         });
     }
 
-    ctor.prototype.changePageSize = function(data, event) {
+    ctor.prototype.changePageSize = function (data, event) {
         var self = this;
 
         var target;
@@ -140,21 +175,21 @@
         self.loadPackages(0);
     }
 
-    ctor.prototype.compositionComplete = function() {
+    ctor.prototype.compositionComplete = function () {
 
         $('#viewFeedTabs').tabs();
         $('.viewFeedsPageSize').dropdown({
-                inDuration: 300,
-                outDuration: 225,
-                constrain_width: true, // Does not change width of dropdown to that of the activator
-                hover: false, // Activate on hover
-                gutter: 0, // Spacing from edge
-                belowOrigin: true // Displays dropdown below the button
-            }
+            inDuration: 300,
+            outDuration: 225,
+            constrain_width: true, // Does not change width of dropdown to that of the activator
+            hover: false, // Activate on hover
+            gutter: 0, // Spacing from edge
+            belowOrigin: true // Displays dropdown below the button
+        }
         );
 
-            $("#progressBar").attr("aria-busy", false);
-        
+        $("#progressBar").attr("aria-busy", false);
+
     }
 
     ctor.prototype.goToPage = function (pageNumber) {

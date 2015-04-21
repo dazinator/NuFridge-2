@@ -23,19 +23,16 @@
     <div id="test2" class="col s12">
         <div class="row">
             <div class="col s12">
-                <!-- ko if: pageCount() >= 1 -->
 
                 <div class="row">
+
                     <div class="input-field col s8">
                         <i class="mdi-action-search prefix"></i>
-                        <input id="search" type="text">
+                        <input id="search" type="text" data-bind="value: searchTerm, valueUpdate: 'afterkeydown'">
                         <label for="search">Search</label>
                     </div>
                     <div class="input-field col s4">
-                        <!-- Dropdown Trigger -->
                         <a class='viewFeedsPageSize btn-flat' data-activates='pageSize' style="float: right;">5 Packages Per Page</a>
-
-                        <!-- Dropdown Structure -->
                         <ul id='pageSize' class='dropdown-content'>
                             <li><a data-bind="click: changePageSize">5</a></li>
                             <li class="divider"></li>
@@ -48,13 +45,21 @@
                     </div>
                 </div>
 
-                <ul class="collection" data-bind="foreach: packages">
-                    <li class="collection-item">
-                        <h5 data-bind="text: id"></h5>
-                        <blockquote data-bind="text: description"></blockquote>
-                    </li>
-                </ul>
+                <div class="progress" data-bind="visible: isSearching">
+                    <div class="indeterminate"></div>
+                </div>
 
+                <!-- ko if: pageCount() >= 1 -->
+
+                    <ul class="collection" data-bind="foreach: packages">
+                        <li class="collection-item">
+                            <h5 data-bind="text: id"></h5>
+                            <blockquote data-bind="text: description"></blockquote>
+                        </li>
+                    </ul>
+            
+                    <!-- /ko -->
+           
                 <!-- ko if: pageCount() > 1 -->
                 <div class="row">
                     <ul class="pagination">
@@ -65,7 +70,6 @@
                         <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
                     </ul>
                 </div>
-                <!-- /ko -->
                 <!-- /ko -->
                 <!-- ko if: pageCount() == 0 -->
                 <p>There are no packages in the feed.</p>

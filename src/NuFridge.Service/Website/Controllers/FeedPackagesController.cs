@@ -24,7 +24,7 @@ namespace NuFridge.Service.Website.Controllers
             FeedRepository = new SqlCompactRepository<Feed>();
         }
 
-        public object Get(string id, int page = 0, int pageSize = 5)
+        public object Get(string id, int page, int pageSize, string searchTerm = "")
         {
             var feed = FeedRepository.GetById(id);
 
@@ -50,10 +50,21 @@ namespace NuFridge.Service.Website.Controllers
 
             var repo = new DataServicePackageRepository(new Uri(baseAddress + "api/odata/"));
 
-            IQueryable<IPackage> query = repo.GetPackages();
+            IQueryable<IPackage> query;
+
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = repo.GetPackages();
+            }
+            else
+            {
+                query = repo.Search(searchTerm, true);
+            }
 
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+  
 
             var results = query
                 .Skip(pageSize*page)
