@@ -28,14 +28,10 @@ namespace NuFridge.Service.Website
         {
             ConfigureOAuth(appBuilder);
 
-
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
-            config.Routes.MapHttpRoute("NuFridge API", "api/{controller}/{id}", new { id = RouteParameter.Optional }
-            );
+            //config.Routes.MapHttpRoute("NuFridge API", "api/{controller}/{id}", new { id = RouteParameter.Optional });
 
-            //Copied from durandal route config
-            config.Routes.IgnoreRoute("Axd", "{resource}.axd/{*pathInfo}");
 
             config.MapHttpAttributeRoutes();
             config.Filters.Add(new ValidationActionFilter());

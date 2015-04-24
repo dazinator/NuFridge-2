@@ -15,15 +15,17 @@ using NuGet;
 
 namespace NuFridge.Service.Website.Controllers
 {
-    public class FeedPackagesController : ApiController
+    [Route("api/packages")]
+    public class PackagesController : ApiController
     {
         private IRepository<Feed> FeedRepository { get; set; }
 
-        public FeedPackagesController()
+        public PackagesController()
         {
             FeedRepository = new SqlCompactRepository<Feed>();
         }
 
+        [HttpGet]
         public object Get(string id, int page, int pageSize, string searchTerm = "")
         {
             var feed = FeedRepository.GetById(id);

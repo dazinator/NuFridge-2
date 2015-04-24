@@ -15,7 +15,7 @@
         var self = this;
 
         $.ajax({
-            url: "/api/Account/administrator",
+            url: "/api/account/administrator",
             cache: false,
             dataType: 'json'
         }).then(function (response) {

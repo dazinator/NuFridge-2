@@ -14,6 +14,7 @@ using NuFridge.Service.Repositories;
 namespace NuFridge.Service.Website.Controllers
 {
     //[Authorize]
+    [Route("api/feeds")]
     public class FeedsController : ApiController 
     {
         private IRepository<Feed> FeedRepository { get; set; }
@@ -23,6 +24,9 @@ namespace NuFridge.Service.Website.Controllers
             FeedRepository = new SqlCompactRepository<Feed>();
         }
 
+
+        [HttpGet]
+        [Route("{page?}/{pageSize?}")]
         public Object Get(int page = 0, int pageSize = 5)
         {
             IList<Feed> query = FeedRepository.GetAll();
@@ -43,6 +47,8 @@ namespace NuFridge.Service.Website.Controllers
             };
         }
 
+                [HttpGet]
+                [Route("{id}")]
         public HttpResponseMessage Get(string id)
         {
             var feed = FeedRepository.GetById(id);
@@ -60,6 +66,7 @@ namespace NuFridge.Service.Website.Controllers
             return Request.CreateResponse(feed);
         }
 
+        [HttpPost]
         public HttpResponseMessage Post([FromBody]Feed feed)
         {
             var existingFeedWithName = FeedRepository.GetAll().FirstOrDefault(fd => fd.Name == feed.Name);
@@ -80,6 +87,7 @@ namespace NuFridge.Service.Website.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, feed);
         }
 
+        [HttpPut]
         public HttpResponseMessage Put(string id, [FromBody]Feed feed)
         {
             if (id != feed.Id)
@@ -117,6 +125,8 @@ namespace NuFridge.Service.Website.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, feed);
         }
 
+
+        [HttpDelete]
         public HttpResponseMessage Delete(string id)
         {
             var feed = FeedRepository.GetById(id);

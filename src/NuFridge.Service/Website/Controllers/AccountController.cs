@@ -22,7 +22,8 @@ namespace NuFridge.Service.Website.Controllers
 
         // POST api/Account/Register
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("api/account/register")]
+        [HttpPost]
         public async Task<IHttpActionResult> Register(ApplicationUser userModel, string password)
         {
             IdentityResult result = await _repo.RegisterUser(userModel, password);
@@ -38,8 +39,8 @@ namespace NuFridge.Service.Website.Controllers
         }
 
         //TODO change once auth is fully implemented. This is not secure.
-        [AllowAnonymous]
         [HttpGet]
+        [Route("api/account/{id}")]
         public HttpResponseMessage Get(string id)
         {
             var user = _repo.FindByName(id).Result;

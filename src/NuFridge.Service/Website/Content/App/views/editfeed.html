@@ -15,7 +15,7 @@
     <div id="test1" class="col s12">
         <div class="row">
             <div class="col s12">
-                <p data-bind="text: 'Packages: ' + packages().length"></p>
+                <a class="waves-effect waves-light btn blue">Stop</a>
             </div>
         </div>
     </div>
@@ -51,15 +51,16 @@
 
                 <!-- ko if: pageCount() >= 1 -->
 
-                    <ul class="collection" data-bind="foreach: packages">
-                        <li class="collection-item">
-                            <h5 data-bind="text: id"></h5>
-                            <blockquote data-bind="text: description"></blockquote>
-                        </li>
-                    </ul>
-            
-                    <!-- /ko -->
-           
+                <ul class="collection" data-bind="foreach: packages">
+                    <li class="collection-item">
+                        <h5 data-bind="text: id"></h5>
+                        <blockquote data-bind="text: description"></blockquote>
+                        <a class="waves-effect waves-light btn blue">Download</a>
+                    </li>
+                </ul>
+
+                <!-- /ko -->
+
                 <!-- ko if: pageCount() > 1 -->
                 <div class="row">
                     <ul class="pagination">

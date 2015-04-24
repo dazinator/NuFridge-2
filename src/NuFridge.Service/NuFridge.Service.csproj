@@ -91,7 +91,7 @@
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Website\Controllers\FeedPackagesController.cs" />
+    <Compile Include="Website\Controllers\PackagesController.cs" />
     <Compile Include="Website\Middleware\OwinConstants.cs" />
     <Compile Include="Website\Middleware\ShutdownMiddleware.cs" />
     <Compile Include="Website\WebisteStartupConfig.cs" />
