@@ -6,7 +6,10 @@
         'transitions': '../Scripts/durandal/transitions',
         'knockoutvalidation': '../Scripts/knockout.validation',
         'knockoutmapping': '../Scripts/knockout.mapping',
-        'databinding': 'viewmodels/databinding',
+        'databinding-lucenefeed': 'viewmodels/databinding/lucenefeed',
+        'databinding-lucenepackage': 'viewmodels/databinding/lucenepackage',
+        'databinding-systeminfo': 'viewmodels/databinding/systeminfo',
+        'databinding-user': 'viewmodels/databinding/user',
         'readmore' :'../Scripts/readmore'
     }
 });

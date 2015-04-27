@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
+﻿define(['plugins/router', 'databinding-lucenefeed'], function (router, luceneFeed) {
     var ctor = function () {
         this.displayName = 'Feeds';
         this.feeds = ko.observableArray();
@@ -7,7 +7,7 @@
         this.feedsLoaded = ko.observable(false);
     };
 
-    ctor.prototype.previousPage = function () {
+    ctor.prototype.previousPage = function() {
         var self = this;
 
         if ($(event.target).closest("li").hasClass("disabled")) {
@@ -15,7 +15,7 @@
         }
 
         self.loadFeeds(self.currentPage() - 1);
-    }
+    };
 
     ctor.prototype.loadFeeds = function(pageNumber) {
         var self = this;
@@ -28,19 +28,18 @@
             }
         }
 
- 
 
         $.ajax({
             url: "/api/Feeds?page=" + pageNumber + "&pageSize=10",
             cache: false,
             dataType: 'json'
-        }).then(function (response) {
+        }).then(function(response) {
             self.feedsLoaded(true);
             self.pageCount(response.totalPages);
             self.currentPage(pageNumber);
 
             var mapping = {
-                create: function (options) {
+                create: function(options) {
                     return luceneFeed(options.data);
                 }
             };
@@ -48,18 +47,18 @@
             ko.mapping.fromJS(response.results, mapping, self.feeds);
 
 
-        }).fail(function (response) {
+        }).fail(function(response) {
             self.feedsLoaded(true);
 
             alert("Errors are not handled yet.");
         });
-    }
+    };
 
     ctor.prototype.goToPage = function(pageNumber) {
         var self = this;
 
         self.loadFeeds(pageNumber);
-    }
+    };
 
     ctor.prototype.nextPage = function(data, event) {
         var self = this;
@@ -69,17 +68,17 @@
         }
 
         self.loadFeeds(self.currentPage() + 1);
-    }
+    };
 
-    ctor.prototype.activate = function () {
+    ctor.prototype.activate = function() {
         var self = this;
 
         self.loadFeeds();
-    }
+    };
 
-    ctor.prototype.compositionComplete = function () {
+    ctor.prototype.compositionComplete = function() {
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
-    }
+    };
 
     return ctor;
 });

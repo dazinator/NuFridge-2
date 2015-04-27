@@ -66,51 +66,51 @@ namespace NuFridge.Service.Website
 
             WebsiteDisposable = WebApp.Start<WebisteStartupConfig>(baseAddress);
 
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                Logger.Info("Enabling the website content file watcher.");
+            //if (System.Diagnostics.Debugger.IsAttached)
+            //{
+            //    Logger.Info("Enabling the website content file watcher.");
 
-                var directory = FindApplicationFolder(Assembly.GetExecutingAssembly().GetName().Name);
+            //    var directory = FindApplicationFolder(Assembly.GetExecutingAssembly().GetName().Name);
 
-                if (directory == null || !directory.Exists)
-                {
-                    Logger.Warn("Failed to enable the website content file watcher. Could not find the directory to watch.");
+            //    if (directory == null || !directory.Exists)
+            //    {
+            //        Logger.Warn("Failed to enable the website content file watcher. Could not find the directory to watch.");
 
-                    return;
-                }
+            //        return;
+            //    }
 
-                var path = Path.Combine(directory.FullName, "Website", "Content");
+            //    var path = Path.Combine(directory.FullName, "Website", "Content");
 
-                if (!Directory.Exists(path))
-                {
-                    Logger.Warn("Failed to enable the website content file watcher. Could not find the website content folder using " + directory.FullName + ".");
+            //    if (!Directory.Exists(path))
+            //    {
+            //        Logger.Warn("Failed to enable the website content file watcher. Could not find the website content folder using " + directory.FullName + ".");
 
-                    return;
-                }
+            //        return;
+            //    }
 
-                FileSystemWatcher fileWatcher = new FileSystemWatcher();
-                fileWatcher.Path = path;
-                fileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.LastAccess;
-                fileWatcher.Filter = "*.*";
-                fileWatcher.IncludeSubdirectories = true;
-                fileWatcher.Created += fileWatcher_Changed;
-                fileWatcher.Deleted += fileWatcher_Deleted;
-                fileWatcher.Renamed += fileWatcher_Renamed;
-                fileWatcher.Changed += fileWatcher_Changed;
-                fileWatcher.Error += fileWatcher_Error;
-                fileWatcher.EnableRaisingEvents = true;
+            //    FileSystemWatcher fileWatcher = new FileSystemWatcher();
+            //    fileWatcher.Path = path;
+            //    fileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime | NotifyFilters.Size | NotifyFilters.LastAccess;
+            //    fileWatcher.Filter = "*.*";
+            //    fileWatcher.IncludeSubdirectories = true;
+            //    fileWatcher.Created += fileWatcher_Changed;
+            //    fileWatcher.Deleted += fileWatcher_Deleted;
+            //    fileWatcher.Renamed += fileWatcher_Renamed;
+            //    fileWatcher.Changed += fileWatcher_Changed;
+            //    fileWatcher.Error += fileWatcher_Error;
+            //    fileWatcher.EnableRaisingEvents = true;
 
-                FileSystemWatcher directoryWatcher = new FileSystemWatcher();
-                directoryWatcher.Path = path;
-                directoryWatcher.NotifyFilter = NotifyFilters.DirectoryName;
-                directoryWatcher.Filter = "*.*";
-                directoryWatcher.IncludeSubdirectories = true;
-                directoryWatcher.Created += directoryWatcher_Created;
-                directoryWatcher.Deleted += directoryWatcher_Deleted;
-                directoryWatcher.Renamed += directoryWatcher_Renamed;
-                directoryWatcher.Error += directoryWatcher_Error;
-                directoryWatcher.EnableRaisingEvents = true;
-            }
+            //    FileSystemWatcher directoryWatcher = new FileSystemWatcher();
+            //    directoryWatcher.Path = path;
+            //    directoryWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+            //    directoryWatcher.Filter = "*.*";
+            //    directoryWatcher.IncludeSubdirectories = true;
+            //    directoryWatcher.Created += directoryWatcher_Created;
+            //    directoryWatcher.Deleted += directoryWatcher_Deleted;
+            //    directoryWatcher.Renamed += directoryWatcher_Renamed;
+            //    directoryWatcher.Error += directoryWatcher_Error;
+            //    directoryWatcher.EnableRaisingEvents = true;
+            //}
         }
 
         private void directoryWatcher_Error(object sender, ErrorEventArgs e)

@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'databinding/user'], function(router, user) {
+﻿define(['plugins/router', 'databinding-user'], function(router, user) {
     var ctor = function () {
         this.displayName = 'Profile';
         this.user = ko.observable(user());
@@ -8,33 +8,33 @@
         $('#profileTabs').tabs();
 
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
-    }
+    };
 
-    ctor.prototype.activate = function () {
+    ctor.prototype.activate = function() {
         var self = this;
 
         $.ajax({
             url: "/api/account/administrator",
             cache: false,
             dataType: 'json'
-        }).then(function (response) {
+        }).then(function(response) {
 
             var mapping = {
-                create: function (options) {
+                create: function(options) {
                     return user(options.data);
                 }
             };
 
             ko.mapping.fromJS(response, mapping, self.user);
-        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+        }).fail(function(xmlHttpRequest, textStatus, errorThrown) {
             router.navigate("#");
             Materialize.toast(errorThrown, 7500);
         });
-    }
+    };
 
     ctor.prototype.updateClick = function() {
         Materialize.toast('Not implemented.', 7500);
-    }
+    };
 
     return ctor;
 });

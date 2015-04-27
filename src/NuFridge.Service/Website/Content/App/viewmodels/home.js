@@ -3,12 +3,12 @@
         this.displayName = 'Welcome!';
     };
 
-    ctor.prototype.activate = function () {
+    ctor.prototype.activate = function() {
 
-    }
-    ctor.prototype.compositionComplete = function () {
+    };
+    ctor.prototype.compositionComplete = function() {
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
-    }
+    };
 
     return ctor;
 });
