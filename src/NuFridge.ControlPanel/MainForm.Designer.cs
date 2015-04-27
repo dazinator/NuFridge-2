@@ -42,21 +42,16 @@ namespace NuFridge.ControlPanel
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.materialLabel5 = new MaterialSkin.Controls.MaterialLabel();
             this.btnRestoreDatabase = new MaterialSkin.Controls.MaterialFlatButton();
-            this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             this.btnBackupDatabase = new MaterialSkin.Controls.MaterialFlatButton();
+            this.materialLabel1 = new MaterialSkin.Controls.MaterialLabel();
             this.materialDivider2 = new System.Windows.Forms.Panel();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.materialLabel6 = new MaterialSkin.Controls.MaterialLabel();
-            this.lblUpdatesAvailable = new MaterialSkin.Controls.MaterialLabel();
-            this.btnUpdate = new MaterialSkin.Controls.MaterialFlatButton();
-            this.materialDivider3 = new System.Windows.Forms.Panel();
+
             this.nufridgeServiceWorker = new System.ComponentModel.BackgroundWorker();
             this.backupSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.backupLoadFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.materialTabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // materialTabSelector1
@@ -79,7 +74,6 @@ namespace NuFridge.ControlPanel
             | System.Windows.Forms.AnchorStyles.Right)));
             this.materialTabControl1.Controls.Add(this.tabPage1);
             this.materialTabControl1.Controls.Add(this.tabPage2);
-            this.materialTabControl1.Controls.Add(this.tabPage3);
             this.materialTabControl1.Depth = 0;
             this.materialTabControl1.Location = new System.Drawing.Point(12, 97);
             this.materialTabControl1.MouseState = MaterialSkin.MouseState.HOVER;
@@ -194,8 +188,8 @@ namespace NuFridge.ControlPanel
             // 
             this.tabPage2.Controls.Add(this.materialLabel5);
             this.tabPage2.Controls.Add(this.btnRestoreDatabase);
-            this.tabPage2.Controls.Add(this.materialLabel1);
             this.tabPage2.Controls.Add(this.btnBackupDatabase);
+            this.tabPage2.Controls.Add(this.materialLabel1);
             this.tabPage2.Controls.Add(this.materialDivider2);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -234,19 +228,6 @@ namespace NuFridge.ControlPanel
             this.btnRestoreDatabase.UseVisualStyleBackColor = true;
             this.btnRestoreDatabase.Click += new System.EventHandler(this.btnRestoreDatabase_Click);
             // 
-            // materialLabel1
-            // 
-            this.materialLabel1.AutoSize = true;
-            this.materialLabel1.Depth = 0;
-            this.materialLabel1.Font = new System.Drawing.Font("Roboto", 11F);
-            this.materialLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.materialLabel1.Location = new System.Drawing.Point(6, 16);
-            this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialLabel1.Name = "materialLabel1";
-            this.materialLabel1.Size = new System.Drawing.Size(283, 19);
-            this.materialLabel1.TabIndex = 5;
-            this.materialLabel1.Text = "Backups do not include NuGet packages.";
-            // 
             // btnBackupDatabase
             // 
             this.btnBackupDatabase.AutoSize = true;
@@ -264,6 +245,19 @@ namespace NuFridge.ControlPanel
             this.btnBackupDatabase.UseVisualStyleBackColor = true;
             this.btnBackupDatabase.Click += new System.EventHandler(this.btnBackupDatabase_Click);
             // 
+            // materialLabel1
+            // 
+            this.materialLabel1.AutoSize = true;
+            this.materialLabel1.Depth = 0;
+            this.materialLabel1.Font = new System.Drawing.Font("Roboto", 11F);
+            this.materialLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.materialLabel1.Location = new System.Drawing.Point(6, 16);
+            this.materialLabel1.MouseState = MaterialSkin.MouseState.HOVER;
+            this.materialLabel1.Name = "materialLabel1";
+            this.materialLabel1.Size = new System.Drawing.Size(283, 19);
+            this.materialLabel1.TabIndex = 5;
+            this.materialLabel1.Text = "Backups do not include NuGet packages.";
+            // 
             // materialDivider2
             // 
             this.materialDivider2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
@@ -272,71 +266,7 @@ namespace NuFridge.ControlPanel
             this.materialDivider2.Size = new System.Drawing.Size(552, 59);
             this.materialDivider2.TabIndex = 13;
             this.materialDivider2.Text = "materialDivider2";
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Controls.Add(this.materialLabel6);
-            this.tabPage3.Controls.Add(this.lblUpdatesAvailable);
-            this.tabPage3.Controls.Add(this.btnUpdate);
-            this.tabPage3.Controls.Add(this.materialDivider3);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(568, 130);
-            this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Updates";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // materialLabel6
-            // 
-            this.materialLabel6.AutoSize = true;
-            this.materialLabel6.Depth = 0;
-            this.materialLabel6.Font = new System.Drawing.Font("Roboto", 11F);
-            this.materialLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.materialLabel6.Location = new System.Drawing.Point(6, 49);
-            this.materialLabel6.MouseState = MaterialSkin.MouseState.HOVER;
-            this.materialLabel6.Name = "materialLabel6";
-            this.materialLabel6.Size = new System.Drawing.Size(61, 19);
-            this.materialLabel6.TabIndex = 16;
-            this.materialLabel6.Text = "Actions";
-            // 
-            // lblUpdatesAvailable
-            // 
-            this.lblUpdatesAvailable.AutoSize = true;
-            this.lblUpdatesAvailable.Depth = 0;
-            this.lblUpdatesAvailable.Font = new System.Drawing.Font("Roboto", 11F);
-            this.lblUpdatesAvailable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(222)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.lblUpdatesAvailable.Location = new System.Drawing.Point(6, 16);
-            this.lblUpdatesAvailable.MouseState = MaterialSkin.MouseState.HOVER;
-            this.lblUpdatesAvailable.Name = "lblUpdatesAvailable";
-            this.lblUpdatesAvailable.Size = new System.Drawing.Size(178, 19);
-            this.lblUpdatesAvailable.TabIndex = 4;
-            this.lblUpdatesAvailable.Text = "No updates are available.";
-            // 
-            // btnUpdate
-            // 
-            this.btnUpdate.AutoSize = true;
-            this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnUpdate.Depth = 0;
-            this.btnUpdate.Location = new System.Drawing.Point(24, 82);
-            this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
-            this.btnUpdate.MouseState = MaterialSkin.MouseState.HOVER;
-            this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Primary = true;
-            this.btnUpdate.Size = new System.Drawing.Size(64, 36);
-            this.btnUpdate.TabIndex = 3;
-            this.btnUpdate.Text = "Update";
-            this.btnUpdate.UseVisualStyleBackColor = true;
-            this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
-            // 
-            // materialDivider3
-            // 
-            this.materialDivider3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.materialDivider3.Location = new System.Drawing.Point(10, 71);
-            this.materialDivider3.Name = "materialDivider3";
-            this.materialDivider3.Size = new System.Drawing.Size(552, 59);
-            this.materialDivider3.TabIndex = 15;
-            this.materialDivider3.Text = "materialDivider3";
+
             // 
             // nufridgeServiceWorker
             // 
@@ -369,8 +299,6 @@ namespace NuFridge.ControlPanel
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -378,28 +306,23 @@ namespace NuFridge.ControlPanel
         #endregion
 
         private MaterialSkin.Controls.MaterialTabSelector materialTabSelector1;
-        private MaterialSkin.Controls.MaterialTabControl materialTabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private MaterialSkin.Controls.MaterialFlatButton btnStartService;
-        private MaterialSkin.Controls.MaterialFlatButton btnStopService;
-        private MaterialSkin.Controls.MaterialFlatButton btnRestartService;
-        private MaterialSkin.Controls.MaterialLabel lblNuFridgeServiceStatus;
         private System.ComponentModel.BackgroundWorker nufridgeServiceWorker;
-        private System.Windows.Forms.TabPage tabPage2;
-        private MaterialSkin.Controls.MaterialLabel materialLabel1;
-        private MaterialSkin.Controls.MaterialFlatButton btnBackupDatabase;
-        private MaterialSkin.Controls.MaterialFlatButton btnRestoreDatabase;
         private System.Windows.Forms.SaveFileDialog backupSaveFileDialog;
         private System.Windows.Forms.OpenFileDialog backupLoadFileDialog;
-        private System.Windows.Forms.TabPage tabPage3;
-        private MaterialSkin.Controls.MaterialFlatButton btnUpdate;
-        private MaterialSkin.Controls.MaterialLabel lblUpdatesAvailable;
+        private MaterialSkin.Controls.MaterialTabControl materialTabControl1;
+        private TabPage tabPage1;
         private MaterialSkin.Controls.MaterialLabel materialLabel4;
+        private MaterialSkin.Controls.MaterialLabel lblNuFridgeServiceStatus;
+        private MaterialSkin.Controls.MaterialFlatButton btnStopService;
+        private MaterialSkin.Controls.MaterialFlatButton btnRestartService;
+        private MaterialSkin.Controls.MaterialFlatButton btnStartService;
         private Panel materialDivider1;
+        private TabPage tabPage2;
         private MaterialSkin.Controls.MaterialLabel materialLabel5;
+        private MaterialSkin.Controls.MaterialFlatButton btnRestoreDatabase;
+        private MaterialSkin.Controls.MaterialFlatButton btnBackupDatabase;
+        private MaterialSkin.Controls.MaterialLabel materialLabel1;
         private Panel materialDivider2;
-        private MaterialSkin.Controls.MaterialLabel materialLabel6;
-        private Panel materialDivider3;
     }
 }
 

@@ -12,15 +12,12 @@ using System.Windows.Forms;
 using MaterialSkin;
 using MaterialSkin.Controls;
 using Microsoft.Win32;
-using wyDay.Controls;
 
 namespace NuFridge.ControlPanel
 {
     public partial class MainForm : MaterialForm
     {
         private readonly MaterialSkinManager materialSkinManager;
-
-        static AutomaticUpdaterBackend auBackend;
 
 
         public MainForm()
@@ -33,15 +30,7 @@ namespace NuFridge.ControlPanel
             materialSkinManager.ColorScheme = new ColorScheme(Primary.Blue600, Primary.Blue900, Primary.Blue100,
                 Accent.Amber700, TextShade.WHITE);
 
-            auBackend = new AutomaticUpdaterBackend
-            {
-                //TODO: set a unique string.
-                // For instance, "appname-companyname"
-                GUID = "9a136b4f-ed23-41fd-a544-b18e156894a9",
-                UpdateType = UpdateType.OnlyCheck
 
-
-            };
 
         
         }
@@ -74,114 +63,8 @@ namespace NuFridge.ControlPanel
             {
                 return;
             }
-
-            var config = ConfigurationManager.OpenExeConfiguration(exePath);
-
-            //hypWebsiteBinding.Text = config.AppSettings.Settings["NuFridge.AdministrationWebsite.Binding"].Value;
-            //websiteUrl = hypWebsiteBinding.Text;
-
-            //hypFeedBinding.Text = config.AppSettings.Settings["NuFridge.Feeds.Binding"].Value;
-            //feedUrl = hypFeedBinding.Text;
-
-            auBackend.UpdateAvailable +=auBackend_UpdateAvailable;
-            auBackend.DownloadingFailed += auBackend_DownloadingFailed;
-            auBackend.ExtractingFailed += auBackend_ExtractingFailed;
-            auBackend.CheckingFailed += auBackend_CheckingFailed;
-            auBackend.UpdateFailed += auBackend_UpdateFailed;
-            auBackend.BeforeChecking += auBackend_BeforeChecking;
-            auBackend.UpToDate += auBackend_UpToDate;
-            auBackend.CloseAppNow += auBackend_CloseAppNow;
-            auBackend.UpdateSuccessful += auBackend_UpdateSuccessful;
-            auBackend.Initialize();
-            auBackend.AppLoaded();
-
-            if (!auBackend.ClosingForInstall)
-            {
-                if (auBackend.UpdateStepOn == UpdateStepOn.Nothing)
-                {
-                    auBackend.ForceCheckForUpdate();
-                }
-            }
         }
 
-        void auBackend_UpdateSuccessful(object sender, SuccessArgs e)
-        {
-
-        }
-
-        void auBackend_CloseAppNow(object sender, EventArgs e)
-        {
-         Application.Exit();
-        }
-
-        void auBackend_UpToDate(object sender, SuccessArgs e)
-        {
-            Invoke((MethodInvoker) delegate
-            {
-
-            btnUpdate.Enabled = false;
-            lblUpdatesAvailable.Text = "No updates are available.";
-
-            });
-        }
-
-        void auBackend_BeforeChecking(object sender, BeforeArgs e)
-        {
-
-        }
-
-        void auBackend_UpdateFailed(object sender, FailArgs e)
-        {
-
-            if (MessageBox.Show(e.ErrorMessage, e.ErrorTitle, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) ==
-             DialogResult.Retry)
-            {
-                auBackend.InstallNow();
-            }
-        }
-
-        void auBackend_CheckingFailed(object sender, FailArgs e)
-        {
-            Invoke((MethodInvoker) delegate
-            {
-
-                lblUpdatesAvailable.Text = "Failed to check for available updates.";
-
-                btnUpdate.Enabled = false;
-            });
-        }
-
-        void auBackend_ExtractingFailed(object sender, FailArgs e)
-        {
-            if (MessageBox.Show(e.ErrorMessage, e.ErrorTitle, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) ==
-                DialogResult.Retry)
-            {
-                auBackend.InstallNow();
-            }
-        }
-
-        void auBackend_DownloadingFailed(object sender, FailArgs e)
-        {
-            if (MessageBox.Show(e.ErrorMessage, e.ErrorTitle, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) ==
-                DialogResult.Retry)
-            {
-                auBackend.InstallNow();
-            }
-        }
-
-        private void auBackend_UpdateAvailable(object sender, EventArgs e)
-        {
-            Invoke((MethodInvoker) delegate
-            {
-
-                btnUpdate.Enabled = true;
-                lblUpdatesAvailable.Text = "An update is available.";
-                //txtWhatsNew.Text = auBackend.Changes;
-                //lblWhatsNew.Text = "What's new in v" + auBackend.Version;
-                //lblWhatsNew.Visible = true;
-                //txtWhatsNew.Visible = true;
-            });
-        }
 
         private ServiceController GetService()
         {
@@ -450,21 +333,6 @@ namespace NuFridge.ControlPanel
                     ZipFile.ExtractToDirectory(backupLoadFileDialog.FileName, backupPath);
                 }
             }
-        }
-
-        private void hypWebsiteBinding_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(websiteUrl.Replace("*", "localhost"));
-        }
-
-        private void hypFeedBinding_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            Process.Start(feedUrl.Replace("*", "localhost"));
-        }
-
-        private void btnUpdate_Click(object sender, EventArgs e)
-        {
-            auBackend.InstallNow();
         }
     }
 }
