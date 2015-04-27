@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'databinding/LuceneFeed', 'databinding/lucenepackage'], function (router, luceneFeed, lucenePackage) {
+﻿define(['plugins/router', 'databinding/LuceneFeed', 'databinding/lucenepackage', 'readmore'], function (router, luceneFeed, lucenePackage) {
     var ctor = function () {
         var self = this;
 
@@ -12,6 +12,7 @@
         self.searchTimeout = null;
         self.isSearching = ko.observable(false);
         self.searchSubscription = null;
+        self.searchError = ko.observable();
         self.searchTerm.subscribe(function () {
             clearTimeout(self.searchTimeout);
             self.searchTimeout = setTimeout(function () {
@@ -87,6 +88,7 @@
             cache: false,
             dataType: 'json'
         }).then(function (response) {
+
             self.pageCount(response.totalPages);
             self.currentPage(pageNumber);
 
@@ -95,13 +97,21 @@
                     return lucenePackage(options.data);
                 }
             };
-
+            self.searchError(null);
             ko.mapping.fromJS(response.results, mapping, self.packages);
-
             self.isSearching(false);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            Materialize.toast(errorThrown, 7500);
+            var parsedError = JSON.parse(xmlHttpRequest.responseText);
             self.isSearching(false);
+            self.searchError(parsedError);
+
+            $('.packagesExceptionStackTrace').readmore({
+                speed: 75,
+                lessLink: '<a href="#">Collapse</a>',
+                moreLink: '<a href="#">Expand</a>',
+                collapsedHeight: 65,
+                embedCSS: true
+            });
         });
     }
 

@@ -144,6 +144,7 @@
     <Content Include="Website\Content\Scripts\knockout.mapping.js" />
     <Content Include="Website\Content\Scripts\materialize.js" />
     <Content Include="Website\Content\Scripts\r.js" />
+    <Content Include="Website\Content\Scripts\readmore.js" />
     <Content Include="Website\Content\Scripts\require.js" />
     <Content Include="Website\Content\Scripts\text.js" />
     <Content Include="Website\Content\Index.html" />

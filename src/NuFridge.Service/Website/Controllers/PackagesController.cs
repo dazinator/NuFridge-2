@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -63,20 +64,20 @@ namespace NuFridge.Service.Website.Controllers
                 query = repo.Search(searchTerm, true);
             }
 
-            var totalCount = query.Count();
-            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+                var totalCount = query.Count();
+                var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-            var results = query
-                .Skip(pageSize * page)
-                .Take(pageSize)
-                .ToList();
+                var results = query
+                    .Skip(pageSize * page)
+                    .Take(pageSize)
+                    .ToList();
 
-            return new
-            {
-                TotalCount = totalCount,
-                TotalPages = totalPages,
-                Results = Mapper.Map<List<DtoPackage>>(results)
-            };
+                return new
+                {
+                    TotalCount = totalCount,
+                    TotalPages = totalPages,
+                    Results = Mapper.Map<List<DtoPackage>>(results)
+                };
         }
     }
 }

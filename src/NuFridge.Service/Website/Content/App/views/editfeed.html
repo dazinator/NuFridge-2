@@ -49,6 +49,17 @@
                     <div class="indeterminate"></div>
                 </div>
 
+                <!-- ko if: searchError() -->
+                <div data-bind="with: searchError">
+                    <h5>Message</h5>
+                    <blockquote data-bind="text: message"></blockquote>
+                    <h5>Exception</h5>
+                    <blockquote data-bind="text: exceptionMessage"></blockquote>
+                    <h5>Stack Trace</h5>
+                    <blockquote data-bind="text: stackTrace" class="packagesExceptionStackTrace"></blockquote>
+                </div>
+                <!-- /ko -->
+
                 <!-- ko if: pageCount() >= 1 -->
 
                 <ul class="collection" data-bind="foreach: packages">

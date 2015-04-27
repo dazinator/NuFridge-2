@@ -6,7 +6,8 @@
         'transitions': '../Scripts/durandal/transitions',
         'knockoutvalidation': '../Scripts/knockout.validation',
         'knockoutmapping': '../Scripts/knockout.mapping',
-        'databinding': 'viewmodels/databinding'
+        'databinding': 'viewmodels/databinding',
+        'readmore' :'../Scripts/readmore'
     }
 });
 
