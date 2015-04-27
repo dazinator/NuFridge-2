@@ -8,7 +8,7 @@
     ctor.prototype.compositionComplete = function () {
         $('#settingsTabs').tabs();
 
-        $("#progressBar").attr("aria-busy", false);
+        router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
     }
 
     ctor.prototype.activate = function () {
@@ -32,6 +32,5 @@
             Materialize.toast(errorThrown, 7500);
         });
     }
-
     return ctor;
 });

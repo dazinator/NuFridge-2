@@ -1,4 +1,4 @@
-﻿define(['databinding/LuceneFeed'], function (luceneFeed) {
+﻿define(['plugins/router', 'databinding/LuceneFeed'], function (router, luceneFeed) {
     var ctor = function () {
         this.displayName = 'Feeds';
         this.feeds = ko.observableArray();
@@ -78,7 +78,7 @@
     }
 
     ctor.prototype.compositionComplete = function () {
-        $("#progressBar").attr("aria-busy", false);
+        router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
     }
 
     return ctor;

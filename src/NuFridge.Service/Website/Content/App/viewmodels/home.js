@@ -1,4 +1,4 @@
-﻿define(function() {
+﻿define(['plugins/router'], function (router) {
     var ctor = function () {
         this.displayName = 'Welcome!';
     };
@@ -7,7 +7,7 @@
 
     }
     ctor.prototype.compositionComplete = function () {
-        $("#progressBar").attr("aria-busy", false);
+        router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
     }
 
     return ctor;

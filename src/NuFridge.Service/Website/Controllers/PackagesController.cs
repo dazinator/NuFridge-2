@@ -15,7 +15,6 @@ using NuGet;
 
 namespace NuFridge.Service.Website.Controllers
 {
-    [Route("api/packages")]
     public class PackagesController : ApiController
     {
         private IRepository<Feed> FeedRepository { get; set; }
@@ -26,7 +25,8 @@ namespace NuFridge.Service.Website.Controllers
         }
 
         [HttpGet]
-        public object Get(string id, int page, int pageSize, string searchTerm = "")
+        [Route("api/packages/{id}/{page}/{pageSize}/{searchTerm?}")]
+        public Object Get(string id, int page, int pageSize, string searchTerm = "")
         {
             var feed = FeedRepository.GetById(id);
 
@@ -66,10 +66,8 @@ namespace NuFridge.Service.Website.Controllers
             var totalCount = query.Count();
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-  
-
             var results = query
-                .Skip(pageSize*page)
+                .Skip(pageSize * page)
                 .Take(pageSize)
                 .ToList();
 

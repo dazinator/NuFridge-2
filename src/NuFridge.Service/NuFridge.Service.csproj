@@ -100,6 +100,8 @@
     </Compile>
     <Compile Include="Website\Controllers\DiagnosticsController.cs" />
     <Compile Include="Website\Controllers\PackagesController.cs" />
+    <Compile Include="Website\CustomDirectRouteProvider.cs" />
+    <Compile Include="Website\NamespaceHttpControllerSelector.cs" />
     <Compile Include="Website\Middleware\OwinConstants.cs" />
     <Compile Include="Website\Middleware\ShutdownMiddleware.cs" />
     <Compile Include="Website\WebisteStartupConfig.cs" />

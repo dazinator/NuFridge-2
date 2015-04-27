@@ -76,10 +76,10 @@
             pageNumber = 0;
         }
 
-        var url = "/api/FeedPackages?id=" + self.feed().id() + "&page=" + pageNumber + "&pageSize=" + self.pageSize();
+        var url = "/api/packages/" + self.feed().id() + "/" + pageNumber + "/" + self.pageSize();
 
         if (self.searchTerm() != '') {
-            url += "&searchTerm=" + self.searchTerm();
+            url += "/" + self.searchTerm();
         }
 
         $.ajax({
@@ -188,7 +188,7 @@
         }
         );
 
-        $("#progressBar").attr("aria-busy", false);
+        router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
 
     }
 

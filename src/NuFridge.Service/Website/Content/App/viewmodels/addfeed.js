@@ -10,7 +10,7 @@
     }
 
     ctor.prototype.compositionComplete = function () {
-        $("#progressBar").attr("aria-busy", false);
+        router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
     }
 
     ctor.prototype.createClick = function () {

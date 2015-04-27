@@ -23,25 +23,27 @@
 
 
 
-<footer class="page-footer blue darken-1">
-    <div class="container">
+<footer class="page-footer blue darken-1" style="padding-top: 0;">
+    <div class="container" style="height: 18px;">
         <div class="row">
-            <div class="col l6 s12">
-                <p class="grey-text text-lighten-4">NuFridge is a package management server for NuGet which supports multiple feeds.</p>
-                <p class="grey-text text-lighten-4">The feeds are powered by <a class="grey-text text-lighten-4" href="https://github.com/themotleyfool/NuGet.Lucene">https://github.com/themotleyfool/NuGet.Lucene</aclass>.</p>
+            <div class="col s12">
+                <div class="grey-text text-lighten-3" style="font-size: 12px;" data-bind="text: router.navigateRenderTime"></div>
             </div>
-            <div class="col l4 offset-l2 s12">
-                <ul>
-                    <li><a class="grey-text text-lighten-3" href="https://www.nufridge.com">https://www.nufridge.com</a></li>
-                    <li><a class="grey-text text-lighten-3" href="http://teamcity.nufridge.com">http://teamcity.nufridge.com</a></li>
-                    <li><a class="grey-text text-lighten-3" href="http://octopus.nufridge.com">http://octopus.nufridge.com</a></li>
-                </ul>
             </div>
-        </div>
     </div>
     <div class="footer-copyright blue darken-4">
         <div class="container">
-            NuFridge
+            <div class="row">
+                <div class="col s4">
+                    <a class="grey-text text-lighten-3" target="_blank" href="https://www.nufridge.com">https://www.nufridge.com</a>
+                </div>
+                <div class="col s4">
+                    <a class="grey-text text-lighten-3" target="_blank" href="http://teamcity.nufridge.com">http://teamcity.nufridge.com</a>
+                </div>
+                <div class="col s4">
+                    <a class="grey-text text-lighten-3" target="_blank" href="http://octopus.nufridge.com">http://octopus.nufridge.com</a>
+                </div>
+            </div>
         </div>
     </div>
 </footer>

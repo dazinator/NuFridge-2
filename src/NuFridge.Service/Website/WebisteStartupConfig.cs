@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Reflection;
 using System.Web.Http;
+using System.Web.Http.Controllers;
+using System.Web.Http.Dispatcher;
+using System.Web.Http.Routing;
 using Microsoft.Owin;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.FileSystems;
@@ -30,10 +37,12 @@ namespace NuFridge.Service.Website
 
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
-            //config.Routes.MapHttpRoute("NuFridge API", "api/{controller}/{id}", new { id = RouteParameter.Optional });
+
+            config.Services.Replace(typeof(IHttpControllerSelector), new NamespaceHttpControllerSelector(config));
 
 
             config.MapHttpAttributeRoutes();
+
             config.Filters.Add(new ValidationActionFilter());
 
             var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
@@ -73,5 +82,6 @@ namespace NuFridge.Service.Website
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
             app.Use(typeof(MiddlewareLogger));
         }
-    } 
+    }
+
 }
