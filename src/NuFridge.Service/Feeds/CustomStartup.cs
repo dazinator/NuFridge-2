@@ -8,9 +8,7 @@ namespace NuFridge.Service.Feeds
 {
     public class CustomStartup : Startup
     {
-        private Feed _feed;
-        public  IContainer Container;
-
+        private readonly Feed _feed;
         public CustomStartup(Feed feed)
         {
             _feed = feed;
@@ -20,19 +18,7 @@ namespace NuFridge.Service.Feeds
         {
             var settings = new NuGetFeedSettings(_feed);
 
-            _feed = null;
-
             return settings;
-        }
-
-        public IContainer CreateDefaultContainer(IAppBuilder app)
-        {
-            return  Container = base.CreateContainer(app);
-        }
-
-        protected override IContainer CreateContainer(IAppBuilder app)
-        {
-            return CreateDefaultContainer(app);
         }
     }
 }

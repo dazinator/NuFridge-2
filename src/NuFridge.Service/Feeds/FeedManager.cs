@@ -42,15 +42,13 @@ namespace NuFridge.Service.Feeds
 
                 foreach (var feedService in FeedServices)
                 {
-                    feedService.Stop();
+                    feedService.Dispose();
                 }
             }
         }
 
         public bool Start(Feed feed)
         {
-            var config = new ServiceConfiguration();
-
             NuGetFeed feedService = new NuGetFeed();
 
             if (!feedService.Start(feed))
@@ -75,7 +73,7 @@ namespace NuFridge.Service.Feeds
 
             Logger.Info("Stopping " + feed.Name + ".");
 
-            service.Stop();
+            service.Dispose();
 
             FeedServices.Remove(service);
 

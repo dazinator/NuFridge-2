@@ -9,20 +9,27 @@ using NuGet.Lucene.Web.Util;
 
 namespace NuFridge.Service.Feeds
 {
-    public class NuGetFeed
+    public class NuGetFeed : IDisposable
     {
         private static readonly ILog Logger = LogProvider.For<NuGetFeed>();
 
         private CustomStartup _startup;
-        private IDisposable webApp;
+        private IDisposable _webApp;
 
 
-        public void Stop()
+        public void Dispose()
         {
+            if (_webApp != null)
+            {
+                _webApp.Dispose();
+                _webApp = null;
+            }
 
-            webApp.Dispose();
-            _startup.WaitForShutdown(TimeSpan.FromSeconds(30));
-            _startup = null;
+            if (_startup != null)
+            {
+                _startup.WaitForShutdown(TimeSpan.FromMinutes(1));
+                _startup = null;
+            }
 
 
         }
@@ -52,10 +59,11 @@ namespace NuFridge.Service.Feeds
             try
             {
 
-                webApp = WebApp.Start(baseAddress, app =>
+                _webApp = WebApp.Start(baseAddress, app =>
                 {
                     _startup = new CustomStartup(feed);
                     _startup.Configuration(app);
+                    
                 });
 
                 return true;

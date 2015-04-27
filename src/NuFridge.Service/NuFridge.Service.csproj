@@ -43,6 +43,13 @@
     <Compile Include="Authentication\Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Authentication\Stores\ApplicationRoleStore.cs" />
     <Compile Include="Authentication\Stores\ApplicationUserStore.cs" />
+    <Compile Include="Diagnostics\Win\Win32_ComputerSystem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Diagnostics\SystemInfo.cs" />
+    <Compile Include="Diagnostics\Win\Win32_Process.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Feeds\CustomStartup.cs" />
     <Compile Include="Feeds\FeedManager.cs" />
     <Compile Include="Feeds\NuGetFeed.cs" />
@@ -91,6 +98,7 @@
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Website\Controllers\DiagnosticsController.cs" />
     <Compile Include="Website\Controllers\PackagesController.cs" />
     <Compile Include="Website\Middleware\OwinConstants.cs" />
     <Compile Include="Website\Middleware\ShutdownMiddleware.cs" />
@@ -104,6 +112,7 @@
   <ItemGroup>
     <Content Include="Website\Content\App\viewmodels\databinding\lucenefeed.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\lucenepackage.js" />
+    <Content Include="Website\Content\App\viewmodels\databinding\systeminfo.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\user.js" />
     <Content Include="Website\Content\font\material-design-icons\Material-Design-Icons.svg" />
     <Content Include="Website\Content\Scripts\almond-custom.js" />
@@ -280,6 +289,7 @@
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

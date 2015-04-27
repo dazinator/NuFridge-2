@@ -99,8 +99,8 @@
             ko.mapping.fromJS(response.results, mapping, self.packages);
 
             self.isSearching(false);
-        }).fail(function (response) {
-            alert("Errors are not handled yet.");
+        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+            Materialize.toast(errorThrown, 7500);
             self.isSearching(false);
         });
     }

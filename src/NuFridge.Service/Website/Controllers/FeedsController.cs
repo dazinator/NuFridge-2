@@ -14,7 +14,6 @@ using NuFridge.Service.Repositories;
 namespace NuFridge.Service.Website.Controllers
 {
     //[Authorize]
-    [Route("api/feeds")]
     public class FeedsController : ApiController 
     {
         private IRepository<Feed> FeedRepository { get; set; }
@@ -26,7 +25,7 @@ namespace NuFridge.Service.Website.Controllers
 
 
         [HttpGet]
-        [Route("{page?}/{pageSize?}")]
+        [Route("api/feeds/{page?}/{pageSize?}")]
         public Object Get(int page = 0, int pageSize = 5)
         {
             IList<Feed> query = FeedRepository.GetAll();
@@ -48,7 +47,7 @@ namespace NuFridge.Service.Website.Controllers
         }
 
                 [HttpGet]
-                [Route("{id}")]
+                [Route("api/feeds/{id}")]
         public HttpResponseMessage Get(string id)
         {
             var feed = FeedRepository.GetById(id);
@@ -67,6 +66,7 @@ namespace NuFridge.Service.Website.Controllers
         }
 
         [HttpPost]
+        [Route("api/feeds")]
         public HttpResponseMessage Post([FromBody]Feed feed)
         {
             var existingFeedWithName = FeedRepository.GetAll().FirstOrDefault(fd => fd.Name == feed.Name);
@@ -88,6 +88,7 @@ namespace NuFridge.Service.Website.Controllers
         }
 
         [HttpPut]
+        [Route("api/feeds/{id}")]
         public HttpResponseMessage Put(string id, [FromBody]Feed feed)
         {
             if (id != feed.Id)
@@ -127,6 +128,7 @@ namespace NuFridge.Service.Website.Controllers
 
 
         [HttpDelete]
+        [Route("api/feeds/{id}")]
         public HttpResponseMessage Delete(string id)
         {
             var feed = FeedRepository.GetById(id);
