@@ -76,6 +76,10 @@
     <Compile Include="Migrations\201504200859451_AddApiKeyToFeed.Designer.cs">
       <DependentUpon>201504200859451_AddApiKeyToFeed.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201504281619482_MoveFeedUrlToFeedModel.cs" />
+    <Compile Include="Migrations\201504281619482_MoveFeedUrlToFeedModel.Designer.cs">
+      <DependentUpon>201504281619482_MoveFeedUrlToFeedModel.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\DbInitializer.cs" />
     <Compile Include="Model\ApplicationGroup.cs" />
@@ -86,7 +90,6 @@
     <Compile Include="Model\Dto\DtoApplicationUser.cs" />
     <Compile Include="Model\Dto\DtoPackage.cs" />
     <Compile Include="Model\Feed.cs" />
-    <Compile Include="Model\FeedGroup.cs" />
     <Compile Include="Model\IEntityBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -428,6 +431,9 @@
     <EmbeddedResource Include="Migrations\201504200859451_AddApiKeyToFeed.resx">
       <DependentUpon>201504200859451_AddApiKeyToFeed.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201504281619482_MoveFeedUrlToFeedModel.resx">
+      <DependentUpon>201504281619482_MoveFeedUrlToFeedModel.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Website\Content\App\main.js" />
@@ -460,16 +466,18 @@
     <PostBuildEvent>if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
     xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
     if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
-    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"
-
-Robocopy "$(ProjectDir)Website\Content\build" "$(TargetDir)Content" /MIR
-if %25errorlevel%25 leq 1 exit 0 else exit %25errorlevel%25</PostBuildEvent>
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)Website\Content
 
-grunt build</PreBuildEvent>
+if $(ConfigurationName) == Release (
+grunt "build release"
+
+Robocopy "$(ProjectDir)Website\Content\build" "$(TargetDir)Content" /MIR
+if %25errorlevel%25 leq 1 exit 0 else exit %25errorlevel%25
+)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

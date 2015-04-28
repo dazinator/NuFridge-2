@@ -23,7 +23,7 @@
         if (!pageNumber) {
             pageNumber = 0;
         } else {
-            if (pageNumber == self.currentPage()) {
+            if (pageNumber === self.currentPage()) {
                 return;
             }
         }

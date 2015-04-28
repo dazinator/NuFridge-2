@@ -51,7 +51,18 @@ namespace NuFridge.Service.Website
             var currentAssemblyPath = Assembly.GetEntryAssembly().Location;
             var currentDirectory = Directory.GetParent(currentAssemblyPath);
 
-            var appPath = Path.Combine(currentDirectory.FullName, "Content");
+            string appPath;
+
+            if (currentDirectory.FullName.EndsWith(@"\bin\Debug"))
+            {
+                var root = Directory.GetParent(Directory.GetParent(currentDirectory.FullName).FullName).FullName;
+
+                appPath = Path.Combine(root, "Website", "Content");
+            }
+            else
+            {
+                appPath = Path.Combine(currentDirectory.FullName, "Content");
+            }
 
             var physicalFileSystem = new PhysicalFileSystem(appPath);
             var options = new FileServerOptions

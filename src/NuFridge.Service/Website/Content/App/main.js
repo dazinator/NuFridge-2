@@ -17,7 +17,7 @@
 define('jquery', function () { return jQuery; });
 define('knockout', ko);
 
-define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapping'], function (system, app, viewLocator, komapping) {
+define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapping', 'knockoutvalidation'], function (system, app, viewLocator, komapping) {
 
     //>>excludeStart("build", true);
     system.debug(true);
@@ -52,6 +52,21 @@ define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapp
             });
         }
     };
+
+    ko.subscribable.fn.subscribeChanged = function (callback) {
+        var oldValue;
+        this.subscribe(function (_oldValue) {
+            oldValue = _oldValue;
+        }, this, 'beforeChange');
+
+        this.subscribe(function (newValue) {
+            callback(newValue, oldValue);
+        });
+    };
+
+    ko.validation.init({
+        insertMessages: false
+    });
 
     app.title = 'NuFridge';
 

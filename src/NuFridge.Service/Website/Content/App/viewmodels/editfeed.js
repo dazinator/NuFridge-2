@@ -2,7 +2,7 @@
     var ctor = function () {
         var self = this;
 
-        self.feed = ko.observable(luceneFeed());
+        self.feed = ko.validatedObservable(luceneFeed());
         self.packages = ko.observableArray();
         self.pageCount = ko.observable(1);
         self.currentPage = ko.observable(0);
@@ -19,13 +19,50 @@
                 self.loadPackages();
             }, 500);
         });
+        self.thisWillCreateUrl = ko.observable("");
+        self.setThisWillCreateUrlText();
+
+        self.feed().name.subscribeChanged(function (newValue, oldValue) {
+            var virtualDirectory = self.feed().virtualDirectory();
+            if (!virtualDirectory || virtualDirectory === "/" || virtualDirectory === "/" + oldValue.toLowerCase()) {
+                self.feed().virtualDirectory("/" + newValue.toLowerCase());
+            }
+        });
+
+        self.feed().port.subscribe(function () {
+            self.setThisWillCreateUrlText();
+        });
+
+        self.feed().host.subscribe(function () {
+            self.setThisWillCreateUrlText();
+        });
+
+        self.feed().virtualDirectory.subscribe(function () {
+            self.setThisWillCreateUrlText();
+        });
+    };
+
+    ctor.prototype.setThisWillCreateUrlText = function () {
+        var self = this;
+
+        var host = self.feed().host();
+        var port = self.feed().port();
+        var virtualDirectory = self.feed().virtualDirectory();
+
+        if (port === "80") {
+            port = "";
+        } else {
+            port = ":" + port;
+        }
+
+        self.thisWillCreateUrl("http://" + host + port + virtualDirectory);
     };
 
     ctor.prototype.activate = function() {
 
         var self = this;
 
-        if (router.activeInstruction().params.length == 1) {
+        if (router.activeInstruction().params.length === 1) {
             $.ajax({
                 url: "/api/Feeds/" + router.activeInstruction().params[0],
                 cache: false,
@@ -39,6 +76,7 @@
                 };
 
                 ko.mapping.fromJS(response, mapping, self.feed);
+                self.setThisWillCreateUrlText();
                 self.displayName('Edit ' + self.feed().name());
                 self.loadPackages();
             }).fail(function(xmlHttpRequest, textStatus, errorThrown) {
@@ -118,40 +156,46 @@
     ctor.prototype.deleteClick = function() {
         var feed = this;
 
-        $("#deleteFeedModal").openModal();
+        $("#deleteFeedConfirmationModal").openModal();
 
-        $.ajax({
-            url: "/api/Feeds/" + feed.id(),
-            type: 'DELETE',
-            dataType: 'json',
-            cache: false,
-            success: function(result) {
-                $("#deleteFeedModal").closeModal();
-                router.navigate('#feeds');
-                Materialize.toast('The ' + feed.name() + ' feed was successfully deleted.', 7500);
-            },
-            error: function(xmlHttpRequest, textStatus, errorThrown) {
-                $("#deleteFeedModal").closeModal();
-                Materialize.toast(errorThrown, 7500);
-            }
-        });
+        //$("#deleteFeedModal").openModal();
+
+        //$.ajax({
+        //    url: "/api/Feeds/" + feed.id(),
+        //    type: 'DELETE',
+        //    dataType: 'json',
+        //    cache: false,
+        //    success: function(result) {
+        //        $("#deleteFeedModal").closeModal();
+        //        router.navigate('#feeds');
+        //        Materialize.toast('The ' + feed.name() + ' feed was successfully deleted.', 7500);
+        //    },
+        //    error: function(xmlHttpRequest, textStatus, errorThrown) {
+        //        $("#deleteFeedModal").closeModal();
+        //        Materialize.toast(errorThrown, 7500);
+        //    }
+        //});
     };
 
     ctor.prototype.updateClick = function() {
-        var feed = this;
+        var self = this;
+
+        if (!self.feed.isValid()) {
+            return;
+        }
 
         $("#editFeedModal").openModal();
 
         $.ajax({
-            url: "/api/Feeds/" + feed.id(),
+            url: "/api/Feeds/" + self.feed().id(),
             type: 'PUT',
-            data: ko.toJS(feed),
+            data: ko.toJS(self.feed()),
             dataType: 'json',
             cache: false,
             success: function(result) {
                 $("#editFeedModal").closeModal();
                 router.navigate('#feeds');
-                Materialize.toast('The ' + feed.name() + ' feed was successfully updated.', 7500);
+                Materialize.toast('The ' + self.feed().name() + ' feed was successfully updated.', 7500);
             },
             error: function(xmlHttpRequest, textStatus, errorThrown) {
                 $("#editFeedModal").closeModal();
@@ -171,7 +215,7 @@
             target = event.srcElement;
         }
 
-        if (target.nodeType == 3) {
+        if (target.nodeType === 3) {
             target = target.parentNode;
         }
 

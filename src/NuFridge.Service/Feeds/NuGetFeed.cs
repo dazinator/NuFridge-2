@@ -44,22 +44,16 @@ namespace NuFridge.Service.Feeds
 
             var config = new ServiceConfiguration();
 
-            var baseUrl = config.FeedWebBinding;
+            string feedUrl = feed.GetUrl();
 
-            if (!baseUrl.EndsWith("/"))
-            {
-                baseUrl += "/";
-            }
-
-            var baseAddress = string.Format("{0}{1}", baseUrl, feed.Name);
-            var feedDirectory = Path.Combine(config.FeedsHome, feed.Id);
+            var feedDirectory = Path.Combine(config.FeedsHomePath, feed.Id);
 
             Logger.Info("Starting " + feed.Name + " at " + feedDirectory);
 
             try
             {
 
-                _webApp = WebApp.Start(baseAddress, app =>
+                _webApp = WebApp.Start(feedUrl, app =>
                 {
                     _startup = new CustomStartup(feed);
                     _startup.Configuration(app);

@@ -177,6 +177,5 @@ namespace NuFridge.Service.Repositories
         }
 
         public DbSet<Feed> Feeds { get; set; }
-        public DbSet<FeedGroup> FeedGroups { get; set; }
     }
 }

@@ -41,17 +41,9 @@ namespace NuFridge.Service.Website.Controllers
                 throw new HttpResponseException(resp);
             }
 
+            string feedUrl = feed.GetUrl();
 
-            var baseUrl = new ServiceConfiguration().FeedWebBinding.Replace("*", "localhost");
-
-            if (!baseUrl.EndsWith("/"))
-            {
-                baseUrl += "/";
-            }
-
-            var baseAddress = string.Format("{0}{1}/", baseUrl, feed.Name);
-
-            var repo = new DataServicePackageRepository(new Uri(baseAddress + "api/odata/"));
+            var repo = new DataServicePackageRepository(new Uri(feedUrl + "api/odata/"));
 
             IQueryable<IPackage> query;
 

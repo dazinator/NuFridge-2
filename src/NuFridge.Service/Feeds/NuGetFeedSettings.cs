@@ -17,20 +17,17 @@ namespace NuFridge.Service.Feeds
             public const string DefaultRoutePathPrefix = "api/";
 
 
-
-            private readonly System.Collections.Specialized.NameValueCollection roleMappings;
             private string FeedDirectory { get; set; }
             private string ApiKey { get; set; }
             private ServiceConfiguration Config { get; set; }
+            private Feed Feed { get; set; }
 
             public NuGetFeedSettings(Feed feed)
             {
                 this.Config = new ServiceConfiguration();
-                this.roleMappings = roleMappings ?? new NameValueCollection();
+                this.Feed = feed;
 
-                FeedDirectory = Path.GetFullPath(Path.Combine(Config.FeedsHome, feed.Id));
-
-               
+                FeedDirectory = Path.GetFullPath(Path.Combine(Config.FeedsHomePath, feed.Id));
 
                 if (!Directory.Exists(FeedDirectory))
                 {
@@ -117,11 +114,11 @@ namespace NuFridge.Service.Feeds
                 }
             }
 
-            public System.Collections.Specialized.NameValueCollection RoleMappings
+            public NameValueCollection RoleMappings
             {
                 get
                 {
-                    return roleMappings;
+                    return new NameValueCollection();
                 }
             }
 
@@ -145,17 +142,17 @@ namespace NuFridge.Service.Feeds
 
             public bool SynchronizeOnStart
             {
-                get { return Config.SynchronizeOnStart; }
+                get { return Feed.SynchronizeOnStart; }
             }
 
             public bool EnablePackageFileWatcher
             {
-                get { return Config.EnablePackageFileWatcher; }
+                get { return Feed.EnablePackageFileWatcher; }
             }
 
             public bool GroupPackageFilesById
             {
-                get { return Config.GroupPackageFilesById; }
+                get { return Feed.GroupPackageFilesById; }
             }
 
             public string LucenePackagesIndexPath
@@ -178,7 +175,7 @@ namespace NuFridge.Service.Feeds
             {
                 get
                 {
-                    if (Config.AllowPackageOverwrite)
+                    if (Feed.AllowPackageOverwrite)
                     {
                         return PackageOverwriteMode.Allow;
                     }

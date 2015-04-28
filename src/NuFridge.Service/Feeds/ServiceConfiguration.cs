@@ -6,89 +6,12 @@ namespace NuFridge.Service.Feeds
 {
     public sealed class ServiceConfiguration
     {
-        private const string FeedWebBindingKey = "NuFridge.Feeds.Binding";
-        private const string FeedsHomeKey = "NuFridge.Feeds.Home";
+        private const string FeedsHomeKey = "NuFridge.FeedsPath";
         private const string DebuggingToolsPathKey = "NuFridge.DebuggingToolsPath";
-        private const string SynchronizeOnStartKey = "NuFridge.Feeds.SynchronizeOnStart";
-        private const string EnablePackageFileWatcherKey = "NuFridge.Feeds.EnablePackageFileWatcher";
-        private const string GroupPackageFilesByIdKey = "NuFridge.Feeds.GroupPackageFilesById";
-        private const string AllowPackageOverwriteKey = "NuFridge.Feeds.AllowPackageOverwrite";
         private const string WebsiteBindingKey = "NuFridge.AdministrationWebsite.Binding";
 
-        private bool? _allowPackageOverwrite;
-        public bool AllowPackageOverwrite
-        {
-            get
-            {
-                if (!_allowPackageOverwrite.HasValue)
-                {
-                    bool tmpValue;
-                    if (bool.TryParse(ConfigurationManager.AppSettings[AllowPackageOverwriteKey], out tmpValue))
-                    {
-                        _allowPackageOverwrite = tmpValue;
-                    }
-                }
-
-                return _allowPackageOverwrite ?? (_allowPackageOverwrite = true).Value;
-            }
-        }
-
-        private bool? _groupPackageFilesById;
-        public bool GroupPackageFilesById
-        {
-            get
-            {
-                if (!_groupPackageFilesById.HasValue)
-                {
-                    bool tmpValue;
-                    if (bool.TryParse(ConfigurationManager.AppSettings[GroupPackageFilesByIdKey], out tmpValue))
-                    {
-                        _groupPackageFilesById = tmpValue;
-                    }
-                }
-
-                return _groupPackageFilesById ?? (_groupPackageFilesById = true).Value;
-            }
-        }
-
-        private bool? _enablePackageFileWatcher;
-        public bool EnablePackageFileWatcher
-        {
-            get
-            {
-                if (!_enablePackageFileWatcher.HasValue)
-                {
-                    bool tmpValue;
-                    if (bool.TryParse(ConfigurationManager.AppSettings[EnablePackageFileWatcherKey], out tmpValue))
-                    {
-                        _enablePackageFileWatcher = tmpValue;
-                    }
-                }
-
-                return _enablePackageFileWatcher ?? (_enablePackageFileWatcher = true).Value;
-            }
-        }
-
-        private bool? _synchronizeOnStart;
-        public bool SynchronizeOnStart
-        {
-            get
-            {
-                if(!_synchronizeOnStart.HasValue)
-                {
-                    bool tmpValue;
-                    if (bool.TryParse(ConfigurationManager.AppSettings[SynchronizeOnStartKey], out tmpValue))
-                    {
-                        _synchronizeOnStart = tmpValue;
-                    }
-                }
-                
-                return _synchronizeOnStart ?? (_synchronizeOnStart = true).Value;
-            }
-        }
-
         private string _feedsHome;
-        public string FeedsHome
+        public string FeedsHomePath
         {
             get
             {
@@ -105,15 +28,6 @@ namespace NuFridge.Service.Feeds
             }
         }
 
-        private string _feedWebBinding;
-        public string FeedWebBinding
-        {
-            get
-            {
-                return _feedWebBinding ?? (_feedWebBinding = ConfigurationManager.AppSettings[FeedWebBindingKey]);
-            }
-        }
-
         private string _debuggingToolsPath;
         public string DebuggingToolsPath
         {
@@ -125,21 +39,16 @@ namespace NuFridge.Service.Feeds
 
         public ConfigurationValidateResult Validate()
         {
-            if (FeedWebBinding == null)
+            if (FeedsHomePath == null)
             {
-                return new ConfigurationValidateResult(new NullReferenceException(string.Format("The '{0}' app setting has not been set.", FeedWebBindingKey)));
+                return new ConfigurationValidateResult(new NullReferenceException(string.Format("The '{0}' app setting has not been set.", FeedsHomePath)));
             }
 
-            if (FeedsHome == null)
-            {
-                return new ConfigurationValidateResult(new NullReferenceException(string.Format("The '{0}' app setting has not been set.", FeedsHome)));
-            }
-
-            if (!System.IO.Directory.Exists(FeedsHome))
+            if (!System.IO.Directory.Exists(FeedsHomePath))
             {
                 try
                 {
-                    System.IO.Directory.CreateDirectory(FeedsHome);
+                    System.IO.Directory.CreateDirectory(FeedsHomePath);
                 }
                 catch (Exception ex)
                 {

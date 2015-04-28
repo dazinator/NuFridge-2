@@ -5,20 +5,19 @@
     <div class="row">
         <div class="col s12">
             <ul class="tabs z-depth-1" style="width: 100%;" id="viewFeedTabs">
-                <li class="tab col s3" style="width: 33%;"><a href="#test1" class="active blue-text">Overview</a></li>
-                <li class="tab col s3" style="width: 33%;"><a class="blue-text" href="#test2">Packages</a></li>
-                <li class="tab col s3" style="width: 33%;"><a class="blue-text" href="#test3">Settings</a></li>
+                <li class="tab col s3" style="width: 50%;"><a class="blue-text" href="#test2">Packages</a></li>
+                <li class="tab col s3" style="width: 50%;"><a class="blue-text" href="#test3">Settings</a></li>
             </ul>
         </div>
     </div>
 
-    <div id="test1" class="col s12">
+    <!--<div id="test1" class="col s12">
         <div class="row">
             <div class="col s12">
                 <a class="waves-effect waves-light btn blue">Stop</a>
             </div>
         </div>
-    </div>
+    </div>-->
 
     <div id="test2" class="col s12">
         <div class="row">
@@ -32,8 +31,8 @@
                         <label for="search">Search</label>
                     </div>
                     <div class="input-field col s4">
-                        <a class='viewFeedsPageSize btn-flat' data-activates='pageSize' style="float: right;">5 Packages Per Page</a>
-                        <ul id='pageSize' class='dropdown-content'>
+                        <a class="viewFeedsPageSize btn-flat" data-activates="pageSize" style="float: right;">5 Packages Per Page</a>
+                        <ul id="pageSize" class="dropdown-content">
                             <li><a data-bind="click: changePageSize">5</a></li>
                             <li class="divider"></li>
                             <li><a data-bind="click: changePageSize">10</a></li>
@@ -93,20 +92,99 @@
     <div id="test3" class="col s12">
         <div class="row">
             <form class="col s12" data-bind="with: feed">
+                <h5>General</h5>
 
-                <div class="input-field ">
+                <div class="input-field col s12">
                     <i class="mdi-action-label prefix" data-bind="css: { active: name() ? true : false }"></i>
-                    <input id="icon_prefix" type="text" data-bind="value: name">
+                    <input id="icon_prefix" type="text" data-bind="value: name, valueUpdate: 'afterkeydown'">
                     <label for="icon_prefix" data-bind="css: { active: name() ? true : false }">Feed Name</label>
                 </div>
 
-                <div class="input-field">
+
+
+                <div class="input-field col s12">
                     <i class="mdi-action-lock prefix" data-bind="css: { active: apiKey() ? true : false }"></i>
-                    <input id="password" type="text" data-bind="value: apiKey">
-                    <label for="password" data-bind="css: { active: apiKey() ? true : false }">API Key</label>
+                    <input id="apikey" type="text" data-bind="value: apiKey">
+                    <label for="apikey" data-bind="css: { active: apiKey() ? true : false }">API Key</label>
                 </div>
 
-                <a class="waves-effect waves-light btn blue" data-bind="click: $root.updateClick">Update</a> <a class="waves-effect waves-light btn red" data-bind="    click: $root.deleteClick">Delete</a>
+                <h5>Binding</h5>
+
+                <div class="input-field col s3">
+                    <i class="mdi-file-cloud prefix" data-bind="css: { active: host() ? true : false }"></i>
+                    <input id="host" type="text" data-bind="value: host, valueUpdate: 'afterkeydown'">
+                    <label for="host" data-bind="css: { active: host() ? true : false }">Host</label>
+                </div>
+                <div class="input-field col s2">
+                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: port() ? true : false }"></i>
+                    <input id="port" type="text" data-bind="value: port, valueUpdate: 'afterkeydown'">
+                    <label for="port" data-bind="css: { active: port() ? true : false }">Port</label>
+                </div>
+                <div class="input-field col s3">
+                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: virtualDirectory() ? true : false }"></i>
+                    <input id="virtualDirectory" type="text" data-bind="value: virtualDirectory, valueUpdate: 'afterkeydown'">
+                    <label for="virtualDirectory" data-bind="css: { active: virtualDirectory() ? true : false }">Virtual Directory</label>
+                </div>
+                <div class="input-field col s4">
+                    <i class="mdi-image-navigate-next prefix active"></i>
+                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly">
+                    <label for="thisWillCreateUrl" class="active">Full URL</label>
+                </div>
+
+
+                <h5>Advanced</h5>
+
+                <div class="input-field col s2">
+                    <div class="switch" style="height: 40px;">
+                        <label>
+                            Off
+                            <input type="checkbox" data-bind="checked: synchronizeOnStart">
+                            <span class="lever blue"></span>
+                            On
+                        </label>
+                    </div>
+                    <label class="active">Synchronize On Start</label>
+                </div>
+
+                <div class="input-field col s2">
+                    <div class="switch" style="height: 40px;">
+                        <label>
+                            Off
+                            <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
+                            <span class="lever blue"></span>
+                            On
+                        </label>
+                    </div>
+                    <label class="active">Enable Package File Watcher</label>
+                </div>
+
+                <div class="input-field col s2">
+                    <div class="switch" style="height: 40px;">
+                        <label>
+                            Off
+                            <input type="checkbox" data-bind="checked: groupPackageFilesById">
+                            <span class="lever blue"></span>
+                            On
+                        </label>
+                    </div>
+                    <label class="active">Group Package Files By Id</label>
+                </div>
+
+                <div class="input-field col s6">
+                    <div class="switch" style="height: 40px;">
+                        <label>
+                            Off
+                            <input type="checkbox" data-bind="checked: allowPackageOverwrite">
+                            <span class="lever blue"></span>
+                            On
+                        </label>
+                    </div>
+                    <label class="active">Allow Package Overwrite</label>
+                </div>
+
+                <div class="row"></div>
+
+                <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, blue: $root.feed.isValid() === true }">Update</a>
 
             </form>
 
@@ -124,6 +202,15 @@
         <div class="modal-content">
             <h4>Deleting feed.</h4>
             <p>Please wait while the feed is deleted.</p>
+        </div>
+    </div>
+    <div id="deleteFeedConfirmationModal" class="modal">
+        <div class="modal-content">
+            <h4>Are you sure you want to delete this feed?</h4>
+            <p>NuGet Packages will not be deleted automatically.</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class=" modal-action modal-close waves-effect waves-red btn-flat">Delete</a>
         </div>
     </div>
 </div>

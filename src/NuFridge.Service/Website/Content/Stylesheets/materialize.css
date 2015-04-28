@@ -6432,7 +6432,7 @@ form p:last-child {
   background-color: #84c7c1; }
 
 .switch label input[type=checkbox]:checked + .lever:after {
-  background-color: #26a69a; }
+  background-color: #0D47A1; }
 
 .switch label .lever {
   content: "";

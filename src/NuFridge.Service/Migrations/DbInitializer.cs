@@ -29,21 +29,6 @@ namespace NuFridge.Service.Migrations
                 }, "password").Wait();
             }
 
-            if (!context.FeedGroups.Any() && !context.Feeds.Any())
-            {
-                var feedGroup = new FeedGroup
-                {
-                    Name = "Default",
-                    Id = Guid.NewGuid().ToString()
-                };
-                context.FeedGroups.Add(feedGroup);
-
-                var feed = new Feed { GroupId = feedGroup.Id, Name = "Default", Id = Guid.NewGuid().ToString() };
-                context.Feeds.Add(feed);
-
-                context.SaveChanges();
-            }
-
             this.AddGroups();
             this.AddRoles();
             this.AddRolesToGroups();
