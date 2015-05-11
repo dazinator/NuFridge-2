@@ -1,3 +1,86 @@
 ﻿<div class="container">
     <h4 data-bind="text: displayName"></h4>
+    <hr />
+    <div class="row" data-bind="with: dashboard">
+
+        <div class="col s4">
+
+
+            <div class="card ">
+                <div class="card-content white-text light-green darken-1" style="padding: 5px 20px 0px 20px;">
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s6">
+                            <i class="mdi-action-view-array" style="font-size: 4rem;">&nbsp;</i>
+                        </div>
+                        <div class="col s6" style="height: 50px;">
+                            <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: packageCount"></span>
+                        </div>
+                        <div class="col s6">
+                            <span class="white-text" style="float: right; font-size: 15px;">Packages</span>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--<div class="card-action" style="padding: 10px;">
+                    <a href="#" class="black-text">View Details</a>
+                </div>-->
+            </div>
+
+
+        </div>
+        <div class="col s4">
+
+            <div class="card ">
+                <div class="card-content white-text orange lighten-1" style="padding: 5px 20px 0px 20px; cursor: pointer;" data-bind="click: $root.goToFeeds">
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s6">
+                            <i class="mdi-navigation-apps" style="font-size: 4rem;">&nbsp;</i>
+                        </div>
+                        <div class="col s6" style="height: 50px;">
+                            <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: feedCount"></span>
+                        </div>
+                        <div class="col s6">
+                            <span class="white-text" style="float: right; font-size: 15px;">Feeds</span>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--<div class="card-action" style="padding: 10px;">
+                    <a href="#" class="black-text">View Details</a>
+                </div>-->
+            </div>
+
+
+        </div>
+        <div class="col s4">
+
+            <div class="card ">
+                <div class="card-content white-text deep-orange accent-2" style="padding: 5px 20px 0px 20px;">
+                    <div class="row" style="margin-bottom: 0;">
+                        <div class="col s6">
+                            <i class="mdi-action-account-box" style="font-size: 4rem;">&nbsp;</i>
+                        </div>
+                        <div class="col s6" style="height: 50px;">
+                            <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: userCount"></span>
+                        </div>
+                        <div class="col s6">
+                            <span class="white-text" style="float: right; font-size: 15px;">Users</span>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!--<div class="card-action" style="padding: 10px;">
+                    <a href="#" class="black-text">View Details</a>
+                </div>-->
+            </div>
+
+
+        </div>
+    </div>
+
+
+
 </div>

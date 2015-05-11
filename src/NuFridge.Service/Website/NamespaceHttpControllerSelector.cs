@@ -16,10 +16,6 @@ namespace NuFridge.Service.Website
 {
     public class NamespaceHttpControllerSelector : IHttpControllerSelector
     {
-        private const string VersionKey = "version";
-        private const string NamespaceKey = "namespace";
-        private const string ControllerKey = "controller";
-
         private readonly HttpConfiguration _configuration;
         private readonly Lazy<Dictionary<string, HttpControllerDescriptor>> _controllers;
         private readonly HashSet<string> _duplicates;

@@ -101,6 +101,7 @@
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Website\Controllers\DashboardController.cs" />
     <Compile Include="Website\Controllers\DiagnosticsController.cs" />
     <Compile Include="Website\Controllers\PackagesController.cs" />
     <Compile Include="Website\CustomDirectRouteProvider.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Website\WebsiteManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Website\Content\App\viewmodels\databinding\dashboard.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\lucenefeed.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\lucenepackage.js" />
     <Content Include="Website\Content\App\viewmodels\databinding\systeminfo.js" />

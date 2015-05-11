@@ -18,6 +18,7 @@ module.exports = function(grunt) {
             'databinding-lucenepackage': 'viewmodels/databinding/lucenepackage',
             'databinding-systeminfo': 'viewmodels/databinding/systeminfo',
             'databinding-user': 'viewmodels/databinding/user',
+            'databinding-dashboard': 'viewmodels/databinding/dashboard',
             'readmore': '../Scripts/readmore'
         }
     };
