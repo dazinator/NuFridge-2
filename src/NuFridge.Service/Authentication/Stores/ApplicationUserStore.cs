@@ -9,7 +9,7 @@ using NuFridge.Service.Repositories;
 
 namespace NuFridge.Service.Authentication.Stores
 {
-    public class ApplicationUserStore : IUserEmailStore<ApplicationUser, string>, IUserRoleStore<ApplicationUser, string>, IUserPasswordStore<ApplicationUser, string>
+    public class ApplicationUserStore : IUserEmailStore<ApplicationUser, string>, IUserRoleStore<ApplicationUser, string>, IUserPasswordStore<ApplicationUser, string>, IQueryableUserStore<ApplicationUser, string>
     {
         private NuFridgeContext _context;
         private ApplicationRoleStore _roleManager = new ApplicationRoleStore();
@@ -171,6 +171,11 @@ namespace NuFridge.Service.Authentication.Stores
             user.PasswordHash = passwordHash;
 
             return Task.FromResult(_context.SaveChangesAsync());
+        }
+
+        public IQueryable<ApplicationUser> Users
+        {
+            get { return _context.Users; }
         }
     }
 }

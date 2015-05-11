@@ -42,6 +42,11 @@ namespace NuFridge.Service.Authentication.Managers
             return result;
         }
 
+        public int GetUsersCount()
+        {
+            return _userManager.Users.Count();
+        }
+
         public async Task<ApplicationUser> FindUser(string userName, string password)
         {
             ApplicationUser user = await _userManager.FindAsync(userName, password);

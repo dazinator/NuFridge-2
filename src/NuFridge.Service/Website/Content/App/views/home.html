@@ -16,7 +16,7 @@
                             <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: packageCount"></span>
                         </div>
                         <div class="col s6">
-                            <span class="white-text" style="float: right; font-size: 15px;">Packages</span>
+                            <span class="white-text" style="float: right; font-size: 15px;" data-bind="text: packageCount() == 1 ? 'Package' : 'Packages'"></span>
                         </div>
 
                     </div>
@@ -41,7 +41,7 @@
                             <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: feedCount"></span>
                         </div>
                         <div class="col s6">
-                            <span class="white-text" style="float: right; font-size: 15px;">Feeds</span>
+                            <span class="white-text" style="float: right; font-size: 15px;" data-bind="text: feedCount() == 1 ? 'Feed' : 'Feeds'"></span>
                         </div>
 
                     </div>
@@ -66,7 +66,7 @@
                             <span class="white-text" style="float: right; font-size: 38px;" data-bind="text: userCount"></span>
                         </div>
                         <div class="col s6">
-                            <span class="white-text" style="float: right; font-size: 15px;">Users</span>
+                            <span class="white-text" style="float: right; font-size: 15px;" data-bind="text: userCount() == 1 ? 'User' : 'Users'"></span>
                         </div>
 
                     </div>
