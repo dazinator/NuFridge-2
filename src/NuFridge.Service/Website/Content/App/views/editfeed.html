@@ -185,7 +185,7 @@
                 <div class="row"></div>
 
                 <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, blue: $root.feed.isValid() === true }">Update</a>
-
+                <a class="waves-effect waves-light btn red" data-bind="click: $root.feed.isValid() === true ? function() { $root.deleteClick(); } : null, css: { disabled: $root.feed.isValid() === false, red: $root.feed.isValid() === true }">Delete</a>
             </form>
 
         </div>
@@ -198,19 +198,20 @@
             <p>Please wait while the feed is restarted.</p>
         </div>
     </div>
-    <div id="deleteFeedModal" class="modal">
+    <div id="deleteFeedModal" class="modal" style="width: 700px;">
         <div class="modal-content">
             <h4>Deleting feed.</h4>
             <p>Please wait while the feed is deleted.</p>
         </div>
     </div>
-    <div id="deleteFeedConfirmationModal" class="modal">
+    <div id="deleteFeedConfirmationModal" class="modal" style="width: 700px;">
         <div class="modal-content">
             <h4>Are you sure you want to delete this feed?</h4>
             <p>NuGet Packages will not be deleted automatically.</p>
         </div>
         <div class="modal-footer">
-            <a href="#!" class=" modal-action modal-close waves-effect waves-red btn-flat">Delete</a>
+            <a class=" modal-action modal-close waves-effect btn red white-text" data-bind="click: $root.confirmDeleteClick">Delete</a>
+            <a class=" modal-action modal-close waves-effect btn-flat">Cancel</a>
         </div>
     </div>
 </div>
