@@ -78,6 +78,8 @@
 
     ctor.prototype.compositionComplete = function() {
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
+
+        $('#viewFeedTabs').tabs();
     };
 
     return ctor;

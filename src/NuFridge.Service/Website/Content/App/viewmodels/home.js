@@ -32,6 +32,8 @@
 
     ctor.prototype.compositionComplete = function() {
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
+
+        $('#dashboardTabs').tabs();
     };
 
     return ctor;

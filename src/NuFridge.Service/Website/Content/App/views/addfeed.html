@@ -1,151 +1,176 @@
 ﻿<div class="container">
 
-    <h4 data-bind="text:displayName"></h4>
+
+    <br />
     <div class="row">
-        <form class="col s12" data-bind="with: feed, visible: step() == 0">
-            <h5>General</h5>
+        <div class="col s12 m12">
+            <div class="card white">
+                <div class="card-title" style="border-bottom: 1px #cfd8dc solid;">
 
-            <div class="input-field col s12">
-                <i class="mdi-action-label prefix"></i>
-                <input id="icon_prefix" type="text" data-bind="value: name, valueUpdate: 'afterkeydown'">
-                <label for="icon_prefix">Feed Name</label>
-            </div>
+                    <ul class="tabs white " style="width: 100%;" id="addFeedTabs">
+                        <li class="tab col s6" style="width: 100%;"><a class="grey-text" href="#test2">Add Feed</a></li>
+                    </ul>
 
-
-
-            <div class="input-field col s12">
-                <i class="mdi-action-lock prefix"></i>
-                <input id="apikey" type="text" data-bind="value: apiKey">
-                <label for="apikey">API Key</label>
-            </div>
-
-            <h5>Binding</h5>
-
-            <div class="input-field col s3">
-                <i class="mdi-file-cloud prefix" data-bind="css: { active: host() ? true : false }"></i>
-                <input id="host" type="text" data-bind="value: host, valueUpdate: 'afterkeydown'">
-                <label for="host" data-bind="css: { active: host() ? true : false }">Host</label>
-            </div>
-            <div class="input-field col s2">
-                <i class="mdi-image-navigate-next prefix" data-bind="css: { active: port() ? true : false }"></i>
-                <input id="port" type="text" data-bind="value: port, valueUpdate: 'afterkeydown'">
-                <label for="port" data-bind="css: { active: port() ? true : false }">Port</label>
-            </div>
-            <div class="input-field col s3">
-                <i class="mdi-image-navigate-next prefix" data-bind="css: { active: virtualDirectory() ? true : false }"></i>
-                <input id="virtualDirectory" type="text" data-bind="value: virtualDirectory, valueUpdate: 'afterkeydown'">
-                <label for="virtualDirectory" data-bind="css: { active: virtualDirectory() ? true : false }">Virtual Directory</label>
-            </div>
-            <div class="input-field col s4">
-                <i class="mdi-image-navigate-next prefix active"></i>
-                <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly">
-                <label for="thisWillCreateUrl" class="active">Full URL</label>
-            </div>
-
-            <h5>Advanced</h5>
-
-            <div class="input-field col s2">
-                <div class="switch" style="height: 40px;">
-                    <label>
-                        Off
-                        <input type="checkbox" data-bind="checked: synchronizeOnStart">
-                        <span class="lever" data-bind="css: { blue: synchronizeOnStart }"></span>
-                        On
-                    </label>
                 </div>
-                <label class="active">Synchronize On Start</label>
-            </div>
+                <div class="card-content black-text">
+                    <div id="test2" class="col s12">
 
-            <div class="input-field col s2">
-                <div class="switch" style="height: 40px;">
-                    <label>
-                        Off
-                        <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
-                        <span class="lever" data-bind="css: { blue: enablePackageFileWatcher }"></span>
-                        On
-                    </label>
-                </div>
-                <label class="active">Enable Package File Watcher</label>
-            </div>
+                        <div class="row">
+                            <form class="col s12" data-bind="with: feed, visible: step() == 0">
+                                <h5>General</h5>
 
-            <div class="input-field col s2">
-                <div class="switch" style="height: 40px;">
-                    <label>
-                        Off
-                        <input type="checkbox" data-bind="checked: groupPackageFilesById">
-                        <span class="lever" data-bind="css: { blue: groupPackageFilesById }"></span>
-                        On
-                    </label>
-                </div>
-                <label class="active">Group Package Files By Id</label>
-            </div>
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-label prefix"></i>
+                                    <input id="icon_prefix" type="text" data-bind="value: name, valueUpdate: 'afterkeydown'">
+                                    <label for="icon_prefix">Feed Name</label>
+                                </div>
 
-            <div class="input-field col s6">
-                <div class="switch" style="height: 40px;">
-                    <label>
-                        Off
-                        <input type="checkbox" data-bind="checked: allowPackageOverwrite">
-                        <span class="lever" data-bind="css: { blue: allowPackageOverwrite }"></span>
-                        On
-                    </label>
-                </div>
-                <label class="active">Allow Package Overwrite</label>
-            </div>
 
-            <div class="row"></div>
 
-            <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.nextClick(); } : null, css: { disabled: $root.feed.isValid() === false, blue: $root.feed.isValid() === true }">Next</a>
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-lock prefix"></i>
+                                    <input id="apikey" type="text" data-bind="value: apiKey">
+                                    <label for="apikey">API Key</label>
+                                </div>
 
-        </form>
+                                <h5>Binding</h5>
 
-        <form class="col s12" data-bind="with: feed, visible: step() == 1">
-            <h5>Summary</h5>
+                                <div class="input-field col s3">
+                                    <i class="mdi-file-cloud prefix" data-bind="css: { active: host() ? true : false }"></i>
+                                    <input id="host" type="text" data-bind="value: host, valueUpdate: 'afterkeydown'">
+                                    <label for="host" data-bind="css: { active: host() ? true : false }">Host</label>
+                                </div>
+                                <div class="input-field col s2">
+                                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: port() ? true : false }"></i>
+                                    <input id="port" type="text" data-bind="value: port, valueUpdate: 'afterkeydown'">
+                                    <label for="port" data-bind="css: { active: port() ? true : false }">Port</label>
+                                </div>
+                                <div class="input-field col s3">
+                                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: virtualDirectory() ? true : false }"></i>
+                                    <input id="virtualDirectory" type="text" data-bind="value: virtualDirectory, valueUpdate: 'afterkeydown'">
+                                    <label for="virtualDirectory" data-bind="css: { active: virtualDirectory() ? true : false }">Virtual Directory</label>
+                                </div>
+                                <div class="input-field col s4">
+                                    <i class="mdi-image-navigate-next prefix active"></i>
+                                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly" style="color: rgba(0, 0, 0, 0.50)">
+                                    <label for="thisWillCreateUrl" class="active">Full URL</label>
+                                </div>
 
-            <table class="bordered hoverable">
-                <tbody>
-                    <tr>
-                        <td>Name</td>
-                        <td data-bind="text: $root.feed().name"></td>
-                    </tr>
-                    <tr>
-                    <tr>
-                        <td>API Key</td>
-                        <td data-bind="text: $root.feed().apiKey"></td>
-                    </tr>
-                    <tr>
-                        <td>URL</td>
-                        <td data-bind="text: $root.thisWillCreateUrl"></td>
-                    </tr>
-                    <tr>
-                        <td>Synchronize On Start</td>
-                        <td data-bind="text: $root.feed().synchronizeOnStart"></td>
-                    </tr>
-                    <tr>
-                        <td>Enable Package File Watcher</td>
-                        <td data-bind="text: $root.feed().enablePackageFileWatcher"></td>
-                    </tr>
-                    <tr>
-                        <td>Group Package Files By Id</td>
-                        <td data-bind="text: $root.feed().groupPackageFilesById"></td>
-                    </tr>
-                    <tr>
-                        <td>Allow Package Overwrite</td>
-                        <td data-bind="text: $root.feed().allowPackageOverwrite"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <br />
-            <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.previousClick(); } : null, css: { disabled: $root.feed.isValid() === false, orange: $root.feed.isValid() === true }">Back</a>
-            <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.createClick(); } : null, css: { disabled: $root.feed.isValid() === false, blue: $root.feed.isValid() === true }">Create</a>
-        </form>
+                                <h5>Advanced</h5>
 
-        <!--<div class="card small">
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: synchronizeOnStart">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': synchronizeOnStart }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Synchronize On Start</label>
+                                </div>
+
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': enablePackageFileWatcher }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Enable Package File Watcher</label>
+                                </div>
+
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: groupPackageFilesById">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': groupPackageFilesById }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Group Package Files By Id</label>
+                                </div>
+
+                                <div class="input-field col s6">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: allowPackageOverwrite">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': allowPackageOverwrite }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Allow Package Overwrite</label>
+                                </div>
+
+                                <div class="row"></div>
+
+                                <a class="waves-effect waves-light btn orange accent-2" data-bind="click: $root.feed.isValid() === true ? function() { $root.nextClick(); } : null, css: { disabled: $root.feed.isValid() === false, 'orange accent-2': $root.feed.isValid() === true }">Next</a>
+                                <a class="waves-effect waves-light btn grey" data-bind="click: $root.cancelClick">Cancel</a>
+                            </form>
+
+                            <form class="col s12" data-bind="with: feed, visible: step() == 1">
+                                <h5>Summary</h5>
+
+                                <table class="bordered hoverable">
+                                    <tbody>
+                                        <tr>
+                                            <td>Name</td>
+                                            <td data-bind="text: $root.feed().name"></td>
+                                        </tr>
+                                        <tr>
+                                        <tr>
+                                            <td>API Key</td>
+                                            <td data-bind="text: $root.feed().apiKey"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>URL</td>
+                                            <td data-bind="text: $root.thisWillCreateUrl"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Synchronize On Start</td>
+                                            <td data-bind="text: $root.feed().synchronizeOnStart"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Enable Package File Watcher</td>
+                                            <td data-bind="text: $root.feed().enablePackageFileWatcher"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Group Package Files By Id</td>
+                                            <td data-bind="text: $root.feed().groupPackageFilesById"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Allow Package Overwrite</td>
+                                            <td data-bind="text: $root.feed().allowPackageOverwrite"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br />
+                                <a class="waves-effect waves-light btn orange accent-2" data-bind="click: $root.feed.isValid() === true ? function() { $root.createClick(); } : null, css: { disabled: $root.feed.isValid() === false, 'orange accent-2': $root.feed.isValid() === true }">Create</a>
+                                <a class="waves-effect waves-light btn grey" data-bind="click: $root.feed.isValid() === true ? function() { $root.previousClick(); } : null, css: { disabled: $root.feed.isValid() === false, grey: $root.feed.isValid() === true }">Back</a>
+
+                            </form>
+
+                            <!--<div class="card small">
             <ul data-bind="foreach: { data: $root.feed.errors, as: 'error'}">
                 <li data-bind="text: error"></li>
             </ul>
         </div>-->
 
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
+
     <div id="addFeedModal" class="modal">
         <div class="modal-content">
             <h4>Creating feed.</h4>

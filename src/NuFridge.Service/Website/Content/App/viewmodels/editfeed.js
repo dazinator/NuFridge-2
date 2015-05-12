@@ -7,12 +7,14 @@
         self.pageCount = ko.observable(1);
         self.currentPage = ko.observable(0);
         self.displayName = ko.observable('');
-        self.pageSize = ko.observable(5);
+        self.pageSize = ko.observable(10);
         self.searchTerm = ko.observable('');
         self.searchTimeout = null;
         self.isSearching = ko.observable(false);
         self.searchSubscription = null;
         self.searchError = ko.observable();
+        self.hiddenPackageRowClassName = 'tablePackageExpandCollapseRow';
+        self.visiblePackageRowClassName = 'tablePackageRow';
         self.searchTerm.subscribe(function () {
             clearTimeout(self.searchTimeout);
             self.searchTimeout = setTimeout(function () {
@@ -42,6 +44,33 @@
         });
     };
 
+    ctor.prototype.expandCollapsePackageRow = function(index) {
+        var self = this;
+
+        var rowClass = self.visiblePackageRowClassName + index;
+        var rowToShowHideClass = self.hiddenPackageRowClassName + index;
+
+        var row = $('.' + rowClass);
+        var rowToShowHide = $('.' + rowToShowHideClass);
+
+        row.css('border', "1px solid #DCDCDC");
+        row.css('border-width', "1px 1px 0px 1px");
+        rowToShowHide.css('border', "1px solid #DCDCDC");
+        rowToShowHide.css('border-width', "0px 1px 1px 1px");
+
+        var updateParentRow = function (rowToShowHide, row) {
+            if (rowToShowHide.is(':visible')) {
+                row.addClass('grey lighten-4');
+            } else {
+                row.removeClass('grey lighten-4');
+                row.css('border', "none");
+                rowToShowHide.css('border', "none");
+            }
+        };
+
+        rowToShowHide.slideToggle('fast', 'swing', updateParentRow.bind(this, rowToShowHide, row));
+    };
+
     ctor.prototype.setThisWillCreateUrlText = function () {
         var self = this;
 
@@ -56,6 +85,10 @@
         }
 
         self.thisWillCreateUrl("http://" + host + port + virtualDirectory);
+    };
+
+    ctor.prototype.cancelClick = function() {
+        router.navigate('#feeds');
     };
 
     ctor.prototype.activate = function () {
@@ -77,7 +110,7 @@
 
                 ko.mapping.fromJS(response, mapping, self.feed);
                 self.setThisWillCreateUrlText();
-                self.displayName('Edit ' + self.feed().name());
+                self.displayName(self.feed().name());
                 self.loadPackages();
             }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
                 router.navigate("#");
@@ -204,7 +237,10 @@
             return;
         }
 
-        $("#editFeedModal").openModal();
+        $("#editFeedModal").openModal({
+            dismissible: false,
+            opacity: .6
+        });
 
         $.ajax({
             url: "/api/Feeds/" + self.feed().id(),

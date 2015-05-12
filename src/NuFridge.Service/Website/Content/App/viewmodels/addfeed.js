@@ -31,6 +31,10 @@
         });
     };
 
+    ctor.prototype.cancelClick = function () {
+        router.navigate('#feeds');
+    };
+
     ctor.prototype.setThisWillCreateUrlText = function() {
         var self = this;
 
@@ -49,6 +53,8 @@
 
     ctor.prototype.compositionComplete = function() {
         router.trigger("router:navigation:viewLoaded", router.activeInstruction(), router);
+
+        $('#addFeedTabs').tabs();
     };
 
     ctor.prototype.nextClick = function () {
@@ -68,7 +74,10 @@
             return;
         }
 
-        $("#addFeedModal").openModal();
+        $("#addFeedModal").openModal({
+            dismissible: false,
+            opacity: .6
+        });
 
         $.ajax({
             url: "/api/Feeds",

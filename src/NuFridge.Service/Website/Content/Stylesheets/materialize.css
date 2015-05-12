@@ -2366,7 +2366,7 @@ span.badge {
   height: 4px;
   display: block;
   width: 100%;
-  background-color: #acece6;
+  background-color: #ffab40;
   border-radius: 2px;
   margin: 0.5rem 0 1rem 0;
   overflow: hidden; }
@@ -2375,14 +2375,14 @@ span.badge {
     background-color: inherit;
     top: 0;
     bottom: 0;
-    background-color: #26a69a;
+    background-color: #5677fc ;
     -webkit-transition: width .3s linear;
     -moz-transition: width .3s linear;
     -o-transition: width .3s linear;
     -ms-transition: width .3s linear;
     transition: width .3s linear; }
   .progress .indeterminate {
-    background-color: #26a69a; }
+    background-color: #5677fc ; }
     .progress .indeterminate:before {
       content: '';
       position: absolute;
@@ -5532,7 +5532,7 @@ small {
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #2196F3 !important;
+    background-color: #ffab40 !important;
     will-change: left, right; }
 
 .tabs .tab {
@@ -6432,7 +6432,7 @@ form p:last-child {
   background-color: #84c7c1; }
 
 .switch label input[type=checkbox]:checked + .lever:after {
-  background-color: #0D47A1; }
+  background-color: #424242 ; }
 
 .switch label .lever {
   content: "";
@@ -8066,28 +8066,32 @@ nav [role="progressbar"][aria-busy="true"]::after {
 
   /* label color */
    .input-field label {
-     color: #2196F3 !important;
+     color: #000000 !important;
    }
    /* label focus color */
    .input-field input:focus + label {
-     color: #2196F3 !important;
+     color: #000000 !important;
    }
    /* label underline focus color */
    .input-field input:focus {
-     border-bottom: 1px solid #0D47A1 !important;
-     box-shadow: 0 1px 0 0 #0D47A1 !important;
+     border-bottom: 1px solid #ffab40 !important;
+     box-shadow: 0 1px 0 0 #ffab40 !important;
    }
    /* valid color */
    .input-field input.valid {
-     border-bottom: 1px solid #0D47A1 !important;
-     box-shadow: 0 1px 0 0 #0D47A1 !important;
+     border-bottom: 1px solid #ffab40 !important;
+     box-shadow: 0 1px 0 0 #ffab40 !important;
    }
    /* invalid color */
    .input-field input.invalid {
-     border-bottom: 1px solid #0D47A1 !important;
-     box-shadow: 0 1px 0 0 #0D47A1 !important; 
+     border-bottom: 1px solid #ffab40 !important;
+     box-shadow: 0 1px 0 0 #ffab40 !important; 
    }
    /* icon prefix focus color */
    .input-field .prefix.active {
-     color: #2196F3 !important;
+     color: #000000 !important;
    }
+
+.tabs .tab a.active {
+    color: #455ede !important;
+}

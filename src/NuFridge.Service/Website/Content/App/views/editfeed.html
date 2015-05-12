@@ -1,24 +1,17 @@
 ﻿<div class="container">
+<br/>
+<div class="row">
+<div class="col s12 m12">
+<div class="card white">
+<div class="card-title" style="border-bottom: 1px #cfd8dc solid;">
 
-    <h4 data-bind="text: displayName()"></h4>
+    <ul class="tabs white " style="width: 100%;" id="viewFeedTabs">
+        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test2">Packages</a></li>
+        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test3">Settings</a></li>
+    </ul>
 
-    <div class="row">
-        <div class="col s12">
-            <ul class="tabs z-depth-1" style="width: 100%;" id="viewFeedTabs">
-                <li class="tab col s3" style="width: 50%;"><a class="blue-text" href="#test2">Packages</a></li>
-                <li class="tab col s3" style="width: 50%;"><a class="blue-text" href="#test3">Settings</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!--<div id="test1" class="col s12">
-        <div class="row">
-            <div class="col s12">
-                <a class="waves-effect waves-light btn blue">Stop</a>
-            </div>
-        </div>
-    </div>-->
-
+</div>
+<div class="card-content black-text">
     <div id="test2" class="col s12">
         <div class="row">
             <div class="col s12">
@@ -31,15 +24,15 @@
                         <label for="search">Search</label>
                     </div>
                     <div class="input-field col s4">
-                        <a class="viewFeedsPageSize btn-flat" data-activates="pageSize" style="float: right;">5 Packages Per Page</a>
+                        <a class="viewFeedsPageSize btn-flat" data-activates="pageSize" style="float: right; border: 1px solid #e0e0e0;">10 Packages Per Page</a>
                         <ul id="pageSize" class="dropdown-content">
-                            <li><a data-bind="click: changePageSize">5</a></li>
+                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 10, 'black-text': pageSize() !== 10, 'white-text': pageSize() === 10 }">10</a></li>
                             <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize">10</a></li>
+                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 20, 'black-text': pageSize() !== 20, 'white-text': pageSize() === 20 }" class="black-text">20</a></li>
                             <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize">20</a></li>
+                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 40, 'black-text': pageSize() !== 40, 'white-text': pageSize() === 40 }" class="black-text">40</a></li>
                             <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize">40</a></li>
+                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 80, 'black-text': pageSize() !== 80, 'white-text': pageSize() === 80 }" class="black-text">80</a></li>
                         </ul>
                     </div>
                 </div>
@@ -58,25 +51,47 @@
                     <blockquote data-bind="text: stackTrace" class="packagesExceptionStackTrace"></blockquote>
                 </div>
                 <!-- /ko -->
-
                 <!-- ko if: pageCount() >= 1 -->
 
-                <ul class="collection" data-bind="foreach: packages">
-                    <li class="collection-item">
-                        <h5 data-bind="text: id"></h5>
-                        <blockquote data-bind="text: description"></blockquote>
-                        <a class="waves-effect waves-light btn blue">Download</a>
-                    </li>
-                </ul>
+                <table class="hoverable">
+                    <thead>
+                    <tr>
+                        <th>Package</th>
+                        <th>Version</th>
+                        <th>Published Date</th>
+                    </tr>
+                    </thead>
+                    <tbody data-bind="foreach: packages">
+                    <tr style="cursor: pointer;" data-bind="click: function(data, event) {$root.expandCollapsePackageRow($index());}, attr: {class: $root.visiblePackageRowClassName + $index() }">
+                        <td data-bind="text: id"></td>
+                        <td data-bind="text: version"></td>
+                        <td data-bind="text: published"></td>
+                    </tr>
+                    <tr style="padding: 0;">
+                        <td colspan="3" style="padding: 0;">
+                            <div style="display: none;" data-bind="attr: {class: $root.hiddenPackageRowClassName + $index() + ' grey lighten-4'  }">
+                                <div style="margin: 0 5px 5px 5px;">
+                                    <blockquote style="margin: 0;" data-bind="text: description"></blockquote>
+                                    <div style="margin: 7px 0px 10px 0px;">
+                                        <a class="waves-effect waves-light btn orange accent-2">Download</a>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
                 <!-- /ko -->
-
                 <!-- ko if: pageCount() > 1 -->
                 <div class="row">
                     <ul class="pagination">
                         <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>
                         <!-- ko foreach: new Array(pageCount()) -->
-                        <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), blue: $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
+                        <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), 'orange accent-2': $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
                         <!-- /ko -->
                         <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
                     </ul>
@@ -88,7 +103,6 @@
             </div>
         </div>
     </div>
-
     <div id="test3" class="col s12">
         <div class="row">
             <form class="col s12" data-bind="with: feed">
@@ -127,7 +141,7 @@
                 </div>
                 <div class="input-field col s4">
                     <i class="mdi-image-navigate-next prefix active"></i>
-                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly">
+                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly" style="color: rgba(0, 0, 0, 0.50)">
                     <label for="thisWillCreateUrl" class="active">Full URL</label>
                 </div>
 
@@ -139,7 +153,7 @@
                         <label>
                             Off
                             <input type="checkbox" data-bind="checked: synchronizeOnStart">
-                            <span class="lever" data-bind="css: { blue: synchronizeOnStart }"></span>
+                            <span class="lever" data-bind="css: { 'grey darken-2': synchronizeOnStart }"></span>
                             On
                         </label>
                     </div>
@@ -151,7 +165,7 @@
                         <label>
                             Off
                             <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
-                            <span class="lever" data-bind="css: { blue: enablePackageFileWatcher }"></span>
+                            <span class="lever" data-bind="css: { 'grey darken-2': enablePackageFileWatcher }"></span>
                             On
                         </label>
                     </div>
@@ -163,7 +177,7 @@
                         <label>
                             Off
                             <input type="checkbox" data-bind="checked: groupPackageFilesById">
-                            <span class="lever" data-bind="css: { blue: groupPackageFilesById }"></span>
+                            <span class="lever" data-bind="css: { 'grey darken-2': groupPackageFilesById }"></span>
                             On
                         </label>
                     </div>
@@ -175,7 +189,7 @@
                         <label>
                             Off
                             <input type="checkbox" data-bind="checked: allowPackageOverwrite">
-                            <span class="lever" data-bind="css: { blue: allowPackageOverwrite }"></span>
+                            <span class="lever" data-bind="css: { 'grey darken-2': allowPackageOverwrite }"></span>
                             On
                         </label>
                     </div>
@@ -184,34 +198,56 @@
 
                 <div class="row"></div>
 
-                <a class="waves-effect waves-light btn blue" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, blue: $root.feed.isValid() === true }">Update</a>
-                <a class="waves-effect waves-light btn red" data-bind="click: $root.feed.isValid() === true ? function() { $root.deleteClick(); } : null, css: { disabled: $root.feed.isValid() === false, red: $root.feed.isValid() === true }">Delete</a>
+                <a class="waves-effect waves-light btn orange accent-2" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, 'orange accent-2': $root.feed.isValid() === true }">Update</a>
+                <a class="waves-effect waves-light btn grey" data-bind="click: $root.cancelClick">Cancel</a>
+                <a class="waves-effect waves-light btn red" style="float: right;" data-bind="click: $root.feed.isValid() === true ? function() { $root.deleteClick(); } : null, css: { disabled: $root.feed.isValid() === false, red: $root.feed.isValid() === true }">Delete</a>
             </form>
 
         </div>
     </div>
 
+</div>
+</div>
+</div>
+</div>
 
-    <div id="editFeedModal" class="modal">
-        <div class="modal-content">
-            <h4>Saving feed.</h4>
-            <p>Please wait while the feed is restarted.</p>
+
+
+<!--<div id="test1" class="col s12">
+    <div class="row">
+        <div class="col s12">
+            <a class="waves-effect waves-light btn blue">Stop</a>
         </div>
     </div>
-    <div id="deleteFeedModal" class="modal" style="width: 700px;">
-        <div class="modal-content">
-            <h4>Deleting feed.</h4>
-            <p>Please wait while the feed is deleted.</p>
+</div>-->
+
+
+
+
+<div id="editFeedModal" class="modal">
+    <div class="modal-content">
+        <h4>Saving feed.</h4>
+        <p>Please wait while the feed is restarted.</p>
+    </div>
+</div>
+<div id="deleteFeedModal" class="modal" style="width: 700px;">
+    <div class="modal-content">
+        <h4>Deleting feed.</h4>
+        <p>Please wait while the feed is deleted.</p>
+    </div>
+</div>
+<div id="deleteFeedConfirmationModal" class="modal" style="width: 700px;">
+    <div class="modal-content">
+        <h4>Are you sure you want to delete this feed?</h4>
+        <p>NuGet Packages will not be deleted automatically.</p>
+    </div>
+    <div class="modal-footer">
+        <div style="float: right;">
+            <a class="modal-action modal-close waves-effect waves-light btn red white-text" style="float: none;" data-bind="click: $root.confirmDeleteClick">Delete</a>
+            <a class="modal-action modal-close waves-effect waves-light btn grey" style="float: none;">Cancel</a>
+
+
         </div>
     </div>
-    <div id="deleteFeedConfirmationModal" class="modal" style="width: 700px;">
-        <div class="modal-content">
-            <h4>Are you sure you want to delete this feed?</h4>
-            <p>NuGet Packages will not be deleted automatically.</p>
-        </div>
-        <div class="modal-footer">
-            <a class=" modal-action modal-close waves-effect btn red white-text" data-bind="click: $root.confirmDeleteClick">Delete</a>
-            <a class=" modal-action modal-close waves-effect btn-flat">Cancel</a>
-        </div>
-    </div>
+</div>
 </div>
