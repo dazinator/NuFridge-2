@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using NuFridge.Service.Diagnostics.Win;
@@ -27,6 +29,17 @@ namespace NuFridge.Service.Diagnostics
         public string WorkingSetSize { get; set; }
         public string ProcessName { get; set; }
         #endregion
+
+        public string FreeDiskSpace { get; set; }
+
+        [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Auto)]
+[return: MarshalAs(UnmanagedType.Bool)]
+static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
+   out ulong lpFreeBytesAvailable,
+   out ulong lpTotalNumberOfBytes,
+   out ulong lpTotalNumberOfFreeBytes);
+
+
 
         public SystemInfo(Win32_ComputerSystem system, Win32_Process process)
         {
@@ -64,6 +77,31 @@ namespace NuFridge.Service.Diagnostics
 
                 Uptime = formatted;
             }
+
+            ulong FreeBytesAvailable;
+            ulong TotalNumberOfBytes;
+            ulong TotalNumberOfFreeBytes;
+
+            bool success = GetDiskFreeSpaceEx(Directory.GetCurrentDirectory(),
+                                              out FreeBytesAvailable,
+                                              out TotalNumberOfBytes,
+                                              out TotalNumberOfFreeBytes);
+
+            if (success)
+            {
+                FreeDiskSpace = BytesToString(FreeBytesAvailable);
+            }
+        }
+
+        private static String BytesToString(ulong byteCount)
+        {
+            string[] suf = { " B", " KB", " MB", " GB", " TB", " PB", " EB" };
+            if (byteCount == 0)
+                return "0" + suf[0];
+            long bytes = Math.Abs((long)byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign((long)byteCount) * num).ToString("0.00") + suf[place];
         }
     }
 }

@@ -97,7 +97,7 @@
 
         if (router.activeInstruction().params.length === 1) {
             $.ajax({
-                url: "/api/Feeds/" + router.activeInstruction().params[0],
+                url: "/api/feeds/" + router.activeInstruction().params[0],
                 cache: false,
                 dataType: 'json'
             }).then(function (response) {
@@ -119,6 +119,42 @@
         } else {
             alert("This scenario is not handled.");
         }
+    };
+
+    ctor.prototype.uploadConfirmClick = function() {
+        var self = this;
+
+        $("#uploadPackageModal").closeModal({
+            complete: function () {
+                setTimeout(function () {
+                    $("#uploadPackageWaitModal").openModal({
+                        dismissible: false,
+                        opacity: .6
+                    });
+
+                    var formElement = document.getElementById("uploadForm");
+
+                    var formData = new FormData(formElement);
+
+                    $.ajax({
+                        url: '/api/packages/' + self.feed().id(),
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false
+                    }).then(function (response) {
+                        self.loadPackages(self.currentPage());
+                        Materialize.toast("Successfully uploaded the '" + $(".file-path").val() + "' package.", 7500);
+                        $("#uploadPackageWaitModal").closeModal();
+                    }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+                        Materialize.toast(errorThrown, 7500);
+                       $("#uploadPackageWaitModal").closeModal();
+                    });
+
+
+                }, 1);
+            }
+        });
     };
 
     ctor.prototype.loadPackages = function (pageNumber) {
@@ -143,6 +179,8 @@
         }
 
         self.isSearching(true);
+
+        self.packages.removeAll();
 
         if (!pageNumber) {
             pageNumber = 0;
@@ -183,6 +221,32 @@
                 collapsedHeight: 65,
                 embedCSS: true
             });
+        });
+    };
+
+    ctor.prototype.uploadClick = function () {
+        var self = this;
+
+        $("#uploadPackageModal").openModal({
+            dismissible: false,
+            opacity: .6
+        });
+
+        $("#fileToUpload").val("");
+        $(".file-path").val("");
+
+        $("#fileToUpload").on('change', function() {
+            $(".file-path").val($(this).val().split('\\').pop());
+        });
+
+        $("#confirmUploadButton").on('click', function (event) {
+            if ($(".file-path").val()) {
+                if ($(".file-path").val().match(/.nupkg/)) {
+                    self.uploadConfirmClick();
+                } else {
+                    Materialize.toast('Only NuGet packages can be uploaded (*.nupkg).', 7500);
+                }
+            }
         });
     };
 

@@ -1,241 +1,248 @@
 ﻿<div class="container">
-<br/>
-<div class="row">
-<div class="col s12 m12">
-<div class="card white">
-<div class="card-title" style="border-bottom: 1px #cfd8dc solid;">
+    <br />
+    <div class="row">
+        <div class="col s12 m12">
+            <div class="card white">
+                <div class="card-title" style="border-bottom: 1px #cfd8dc solid;">
 
-    <ul class="tabs white " style="width: 100%;" id="viewFeedTabs">
-        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test2">Packages</a></li>
-        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test3">Settings</a></li>
-    </ul>
+                    <ul class="tabs white " style="width: 100%;" id="viewFeedTabs">
+                        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test2">Packages</a></li>
+                        <li class="tab col s6" style="width: 50%;"><a class="grey-text" href="#test3">Settings</a></li>
+                    </ul>
 
-</div>
-<div class="card-content black-text">
-    <div id="test2" class="col s12">
-        <div class="row">
-            <div class="col s12">
-
-                <div class="row">
-
-                    <div class="input-field col s8">
-                        <i class="mdi-action-search prefix"></i>
-                        <input id="search" type="text" data-bind="value: searchTerm, valueUpdate: 'afterkeydown'">
-                        <label for="search">Search</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <a class="viewFeedsPageSize btn-flat" data-activates="pageSize" style="float: right; border: 1px solid #e0e0e0;">10 Packages Per Page</a>
-                        <ul id="pageSize" class="dropdown-content">
-                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 10, 'black-text': pageSize() !== 10, 'white-text': pageSize() === 10 }">10</a></li>
-                            <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 20, 'black-text': pageSize() !== 20, 'white-text': pageSize() === 20 }" class="black-text">20</a></li>
-                            <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 40, 'black-text': pageSize() !== 40, 'white-text': pageSize() === 40 }" class="black-text">40</a></li>
-                            <li class="divider"></li>
-                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 80, 'black-text': pageSize() !== 80, 'white-text': pageSize() === 80 }" class="black-text">80</a></li>
-                        </ul>
-                    </div>
                 </div>
+                <div class="card-content black-text">
+                    <div id="test2" class="col s12">
+                        <div class="row">
+                            <div class="col s12">
 
-                <div class="progress" data-bind="visible: isSearching">
-                    <div class="indeterminate"></div>
-                </div>
+                                <div class="row">
 
-                <!-- ko if: searchError() -->
-                <div data-bind="with: searchError">
-                    <h5>Message</h5>
-                    <blockquote data-bind="text: message"></blockquote>
-                    <h5>Exception</h5>
-                    <blockquote data-bind="text: exceptionMessage"></blockquote>
-                    <h5>Stack Trace</h5>
-                    <blockquote data-bind="text: stackTrace" class="packagesExceptionStackTrace"></blockquote>
-                </div>
-                <!-- /ko -->
-                <!-- ko if: pageCount() >= 1 -->
-
-                <table class="hoverable">
-                    <thead>
-                    <tr>
-                        <th>Package</th>
-                        <th>Version</th>
-                        <th>Published Date</th>
-                    </tr>
-                    </thead>
-                    <tbody data-bind="foreach: packages">
-                    <tr style="cursor: pointer;" data-bind="click: function(data, event) {$root.expandCollapsePackageRow($index());}, attr: {class: $root.visiblePackageRowClassName + $index() }">
-                        <td data-bind="text: id"></td>
-                        <td data-bind="text: version"></td>
-                        <td data-bind="text: published"></td>
-                    </tr>
-                    <tr style="padding: 0;">
-                        <td colspan="3" style="padding: 0;">
-                            <div style="display: none;" data-bind="attr: {class: $root.hiddenPackageRowClassName + $index() + ' grey lighten-4'  }">
-                                <div style="margin: 0 5px 5px 5px;">
-                                    <blockquote style="margin: 0;" data-bind="text: description"></blockquote>
-                                    <div style="margin: 7px 0px 10px 0px;">
-                                        <a class="waves-effect waves-light btn orange accent-2">Download</a>
+                                    <div class="input-field col s6">
+                                        <i class="mdi-action-search prefix"></i>
+                                        <input id="search" type="text" data-bind="value: searchTerm, valueUpdate: 'afterkeydown'">
+                                        <label for="search">Search</label>
                                     </div>
+                                    <div class="input-field col s6">
+                                        <a class="viewFeedsPageSize btn-flat" data-activates="pageSize" style="margin-top: 12px; border: 1px solid #e0e0e0;">10 Packages Per Page</a>
+                                        <ul id="pageSize" class="dropdown-content">
+                                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 10, 'black-text': pageSize() !== 10, 'white-text': pageSize() === 10 }">10</a></li>
+                                            <li class="divider"></li>
+                                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 20, 'black-text': pageSize() !== 20, 'white-text': pageSize() === 20 }" class="black-text">20</a></li>
+                                            <li class="divider"></li>
+                                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 40, 'black-text': pageSize() !== 40, 'white-text': pageSize() === 40 }" class="black-text">40</a></li>
+                                            <li class="divider"></li>
+                                            <li><a data-bind="click: changePageSize, css: { 'orange accent-2': pageSize() == 80, 'black-text': pageSize() !== 80, 'white-text': pageSize() === 80 }" class="black-text">80</a></li>
+                                        </ul>
+                                        <a class="waves-effect waves-light btn-flat" style="margin-top: 12px;border: 1px solid #e0e0e0;" data-bind="click: $root.uploadClick">Upload Package</a>
+                                    </div>
+                                </div>
 
+                                <div class="progress" data-bind="visible: isSearching">
+                                    <div class="indeterminate"></div>
+                                </div>
+
+                                <!-- ko if: searchError() -->
+                                <div data-bind="with: searchError">
+                                    <h5>Message</h5>
+                                    <blockquote data-bind="text: message"></blockquote>
+                                    <h5>Exception</h5>
+                                    <blockquote data-bind="text: exceptionMessage"></blockquote>
+                                    <h5>Stack Trace</h5>
+                                    <blockquote data-bind="text: stackTrace" class="packagesExceptionStackTrace"></blockquote>
+                                </div>
+                                <!-- /ko -->
+                                <!-- ko if: pageCount() >= 1 -->
+
+                                <table class="hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th>Package</th>
+                                            <th>Version</th>
+                                            <th>Published Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: packages">
+                                        <tr style="cursor: pointer;" data-bind="click: function(data, event) {$root.expandCollapsePackageRow($index());}, attr: {class: $root.visiblePackageRowClassName + $index() }">
+                                            <td data-bind="text: id"></td>
+                                            <td data-bind="text: version"></td>
+                                            <td data-bind="text: published"></td>
+                                        </tr>
+                                        <tr style="padding: 0;">
+                                            <td colspan="3" style="padding: 0;">
+                                                <div style="display: none;  margin-right: -1px;" data-bind="attr: {class: $root.hiddenPackageRowClassName + $index() + ' grey lighten-4'  }">
+                                                    <div style="margin: 0 5px 5px 5px;">
+                                                        <blockquote style="margin: 0;" data-bind="text: description"></blockquote>
+                                                        <div style="margin: 7px 0px 10px 0px;">
+                                                            <a class="waves-effect waves-light btn orange accent-2">Download</a>
+                                                        </div>
+
+                                                    </div>
+
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <!-- /ko -->
+                                <!-- ko if: pageCount() > 1 -->
+                                <div class="row">
+                                    <ul class="pagination">
+                                        <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>
+                                        <!-- ko foreach: new Array(pageCount()) -->
+                                        <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), 'orange accent-2': $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
+                                        <!-- /ko -->
+                                        <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
+                                    </ul>
+                                </div>
+                                <!-- /ko -->
+                                <!-- ko if: pageCount() == 0 -->
+                                <p>There are no packages in the feed.</p>
+                                <!-- /ko -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="test3" class="col s12">
+                        <div class="row">
+                            <form class="col s12" data-bind="with: feed">
+                                <h5>General</h5>
+
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-label prefix" data-bind="css: { active: name() ? true : false }"></i>
+                                    <input id="icon_prefix" type="text" data-bind="value: name, valueUpdate: 'afterkeydown'">
+                                    <label for="icon_prefix" data-bind="css: { active: name() ? true : false }">Feed Name</label>
                                 </div>
 
 
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
 
-                <!-- /ko -->
-                <!-- ko if: pageCount() > 1 -->
-                <div class="row">
-                    <ul class="pagination">
-                        <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>
-                        <!-- ko foreach: new Array(pageCount()) -->
-                        <li class="waves-effect" data-bind="css: { active: $root.currentPage() == $index(), 'orange accent-2': $root.currentPage() == $index() }, click: function () { $root.goToPage($index()); }"><a data-bind="    text: $index() + 1"></a></li>
-                        <!-- /ko -->
-                        <li data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }"><a data-bind="    click: $root.nextPage"><i class="mdi-navigation-chevron-right"></i></a></li>
-                    </ul>
+                                <div class="input-field col s12">
+                                    <i class="mdi-action-lock prefix" data-bind="css: { active: apiKey() ? true : false }"></i>
+                                    <input id="apikey" type="text" data-bind="value: apiKey">
+                                    <label for="apikey" data-bind="css: { active: apiKey() ? true : false }">API Key</label>
+                                </div>
+
+                                <h5>Binding</h5>
+
+                                <div class="input-field col s3">
+                                    <i class="mdi-file-cloud prefix" data-bind="css: { active: host() ? true : false }"></i>
+                                    <input id="host" type="text" data-bind="value: host, valueUpdate: 'afterkeydown'">
+                                    <label for="host" data-bind="css: { active: host() ? true : false }">Host</label>
+                                </div>
+                                <div class="input-field col s2">
+                                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: port() ? true : false }"></i>
+                                    <input id="port" type="text" data-bind="value: port, valueUpdate: 'afterkeydown'">
+                                    <label for="port" data-bind="css: { active: port() ? true : false }">Port</label>
+                                </div>
+                                <div class="input-field col s3">
+                                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: virtualDirectory() ? true : false }"></i>
+                                    <input id="virtualDirectory" type="text" data-bind="value: virtualDirectory, valueUpdate: 'afterkeydown'">
+                                    <label for="virtualDirectory" data-bind="css: { active: virtualDirectory() ? true : false }">Virtual Directory</label>
+                                </div>
+                                <div class="input-field col s4">
+                                    <i class="mdi-image-navigate-next prefix active"></i>
+                                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly" style="color: rgba(0, 0, 0, 0.50)">
+                                    <label for="thisWillCreateUrl" class="active">Full URL</label>
+                                </div>
+
+
+                                <h5>Advanced</h5>
+
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: synchronizeOnStart">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': synchronizeOnStart }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Synchronize On Start</label>
+                                </div>
+
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': enablePackageFileWatcher }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Enable Package File Watcher</label>
+                                </div>
+
+                                <div class="input-field col s2">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: groupPackageFilesById">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': groupPackageFilesById }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Group Package Files By Id</label>
+                                </div>
+
+                                <div class="input-field col s6">
+                                    <div class="switch" style="height: 40px;">
+                                        <label>
+                                            Off
+                                            <input type="checkbox" data-bind="checked: allowPackageOverwrite">
+                                            <span class="lever" data-bind="css: { 'grey darken-2': allowPackageOverwrite }"></span>
+                                            On
+                                        </label>
+                                    </div>
+                                    <label class="active">Allow Package Overwrite</label>
+                                </div>
+
+                                <div class="row"></div>
+
+                                <a class="waves-effect waves-light btn orange accent-2" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, 'orange accent-2': $root.feed.isValid() === true }">Update</a>
+                                <a class="waves-effect waves-light btn grey" data-bind="click: $root.cancelClick">Cancel</a>
+                                <a class="waves-effect waves-light btn red" style="float: right;" data-bind="click: $root.feed.isValid() === true ? function() { $root.deleteClick(); } : null, css: { disabled: $root.feed.isValid() === false, red: $root.feed.isValid() === true }">Delete</a>
+                            </form>
+
+                        </div>
+                    </div>
+
                 </div>
-                <!-- /ko -->
-                <!-- ko if: pageCount() == 0 -->
-                <p>There are no packages in the feed.</p>
-                <!-- /ko -->
             </div>
         </div>
     </div>
-    <div id="test3" class="col s12">
+
+
+
+    <!--<div id="test1" class="col s12">
         <div class="row">
-            <form class="col s12" data-bind="with: feed">
-                <h5>General</h5>
-
-                <div class="input-field col s12">
-                    <i class="mdi-action-label prefix" data-bind="css: { active: name() ? true : false }"></i>
-                    <input id="icon_prefix" type="text" data-bind="value: name, valueUpdate: 'afterkeydown'">
-                    <label for="icon_prefix" data-bind="css: { active: name() ? true : false }">Feed Name</label>
-                </div>
+            <div class="col s12">
+                <a class="waves-effect waves-light btn blue">Stop</a>
+            </div>
+        </div>
+    </div>-->
 
 
 
-                <div class="input-field col s12">
-                    <i class="mdi-action-lock prefix" data-bind="css: { active: apiKey() ? true : false }"></i>
-                    <input id="apikey" type="text" data-bind="value: apiKey">
-                    <label for="apikey" data-bind="css: { active: apiKey() ? true : false }">API Key</label>
-                </div>
 
-                <h5>Binding</h5>
-
-                <div class="input-field col s3">
-                    <i class="mdi-file-cloud prefix" data-bind="css: { active: host() ? true : false }"></i>
-                    <input id="host" type="text" data-bind="value: host, valueUpdate: 'afterkeydown'">
-                    <label for="host" data-bind="css: { active: host() ? true : false }">Host</label>
-                </div>
-                <div class="input-field col s2">
-                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: port() ? true : false }"></i>
-                    <input id="port" type="text" data-bind="value: port, valueUpdate: 'afterkeydown'">
-                    <label for="port" data-bind="css: { active: port() ? true : false }">Port</label>
-                </div>
-                <div class="input-field col s3">
-                    <i class="mdi-image-navigate-next prefix" data-bind="css: { active: virtualDirectory() ? true : false }"></i>
-                    <input id="virtualDirectory" type="text" data-bind="value: virtualDirectory, valueUpdate: 'afterkeydown'">
-                    <label for="virtualDirectory" data-bind="css: { active: virtualDirectory() ? true : false }">Virtual Directory</label>
-                </div>
-                <div class="input-field col s4">
-                    <i class="mdi-image-navigate-next prefix active"></i>
-                    <input id="thisWillCreateUrl" type="text" data-bind="value: $root.thisWillCreateUrl" readonly="readonly" style="color: rgba(0, 0, 0, 0.50)">
-                    <label for="thisWillCreateUrl" class="active">Full URL</label>
-                </div>
-
-
-                <h5>Advanced</h5>
-
-                <div class="input-field col s2">
-                    <div class="switch" style="height: 40px;">
-                        <label>
-                            Off
-                            <input type="checkbox" data-bind="checked: synchronizeOnStart">
-                            <span class="lever" data-bind="css: { 'grey darken-2': synchronizeOnStart }"></span>
-                            On
-                        </label>
-                    </div>
-                    <label class="active">Synchronize On Start</label>
-                </div>
-
-                <div class="input-field col s2">
-                    <div class="switch" style="height: 40px;">
-                        <label>
-                            Off
-                            <input type="checkbox" data-bind="checked: enablePackageFileWatcher">
-                            <span class="lever" data-bind="css: { 'grey darken-2': enablePackageFileWatcher }"></span>
-                            On
-                        </label>
-                    </div>
-                    <label class="active">Enable Package File Watcher</label>
-                </div>
-
-                <div class="input-field col s2">
-                    <div class="switch" style="height: 40px;">
-                        <label>
-                            Off
-                            <input type="checkbox" data-bind="checked: groupPackageFilesById">
-                            <span class="lever" data-bind="css: { 'grey darken-2': groupPackageFilesById }"></span>
-                            On
-                        </label>
-                    </div>
-                    <label class="active">Group Package Files By Id</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <div class="switch" style="height: 40px;">
-                        <label>
-                            Off
-                            <input type="checkbox" data-bind="checked: allowPackageOverwrite">
-                            <span class="lever" data-bind="css: { 'grey darken-2': allowPackageOverwrite }"></span>
-                            On
-                        </label>
-                    </div>
-                    <label class="active">Allow Package Overwrite</label>
-                </div>
-
-                <div class="row"></div>
-
-                <a class="waves-effect waves-light btn orange accent-2" data-bind="click: $root.feed.isValid() === true ? function() { $root.updateClick(); } : null, css: { disabled: $root.feed.isValid() === false, 'orange accent-2': $root.feed.isValid() === true }">Update</a>
-                <a class="waves-effect waves-light btn grey" data-bind="click: $root.cancelClick">Cancel</a>
-                <a class="waves-effect waves-light btn red" style="float: right;" data-bind="click: $root.feed.isValid() === true ? function() { $root.deleteClick(); } : null, css: { disabled: $root.feed.isValid() === false, red: $root.feed.isValid() === true }">Delete</a>
-            </form>
-
+    <div id="editFeedModal" class="modal" style="width: 700px;">
+        <div class="modal-content">
+            <h4>Saving feed.</h4>
+            <p>Please wait while the feed is restarted.</p>
         </div>
     </div>
-
-</div>
-</div>
-</div>
-</div>
-
-
-
-<!--<div id="test1" class="col s12">
-    <div class="row">
-        <div class="col s12">
-            <a class="waves-effect waves-light btn blue">Stop</a>
-        </div>
-    </div>
-</div>-->
-
-
-
-
-<div id="editFeedModal" class="modal">
-    <div class="modal-content">
-        <h4>Saving feed.</h4>
-        <p>Please wait while the feed is restarted.</p>
-    </div>
-</div>
 <div id="deleteFeedModal" class="modal" style="width: 700px;">
     <div class="modal-content">
         <h4>Deleting feed.</h4>
         <p>Please wait while the feed is deleted.</p>
     </div>
 </div>
+    <div id="uploadPackageWaitModal" class="modal" style="width: 700px;">
+        <div class="modal-content">
+            <h4>Uploading package.</h4>
+            <p>Please wait while the package is uploaded.</p>
+        </div>
+    </div>
 <div id="deleteFeedConfirmationModal" class="modal" style="width: 700px;">
     <div class="modal-content">
         <h4>Are you sure you want to delete this feed?</h4>
@@ -245,9 +252,28 @@
         <div style="float: right;">
             <a class="modal-action modal-close waves-effect waves-light btn red white-text" style="float: none;" data-bind="click: $root.confirmDeleteClick">Delete</a>
             <a class="modal-action modal-close waves-effect waves-light btn grey" style="float: none;">Cancel</a>
-
-
         </div>
     </div>
 </div>
+    <div id="uploadPackageModal" class="modal" style="width: 700px;">
+        <div class="modal-content">
+            <h4>Upload Package</h4>
+            <form id="uploadForm" name="uploadForm">
+                <div class="file-field input-field">
+                    <input class="file-path" type="text" style="margin-left: 160px; width: calc(100% - 160px);" />
+                    <div class="btn white black-text">
+                        <span>Select File</span>
+                        <input type="file" name="fileToUpload" id="fileToUpload">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <div style="float: right;">
+                <a class="modal-action modal-close waves-effect waves-light btn orange accent-2" id="confirmUploadButton" style="float: none;">Upload</a>
+                <a class="modal-action modal-close waves-effect waves-light btn grey" style="float: none;">Cancel</a>
+            </div>
+        </div>
+    </div>
 </div>
+\

@@ -19,12 +19,14 @@ namespace NuFridge.Service.Website
         private readonly HttpConfiguration _configuration;
         private readonly Lazy<Dictionary<string, HttpControllerDescriptor>> _controllers;
         private readonly HashSet<string> _duplicates;
+        private readonly Assembly _excludeAssembly;
 
-        public NamespaceHttpControllerSelector(HttpConfiguration config)
+        public NamespaceHttpControllerSelector(HttpConfiguration config, Assembly excludeAssembly)
         {
             _configuration = config;
             _duplicates = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             _controllers = new Lazy<Dictionary<string, HttpControllerDescriptor>>(InitializeControllerDictionary);
+            _excludeAssembly = excludeAssembly;
         }
 
         private Dictionary<string, HttpControllerDescriptor> InitializeControllerDictionary()
@@ -34,9 +36,8 @@ namespace NuFridge.Service.Website
             IAssembliesResolver assembliesResolver = _configuration.Services.GetAssembliesResolver();
             IHttpControllerTypeResolver controllersResolver = _configuration.Services.GetHttpControllerTypeResolver();
 
-            var currentAssembly = Assembly.GetExecutingAssembly().FullName;
 
-            IEnumerable<Type> controllerTypes = controllersResolver.GetControllerTypes(assembliesResolver).Where(ct => ct.Assembly.FullName == currentAssembly);
+            IEnumerable<Type> controllerTypes = controllersResolver.GetControllerTypes(assembliesResolver).Where(ct => ct.Assembly.FullName != _excludeAssembly.FullName);
 
             foreach (Type t in controllerTypes)
             {
@@ -61,7 +62,14 @@ namespace NuFridge.Service.Website
 
         public virtual string GetControllerName(IHttpRouteData routeData)
         {
-            var attributedRoutesData = routeData.GetSubRoutes();
+
+            var attributedRoutesData = (routeData.GetSubRoutes() ?? new List<IHttpRouteData>()).ToList();
+            if (!attributedRoutesData.Any())
+            {
+                var fullName = routeData.Values["controller"].ToString();
+                return string.Format("{0}Controller", fullName);
+            }
+
             var subRouteData = attributedRoutesData.FirstOrDefault();
 
             var actions = (HttpActionDescriptor[])subRouteData.Route.DataTokens["actions"];
@@ -71,6 +79,7 @@ namespace NuFridge.Service.Website
 
         public HttpControllerDescriptor SelectController(HttpRequestMessage request)
         {
+
             if (request == null)
             {
                 throw new HttpResponseException(HttpStatusCode.BadRequest);

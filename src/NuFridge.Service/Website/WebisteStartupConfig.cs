@@ -38,7 +38,7 @@ namespace NuFridge.Service.Website
             // Configure Web API for self-host. 
             HttpConfiguration config = new HttpConfiguration();
 
-            config.Services.Replace(typeof(IHttpControllerSelector), new NamespaceHttpControllerSelector(config));
+            config.Services.Replace(typeof(IHttpControllerSelector), new NamespaceHttpControllerSelector(config, Assembly.Load("NuGet.Lucene.Web")));
 
 
             config.MapHttpAttributeRoutes();

@@ -14,7 +14,8 @@
             threadCount: ko.observable(),
             workingSetSize: ko.observable(),
             processName: ko.observable(),
-            uptime: ko.observable()
+            uptime: ko.observable(),
+            freeDiskSpace: ko.observable()
         }, config);
 
 
