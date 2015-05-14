@@ -67,7 +67,9 @@ namespace NuFridge.Service.Feeds
                 var baseException = ex.GetBaseException();
 
                 Logger.Info("Exception: " + baseException.Message);
-
+                
+                Dispose();
+                
                 return false;
             }
             finally

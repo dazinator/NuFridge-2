@@ -319,7 +319,7 @@
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 $("#editFeedModal").closeModal();
-                Materialize.toast(errorThrown, 7500);
+                Materialize.toast(JSON.parse(xmlHttpRequest.responseText).message, 7500);
             }
         });
     };

@@ -117,11 +117,16 @@ namespace NuFridge.Service.Website.Controllers
                 }
             }
 
+
             FeedManager.Instance().Stop(feed);
 
             FeedRepository.Update(feed);
 
-            FeedManager.Instance().Start(feed);
+            if (!FeedManager.Instance().Start(feed))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "The NuGet feed was successfully saved but failed to start.");
+            }
+
 
             return Request.CreateResponse(HttpStatusCode.OK, feed);
         }
