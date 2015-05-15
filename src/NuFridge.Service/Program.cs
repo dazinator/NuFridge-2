@@ -111,8 +111,6 @@ namespace NuFridge.Service
     .ForMember(x => x.LastName, o => o.MapFrom(s => s.LastName))
     .ForMember(x => x.UserName, o => o.MapFrom(s => s.UserName));
 
-            Mapper.CreateMap<IPackage, DtoPackage>();
-
             try
             {
                 FeedManager.Instance().StartAll(config);

@@ -89,7 +89,6 @@
     <Compile Include="Model\ApplicationUser.cs" />
     <Compile Include="Model\ApplicationUserGroup.cs" />
     <Compile Include="Model\Dto\DtoApplicationUser.cs" />
-    <Compile Include="Model\Dto\DtoPackage.cs" />
     <Compile Include="Model\Feed.cs" />
     <Compile Include="Model\IEntityBase.cs" />
     <Compile Include="Program.cs" />
@@ -105,6 +104,7 @@
     <Compile Include="Website\Controllers\DashboardController.cs" />
     <Compile Include="Website\Controllers\DiagnosticsController.cs" />
     <Compile Include="Website\Controllers\PackagesController.cs" />
+    <Compile Include="Website\Controllers\Responses\PackageQueryResponse.cs" />
     <Compile Include="Website\CustomDirectRouteProvider.cs" />
     <Compile Include="Website\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Website\NamespaceHttpControllerSelector.cs" />
