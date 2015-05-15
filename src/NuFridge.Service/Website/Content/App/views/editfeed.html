@@ -46,13 +46,17 @@
                                 <div data-bind="with: searchError">
                                     <h5>Message</h5>
                                     <blockquote data-bind="text: message"></blockquote>
+                                    <!-- ko if: exceptionMessage -->
                                     <h5>Exception</h5>
                                     <blockquote data-bind="text: exceptionMessage"></blockquote>
+                                    <!-- /ko -->
+                                    <!-- ko if: stackTrace -->
                                     <h5>Stack Trace</h5>
                                     <blockquote data-bind="text: stackTrace" class="packagesExceptionStackTrace"></blockquote>
+                                    <!-- /ko -->
                                 </div>
                                 <!-- /ko -->
-                                <!-- ko if: pageCount() >= 1 -->
+                                <!-- ko if: pageCount() >= 1 && !searchError() -->
 
                                 <table class="hoverable">
                                     <thead>
@@ -87,7 +91,7 @@
                                 </table>
 
                                 <!-- /ko -->
-                                <!-- ko if: pageCount() > 1 -->
+                                <!-- ko if: pageCount() > 1 && !searchError() -->
                                 <div class="row">
                                     <ul class="pagination">
                                         <li data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }"><a data-bind="    click: $root.previousPage"><i class="mdi-navigation-chevron-left"></i></a></li>

@@ -44,7 +44,7 @@ namespace NuFridge.Service.Feeds
 
             var config = new ServiceConfiguration();
 
-            string feedUrl = feed.GetUrl();
+            string feedUrl = feed.GetBaseUrl();
 
             var feedDirectory = Path.Combine(config.FeedsHomePath, feed.Id);
 

@@ -18,7 +18,17 @@
         public bool GroupPackageFilesById { get; set; }
         public bool AllowPackageOverwrite { get; set; }
 
-        public string GetUrl()
+        public string GetODataUrl()
+        {
+            return string.Format("{0}api/odata", GetBaseUrl());
+        }
+
+        public string GetPackagesUrl()
+        {
+            return string.Format("{0}api/packages", GetBaseUrl());
+        }
+
+        public string GetBaseUrl()
         {
 
             string port;

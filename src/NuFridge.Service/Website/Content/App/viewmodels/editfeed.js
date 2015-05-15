@@ -210,9 +210,19 @@
             ko.mapping.fromJS(response.results, mapping, self.packages);
             self.isSearching(false);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            var parsedError = JSON.parse(xmlHttpRequest.responseText);
+            if (xmlHttpRequest.responseText) {
+                var parsedError = JSON.parse(xmlHttpRequest.responseText);
+                self.searchError(parsedError);
+            } else {
+                self.searchError({
+                    message: "There was a problem querying the NuGet feed.",
+                    stackTrace: null,
+                    exceptionMessage: null
+                });
+            }
+         
             self.isSearching(false);
-            self.searchError(parsedError);
+        
 
             $('.packagesExceptionStackTrace').readmore({
                 speed: 75,
