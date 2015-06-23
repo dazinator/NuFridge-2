@@ -98,7 +98,10 @@
 
         var searchOptions = {
             apiSettings: {
-                url: api.search_feeds + '/?name={query}'
+                url: api.search_feeds + '/?name={query}',
+                beforeXHR: function (xhr) {
+                    xhr.setRequestHeader('Authorization', 'Token ' + new auth().getAuthToken());
+                }
             },
             type: 'category'
         };

@@ -4,6 +4,9 @@ NuFridge is a package management server for NuGet which supports multiple feeds.
 ## Chat Room
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lukeskinner/NuFridge?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
+## Demo
+http://dev.nufridge.com/
+
 ## Prerequisites
 1. Install .NET Framework 4.5.1 (or higher)
 
