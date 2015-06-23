@@ -1,0 +1,42 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using NuFridge.Shared.Model;
+using NuFridge.Shared.Server.Statistics.Design;
+using NuFridge.Shared.Server.Storage;
+
+namespace NuFridge.Shared.Server.Statistics
+{
+    public class FeedDownloadCountStatistic : StatisticBase<List<FeedDownloadCountStatisticItem>>
+    {
+        public FeedDownloadCountStatistic(ITransaction transaction) : base(transaction)
+        {
+
+        }
+
+        protected override List<FeedDownloadCountStatisticItem> Update()
+        {
+            var list = new List<FeedDownloadCountStatisticItem>();
+
+            var feeds = Transaction.Query<Feed>().ToList();
+
+            ColorGenerator generator = new ColorGenerator();
+
+            foreach (var feed in feeds)
+            {
+                var packages = Transaction.Query<InternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
+
+                if (packages.Any(pk => pk.DownloadCount > 0))
+                {
+                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.DownloadCount), generator.NextColour()));
+                }
+            }
+
+            return list;
+        }
+
+        protected override string StatName
+        {
+            get { return "FeedDownloadCount"; }
+        }
+    }
+}

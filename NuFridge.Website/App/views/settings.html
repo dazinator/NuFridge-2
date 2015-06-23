@@ -1,0 +1,97 @@
+﻿<div class="ui masthead vertical tab segment">
+    <div class="ui container">
+        <div class="introduction">
+
+            <h1 class="ui header">
+                Settings
+
+                <div class="sub header">
+
+                    Welcome to NuFridge.
+                </div>
+            </h1>
+
+            <div class="ui hidden divider"></div>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="main ui container">
+
+    <div class="ui active tab" data-tab="icons">
+
+
+        <h2 class="ui header dividing settingsHeader">
+            Settings
+        </h2>
+
+        <div class="ui top attached tabular menu settingMenu">
+            <a class="item active" data-tab="first">System Information</a>
+            <a class="item" data-tab="second">Process Information</a>
+        </div>
+        <div data-tab="first" class="ui bottom attached tab segment active" data-bind="with: systemInfo">
+            <table class="ui compact table">
+                <tbody>
+                    <tr>
+                        <td>Machine Name</td>
+                        <td data-bind="text: MachineName"></td>
+                    </tr>
+                    <tr data-bind="visible: PartOfDomain()">
+                        <td>Domain</td>
+                        <td data-bind="text: Domain"></td>
+                    </tr>
+                    <tr>
+                        <td>System Type</td>
+                        <td data-bind="text: SystemType"></td>
+                    </tr>
+                    <tr data-bind="visible: ProcessorCount() > 1">
+                        <td>Processor Count</td>
+                        <td data-bind="text: ProcessorCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Logical Processor Count</td>
+                        <td data-bind="text: LogicalProcessorCount"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div data-tab="second" class="ui bottom attached tab segment" data-bind="with: systemInfo">
+            <div class="meta" style="color: rgba(0, 0, 0, .4);">Last Updated: <span data-bind="timeago: $root.systemInfoUpdatedAt"></span> <a style="cursor: pointer;" data-bind="click: function(data, event) { $root.manualRefreshPageData(); }"><i title="Refresh" class="icon refresh titlePopup"></i></a></div>
+            <table class="ui compact table">
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td data-bind="text: ProcessName"></td>
+                    </tr>
+                    <tr>
+                        <td>Path</td>
+                        <td data-bind="text: ExecutablePath"></td>
+                    </tr>
+                    <tr>
+                        <td>Started at</td>
+                        <td>
+                            <span data-bind="text: $root.formattedStartDate"></span>
+                            <span> (</span><span data-bind="timeago: $root.systemInfoStartedAt"></span><span>)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Thread Count</td>
+                        <td data-bind="text: ThreadCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Working Set</td>
+                        <td data-bind="text: WorkingSetSize"></td>
+                    </tr>
+                    <tr>
+                        <td>Free Disk Space</td>
+                        <td data-bind="text: FreeDiskSpace"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

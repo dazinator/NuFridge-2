@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Autofac;
+using Moq;
+using NuFridge.Shared.Model;
+using NuFridge.Shared.Server.Modules;
+using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.Storage;
+using NUnit.Framework;
+
+namespace NuFridge.Tests
+{
+    [TestFixture]
+    public class InternalPackageRepositoryTests
+    {
+        private IContainer _container;
+
+        [Test]
+        public void IsInstancePerDependency()
+        {
+            var factory = _container.Resolve<InternalPackageRepositoryFactory>();
+
+            var packageRepo1 = factory.Create(1);
+            var packageRepo2 = factory.Create(2);
+
+            Assert.AreNotSame(packageRepo1, packageRepo2);
+            Assert.AreNotEqual(packageRepo1.FeedId, packageRepo2.FeedId);
+            Assert.AreEqual(1, packageRepo1.FeedId);
+            Assert.AreEqual(2, packageRepo2.FeedId);
+        }
+
+        private void MockStore(ContainerBuilder builder) 
+        {
+            Mock<IStore> store = new Mock<IStore>();
+            builder.RegisterInstance(store.Object);
+
+            Mock<ITransaction> transaction = new Mock<ITransaction>();
+            store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
+
+            Mock<IQueryBuilder<FeedConfiguration>> queryMock = new Mock<IQueryBuilder<FeedConfiguration>>();
+            transaction.Setup(tr => tr.Query<FeedConfiguration>()).Returns(queryMock.Object);
+            queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
+            queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
+
+            Mock<FeedConfiguration> mock = new Mock<FeedConfiguration>();
+
+            mock.SetupProperty(fc => fc.PackagesDirectory, "TestDirectory");
+            mock.SetupProperty(fc => fc.Id, 1);
+            mock.SetupProperty(fc => fc.FeedId, 1);
+
+            queryMock.Setup(qu => qu.ToList()).Returns(new List<FeedConfiguration> {mock.Object});
+            queryMock.Setup(qu => qu.First()).Returns(mock.Object);
+            queryMock.Setup(qu => qu.Count()).Returns(1);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterModule(new NuGetModule());
+            MockStore(builder);
+
+            _container = builder.Build();
+        }
+    }
+}
