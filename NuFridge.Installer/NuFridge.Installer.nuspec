@@ -8,6 +8,6 @@
     <description>NuFridge</description>
   </metadata>
   <files>
-    <file src="..\..\Dist\NuFridge.msi" />
+    <file src="Dist\NuFridge.msi" />
   </files>
 </package>
