@@ -420,6 +420,10 @@ namespace NuFridge.Shared.Server.Web
 
                   IDictionary<string, object> queryDictionary = Context.Request.Query;
 
+                  if (queryDictionary.ContainsKey("$select"))
+                  {
+                      queryDictionary.Remove("$select");
+                  }
 
                   NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
                   builder.Build();
@@ -431,27 +435,43 @@ namespace NuFridge.Shared.Server.Web
                   var url = Request.Url.SiteBase + Request.Url.Path;
 
                   var query = string.Empty;
-                  foreach (var qd in queryDictionary)
+
+                  var updatesToApply = new List<KeyValuePair<string, object>>();
+
+                  //Start - this section could be better
+                  foreach (KeyValuePair<string, object> qd in queryDictionary)
                   {
-                      if (qd.Key.ToLower() != "$select")
+                      string updatedValue;
+                      if (GetReplacedODataQueryValue(qd, out updatedValue))
                       {
-                          if (string.IsNullOrWhiteSpace(query))
-                          {
-                              query = "?";
-                          }
-                          query += qd.Key + "=" + qd.Value + "&";
+                          updatesToApply.Add(new KeyValuePair<string, object>(qd.Key, updatedValue));
                       }
+                  }
+
+                  foreach (var updateToApply in updatesToApply)
+                  {
+                      queryDictionary[updateToApply.Key] = updateToApply.Value;
+                  }
+
+                  foreach (KeyValuePair<string, object> qd in queryDictionary)
+                  {
+                      if (string.IsNullOrWhiteSpace(query))
+                      {
+                          query = "?";
+                      }
+                      query += qd.Key + "=" + qd.Value + "&";
                   }
 
                   if (query.EndsWith("&"))
                   {
                       query = query.Substring(0, query.Length - 1);
                   }
+                  //End - this section could be better
 
                   url += query;
 
                   var request = new HttpRequestMessage(method, url);
-                  request.Properties.AddRange(queryDictionary.Where(qd => qd.Key.ToLower() != "$select"));
+                  request.Properties.AddRange(queryDictionary);
 
                   using (var dbContext = new DatabaseContext(store))
                   {
