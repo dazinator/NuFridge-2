@@ -7,6 +7,9 @@ using System.Security;
 using System.Threading.Tasks;
 using Autofac;
 using FluentScheduler;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using NuFridge.Shared.Commands.Interfaces;
 using NuFridge.Shared.Commands.Modules;
 using NuFridge.Shared.Commands.Options;
@@ -17,6 +20,7 @@ using NuFridge.Shared.Server.Hosts;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using LogLevel = NuFridge.Shared.Logging.LogLevel;
 
 namespace NuFridge.Service
 {
@@ -58,6 +62,35 @@ namespace NuFridge.Service
 
         public int Run()
         {
+            var config = new LoggingConfiguration();
+
+            var fileTarget = new FileTarget();
+            fileTarget.KeepFileOpen = true;
+            fileTarget.EnableArchiveFileCompression = true;
+            fileTarget.ConcurrentWrites = false;
+            fileTarget.ArchiveAboveSize = 10000000; //10MB
+            fileTarget.ArchiveEvery = FileArchivePeriod.Hour;
+            fileTarget.ArchiveOldFileOnStartup = true;
+            fileTarget.MaxArchiveFiles = 8;
+            fileTarget.ArchiveFileName = "Logs/server-{#}-logs.zip";
+            config.AddTarget("file", fileTarget);
+
+            fileTarget.FileName = "${basedir}/Logs/server.log";
+            fileTarget.Layout = "${longdate} ${level} ${logger}: ${message}";
+
+            var consoleTarget = new ColoredConsoleTarget();
+            consoleTarget.Layout = "${time}: ${message}";
+            config.AddTarget("console", consoleTarget);
+
+            var rule1 = new LoggingRule("*", NLog.LogLevel.Trace, consoleTarget);
+           
+            config.LoggingRules.Add(rule1);
+
+            var rule2 = new LoggingRule("*", NLog.LogLevel.Info, fileTarget);
+            config.LoggingRules.Add(rule2);
+
+            LogManager.Configuration = config;
+
             TaskScheduler.UnobservedTaskException += (EventHandler<UnobservedTaskExceptionEventArgs>)((sender, args) =>
             {
                 _log.ErrorException("Unhandled task exception occurred: {0}", args.Exception.UnpackFromContainers(), args.Exception.GetErrorSummary());
