@@ -17,7 +17,7 @@ public class Setup
         bool isDebug = false;
 #endif
 
-        var rootPath = GetPathToSrcFolder();
+        var rootPath = GetPathToSrcFolder(isDebug);
 
         Console.WriteLine("Root: " + rootPath);
 
@@ -141,17 +141,20 @@ public class Setup
         installDir.SetAttributeValue("Value", "INSTALLDIR");
     }
 
-    private static string GetPathToSrcFolder()
+    private static string GetPathToSrcFolder(bool debug)
     {
         DirectoryInfo currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
 
-        string path = string.Empty;
-
-        for (int i = 0; i < 3; i++)
+        if (debug)
         {
-            path += @"..\";
+            string path = string.Empty;
 
-            currentDirectory = Directory.GetParent(currentDirectory.FullName);
+            for (int i = 0; i < 3; i++)
+            {
+                path += @"..\";
+
+                currentDirectory = Directory.GetParent(currentDirectory.FullName);
+            }
         }
 
         return currentDirectory.FullName + @"\";
