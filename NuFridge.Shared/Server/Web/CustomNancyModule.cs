@@ -505,6 +505,32 @@ namespace NuFridge.Shared.Server.Web
               }
           }
 
+          //This method could be removed if it used an interface to mask the fact Id is my PK and not the PackageId
+          private bool GetReplacedODataQueryValue(KeyValuePair<string, object> kvp, out string updatedString)
+          {
+              bool updated = false;
+              updatedString = null;
+              var value = kvp.Value;
+              if (value != null)
+              {
+                  var str = value.ToString();
+                  var split = str.Split(',');
+                  if (split.Any())
+                  {
+                      for (int i = 0; i < split.Length; i++)
+                      {
+                          if (split[i].ToLower() == "id")
+                          {
+                              updated = true;
+                              split[i] = "PackageId";
+                          }
+                      }
+                  }
+                 updatedString = string.Join(",", split);
+              }
+              return updated;
+          }
+
           private dynamic ProcessODataRequest(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
           {
               string feedName = p.feed;
@@ -519,6 +545,11 @@ namespace NuFridge.Shared.Server.Web
 
                   IDictionary<string, object> queryDictionary = Context.Request.Query;
 
+                  if (queryDictionary.ContainsKey("$select"))
+                  {
+                      queryDictionary.Remove("$select");
+                  }
+
 
                   NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
                   builder.Build();
@@ -530,27 +561,43 @@ namespace NuFridge.Shared.Server.Web
                   var url = Request.Url.SiteBase + Request.Url.Path;
 
                   var query = string.Empty;
-                  foreach (var qd in queryDictionary)
+
+                  var updatesToApply = new List<KeyValuePair<string, object>>();
+
+                  //Start - this section could be better
+                  foreach (KeyValuePair<string, object> qd in queryDictionary)
                   {
-                      if (qd.Key.ToLower() != "$select")
+                      string updatedValue;
+                      if (GetReplacedODataQueryValue(qd, out updatedValue))
                       {
-                          if (string.IsNullOrWhiteSpace(query))
-                          {
-                              query = "?";
-                          }
-                          query += qd.Key + "=" + qd.Value + "&";
+                          updatesToApply.Add(new KeyValuePair<string, object>(qd.Key, updatedValue));
                       }
+                  }
+
+                  foreach (var updateToApply in updatesToApply)
+                  {
+                      queryDictionary[updateToApply.Key] = updateToApply.Value;
+                  }
+
+                  foreach (KeyValuePair<string, object> qd in queryDictionary)
+                  {
+                      if (string.IsNullOrWhiteSpace(query))
+                      {
+                          query = "?";
+                      }
+                      query += qd.Key + "=" + qd.Value + "&";
                   }
 
                   if (query.EndsWith("&"))
                   {
                       query = query.Substring(0, query.Length - 1);
                   }
+                  //End - this section could be better
 
                   url += query;
 
                   var request = new HttpRequestMessage(method, url);
-                  request.Properties.AddRange(queryDictionary.Where(qd => qd.Key.ToLower() != "$select"));
+                  request.Properties.AddRange(queryDictionary);
 
                   using (var dbContext = new DatabaseContext(store))
                   {
@@ -585,17 +632,15 @@ namespace NuFridge.Shared.Server.Web
 
                       var settings = new ODataQuerySettings()
                       {
-                          PageSize = 9999999
+                          PageSize = options.Top != null ? options.Top.Value : 15
                       };
 
 
                       ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
 
-                      int total = ds.Count();
 
-                      settings.PageSize = options.Top != null ? options.Top.Value : 15;
+                      long? total = request.GetInlineCount();
 
-                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
 
                       var packageRepository = packageRepositoryFactory.Create(feed.Id);
 
@@ -603,7 +648,7 @@ namespace NuFridge.Shared.Server.Web
                                         "/feeds/" + feedName + "/api/v2";
 
                       var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
-                          ds, feed.Id, total);
+                          ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0);
 
                       StreamReader reader = new StreamReader(stream);
                       string text = reader.ReadToEnd();
