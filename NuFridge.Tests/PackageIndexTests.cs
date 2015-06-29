@@ -47,7 +47,7 @@ namespace NuFridge.Tests
 
             Index.DeletePackage(package);
 
-            transaction.Verify(tr => tr.Delete(It.IsAny<IPackage>()), Times.Once);
+            transaction.Verify(tr => tr.Delete(It.IsAny<IInternalPackage>()), Times.Once);
             transaction.Verify(tr => tr.Commit(), Times.Once);
             transaction.Verify(tr => tr.Dispose(), Times.Once);
         }

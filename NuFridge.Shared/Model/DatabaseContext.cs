@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Model

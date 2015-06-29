@@ -8,15 +8,15 @@ namespace NuFridge.Shared.Model.Interfaces
 {
     public interface IFeedConfiguration
     {
-        int Id { get; }
+        int Id { get; set; }
 
-        int FeedId { get; }
+        int FeedId { get; set; }
 
-        string PackagesDirectory { get; }
+        string PackagesDirectory { get; set; }
 
-        bool RetentionPolicyEnabled { get; }
+        bool RetentionPolicyEnabled { get; set; }
 
-        int MaxPrereleasePackages { get; }
-        int MaxReleasePackages { get; }
+        int MaxPrereleasePackages { get; set; }
+        int MaxReleasePackages { get; set; }
     }
 }

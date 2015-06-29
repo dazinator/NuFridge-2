@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Statistics.Design;
 using NuFridge.Shared.Server.Storage;
 
@@ -23,7 +24,7 @@ namespace NuFridge.Shared.Server.Statistics
            
             foreach (var feed in feeds)
             {
-                var packageCount = Transaction.Query<InternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).Count();
+                var packageCount = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).Count();
 
                 if (packageCount > 0)
                 {

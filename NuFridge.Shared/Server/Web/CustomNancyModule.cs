@@ -86,7 +86,7 @@ namespace NuFridge.Shared.Server.Web
                   {
                       var feedsCount = transaction.Query<IFeed>().Count();
                       var usersCount = transaction.Query<User>().Count();
-                      var packagesCount = transaction.Query<InternalPackage>().Count();
+                      var packagesCount = transaction.Query<IInternalPackage>().Count();
 
                       return new
                       {
@@ -224,7 +224,7 @@ namespace NuFridge.Shared.Server.Web
                       var appFolder = home.InstallDirectory;
                       var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id.ToString());
 
-                      FeedConfiguration config = new FeedConfiguration
+                      IFeedConfiguration config = new FeedConfiguration
                       {
                           FeedId = feed.Id,
                           PackagesDirectory = feedFolder
@@ -301,7 +301,7 @@ namespace NuFridge.Shared.Server.Web
                           return HttpStatusCode.NotFound;
                       }
 
-                      var config = transaction.Query<FeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                      var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
 
                       transaction.Delete(feed);
                       transaction.Delete(config);
@@ -428,7 +428,7 @@ namespace NuFridge.Shared.Server.Web
                   NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
                   builder.Build();
 
-                  var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
+                  var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
                   HttpMethod method = new HttpMethod(Request.Method);
 
@@ -475,7 +475,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (var dbContext = new DatabaseContext(store))
                   {
-                      IQueryable<InternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+                      IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
                       string idSearch = queryDictionary.ContainsKey("id")
                           ? queryDictionary["id"].ToString()
@@ -498,7 +498,7 @@ namespace NuFridge.Shared.Server.Web
                       };
 
 
-                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
+                      ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
 
 
                       var packageRepository = packageRepositoryFactory.Create(feed.Id);
@@ -574,7 +574,7 @@ namespace NuFridge.Shared.Server.Web
                   NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
                   builder.Build();
 
-                  var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
+                  var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
                   HttpMethod method = new HttpMethod(Request.Method);
 
@@ -621,7 +621,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (var dbContext = new DatabaseContext(store))
                   {
-                      IQueryable<InternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+                      IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
 
                       string searchTerm = queryDictionary.ContainsKey("searchTerm")
@@ -656,7 +656,7 @@ namespace NuFridge.Shared.Server.Web
                       };
 
 
-                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
+                      ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
 
 
                       long? total = request.GetInlineCount();

@@ -5,6 +5,7 @@ using System.Linq;
 using FluentScheduler;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
@@ -27,15 +28,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             _log.Info("Running package retention policies.");
 
             List<IFeed> feeds;
-            List<FeedConfiguration> configs;
+            List<IFeedConfiguration> configs;
 
             using (var transaction = Store.BeginTransaction())
             {
                 feeds = transaction.Query<IFeed>().ToList();
-                configs = transaction.Query<FeedConfiguration>().ToList();
+                configs = transaction.Query<IFeedConfiguration>().ToList();
             }
 
-            var feedDictionary = new Dictionary<IFeed, FeedConfiguration>();
+            var feedDictionary = new Dictionary<IFeed, IFeedConfiguration>();
 
             foreach (var feed in feeds)
             {
@@ -51,7 +52,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             _log.Info("Finished running package retention policies.");
         }
 
-        private void RunPolicies(Dictionary<IFeed, FeedConfiguration> feedDictionary)
+        private void RunPolicies(Dictionary<IFeed, IFeedConfiguration> feedDictionary)
         {
             foreach (var feedKvp in feedDictionary)
             {
@@ -59,7 +60,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             }
         }
 
-        private bool IsPackageDirectoryValid(string path)
+        protected virtual bool IsPackageDirectoryValid(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
                 return false;
@@ -67,7 +68,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             return Directory.Exists(path);
         }
 
-        private void RunPolicy(IFeed feed, FeedConfiguration config)
+        private void RunPolicy(IFeed feed, IFeedConfiguration config)
         {
             var directory = config.PackagesDirectory;
 
@@ -83,23 +84,16 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 return;
             }
 
-            var topDirectoryFiles = Directory.GetFiles(directory, "*.nupkg", SearchOption.TopDirectoryOnly);
-            if (topDirectoryFiles.Any())
-            {
-                _log.Error(string.Format("The '{0}' feed has packages in the '{1}' directory. Packages should be contained inside a child folder. The retention policy will not be run.", feed.Name, directory));
-                return;
-            }
-
             _log.Info(string.Format("Running package retention policy for '{0}'. Max release packages: {1}, Max prerelease packages: {2}.", feed.Name, config.MaxReleasePackages, config.MaxPrereleasePackages));
 
-            List<InternalPackage> packages;
+            List<IInternalPackage> packages;
 
             using (var transaction = Store.BeginTransaction())
             {
-                packages = transaction.Query<InternalPackage>().ToList();
+                packages = transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
             }
 
-            Dictionary<string, List<InternalPackage>> packagesGroupedById = packages.GroupBy(x => x.PackageId).ToDictionary(x => x.Key, x => x.ToList());
+            Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.PackageId).ToDictionary(x => x.Key, x => x.ToList());
 
             int releasePackagesDeleted = 0;
             int prereleasePackagesDeleted = 0;
@@ -122,7 +116,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             _log.Info(string.Format("Finished package retention policy for '{0}'. {1} release packages deleted. {2} prerelease packages deleted.", feed.Name, releasePackagesDeleted, prereleasePackagesDeleted));
         }
 
-        private int FindAndRemoveOldReleasePackages(FeedConfiguration config, List<InternalPackage> packages)
+        private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
         {
             packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 
@@ -163,7 +157,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             return toDeleteCount > 0 ? toDeleteCount : 0;
         }
 
-        private int FindAndRemoveOldPrereleasePackages(FeedConfiguration config, List<InternalPackage> packages)
+        private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
         {
             packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 

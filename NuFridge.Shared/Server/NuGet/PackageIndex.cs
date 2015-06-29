@@ -46,7 +46,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             using (var transaction = _store.BeginTransaction())
             {
-                return transaction.Query<InternalPackage>().Stream().AsQueryable();
+                return transaction.Query<IInternalPackage>().Stream().AsQueryable();
             }
         }
 
@@ -75,7 +75,7 @@ namespace NuFridge.Shared.Server.NuGet
 
         public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
         {
-                var query = transaction.Query<InternalPackage>();
+                var query = transaction.Query<IInternalPackage>();
 
                 query.Where("FeedId = @feedId");
                 query.Parameter("feedId", _feedId);
@@ -96,7 +96,7 @@ namespace NuFridge.Shared.Server.NuGet
         public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
         {
 
-                var query = transaction.Query<InternalPackage>();
+                var query = transaction.Query<IInternalPackage>();
 
                 if (filterType == "eq")
                 {
@@ -203,10 +203,10 @@ namespace NuFridge.Shared.Server.NuGet
                 commandParameters.Add("partialMatch", partialMatch ? 1 : 0);
                 CommandParameters args = commandParameters;
                 args.CommandType = CommandType.StoredProcedure;
-                IEnumerable<InternalPackage> enumerable = transaction.ExecuteReaderWithProjection("GetPackages", args,
+                IEnumerable<IInternalPackage> enumerable = transaction.ExecuteReaderWithProjection("GetPackages", args,
                     mapper =>
                     {
-                        InternalPackage internalPackage = mapper.Map<InternalPackage>("");
+                        IInternalPackage internalPackage = mapper.Map<IInternalPackage>("");
                         if (total == 0)
                             mapper.Read(reader => total = (int) reader["TotalCount"]);
                         return internalPackage;
@@ -216,17 +216,17 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        private InternalPackage LoadPackage(IInternalPackage package)
+        private IInternalPackage LoadPackage(IInternalPackage package)
         {
             return LoadPackage(package.PackageId.ToLowerInvariant(), package.Version.ToString().ToLowerInvariant());
         }
 
-        protected virtual InternalPackage LoadPackage(string id, string version)
+        protected virtual IInternalPackage LoadPackage(string id, string version)
         {
             using (var transaction = _store.BeginTransaction())
             {
                 return
-                    transaction.Query<InternalPackage>()
+                    transaction.Query<IInternalPackage>()
                         .Where("PackageId = @packageId AND Version = @packageVersion AND FeedId = @feedId")
                         .Parameter("packageId", id)
                         .Parameter("packageVersion", version)
@@ -239,7 +239,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             using (var transaction = _store.BeginTransaction())
             {
-                return transaction.Query<InternalPackage>().Count();
+                return transaction.Query<IInternalPackage>().Count();
             }
         }
 

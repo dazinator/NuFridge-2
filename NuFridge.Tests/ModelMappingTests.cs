@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Model.Mappings;
 using NuFridge.Shared.Server.Storage;
 using NUnit.Framework;
@@ -14,10 +15,10 @@ namespace NuFridge.Tests
     public class ModelMappingTests
     {
         [Test]
-        [TestCase(typeof(Feed))]
-        [TestCase(typeof(FeedConfiguration))]
+        [TestCase(typeof(IFeed))]
+        [TestCase(typeof(IFeedConfiguration))]
         [TestCase(typeof(ApiKey))]
-        [TestCase(typeof(InternalPackage))]
+        [TestCase(typeof(IInternalPackage))]
         [TestCase(typeof(Statistic))]
         [TestCase(typeof(User))]
         [TestCase(typeof(UserRole))]

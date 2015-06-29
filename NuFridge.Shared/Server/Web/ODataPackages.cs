@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server.Web
 {
     public class ODataPackages
     {
-        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<InternalPackage> packages, int feedId, int total)
+        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<IInternalPackage> packages, int feedId, int total)
         {
             var writerSettings = new ODataMessageWriterSettings()
             {

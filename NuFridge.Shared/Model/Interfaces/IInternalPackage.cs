@@ -6,19 +6,26 @@ namespace NuFridge.Shared.Model.Interfaces
 {
     public interface IInternalPackage
     {
-        string PackageId { get; }
+        int Id { get; set; }
+        string PackageId { get; set; }
+        int FeedId { get; set; }
+        string Version { get; set; }
 
-        string Version { get; }
+        string Description { get; set; }
 
-        string Description { get; }
+        string ReleaseNotes { get; set; }
 
-        string ReleaseNotes { get; }
+        DateTimeOffset? Published { get; set; }
 
-        DateTimeOffset? Published { get; }
+        string Title { get; set; }
 
-        string Title { get; }
+        string Summary { get; set; }
 
-        string Summary { get; }
+        int VersionMajor { get; set; }
+        int VersionMinor { get; set; }
+        int VersionBuild { get; set; }
+        int VersionRevision { get; set; }
+        string VersionSpecial { get; set; }
 
         int DownloadCount { get; set; }
 
@@ -28,32 +35,34 @@ namespace NuFridge.Shared.Model.Interfaces
 
         List<string> GetDependencies();
 
-         string DisplayTitle { get; set; }
-         bool RequireLicenseAcceptance { get; set; }
-         string Language { get; set; }
-         string Tags { get; set; }
-         string PackageHashAlgorithm { get; set; }
-         long PackageSize { get; set; }
-         DateTime LastUpdated { get; set; }
-         DateTime Created { get; set; }
-         bool IsAbsoluteLatestVersion { get; set; }
-         bool IsLatestVersion { get; set; }
-         bool IsPrerelease { get; set; }
-         bool Listed { get; set; }
-
-         int VersionDownloadCount { get; set; }
-         bool DevelopmentDependency { get; set; }
-         float Score { get; set; }
-         string Authors { get; set; }
-         string Owners { get; set; }
-         string IconUrl { get; set; }
-         string LicenseUrl { get; set; }
-         string Copyright { get; set; }
-         string ProjectUrl { get; set; }
-
+        string DisplayTitle { get; set; }
+        bool RequireLicenseAcceptance { get; set; }
+        string Language { get; set; }
+        string Tags { get; set; }
+        string PackageHashAlgorithm { get; set; }
+        long PackageSize { get; set; }
+        long Size { get; set; }
+        DateTime LastUpdated { get; set; }
+        DateTime Created { get; set; }
+        bool IsAbsoluteLatestVersion { get; set; }
+        bool IsLatestVersion { get; set; }
+        bool IsPrerelease { get; set; }
+        bool Listed { get; set; }
+        string[] Dependencies { get; set; }
+        int VersionDownloadCount { get; set; }
+        bool DevelopmentDependency { get; set; }
+        float Score { get; set; }
+        string Authors { get; set; }
+        string Owners { get; set; }
+        string IconUrl { get; set; }
+        string LicenseUrl { get; set; }
+        string Copyright { get; set; }
+        string ProjectUrl { get; set; }
+        string Hash { get; set; }
         string CalculateHash();
         void IncrementDownloadCount();
         SemanticVersion GetSemanticVersion();
         void SetSemanticVersion(SemanticVersion value);
+        string ReportAbuseUrl { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Autofac;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -16,6 +17,8 @@ namespace NuFridge.Shared.Server.Modules
 
             builder.RegisterType<PackageIndex>().AsSelf();
             builder.RegisterType<Feed>().As<IFeed>();
+            builder.RegisterType<FeedConfiguration>().As<IFeedConfiguration>();
+            builder.RegisterType<InternalPackage>().As<IInternalPackage>();
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
 
             builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IStore>(), feedId))).InstancePerDependency();
@@ -42,7 +45,7 @@ namespace NuFridge.Shared.Server.Modules
 
             using (var transaction = store.BeginTransaction())
             {
-                var config = transaction.Query<FeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
 
                 return new PhysicalFileSystem(config.PackagesDirectory);
             }
@@ -55,7 +58,7 @@ namespace NuFridge.Shared.Server.Modules
 
             using (var transaction = store.BeginTransaction())
             {
-                var config = transaction.Query<FeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
 
                 return new DefaultPackagePathResolver(config.PackagesDirectory);
             }

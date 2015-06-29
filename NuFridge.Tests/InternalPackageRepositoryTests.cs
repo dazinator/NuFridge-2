@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Moq;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -40,20 +41,20 @@ namespace NuFridge.Tests
             Mock<ITransaction> transaction = new Mock<ITransaction>();
             store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
-            Mock<IQueryBuilder<FeedConfiguration>> queryMock = new Mock<IQueryBuilder<FeedConfiguration>>();
-            transaction.Setup(tr => tr.Query<FeedConfiguration>()).Returns(queryMock.Object);
+            Mock<IQueryBuilder<IFeedConfiguration>> queryMock = new Mock<IQueryBuilder<IFeedConfiguration>>();
+            transaction.Setup(tr => tr.Query<IFeedConfiguration>()).Returns(queryMock.Object);
             queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
             queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
             queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
             queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
 
-            Mock<FeedConfiguration> mock = new Mock<FeedConfiguration>();
+            Mock<IFeedConfiguration> mock = new Mock<IFeedConfiguration>();
 
             mock.SetupProperty(fc => fc.PackagesDirectory, "TestDirectory");
             mock.SetupProperty(fc => fc.Id, 1);
             mock.SetupProperty(fc => fc.FeedId, 1);
 
-            queryMock.Setup(qu => qu.ToList()).Returns(new List<FeedConfiguration> {mock.Object});
+            queryMock.Setup(qu => qu.ToList()).Returns(new List<IFeedConfiguration> {mock.Object});
             queryMock.Setup(qu => qu.First()).Returns(mock.Object);
             queryMock.Setup(qu => qu.Count()).Returns(1);
         }

@@ -28,8 +28,7 @@ namespace NuFridge.Shared.Model
 
         public string PackageId { get; set; }
 
-        public string FullVersion { get { return Version == null ? string.Empty : Version.ToString(); } }
-
+ 
         private SemanticVersion _version { get; set; }
 
         public string Version { get; set; }
@@ -111,7 +110,7 @@ namespace NuFridge.Shared.Model
             return Hash;
         }
 
-        public static InternalPackage Create(int feedId, IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
+        public static IInternalPackage Create(int feedId, IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
         {
             var newPackage = new InternalPackage
              {

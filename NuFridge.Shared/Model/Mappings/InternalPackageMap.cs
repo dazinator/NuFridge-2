@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Model.Mappings
 {
-    public class InternalPackageMap : EntityMapping<InternalPackage>
+    public class InternalPackageMap : EntityMapping<IInternalPackage>
     {
         public InternalPackageMap()
         {

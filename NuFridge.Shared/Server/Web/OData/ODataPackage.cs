@@ -20,7 +20,7 @@ namespace NuFridge.Shared.Server.Web.OData
         {
         }
 
-        public ODataPackage(InternalPackage package)
+        public ODataPackage(IInternalPackage package)
         {
             #region Converted Properties
             Version = package.Version;
