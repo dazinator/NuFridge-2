@@ -124,7 +124,7 @@ public class Setup
 
         Compiler.WixSourceGenerated += Compiler_WixSourceGenerated;
 
-        Compiler.BuildMsi(project);
+        Compiler.BuildMsi(project, "NuFridge.msi");
 
         if (args.Count() == 2)
         {
