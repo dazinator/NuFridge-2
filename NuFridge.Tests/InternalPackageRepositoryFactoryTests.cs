@@ -19,8 +19,8 @@ namespace NuFridge.Tests
         [Test]
         public void IsSingleInstanceFactory()
         {
-            var factory1 = _container.Resolve<InternalPackageRepositoryFactory>();
-            var factory2 = _container.Resolve<InternalPackageRepositoryFactory>();
+            var factory1 = _container.Resolve<IInternalPackageRepositoryFactory>();
+            var factory2 = _container.Resolve<IInternalPackageRepositoryFactory>();
 
             Assert.AreSame(factory1, factory2);
         }

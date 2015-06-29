@@ -19,44 +19,119 @@ namespace NuFridge.Tests
     public class RunPackageRetentionPoliciesTaskTests
     {
         protected Mock<IStore> Store;
-        protected InternalPackageRepositoryFactory Factory;
+        protected Mock<IInternalPackageRepositoryFactory> PackageRepoFactory;
+        protected Mock<IInternalPackageRepository> PackageRepo;
 
-        protected List<IFeed> InMemoryFeeds;
-        protected List<IFeedConfiguration> InMemoryFeedConfigurations;
+        protected List<IFeed> InMemoryFeeds = new List<IFeed>();
+        protected List<IFeedConfiguration> InMemoryFeedConfigurations = new List<IFeedConfiguration>();
 
-        private IContainer _container;
+      //  private IContainer _container;
 
 
         [SetUp]
         public void Setup()
         {
-            var builder = new ContainerBuilder();
+        //    var builder = new ContainerBuilder();
 
-            builder.RegisterModule(new NuGetModule());
-            _container = builder.Build();
+          //  builder.RegisterModule(new NuGetModule());
+          //  _container = builder.Build();
 
             Store = new Mock<IStore>();
-            Factory = _container.Resolve<InternalPackageRepositoryFactory>();
+            PackageRepoFactory = new Mock<IInternalPackageRepositoryFactory>();
+            PackageRepo = new Mock<IInternalPackageRepository>();
+            PackageRepoFactory.Setup(fc => fc.Create(It.IsAny<Int32>())).Returns(PackageRepo.Object);
+        }
 
+        [Test]
+        public void MultipleReleasePackagesDeleted()
+        {
+            Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
+
+            mock.SetupProperty(fc => fc.Title, "Test Package");
+            mock.SetupProperty(fc => fc.Id, 1);
+            mock.SetupProperty(fc => fc.FeedId, 1);
+            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0"));
+            mock.SetupProperty(fc => fc.Version, "1.0.0");
+
+            Mock<IInternalPackage> mock2 = new Mock<IInternalPackage>();
+
+            mock2.SetupProperty(fc => fc.Title, "Test Package");
+            mock2.SetupProperty(fc => fc.Id, 1);
+            mock2.SetupProperty(fc => fc.FeedId, 1);
+            mock2.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock2.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.1"));
+            mock2.SetupProperty(fc => fc.Version, "1.0.1");
+
+            SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock, mock2 });
+
+            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+
+            task.Execute();
+
+            PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Once);
+            PackageRepo.Verify(pr => pr.RemovePackage(mock.Object), Times.Once);
+            PackageRepo.Verify(pr => pr.RemovePackage(mock2.Object), Times.Never);
+        }
+
+        [Test]
+        public void SingleReleasePackageNotDeleted()
+        {
+            Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
+
+            mock.SetupProperty(fc => fc.Title, "Test Package");
+            mock.SetupProperty(fc => fc.Id, 1);
+            mock.SetupProperty(fc => fc.FeedId, 1);
+            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0"));
+            mock.SetupProperty(fc => fc.Version, "1.0.0");
+
+            SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> {mock});
+
+            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+
+            task.Execute();
+
+            PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
+        }
+
+        [Test]
+        public void SinglePrereleasePackageNotDeleted()
+        {
+            Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
+
+            mock.SetupProperty(fc => fc.Title, "Test Package");
+            mock.SetupProperty(fc => fc.Id, 1);
+            mock.SetupProperty(fc => fc.FeedId, 1);
+            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.IsPrerelease, true);
+            mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0-alpha"));
+            mock.SetupProperty(fc => fc.Version, "1.0.0-alpha");
+
+            SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock });
+
+            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+
+            task.Execute();
+
+            PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
+        }
+
+        private void SetupMockObjects(int maxReleasePackages, int maxPrereleasePackages, List<Mock<IInternalPackage>> packageMocks)
+        {
             Mock<IFeed> feed = new Mock<IFeed>();
             feed.Setup(fd => fd.Name).Returns("In Memory Feed");
             feed.Setup(fd => fd.Id).Returns(1);
-
-            InMemoryFeeds = new List<IFeed> { feed.Object };
+            InMemoryFeeds.Add(feed.Object);
 
             Mock<IFeedConfiguration> feedConfig = new Mock<IFeedConfiguration>();
             feedConfig.Setup(fc => fc.FeedId).Returns(1);
             feedConfig.Setup(fc => fc.PackagesDirectory).Returns("Fake directory");
-            feedConfig.Setup(fc => fc.MaxReleasePackages).Returns(3);
-            feedConfig.Setup(fc => fc.MaxPrereleasePackages).Returns(4);
+            feedConfig.Setup(fc => fc.MaxReleasePackages).Returns(maxReleasePackages);
+            feedConfig.Setup(fc => fc.MaxPrereleasePackages).Returns(maxPrereleasePackages);
             feedConfig.Setup(fc => fc.RetentionPolicyEnabled).Returns(true);
+            InMemoryFeedConfigurations.Add(feedConfig.Object);
 
-            InMemoryFeedConfigurations = new List<IFeedConfiguration> { feedConfig.Object };
-        }
-
-        [Test]
-        public void T()
-        {
             Mock<ITransaction> transaction = new Mock<ITransaction>();
             Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
@@ -70,26 +145,14 @@ namespace NuFridge.Tests
             queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
             queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
 
-            Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
-
-            mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-
-            mock.Object.SetSemanticVersion(SemanticVersion.Parse("1.0.0"));
-
-            queryMock.Setup(qu => qu.ToList()).Returns(new List<IInternalPackage> { mock.Object });
-            queryMock.Setup(qu => qu.First()).Returns(mock.Object);
-            queryMock.Setup(qu => qu.Count()).Returns(1);
-
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, Factory);
-
-            task.Execute();
+            queryMock.Setup(qu => qu.ToList()).Returns(packageMocks.Select(pm => pm.Object).ToList());
+            queryMock.Setup(qu => qu.First()).Returns(packageMocks.First().Object);
+            queryMock.Setup(qu => qu.Count()).Returns(packageMocks.Count());
         }
 
         public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesTask
         {
-            public TestableRunPackageRetentionPoliciesTask(IStore store, InternalPackageRepositoryFactory packageRepositoryFactory)
+            public TestableRunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
                 : base(store, packageRepositoryFactory)
             {
 

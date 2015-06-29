@@ -22,7 +22,7 @@ namespace NuFridge.Tests
         [Test]
         public void IsInstancePerDependency()
         {
-            var factory = _container.Resolve<InternalPackageRepositoryFactory>();
+            var factory = _container.Resolve<IInternalPackageRepositoryFactory>();
 
             var packageRepo1 = factory.Create(1);
             var packageRepo2 = factory.Create(2);

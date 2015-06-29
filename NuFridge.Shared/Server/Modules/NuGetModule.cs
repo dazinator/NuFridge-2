@@ -25,9 +25,9 @@ namespace NuFridge.Shared.Server.Modules
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => CreatePathResolver(c, feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => CreateFileSystem(c, feedId))).InstancePerDependency();
 
-            builder.RegisterType<InternalPackageRepositoryFactory>().AsSelf().SingleInstance();
+            builder.RegisterType<InternalPackageRepositoryFactory>().As<IInternalPackageRepositoryFactory>().SingleInstance();
 
-            builder.Register<Func<int, InternalPackageRepositoryFactory>>(
+            builder.Register<Func<int, IInternalPackageRepositoryFactory>>(
                 c =>
                     (feedId =>
                         new InternalPackageRepositoryFactory(

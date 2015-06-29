@@ -14,10 +14,10 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
     public class RunPackageRetentionPoliciesTask : ITask
     {
         private IStore Store { get; set; }
-        private InternalPackageRepositoryFactory PackageRepositoryFactory { get; set; }
+        private IInternalPackageRepositoryFactory PackageRepositoryFactory { get; set; }
         private readonly ILog _log = LogProvider.For<RunPackageRetentionPoliciesTask>();
 
-        public RunPackageRetentionPoliciesTask(IStore store, InternalPackageRepositoryFactory packageRepositoryFactory)
+        public RunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
         {
             Store = store;
             PackageRepositoryFactory = packageRepositoryFactory;
@@ -118,7 +118,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
         private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
         {
-            packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
+            packages.Sort((a, b) => b.GetSemanticVersion().CompareTo(a.GetSemanticVersion()));
 
             var packageCount = packages.Count();
             for (int i = packageCount; i-- > 0; )

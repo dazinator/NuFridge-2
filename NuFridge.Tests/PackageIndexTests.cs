@@ -76,7 +76,7 @@ namespace NuFridge.Tests
                 return p;
             }
 
-            protected override InternalPackage LoadPackage(string id, string version)
+            protected override IInternalPackage LoadPackage(string id, string version)
             {
                 return GetTestPackage(id, version) as InternalPackage;
             }

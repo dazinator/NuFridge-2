@@ -9,7 +9,7 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
 {
-    public class InternalPackageRepositoryFactory
+    public class InternalPackageRepositoryFactory : IInternalPackageRepositoryFactory
     {
         private Func<int, IInternalPackageRepository> CreateRepoFunc { get; set; }
 
@@ -24,5 +24,10 @@ namespace NuFridge.Shared.Server.NuGet
 
             return packageRepository;
         }
+    }
+
+    public interface IInternalPackageRepositoryFactory
+    {
+        IInternalPackageRepository Create(int feedId);
     }
 }

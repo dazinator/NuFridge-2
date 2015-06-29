@@ -47,7 +47,7 @@ namespace NuFridge.Shared.Server.Web
 {
       public class CustomNancyModule : NancyModule
   {
-          public CustomNancyModule(ITokenizer tokenizer, InternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store, IHomeConfiguration home)
+          public CustomNancyModule(ITokenizer tokenizer, IInternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store, IHomeConfiguration home)
           {
               Post["api/signin"] = p =>
               {
@@ -406,7 +406,7 @@ namespace NuFridge.Shared.Server.Web
               Get["feeds/{feed}/api/v2/package-versions/{packageId}"] = GetPackageVersions(packageRepositoryFactory, store);
           }
 
-          private dynamic ProcessODataFindPackagesByIdRequest(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
+          private dynamic ProcessODataFindPackagesByIdRequest(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
           {
                             string feedName = p.feed;
 
@@ -551,7 +551,7 @@ namespace NuFridge.Shared.Server.Web
               return updated;
           }
 
-          private dynamic ProcessODataRequest(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
+          private dynamic ProcessODataRequest(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
           {
               string feedName = p.feed;
 
@@ -686,7 +686,7 @@ namespace NuFridge.Shared.Server.Web
               }
           }
 
-          private Func<dynamic, dynamic> GetPackageVersions(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+          private Func<dynamic, dynamic> GetPackageVersions(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
           {
               return parameters =>
               {
@@ -719,7 +719,7 @@ namespace NuFridge.Shared.Server.Web
               };
           }
 
-          private Func<dynamic, dynamic> RedirectToDownloadPackage(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+          private Func<dynamic, dynamic> RedirectToDownloadPackage(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
           {
               return parameters =>
               {
@@ -769,7 +769,7 @@ namespace NuFridge.Shared.Server.Web
               };
           }
 
-          private Func<dynamic, dynamic> DownloadPackage(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+          private Func<dynamic, dynamic> DownloadPackage(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
           {
               return parameters =>
               {
@@ -827,7 +827,7 @@ namespace NuFridge.Shared.Server.Web
               };
           }
 
-          private Func<dynamic, dynamic> DeletePackage(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+          private Func<dynamic, dynamic> DeletePackage(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
           {
               return parameters =>
               {
@@ -861,7 +861,7 @@ namespace NuFridge.Shared.Server.Web
               };
           }
 
-          private Func<dynamic, dynamic> UploadPackage(InternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store)
+          private Func<dynamic, dynamic> UploadPackage(IInternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store)
           {
               return parameters =>
               {
