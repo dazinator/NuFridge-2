@@ -93,12 +93,13 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WixSharp">
-      <HintPath>..\..\packages\WixSharp.1.0.12.0\lib\WixSharp.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="WixSharp, Version=1.0.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WixSharp.1.0.12.0\lib\WixSharp.dll</HintPath>
     </Reference>
-    <Reference Include="WixSharp.Msi">
-      <HintPath>..\..\lib\WixSharp.Msi.dll</HintPath>
+    <Reference Include="WixSharp.Msi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\WixSharp.Msi.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
