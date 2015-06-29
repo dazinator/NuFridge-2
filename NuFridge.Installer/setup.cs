@@ -32,7 +32,7 @@ public class Setup
       //  Feature serviceFeature = new Feature("Windows Service", true, false);
        // serviceFeature.Attributes.Add("AllowAdvertise", "no");
         string windowsServiceName = "NuFridge Server Service";
-        string serviceFileFolder = string.Format(@"NuFridge.Service\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
+        string serviceFileFolder = string.Format(@"..\..\..\..\NuFridge.Service\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
         Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt") && !f.EndsWith(".nupkg");
       //  topLevelFeature.Children.Add(serviceFeature);
 
@@ -74,12 +74,18 @@ public class Setup
                 new Property("NuFridgeVersion", version.ToString()), 
             }
         };
+
+
+
+
+        project.OutDir = Path.Combine(rootPath, "Temp", "Wix");
        
-        
+        if (!Directory.Exists(project.OutDir))
+        {
+            Directory.CreateDirectory(project.OutDir);
+        }
 
-        
-
-        project.SourceBaseDir = rootPath;
+        project.SourceBaseDir = Path.Combine(rootPath, "Temp");
         project.Manufacturer = "NuFridge";
         project.Platform = Platform.x64;
         project.UI = WUI.WixUI_InstallDir;
@@ -124,11 +130,11 @@ public class Setup
 
         Compiler.WixSourceGenerated += Compiler_WixSourceGenerated;
 
-        Compiler.BuildMsi(project, "NuFridge.msi");
+        Compiler.BuildMsi(project, Path.Combine(rootPath, "Temp", "NuFridge.msi"));
 
         if (args.Count() == 2)
         {
-            System.IO.File.Move("NuFridge.msi", args.Skip(1).First());
+            System.IO.File.Move(Path.Combine(rootPath, "Temp", "NuFridge.msi"), args.Skip(1).First());
         }
     }
 
