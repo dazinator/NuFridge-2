@@ -136,6 +136,16 @@ namespace NuFridge.Shared.Model
 
              };
 
+            if (string.IsNullOrWhiteSpace(newPackage.Title))
+            {
+                newPackage.Title = package.Id;
+            }
+
+            if (string.IsNullOrWhiteSpace(newPackage.DisplayTitle))
+            {
+                newPackage.DisplayTitle = package.Id;
+            }
+
             newPackage.SetSemanticVersion(package.Version);
 
             if (package.ProjectUrl != null)
