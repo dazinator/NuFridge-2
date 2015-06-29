@@ -149,7 +149,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
                 foreach (var packageToDelete in toDeletePackages)
                 {
-                    packageRepo.RemovePackage(packageToDelete);
+                    try
+                    {
+                        packageRepo.RemovePackage(packageToDelete);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.PackageId, packageToDelete.Version), ex);
+                    }
                 }
             }
 
@@ -183,7 +190,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
                 foreach (var packageToDelete in toDeletePackages)
                 {
-                    packageRepo.RemovePackage(packageToDelete);
+                    try
+                    {
+                        packageRepo.RemovePackage(packageToDelete);
+                    }
+                    catch (Exception ex)
+                    {
+                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.PackageId, packageToDelete.Version), ex);
+                    }
                 }
             }
 
