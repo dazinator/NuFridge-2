@@ -10,6 +10,18 @@ namespace NuFridge.Shared.Model
 
         public virtual string PackagesDirectory { get; set; }
 
+        public bool RetentionPolicyEnabled { get; set; }
+
+        public int MaxPrereleasePackages { get; set; }
+        public int MaxReleasePackages { get; set; }
+
+        public FeedConfiguration()
+        {
+            MaxReleasePackages = 10;
+            MaxPrereleasePackages = 10;
+            RetentionPolicyEnabled = true;
+        }
+
         public virtual string Name
         {
             get { return Id.ToString(); }

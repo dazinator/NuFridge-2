@@ -18,6 +18,7 @@ namespace NuFridge.Tests
 
         [Test]
         [TestCase(typeof(StatisticJobs))]
+        [TestCase(typeof(PackageJobs))]
         public void IsJobRegistered(Type type)
         {
             //It should not be registered under the type, but under the IJob interface.
@@ -40,6 +41,7 @@ namespace NuFridge.Tests
         [TestCase(typeof(UpdateSystemInformationTask))]
         [TestCase(typeof(UpdateFeedDownloadCountStatisticTask))]
         [TestCase(typeof(UpdateFeedPackageCountStatisticTask))]
+        [TestCase(typeof(RunPackageRetentionPolicies))]
         public void IsTaskRegistered(Type type)
         {
             var isRegistered = _container.IsRegistered(type);

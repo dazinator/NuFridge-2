@@ -199,6 +199,8 @@
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\Scheduler\AutofacTaskFactory.cs" />
     <Compile Include="Server\Scheduler\Jobs\IJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\PackageJobs.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Tasks\RunPackageRetentionPolicies.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateSystemInformationTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateFeedDownloadCountStatisticTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateFeedPackageCountStatisticTask.cs" />
