@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Server.Storage
@@ -10,6 +11,7 @@ namespace NuFridge.Shared.Server.Storage
         private readonly string _connectionString;
         private readonly Lazy<Store> _relationalStore;
         private readonly IHomeConfiguration _config;
+        private readonly IContainer _container;
 
         public Store Store
         {
@@ -19,8 +21,9 @@ namespace NuFridge.Shared.Server.Storage
             }
         }
 
-        public StoreFactory(IHomeConfiguration config, string connectionString)
+        public StoreFactory(IContainer container, IHomeConfiguration config, string connectionString)
         {
+            _container = container;
             _config = config;
             _connectionString = connectionString;
             _relationalStore = new Lazy<Store>(InitializeRelationalStore);
@@ -47,7 +50,7 @@ namespace NuFridge.Shared.Server.Storage
 
         private Store InitializeRelationalStore()
         {
-            return new Store(_config, _connectionString, CreateMappings());
+            return new Store(_container, _config, _connectionString, CreateMappings());
         }
     }
 }

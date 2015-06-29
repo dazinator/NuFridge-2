@@ -10,13 +10,13 @@ using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 {
-    public class RunPackageRetentionPolicies : ITask
+    public class RunPackageRetentionPoliciesTask : ITask
     {
         private IStore Store { get; set; }
         private InternalPackageRepositoryFactory PackageRepositoryFactory { get; set; }
-        private readonly ILog _log = LogProvider.For<RunPackageRetentionPolicies>();
+        private readonly ILog _log = LogProvider.For<RunPackageRetentionPoliciesTask>();
 
-        public RunPackageRetentionPolicies(IStore store, InternalPackageRepositoryFactory packageRepositoryFactory)
+        public RunPackageRetentionPoliciesTask(IStore store, InternalPackageRepositoryFactory packageRepositoryFactory)
         {
             Store = store;
             PackageRepositoryFactory = packageRepositoryFactory;
@@ -26,16 +26,16 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
         {
             _log.Info("Running package retention policies.");
 
-            List<Feed> feeds;
+            List<IFeed> feeds;
             List<FeedConfiguration> configs;
 
             using (var transaction = Store.BeginTransaction())
             {
-                feeds = transaction.Query<Feed>().ToList();
+                feeds = transaction.Query<IFeed>().ToList();
                 configs = transaction.Query<FeedConfiguration>().ToList();
             }
 
-            var feedDictionary = new Dictionary<Feed, FeedConfiguration>();
+            var feedDictionary = new Dictionary<IFeed, FeedConfiguration>();
 
             foreach (var feed in feeds)
             {
@@ -51,7 +51,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             _log.Info("Finished running package retention policies.");
         }
 
-        private void RunPolicies(Dictionary<Feed, FeedConfiguration> feedDictionary)
+        private void RunPolicies(Dictionary<IFeed, FeedConfiguration> feedDictionary)
         {
             foreach (var feedKvp in feedDictionary)
             {
@@ -67,7 +67,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             return Directory.Exists(path);
         }
 
-        private void RunPolicy(Feed feed, FeedConfiguration config)
+        private void RunPolicy(IFeed feed, FeedConfiguration config)
         {
             var directory = config.PackagesDirectory;
 

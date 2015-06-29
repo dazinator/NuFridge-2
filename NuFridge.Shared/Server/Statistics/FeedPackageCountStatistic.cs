@@ -17,7 +17,7 @@ namespace NuFridge.Shared.Server.Statistics
         {
             var list = new List<FeedPackageCountStatisticItem>();
 
-            var feeds = Transaction.Query<Feed>().ToList();
+            var feeds = Transaction.Query<IFeed>().ToList();
 
             ColorGenerator generator = new ColorGenerator();
            

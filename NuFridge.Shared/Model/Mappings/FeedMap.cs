@@ -2,10 +2,11 @@
 
 namespace NuFridge.Shared.Model.Mappings
 {
-    public class FeedMap : EntityMapping<Feed>
+    public class FeedMap : EntityMapping<IFeed>
     {
         public FeedMap()
         {
+            TableName = "Feed";
             Column(m => m.Name);
             //Column(m => m.FeedUri);
             //Column(m => m.Username);

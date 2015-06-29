@@ -41,7 +41,7 @@ namespace NuFridge.Tests
         [TestCase(typeof(UpdateSystemInformationTask))]
         [TestCase(typeof(UpdateFeedDownloadCountStatisticTask))]
         [TestCase(typeof(UpdateFeedPackageCountStatisticTask))]
-        [TestCase(typeof(RunPackageRetentionPolicies))]
+        [TestCase(typeof(RunPackageRetentionPoliciesTask))]
         public void IsTaskRegistered(Type type)
         {
             var isRegistered = _container.IsRegistered(type);

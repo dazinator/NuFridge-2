@@ -177,6 +177,7 @@
     <Compile Include="Commands\AbstractStandardCommand.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
     <Compile Include="Model\DatabaseContext.cs" />
+    <Compile Include="Model\Interfaces\IFeedConfiguration.cs" />
     <Compile Include="Model\Mappings\StatisticMap.cs" />
     <Compile Include="Model\Mappings\ApiKeyMap.cs" />
     <Compile Include="Model\Mappings\InternalPackageMap.cs" />
@@ -200,7 +201,7 @@
     <Compile Include="Server\Scheduler\AutofacTaskFactory.cs" />
     <Compile Include="Server\Scheduler\Jobs\IJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\PackageJobs.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Tasks\RunPackageRetentionPolicies.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Tasks\RunPackageRetentionPoliciesTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateSystemInformationTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateFeedDownloadCountStatisticTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateFeedPackageCountStatisticTask.cs" />

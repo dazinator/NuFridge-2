@@ -7,7 +7,7 @@ namespace NuFridge.Shared.Model
 {
     public class Feed : IFeed, IEntity
     {
-        public int Id { get; protected set; }
+        public int Id { get;  set; }
 
         public string Name { get; set; }
 
@@ -53,9 +53,15 @@ namespace NuFridge.Shared.Model
 
     public interface IFeed
     {
-        int Id { get; }
+        int Id { get; set; }
 
-        string FeedUri { get; }
+        string Name { get; set; }
+
+        string FeedUri { get; set; }
+
+        string Username { get; set; }
+
+        string Password { get; set; }
 
         ICredentials GetCredentials();
     }

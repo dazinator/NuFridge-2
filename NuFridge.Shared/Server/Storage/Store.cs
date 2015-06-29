@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters;
+using Autofac;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NuFridge.Shared.Extensions;
@@ -15,6 +16,7 @@ namespace NuFridge.Shared.Server.Storage
         private readonly JsonSerializerSettings _jsonSettings = new JsonSerializerSettings();
         private readonly RelationalMappings _mappings;
         private readonly string _connectionString;
+        private readonly IContainer _container;
 
         public string ConnectionString
         {
@@ -24,8 +26,9 @@ namespace NuFridge.Shared.Server.Storage
             }
         }
 
-        public Store(IHomeConfiguration config, string connectionString, RelationalMappings mappings)
+        public Store(IContainer container, IHomeConfiguration config, string connectionString, RelationalMappings mappings)
         {
+            _container = container;
             _config = config;
             _mappings = mappings;
             _connectionString = SetConnectionStringOptions(connectionString);
@@ -45,7 +48,7 @@ namespace NuFridge.Shared.Server.Storage
 
         public ITransaction BeginTransaction(IsolationLevel isolationLevel)
         {
-            return new Transaction(_connectionString, isolationLevel, _jsonSettings, _mappings);
+            return new Transaction(_container, _connectionString, isolationLevel, _jsonSettings, _mappings);
         }
 
         private string SetConnectionStringOptions(string connectionString)

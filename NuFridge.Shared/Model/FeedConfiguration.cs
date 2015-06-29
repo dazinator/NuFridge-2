@@ -2,7 +2,7 @@
 
 namespace NuFridge.Shared.Model
 {
-    public class FeedConfiguration : IEntity
+    public class FeedConfiguration : IEntity, IFeedConfiguration
     {
         public virtual int Id { get; set; }
 

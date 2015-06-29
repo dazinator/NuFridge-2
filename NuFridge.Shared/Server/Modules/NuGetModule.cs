@@ -15,7 +15,7 @@ namespace NuFridge.Shared.Server.Modules
             base.Load(builder);
 
             builder.RegisterType<PackageIndex>().AsSelf();
-
+            builder.RegisterType<Feed>().As<IFeed>();
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
 
             builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IStore>(), feedId))).InstancePerDependency();

@@ -33,37 +33,6 @@ namespace NuFridge.Shared.Server.Storage.Initializers
             //}
         }
 
-        private void EnsureConfig(ITransaction transaction)
-        {
-            if (transaction.Query<FeedConfiguration>().First() != null)
-                return;
-
-            Feed feed = transaction.Query<Feed>().First();
-
-            var appFolder = _home.InstallDirectory;
-            var feedFolder = Path.Combine(appFolder, @"Feeds", feed.Name);
-
-            FeedConfiguration config = new FeedConfiguration
-            {
-                FeedId = feed.Id,
-                PackagesDirectory = feedFolder
-            };
-
-            transaction.Insert(config); 
-        }
-
-        private bool EnsureFeed(ITransaction transaction)
-        {
-            if (transaction.Query<Feed>().First() != null)
-                return false;
-
-            Feed feed = new Feed
-            {
-                Name = "Default"
-            };
-
-            transaction.Insert(feed);
-            return true;
-        }
+       
     }
 }

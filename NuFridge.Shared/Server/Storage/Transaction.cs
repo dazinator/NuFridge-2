@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Autofac;
 using Newtonsoft.Json;
 using NuFridge.Shared.Exceptions;
 
@@ -22,8 +23,9 @@ namespace NuFridge.Shared.Server.Storage
 
         private readonly SqlConnection _connection;
         private readonly SqlTransaction _transaction;
+        private readonly IContainer _container;
 
-        public Transaction(string connectionString, IsolationLevel isolationLevel, JsonSerializerSettings jsonSerializerSettings, RelationalMappings mappings)
+        public Transaction(IContainer container, string connectionString, IsolationLevel isolationLevel, JsonSerializerSettings jsonSerializerSettings, RelationalMappings mappings)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _mappings = mappings;
@@ -31,6 +33,7 @@ namespace NuFridge.Shared.Server.Storage
             _connection.Open();
             _transaction = _connection.BeginTransaction(isolationLevel);
             CurrentTransactions.TryAdd(this, true);
+            _container = container;
         }
 
         public T Load<T>(int id) where T : class
@@ -166,6 +169,9 @@ namespace NuFridge.Shared.Server.Storage
 
         private IEnumerable<T> Stream<T>(SqlCommand command, EntityMapping mapping)
         {
+            var type = typeof (T);
+
+        
             SqlDataReader reader = command.ExecuteReader();
             try
             {
@@ -174,7 +180,16 @@ namespace NuFridge.Shared.Server.Storage
                 Dictionary<ColumnMapping, int> columnIndexes = mapping.IndexedColumns.ToDictionary(c => c, c => GetOrdinal(reader, c.ColumnName));
                 while (reader.Read())
                 {
-                    T instance = Activator.CreateInstance<T>();
+                    T instance;
+                    if (type.IsInterface)
+                    {
+                        instance = _container.Resolve<T>();
+                    }
+                    else
+                    {
+                        instance = Activator.CreateInstance<T>();
+                    }
+
                     foreach (KeyValuePair<ColumnMapping, int> keyValuePair in columnIndexes)
                     {
                         if (keyValuePair.Value >= 0)
@@ -206,7 +221,7 @@ namespace NuFridge.Shared.Server.Storage
         {
             using (SqlDataReader reader = command.ExecuteReader())
             {
-                ProjectionMapper mapper = new ProjectionMapper(reader, _jsonSerializerSettings, _mappings);
+                ProjectionMapper mapper = new ProjectionMapper(_container, reader, _jsonSerializerSettings, _mappings);
                 while (reader.Read())
                     yield return projectionMapper(mapper);
             }
@@ -333,9 +348,11 @@ namespace NuFridge.Shared.Server.Storage
             private readonly SqlDataReader _reader;
             private readonly JsonSerializerSettings _jsonSerializerSettings;
             private readonly RelationalMappings _mappings;
+            private readonly IContainer _container;
 
-            public ProjectionMapper(SqlDataReader reader, JsonSerializerSettings jsonSerializerSettings, RelationalMappings mappings)
+            public ProjectionMapper(IContainer container, SqlDataReader reader, JsonSerializerSettings jsonSerializerSettings, RelationalMappings mappings)
             {
+                _container = container;
                 _mappings = mappings;
                 _reader = reader;
                 _jsonSerializerSettings = jsonSerializerSettings;
@@ -344,7 +361,19 @@ namespace NuFridge.Shared.Server.Storage
             public TResult Map<TResult>(string prefix)
             {
                 EntityMapping documentMap = _mappings.Get(typeof(TResult));
-                TResult result = Activator.CreateInstance<TResult>();
+
+                var type = typeof (TResult);
+
+                TResult result;
+                if (type.IsInterface)
+                {
+                    result = _container.Resolve<TResult>();
+                }
+                else
+                {
+                    result = Activator.CreateInstance<TResult>();
+                }
+
                 foreach (ColumnMapping columnMapping in documentMap.IndexedColumns)
                     columnMapping.ReaderWriter.Write(result, _reader[GetColumnName(prefix, columnMapping.ColumnName)]);
                 documentMap.IdColumn.ReaderWriter.Write(result, _reader[GetColumnName(prefix, documentMap.IdColumn.ColumnName)]);

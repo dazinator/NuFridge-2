@@ -84,7 +84,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (ITransaction transaction = store.BeginTransaction())
                   {
-                      var feedsCount = transaction.Query<Feed>().Count();
+                      var feedsCount = transaction.Query<IFeed>().Count();
                       var usersCount = transaction.Query<User>().Count();
                       var packagesCount = transaction.Query<InternalPackage>().Count();
 
@@ -133,7 +133,7 @@ namespace NuFridge.Shared.Server.Web
                   using (ITransaction transaction = store.BeginTransaction())
                   {
 
-                      var feeds = transaction.Query<Feed>().ToList(pageSize*page, pageSize, out totalResults);
+                      var feeds = transaction.Query<IFeed>().ToList(pageSize*page, pageSize, out totalResults);
 
                       var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
 
@@ -158,7 +158,7 @@ namespace NuFridge.Shared.Server.Web
                       string name = Request.Query.name;
 
                       int totalResults;
-                      var feeds = transaction.Query<Feed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").ToList(0, 10, out totalResults);
+                      var feeds = transaction.Query<IFeed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").ToList(0, 10, out totalResults);
 
                       var category = new FeedSearchResponse.Category("Default");
                       response.Results.Add(category);
@@ -183,7 +183,7 @@ namespace NuFridge.Shared.Server.Web
                   {
                       int feedId = int.Parse(p.id);
 
-                      return transaction.Query<Feed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
+                      return transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
                   }
               };
 
@@ -192,16 +192,16 @@ namespace NuFridge.Shared.Server.Web
               {
                   this.RequiresAuthentication();
 
-                  Feed feed;
+                  IFeed feed;
 
                   try
                   {
-                      feed = this.Bind<Feed>();
+                      feed = this.Bind<IFeed>();
 
                       ITransaction transaction = store.BeginTransaction();
 
                       var existingFeedExists =
-                          transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feed.Name).Count() >
+                          transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feed.Name).Count() >
                           0;
 
                       if (existingFeedExists)
@@ -216,7 +216,7 @@ namespace NuFridge.Shared.Server.Web
                       transaction = store.BeginTransaction();
 
                       feed =
-                          transaction.Query<Feed>()
+                          transaction.Query<IFeed>()
                               .Where("Name = @feedName")
                               .Parameter("feedName", feed.Name)
                               .First();
@@ -248,13 +248,13 @@ namespace NuFridge.Shared.Server.Web
               {
                   this.RequiresAuthentication();
 
-                  Feed feed;
+                  IFeed feed;
 
                   try
                   {
                       int feedId = int.Parse(p.id);
 
-                      feed = this.Bind<Feed>();
+                      feed = this.Bind<IFeed>();
 
                       if (feedId != feed.Id)
                       {
@@ -264,7 +264,7 @@ namespace NuFridge.Shared.Server.Web
                       ITransaction transaction = store.BeginTransaction();
 
                       var existingFeedExists =
-                          transaction.Query<Feed>().Where("Id = @feedId").Parameter("feedId", feedId).Count() >
+                          transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).Count() >
                           0;
 
                       if (!existingFeedExists)
@@ -294,7 +294,7 @@ namespace NuFridge.Shared.Server.Web
                   {
                       int feedId = int.Parse(p.id);
 
-                      var feed = transaction.Query<Feed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
+                      var feed = transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
 
                       if (feed == null)
                       {
@@ -412,8 +412,8 @@ namespace NuFridge.Shared.Server.Web
 
               using (ITransaction transaction = store.BeginTransaction())
               {
-                  Feed feed =
-                      transaction.Query<Feed>()
+                  IFeed feed =
+                      transaction.Query<IFeed>()
                           .Where("Name = @feedName")
                           .Parameter("feedName", feedName)
                           .First();
@@ -557,8 +557,8 @@ namespace NuFridge.Shared.Server.Web
 
               using (ITransaction transaction = store.BeginTransaction())
               {
-                  Feed feed =
-                      transaction.Query<Feed>()
+                  IFeed feed =
+                      transaction.Query<IFeed>()
                           .Where("Name = @feedName")
                           .Parameter("feedName", feedName)
                           .First();
@@ -704,7 +704,7 @@ namespace NuFridge.Shared.Server.Web
                   using (ITransaction transaction = store.BeginTransaction())
                   {
                       var feed =
-                          transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                          transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                       feedId = feed.Id;
 
 
@@ -731,7 +731,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (ITransaction transaction = store.BeginTransaction())
                   {
-                      var feed = transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                      var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                       feedId = feed.Id;
                   }
 
@@ -782,7 +782,7 @@ namespace NuFridge.Shared.Server.Web
                   using (ITransaction transaction = store.BeginTransaction())
                   {
                       var feed =
-                          transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                          transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                       feedId = feed.Id;
                   }
 
