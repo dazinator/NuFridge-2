@@ -17,12 +17,8 @@ namespace NuFridge.Shared.Server.NuGet
 
         private readonly PackageIndex _packageIndex;
 
-        private readonly object _fileLock = new object();    
+        private readonly object _fileLock = new object();
 
-        public override IQueryable<IPackage> GetPackages()
-        {
-            return _packageIndex.GetPackages();
-        }
 
         public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
         {
@@ -30,61 +26,57 @@ namespace NuFridge.Shared.Server.NuGet
             FeedId = feedId;
         }
 
-        public Stream GetRawContents(IPackage package)
+        public Stream GetRawContents(IInternalPackage package)
         {
             lock (_fileLock)
             {
-                return FileSystem.OpenFile(GetPackageFilePath(package.Id, package.Version));
+                return FileSystem.OpenFile(GetPackageFilePath(package.PackageId, package.GetSemanticVersion()));
             }
         }
 
-        public IPackage GetPackage( string packageId, SemanticVersion version)
+        public IInternalPackage GetPackage(string packageId, SemanticVersion version)
         {
             return _packageIndex.GetPackage(packageId, version);
         }
 
-        public void IncrementDownloadCount(IPackage package)
+        public void IncrementDownloadCount(IInternalPackage package)
         {
             _packageIndex.IncrementDownloadCount((IInternalPackage)package);
         }
 
-        public IEnumerable<IPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
+        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
         {
             return _packageIndex.GetVersions(transaction, packageId, allowPreRelease);
         }
 
-        public IEnumerable<IPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
+        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
         {
             return _packageIndex.GetWebPackages(transaction, filterType, filterColumn, filterValue, orderType, orderProperty, searchTerm, targetFramework, includePrerelease);
         }
 
-        public List<IPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
+        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
         {
                 return _packageIndex.GetPackagesContaining(searchTerm, out total, skip, take, allowPreRelease);
         }
 
         public Stream GetPackageRaw( string packageId, SemanticVersion version)
         {
-            IPackage package = GetPackage(packageId, version);
+            IInternalPackage package = GetPackage(packageId, version);
             if (package == null)
                 return null;
             return GetRawContents(package);
         }
 
-        public override void RemovePackage(IPackage package)
+        public void RemovePackage(IInternalPackage package)
         {
-            base.RemovePackage(package);
+            //TODO this is a hack
+            DataServicePackage p = new DataServicePackage();
+            p.Id = package.PackageId;
+            p.Version = package.Version;
+
+            base.RemovePackage(p);
 
             _packageIndex.DeletePackage(package);
-
-            //lock (_fileLock)
-            //{
-            //    var path = GetPackageFilePath(package.PackageId, package.Version);
-            //    if (FileSystem.FileExists(path))
-            //    {
-            //        FileSystem.DeleteFile(path);
-            //    }
-            //}
         }
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)

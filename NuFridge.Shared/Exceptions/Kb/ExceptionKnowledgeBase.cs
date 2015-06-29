@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Services.Client;
+
 using System.Net;
 using NuFridge.Shared.Extensions;
 
@@ -17,9 +17,6 @@ namespace NuFridge.Shared.Exceptions.Kb
                     r.ExceptionIs(ex => ex.Message.StartsWith("Could not connect to the feed"),
                         (Action<InvalidOperationException, IDictionary<string, object>>)
                             ((ex, s) => s["Generic"] =  ex.Message))
-                        .HasInnerException(
-                            (Action<DataServiceClientException, IDictionary<string, object>>)
-                                ((ex, s) => s["Client"] =  ex.Message))
                         .EntrySummaryIs(
                             s =>  s["Generic"] +  " The feed responded with: " +  s["Client"]));
 

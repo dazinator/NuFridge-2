@@ -9,17 +9,18 @@ using Microsoft.Data.OData;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.Web.OData;
 using NuGet;
 
 namespace NuFridge.Shared.Server.Web
 {
     public class ODataPackages
     {
-        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<IPackage> packages, int feedId, int skip, int take)
+        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<InternalPackage> packages, int feedId, int total)
         {
             var writerSettings = new ODataMessageWriterSettings()
             {
-                Indent = true, // pretty printing
+                Indent = true,
                 CheckCharacters = false,
                 BaseUri = new Uri(baseUrl),
                 Version = ODataVersion.V3
@@ -31,11 +32,12 @@ namespace NuFridge.Shared.Server.Web
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
 
             var feedWriter = writer.CreateODataFeedWriter();
-            feedWriter.WriteStart(new ODataFeed() { Id = "Packages", Count = packages.Count()});
+            feedWriter.WriteStart(new ODataFeed() { Id = "Packages", Count = total});
 
-            var webPackages = packages.Skip(skip).Take(take).Select(pk => new WebZipPackage(pk, new Uri(string.Format("{0}/package/{1}/{2}", baseUrl, pk.Id, pk.Version)))).ToList();
 
-            foreach (var package in webPackages)
+            var pks = packages.Select(pk => new ODataPackage(pk));
+
+            foreach (var package in pks)
             {
                 feedWriter.WriteStart(MapPackageToEntry(baseAddress, package));
                 feedWriter.WriteEnd();
@@ -50,9 +52,9 @@ namespace NuFridge.Shared.Server.Web
             return stream;
         }
 
-        private static ODataEntry MapPackageToEntry(string baseAddress, IWebPackage package)
+        private static ODataEntry MapPackageToEntry(string baseAddress, ODataPackage package)
         {
-            var dtoPackage = MapPackageToDto(package);
+
             var entryId = "Packages(Id='" + package.Id + "',Version='" + package.Version + "')";
 
             var oDataEntry = new ODataEntry()
@@ -63,50 +65,23 @@ namespace NuFridge.Shared.Server.Web
                 MediaResource = new ODataStreamReferenceValue()
                 {
                     ContentType = "application/zip",
-                    ReadLink = package.Uri,
+                    ReadLink = new Uri(baseAddress + "/package/" + package.Id + "/" + package.Version),
                 },
 
-                Properties = GetProperties(dtoPackage)
+                Properties = GetProperties(package)
             };
 
             return oDataEntry;
         }
 
-        private static WebPackage MapPackageToDto(IWebPackage package)
-        {
-            var tempPackage = new WebPackage()
-            {
-                Id = package.Id,
-                Authors = string.Join(", ", package.Authors),
-                Copyright = package.Copyright,
-                Owners = string.Join(", ", package.Owners),
-                ProjectUrl = package.ProjectUrl != null ? package.ProjectUrl.ToString() : null,
-                Title = package.Title,
-                Version = package.Version != null ? package.Version.ToString() : null,
-                IsPrerelease = false,
-                DownloadCount = package.DownloadCount,
-                RequireLicenseAcceptance = package.RequireLicenseAcceptance,
-                DevelopmentDependency = package.DevelopmentDependency,
-                Description = package.Description,
-                Published = package.Published != null ? package.Published.Value.UtcDateTime : new DateTime(2014, 1, 1),
-                LastUpdated = new DateTime(2014, 1, 1),
-                PackageHash = package.GetHash("SHA512"),
-                PackageHashAlgorithm = "SHA512",
-                PackageSize = package.GetStream().Length,
-                IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion,
-                IsLatestVersion = package.IsLatestVersion,
-                Listed = package.Listed,
-                VersionDownloadCount = package.DownloadCount
-            };
-            return tempPackage;
-        }
+
 
         private static IEnumerable<ODataProperty> GetProperties(object obj)
         {
             return obj.GetType().GetProperties().Select(property => new ODataProperty() { Name = property.Name, Value = property.GetValue(obj) }).ToArray();
         }
 
-        public static Stream CreatePackageStream(string baseAddress, IWebPackage package)
+        public static Stream CreatePackageStream(string baseAddress, ODataPackage package)
         {
             var writerSettings = new ODataMessageWriterSettings()
             {

@@ -11,25 +11,23 @@ namespace NuFridge.Shared.Server.NuGet
     {
         int FeedId { get; }
 
-        IQueryable<IPackage> GetPackages();
-
-        void RemovePackage(IPackage package);
+        void RemovePackage(IInternalPackage package);
 
         void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion);
 
-        IPackage GetPackage(string packageId, SemanticVersion version);
+        IInternalPackage GetPackage(string packageId, SemanticVersion version);
 
-        IEnumerable<IPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease);
+        IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease);
 
-        List<IPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true);
+        List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true);
 
         Stream GetPackageRaw(string packageId, SemanticVersion version);
 
-        Stream GetRawContents(IPackage package);
+        Stream GetRawContents(IInternalPackage package);
 
-        void IncrementDownloadCount(IPackage package);
+        void IncrementDownloadCount(IInternalPackage package);
 
-        IEnumerable<IPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn,
+        IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn,
             string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease);
     }
 }

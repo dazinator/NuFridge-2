@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -11,13 +13,15 @@ using NuGet;
 
 namespace NuFridge.Shared.Model
 {
-    public class InternalPackage : IInternalPackage, IEntity, IPackage
+    [Table("Package", Schema = "NuFridge")]
+    public class InternalPackage : IInternalPackage, IEntity
     {
         public InternalPackage()
         {
             IsAbsoluteLatestVersion = true;
         }
 
+        [Key]
         public int Id { get; set; }
 
         public int FeedId { get; set; }
@@ -26,36 +30,36 @@ namespace NuFridge.Shared.Model
 
         public string FullVersion { get { return Version == null ? string.Empty : Version.ToString(); } }
 
-        [XmlIgnore]
         private SemanticVersion _version { get; set; }
 
-        public SemanticVersion Version
+        public string Version { get; set; }
+
+        public SemanticVersion GetSemanticVersion()
         {
-            get
+            return _version;
+        }
+
+        public void SetSemanticVersion(SemanticVersion value)
+        {
+            _version = value;
+            if (value != null)
             {
-                return _version; ;
+                VersionBuild = value.Version.Build;
+                VersionMinor = value.Version.Minor;
+                VersionMajor = value.Version.Major;
+                VersionRevision = value.Version.Revision;
+                VersionSpecial = value.SpecialVersion;
             }
-            set
+            else
             {
-                _version = value;
-                if (value != null)
-                {
-                    VersionBuild = value.Version.Build;
-                    VersionMinor = value.Version.Minor;
-                    VersionMajor = value.Version.Major;
-                    VersionRevision = value.Version.Revision;
-                    VersionSpecial = value.SpecialVersion;
-                }
-                else
-                {
-                    VersionBuild = 0;
-                    VersionMinor = 0;
-                    VersionMajor = 0;
-                    VersionRevision = 0;
-                    VersionSpecial = null;
-                }
+                VersionBuild = 0;
+                VersionMinor = 0;
+                VersionMajor = 0;
+                VersionRevision = 0;
+                VersionSpecial = null;
             }
         }
+
 
         public int VersionMajor { get; set; }
         public int VersionMinor { get; set; }
@@ -73,17 +77,23 @@ namespace NuFridge.Shared.Model
 
         public string[] Dependencies { get; set; }
 
-        public string PackageHash { get; set; }
+        public string Hash { get; set; }
 
         public string Title { get; set; }
 
         public string Summary { get; set; }
 
+                  [NotMapped]
         public long Size { get; set; }
 
         public bool IsReleaseVersion()
         {
-            return string.IsNullOrWhiteSpace(Version.SpecialVersion);
+            var semVersion = GetSemanticVersion();
+            if (semVersion != null)
+            {
+                return string.IsNullOrWhiteSpace(semVersion.SpecialVersion);
+            }
+            return false;
         }
 
         public long GetSize()
@@ -98,7 +108,7 @@ namespace NuFridge.Shared.Model
 
         public string CalculateHash()
         {
-            return PackageHash;
+            return Hash;
         }
 
         public static InternalPackage Create(int feedId, IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
@@ -107,7 +117,6 @@ namespace NuFridge.Shared.Model
              {
                  PackageId = package.Id,
                  FeedId = feedId,
-                 Version = package.Version,
                  Description = package.Description,
                  Published = package.Published ?? DateTimeOffset.UtcNow,
                  LastUpdated = DateTime.UtcNow,
@@ -119,27 +128,50 @@ namespace NuFridge.Shared.Model
                  IsLatestVersion = isLatestVersion,
                  Copyright = package.Copyright,
                  IsPrerelease = !package.IsReleaseVersion(),
-                 LicenseUrl = package.LicenseUrl,
+
                  Listed = true,
-                 ProjectUrl = package.ProjectUrl,
+
                  RequireLicenseAcceptance = package.RequireLicenseAcceptance,
                  Tags = package.Tags,
-                 IconUrl = package.IconUrl
+
              };
+
+            newPackage.SetSemanticVersion(package.Version);
+
+            if (package.ProjectUrl != null)
+            {
+                newPackage.ProjectUrl = package.ProjectUrl.ToString();
+            }
+
+            if (package.IconUrl != null)
+            {
+                newPackage.IconUrl = package.IconUrl.ToString();
+            }
+
+            if (package.LicenseUrl != null)
+            {
+                newPackage.LicenseUrl = package.LicenseUrl.ToString();
+            }
+
+            if (package.ReportAbuseUrl != null)
+            {
+                newPackage.ReportAbuseUrl = package.ReportAbuseUrl.ToString();
+            }
+
 
             if (package.Owners != null)
             {
-                newPackage.Owners = package.Owners.ToArray();
+                newPackage.Owners = string.Join(",", package.Owners);
             }
 
             if (package.Authors != null)
             {
-                newPackage.Authors = package.Authors.ToArray();
+                newPackage.Authors = string.Join(",", package.Authors);
             }
 
             using (Stream stream = package.GetStream())
             {
-                newPackage.PackageHash = HashCalculator.Hash(stream);
+                newPackage.Hash = HashCalculator.Hash(stream);
                 newPackage.Size = stream.Length;
             }
 
@@ -152,81 +184,42 @@ namespace NuFridge.Shared.Model
             get { return PackageId; }
         }
 
+           [NotMapped]
         public string DisplayTitle { get; set; }
         public bool RequireLicenseAcceptance { get; set; }
+           [NotMapped]
         public string Language { get; set; }
         public string Tags { get; set; }
+           [NotMapped]
         public string PackageHashAlgorithm { get; set; }
+           [NotMapped]
         public long PackageSize { get; set; }
         public DateTime LastUpdated { get; set; }
+           [NotMapped]
         public DateTime Created { get; set; }
         public bool IsAbsoluteLatestVersion { get; set; }
         public bool IsLatestVersion { get; set; }
         public bool IsPrerelease { get; set; }
         public bool Listed { get; set; }
         public int DownloadCount { get; set; }
+           [NotMapped]
         public int VersionDownloadCount { get; set; }
+           [NotMapped]
         public bool DevelopmentDependency { get; set; }
+        [NotMapped]
         public float Score { get; set; }
-        public string[] Authors { get; set; }
-        public string[] Owners { get; set; }
-        public Uri IconUrl { get; set; }
-        public Uri LicenseUrl { get; set; }
-        public Uri ProjectUrl { get; set; }
+        public string Authors { get; set; }
+        public string Owners { get; set; }
+        public string IconUrl { get; set; }
+        public string LicenseUrl { get; set; }
+        public string ProjectUrl { get; set; }
 
 
         public void IncrementDownloadCount()
         {
             DownloadCount++;
         }
-
-        public IEnumerable<IPackageAssemblyReference> AssemblyReferences { get; set; }
-
-        public IEnumerable<IPackageFile> GetFiles()
-        {
-            return new List<IPackageFile>();
-        }
-
-        public Stream GetStream()
-        {
-            return Stream.Null;
-        }
-
-        public IEnumerable<System.Runtime.Versioning.FrameworkName> GetSupportedFrameworks()
-        {
-            return new List<FrameworkName>();
-        }
-
-        IEnumerable<string> IPackageMetadata.Authors
-        {
-            get { return Authors; }
-        }
-
-        public IEnumerable<PackageDependencySet> DependencySets { get; set; }
-
-        public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies
-        { get; set; }
-
-        public Version MinClientVersion
-        { get; set; }
-
-        IEnumerable<string> IPackageMetadata.Owners
-        {
-            get { return Owners; }
-        }
-
-        public ICollection<PackageReferenceSet> PackageAssemblyReferences
-        { get; set; }
-
-        string IPackageName.Id
-        {
-            get
-            {
-                return PackageId;
-            }
-        }
-
-        public Uri ReportAbuseUrl
-        { get; set; }
+           [NotMapped]
+        public string ReportAbuseUrl { get; set; }
     }
 }

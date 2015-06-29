@@ -8,7 +8,7 @@ namespace NuFridge.Shared.Model.Interfaces
     {
         string PackageId { get; }
 
-        SemanticVersion Version { get; }
+        string Version { get; }
 
         string Description { get; }
 
@@ -44,14 +44,16 @@ namespace NuFridge.Shared.Model.Interfaces
          int VersionDownloadCount { get; set; }
          bool DevelopmentDependency { get; set; }
          float Score { get; set; }
-         string[] Authors { get; set; }
-         string[] Owners { get; set; }
-         Uri IconUrl { get; set; }
-         Uri LicenseUrl { get; set; }
+         string Authors { get; set; }
+         string Owners { get; set; }
+         string IconUrl { get; set; }
+         string LicenseUrl { get; set; }
          string Copyright { get; set; }
-         Uri ProjectUrl { get; set; }
+         string ProjectUrl { get; set; }
 
         string CalculateHash();
         void IncrementDownloadCount();
+        SemanticVersion GetSemanticVersion();
+        void SetSemanticVersion(SemanticVersion value);
     }
 }

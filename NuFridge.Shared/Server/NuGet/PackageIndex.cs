@@ -27,7 +27,7 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public bool DoesPackageExist(IPackage package)
+        public bool DoesPackageExist(IInternalPackage package)
         {
             return LoadPackage(package) != null;
         }
@@ -42,7 +42,7 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public IQueryable<IPackage> GetPackages()
+        public IQueryable<IInternalPackage> GetPackages()
         {
             using (var transaction = _store.BeginTransaction())
             {
@@ -50,9 +50,9 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public void DeletePackage(IPackage package)
+        public void DeletePackage(IInternalPackage package)
         {
-            IPackage internalPackage = GetPackage(package.Id, package.Version);
+            IInternalPackage internalPackage = GetPackage(package.PackageId, package.GetSemanticVersion());
             if (internalPackage == null)
                 return;
             using (var transaction = _store.BeginTransaction())
@@ -62,18 +62,18 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public IPackage GetPackage(string packageId, SemanticVersion version)
+        public IInternalPackage GetPackage(string packageId, SemanticVersion version)
         {
             return LoadPackage(packageId.ToLowerInvariant(), version.ToString().ToLowerInvariant());
         }
 
-        public IPackage GetLatest(string packageId, bool allowPreRelease = true)
+        public IInternalPackage GetLatest(string packageId, bool allowPreRelease = true)
         {
             int totalResults;
             return CallProcedure(out totalResults, packageId, allowPreRelease, false, true).FirstOrDefault();
         }
 
-        public IEnumerable<IPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
+        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
         {
                 var query = transaction.Query<InternalPackage>();
 
@@ -93,7 +93,7 @@ namespace NuFridge.Shared.Server.NuGet
                 return packages;
         }
 
-        public IEnumerable<IPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
+        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
         {
 
                 var query = transaction.Query<InternalPackage>();
@@ -167,7 +167,7 @@ namespace NuFridge.Shared.Server.NuGet
             
         }
 
-        public List<IPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
+        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
         {
             bool flag1 = allowPreRelease;
             bool flag2 = true;
@@ -183,12 +183,12 @@ namespace NuFridge.Shared.Server.NuGet
             return CallProcedure(out total, packageId, num3 != 0, num4 != 0, num5 != 0, skip1, take1);
         }
 
-        public List<IPackage> GetLatestOfAllPackages(out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
+        public List<IInternalPackage> GetLatestOfAllPackages(out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
         {
             return CallProcedure(out total, null, allowPreRelease, false, true, skip, take);
         }
 
-        private List<IPackage> CallProcedure(out int totalResults, string packageId = null, bool allowPreRelease = true, bool partialMatch = false, bool latestOnly = false, int skip = 0, int take = 30)
+        private List<IInternalPackage> CallProcedure(out int totalResults, string packageId = null, bool allowPreRelease = true, bool partialMatch = false, bool latestOnly = false, int skip = 0, int take = 30)
         {
             using (var transaction = _store.BeginTransaction())
             {
@@ -212,13 +212,13 @@ namespace NuFridge.Shared.Server.NuGet
                         return internalPackage;
                     });
                 totalResults = total;
-                return enumerable.Cast<IPackage>().ToList();
+                return enumerable.Cast<IInternalPackage>().ToList();
             }
         }
 
-        private InternalPackage LoadPackage(IPackage package)
+        private InternalPackage LoadPackage(IInternalPackage package)
         {
-            return LoadPackage(package.Id.ToLowerInvariant(), package.Version.ToString().ToLowerInvariant());
+            return LoadPackage(package.PackageId.ToLowerInvariant(), package.Version.ToString().ToLowerInvariant());
         }
 
         protected virtual InternalPackage LoadPackage(string id, string version)

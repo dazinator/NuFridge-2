@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Http;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Query;
@@ -21,8 +22,6 @@ using LinqToQuerystring.Nancy;
 using LinqToQuerystring.TreeNodes;
 using LinqToQuerystring.TreeNodes.Base;
 using Microsoft.Data.Edm.Library;
-using Microsoft.OData.Core;
-using Microsoft.OData.Core.Atom;
 using Nancy;
 using Nancy.Authentication.Token;
 using Nancy.ModelBinding;
@@ -37,6 +36,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Statistics;
 using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Server.Web.OData;
 using NuFridge.Shared.Server.Web.Responses;
 using NuGet;
 using IFileSystem = NuFridge.Shared.Server.FileSystem.ILocalFileSystem;
@@ -419,125 +419,91 @@ namespace NuFridge.Shared.Server.Web
                           .First();
 
                   IDictionary<string, object> queryDictionary = Context.Request.Query;
-                  NameValueCollection collection = new NameValueCollection();
 
-                  foreach (var o in queryDictionary)
+
+                  NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
+                  builder.Build();
+
+                  var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
+
+                  HttpMethod method = new HttpMethod(Request.Method);
+
+                  var url = Request.Url.SiteBase + Request.Url.Path;
+
+                  var query = string.Empty;
+                  foreach (var qd in queryDictionary)
                   {
-                      if (o.Key.StartsWith("$"))
-                      collection.Add(o.Key, o.Value.ToString());
-                  }
-
-                  var joined = string.Join("&", queryDictionary.Select(o => o.Key + "=" + o.Value));
-                  var queryString = !string.IsNullOrEmpty(joined) ? "?" + joined : string.Empty;
-
-                  if (queryString.StartsWith("?"))
-                  {
-                      queryString = queryString.Substring(1);
-                  }
-
-                  var odataQueries = queryString.Split('&').Where(o => o.StartsWith("$")).ToList();
-
-                  var odataQuerystring = Uri.UnescapeDataString(string.Join("&", odataQueries.ToArray()));
-
-                  var input = new ANTLRReaderStream(new StringReader(odataQuerystring));
-                  var lexer = new LinqToQuerystringLexer(input);
-                  var tokStream = new CommonTokenStream(lexer);
-
-                  var parser = new LinqToQuerystringParser(tokStream)
-                  {
-                      TreeAdaptor = new TreeNodeFactory(typeof(IWebPackage), false)
-                  };
-
-                  var result = parser.prog();
-
-
-                  string packageId = queryDictionary.ContainsKey("id")
-                      ? queryDictionary["id"].ToString()
-                      : string.Empty;
-
-                  string orderType = null;
-                  string orderProperty = null;
-
-                  string filterOp = null;
-                  string filterProp = null;
-                  string filterValue = null;
-
-                  
-
-                                    var tree = result.Tree as CommonTree;
-                  if (tree != null)
-                  {
-                      var children = tree.Children.Cast<TreeNode>().ToList();
-                      children.Sort();
-
-
-
-                      var selectNode = children.FirstOrDefault(o => o is SelectNode);
-                      if (selectNode != null && selectNode.Children != null)
+                      if (qd.Key.ToLower() != "$select")
                       {
-                          List<string> selectProps = selectNode.Children.Select(child => child.Text).ToList();
-                      }
-
-                      var orderByNode = children.FirstOrDefault(o => o is OrderByNode);
-                      if (orderByNode != null)
-                      {
-                          if (orderByNode.Children != null && orderByNode.Children.Any())
+                          if (string.IsNullOrWhiteSpace(query))
                           {
-                              if (orderByNode.Children[0].ChildCount == 1)
-                              {
-                                  orderType = orderByNode.Children[0].Text;
-                                  orderProperty = orderByNode.Children[0].GetChild(0).Text;
-                              }
-                              else
-                              {
-                                  throw new NotImplementedException();
-                              }
+                              query = "?";
                           }
-                      }
-
-                      var filterNode = children.FirstOrDefault(o => o is FilterNode);
-                      if (filterNode != null && filterNode.Children != null && filterNode.Children.Any())
-                      {
-                          if (filterNode.Children[0].ChildCount == 2)
-                          {
-                              filterOp = filterNode.Children[0].Text;
-                              filterProp = filterNode.Children[0].GetChild(0).Text;
-                              filterValue = filterNode.Children[0].GetChild(1).Text;
-                          }
-                          else
-                          {
-                              throw new NotImplementedException();
-                          }
+                          query += qd.Key + "=" + qd.Value + "&";
                       }
                   }
 
-                  var packageRepository = packageRepositoryFactory.Create(feed.Id);
-
-                  var baseAddress = Request.Url.Scheme + "://" + Request.Url.HostName + ":" + Request.Url.Port + "/feeds/" + feedName + "/api/v2";
-
-                  var packages = packageRepository.GetWebPackages(transaction, filterOp, filterProp, filterValue, orderType, orderProperty, "", "", "");
-
-                  var filteredSource = packages.Filter(collection);
-
-                  var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress, packages, feed.Id, 0, int.MaxValue);
-
-                  StreamReader reader = new StreamReader(stream);
-                  string text = reader.ReadToEnd();
-
-                  return new Response()
+                  if (query.EndsWith("&"))
                   {
-                      ContentType = "application/atom+xml; charset=utf-8",
-                      Contents = contentStream =>
+                      query = query.Substring(0, query.Length - 1);
+                  }
+
+                  url += query;
+
+                  var request = new HttpRequestMessage(method, url);
+                  request.Properties.AddRange(queryDictionary.Where(qd => qd.Key.ToLower() != "$select"));
+
+                  using (var dbContext = new DatabaseContext(store))
+                  {
+                      IQueryable<InternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+
+                      string idSearch = queryDictionary.ContainsKey("id")
+                          ? queryDictionary["id"].ToString()
+                          : string.Empty;
+
+                      if (!string.IsNullOrWhiteSpace(idSearch))
                       {
-                          var byteData = Encoding.UTF8.GetBytes(text);
+                          if (idSearch.StartsWith("'") && idSearch.EndsWith("'"))
+                          {
+                              idSearch = idSearch.Substring(1, idSearch.Length - 2);
+                          }
+                          ds = ds.Where(pk => pk.PackageId == idSearch);
+                      }
+
+                      ODataQueryOptions options = new ODataQueryOptions(context, request);
+
+                      var settings = new ODataQuerySettings()
+                      {
+                          PageSize = options.Top != null ? options.Top.Value : 10
+                      };
+
+
+                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
+
+
+                      var packageRepository = packageRepositoryFactory.Create(feed.Id);
+
+                      var baseAddress = Request.Url.Scheme + "://" + Request.Url.HostName + ":" + Request.Url.Port +
+                                        "/feeds/" + feedName + "/api/v2";
+
+                      var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
+                          ds, feed.Id, -1);
+
+                      StreamReader reader = new StreamReader(stream);
+                      string text = reader.ReadToEnd();
+
+                      return new Response()
+                      {
+                          ContentType = "application/atom+xml; charset=utf-8",
+                          Contents = contentStream =>
+                          {
+                              var byteData = Encoding.UTF8.GetBytes(text);
                               contentStream.Write(byteData, 0, byteData.Length);
                           }
                       };
-                  
+                  }
               }
           }
-
-
 
           private dynamic ProcessODataRequest(InternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
           {
@@ -551,145 +517,107 @@ namespace NuFridge.Shared.Server.Web
                           .Parameter("feedName", feedName)
                           .First();
 
-
                   IDictionary<string, object> queryDictionary = Context.Request.Query;
 
-                  var joined = string.Join("&", queryDictionary.Select(o => o.Key + "=" + o.Value));
-                  var queryString = !string.IsNullOrEmpty(joined) ? "?" + joined : string.Empty;
 
-                  if (queryString.StartsWith("?"))
+                  NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
+                  builder.Build();
+
+                  var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
+
+                  HttpMethod method = new HttpMethod(Request.Method);
+
+                  var url = Request.Url.SiteBase + Request.Url.Path;
+
+                  var query = string.Empty;
+                  foreach (var qd in queryDictionary)
                   {
-                      queryString = queryString.Substring(1);
-                  }
-
-                  var odataQueries = queryString.Split('&').Where(o => o.StartsWith("$")).ToList();
-
-                  var odataQuerystring = Uri.UnescapeDataString(string.Join("&", odataQueries.ToArray()));
-
-                  var input = new ANTLRReaderStream(new StringReader(odataQuerystring));
-                  var lexer = new LinqToQuerystringLexer(input);
-                  var tokStream = new CommonTokenStream(lexer);
-
-                  var parser = new LinqToQuerystringParser(tokStream)
-                  {
-                      TreeAdaptor = new TreeNodeFactory(typeof (IWebPackage), false)
-                  };
-
-                  var result = parser.prog();
-
-
-                  string searchTerm = queryDictionary.ContainsKey("searchTerm")
-                      ? queryDictionary["searchTerm"].ToString()
-                      : string.Empty;
-
-                  string targetFramework = queryDictionary.ContainsKey("targetFramework")
-                      ? queryDictionary["targetFramework"].ToString()
-                      : string.Empty;
-
-                  string includePrerelease = queryDictionary.ContainsKey("includePrerelease")
-                      ? queryDictionary["includePrerelease"].ToString()
-                      : string.Empty;
-
-                  int skip = 0;
-                  int take = 15;
-                  string filterOp = null;
-                  string filterProp = null;
-                  string filterValue = null;
-                  string orderType = null;
-                  string orderProperty = null;
-
-                  var tree = result.Tree as CommonTree;
-                  if (tree != null)
-                  {
-                      var children = tree.Children.Cast<TreeNode>().ToList();
-                      children.Sort();
-
-                      var selectNode = children.FirstOrDefault(o => o is SelectNode);
-                      if (selectNode != null && selectNode.Children != null)
+                      if (qd.Key.ToLower() != "$select")
                       {
-                          List<string> selectProps = selectNode.Children.Select(child => child.Text).ToList();
-                      }
-
-                      var skipNode = children.FirstOrDefault(o => o is SkipNode);
-                      if (skipNode != null && skipNode.Children != null && skipNode.Children.Any())
-                      {
-                          if (!int.TryParse(skipNode.Children[0].Text, out skip))
+                          if (string.IsNullOrWhiteSpace(query))
                           {
-                              skip = 0;
+                              query = "?";
                           }
-                      }
-
-                      var orderByNode = children.FirstOrDefault(o => o is OrderByNode);
-                      if (orderByNode != null)
-                      {
-                          if (orderByNode.Children != null && orderByNode.Children.Any())
-                          {
-                              if (orderByNode.Children[0].ChildCount == 1)
-                              {
-                                  orderType = orderByNode.Children[0].Text;
-                                  orderProperty = orderByNode.Children[0].GetChild(0).Text;
-                              }
-                              else
-                              {
-                                  throw new NotImplementedException();
-                              }
-                          }
-                      }
-
-                      var filterNode = children.FirstOrDefault(o => o is FilterNode);
-                      if (filterNode != null && filterNode.Children != null && filterNode.Children.Any())
-                      {
-                          if (filterNode.Children[0].ChildCount == 2)
-                          {
-                              filterOp = filterNode.Children[0].Text;
-                              filterProp = filterNode.Children[0].GetChild(0).Text;
-                              filterValue = filterNode.Children[0].GetChild(1).Text;
-                          }
-                          else
-                          {
-                              throw new NotImplementedException();
-                          }
-                      }
-
-                      var topNode = children.FirstOrDefault(o => o is TopNode);
-                      if (topNode != null && topNode.Children != null && topNode.Children.Any())
-                      {
-                          if (!int.TryParse(topNode.Children[0].Text, out take))
-                          {
-                              take = 0;
-                          }
-                      }
-
-                      var inlineCountNode = children.FirstOrDefault(o => o is InlineCountNode);
-                      if (inlineCountNode != null)
-                      {
-                          if (inlineCountNode.Children != null && inlineCountNode.Children.Any())
-                          {
-                              throw new NotImplementedException();
-                          }
+                          query += qd.Key + "=" + qd.Value + "&";
                       }
                   }
 
-                  var packageRepository = packageRepositoryFactory.Create(feed.Id);
-
-                  var baseAddress = Request.Url.Scheme + "://" + Request.Url.HostName + ":" + Request.Url.Port + "/feeds/" + feedName + "/api/v2";
-
-                  var packages = packageRepository.GetWebPackages(transaction,  filterOp, filterProp, filterValue, orderType, orderProperty, searchTerm, targetFramework, includePrerelease);
-
-                  var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress, packages, feed.Id, skip, take);
-
-                  StreamReader reader = new StreamReader(stream);
-                  string text = reader.ReadToEnd();
-
-                  return new Response()
+                  if (query.EndsWith("&"))
                   {
-                      ContentType = "application/atom+xml; charset=utf-8",
-                      Contents = contentStream =>
+                      query = query.Substring(0, query.Length - 1);
+                  }
+
+                  url += query;
+
+                  var request = new HttpRequestMessage(method, url);
+                  request.Properties.AddRange(queryDictionary.Where(qd => qd.Key.ToLower() != "$select"));
+
+                  using (var dbContext = new DatabaseContext(store))
+                  {
+                      IQueryable<InternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+
+
+                      string searchTerm = queryDictionary.ContainsKey("searchTerm")
+                          ? queryDictionary["searchTerm"].ToString()
+                          : string.Empty;
+
+                      string targetFramework = queryDictionary.ContainsKey("targetFramework")
+                          ? queryDictionary["targetFramework"].ToString()
+                          : string.Empty;
+
+                      bool includePrerelease = queryDictionary.ContainsKey("includePrerelease") && bool.Parse(queryDictionary["includePrerelease"].ToString());
+
+                      if (!includePrerelease)
                       {
-                          var byteData = Encoding.UTF8.GetBytes(text);
-                          contentStream.Write(byteData, 0, byteData.Length);
+                          ds = ds.Where(pk => !pk.IsPrerelease);
                       }
-                  };
+
+                      if (!string.IsNullOrWhiteSpace(searchTerm))
+                      {
+                          if (searchTerm.StartsWith("'") && searchTerm.EndsWith("'"))
+                          {
+                              searchTerm = searchTerm.Substring(1, searchTerm.Length - 2);
+                          }
+                          ds = ds.Where(pk => pk.PackageId.Contains(searchTerm));
+                      }
+
+                      ODataQueryOptions options = new ODataQueryOptions(context, request);
+
+                      var settings = new ODataQuerySettings()
+                      {
+                          PageSize = 9999999
+                      };
+
+
+                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
+
+                      int total = ds.Count();
+
+                      settings.PageSize = options.Top != null ? options.Top.Value : 15;
+
+                      ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
+
+                      var packageRepository = packageRepositoryFactory.Create(feed.Id);
+
+                      var baseAddress = Request.Url.Scheme + "://" + Request.Url.HostName + ":" + Request.Url.Port +
+                                        "/feeds/" + feedName + "/api/v2";
+
+                      var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
+                          ds, feed.Id, total);
+
+                      StreamReader reader = new StreamReader(stream);
+                      string text = reader.ReadToEnd();
+
+                      return new Response()
+                      {
+                          ContentType = "application/atom+xml; charset=utf-8",
+                          Contents = contentStream =>
+                          {
+                              var byteData = Encoding.UTF8.GetBytes(text);
+                              contentStream.Write(byteData, 0, byteData.Length);
+                          }
+                      };
+                  }
               }
           }
 
@@ -744,7 +672,7 @@ namespace NuFridge.Shared.Server.Web
 
                   var packageRepository = packageRepositoryFactory.Create(feedId);
 
-                  IPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
+                  IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
 
                   if (package == null)
@@ -759,7 +687,7 @@ namespace NuFridge.Shared.Server.Web
    
                   var baseAddress = Request.Url.Scheme + "://" + Request.Url.HostName + ":" + Request.Url.Port + "/feeds/" + feedName;
 
-                  var location = string.Format("{0}/packages/{1}/{2}", baseAddress, package.Id, package.Version);
+                  var location = string.Format("{0}/packages/{1}/{2}", baseAddress, package.PackageId, package.Version);
               
                   response.Headers.Add("Location", location);
 
@@ -795,7 +723,7 @@ namespace NuFridge.Shared.Server.Web
 
                   var packageRepository = packageRepositoryFactory.Create(feedId);
 
-                  IPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
+                  IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
 
                   if (package == null)
@@ -852,7 +780,7 @@ namespace NuFridge.Shared.Server.Web
 
                   var packageRepository = packageRepositoryFactory.Create(feedId);
 
-                  IPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
+                  IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
 
                   if (package == null)
