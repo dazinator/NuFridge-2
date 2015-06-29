@@ -19,6 +19,8 @@ public class Setup
 
         var rootPath = GetPathToSrcFolder();
 
+        Console.WriteLine("Root: " + rootPath);
+
         Feature topLevelFeature = new Feature("NuFridge");
 
         Version version = new Version(isDebug && !args.Any() ? "1.0.0" : args.First());
@@ -34,11 +36,6 @@ public class Setup
         Predicate<string> serviceFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".txt") && !f.EndsWith(".nupkg");
       //  topLevelFeature.Children.Add(serviceFeature);
 
-       // Feature controlPanelFeature = new Feature("Control Panel", true, false);
-       // controlPanelFeature.Attributes.Add("AllowAdvertise", "no");
-        string controlPanelFileFolder = string.Format(@"NuFridge.ControlPanel\bin\{1}\*.*", rootPath, isDebug ? "Debug" : "Release");
-        Predicate<string> controlPanelFileFilter = f => !f.EndsWith(".pdb") && !f.EndsWith(".xml") && !f.EndsWith(".sdf") && !f.Contains(".vshost.") && !f.EndsWith(".nupkg");
-       // topLevelFeature.Children.Add(controlPanelFeature);
 
         Project project = new Project(projectName,
               new ManagedAction("ReadInstallDir", Return.ignore, When.Before, new Step("AppSearch"), Condition.NOT_Installed, Sequence.InstallExecuteSequence | Sequence.InstallUISequence) { Execute = Execute.firstSequence },
@@ -64,13 +61,6 @@ public class Setup
                                             new Files(topLevelFeature, serviceFileFolder, serviceFileFilter)
                                         },
                                         Id = "INSTALLDIR.Service"
-                                    },
-                                    new Dir("ControlPanel")
-                                    {
-                                        FileCollections = new Files[]
-                                        {
-                                            new Files(topLevelFeature, controlPanelFileFolder, controlPanelFileFilter)
-                                        }
                                     }
                                 },
                                 Id = "INSTALLDIR"
@@ -98,7 +88,7 @@ public class Setup
         project.UpgradeCode = projectUpgradeCode;
         project.Version = version;
 
-        Console.WriteLine("V: " + project.Version.ToString());
+        Console.WriteLine("Version to build: " + project.Version.ToString());
 
         project.ResolveWildCards();
 
