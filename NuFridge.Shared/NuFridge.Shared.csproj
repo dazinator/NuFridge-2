@@ -222,6 +222,10 @@
     <Compile Include="Server\Statistics\StatisticBase.cs" />
     <Compile Include="Server\Storage\ReferenceCollection.cs" />
     <Compile Include="Server\Storage\ReferenceCollectionReaderWriter.cs" />
+    <Compile Include="Server\Web\Actions\GetFeedAction.cs" />
+    <Compile Include="Server\Web\Actions\GetFeedsAction.cs" />
+    <Compile Include="Server\Web\Actions\IAction.cs" />
+    <Compile Include="Server\Web\Actions\SignInAction.cs" />
     <Compile Include="Server\Web\OData\NuGetWebApiODataModelBuilder.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />
     <Compile Include="Server\Web\TemporaryAdminUserIdentity.cs" />

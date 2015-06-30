@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Query;
+using Autofac;
 using Nancy;
 using Nancy.Authentication.Token;
 using Nancy.ModelBinding;
@@ -18,6 +19,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Statistics;
 using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Server.Web.Actions;
 using NuFridge.Shared.Server.Web.OData;
 using NuFridge.Shared.Server.Web.Responses;
 using NuGet;
@@ -28,36 +30,9 @@ namespace NuFridge.Shared.Server.Web
 {
     public class CustomNancyModule : NancyModule
     {
-        public CustomNancyModule(ITokenizer tokenizer, IInternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store, IHomeConfiguration home)
+        public CustomNancyModule(IContainer container, IInternalPackageRepositoryFactory packageRepositoryFactory, IFileSystem fileSystem, IStore store, IHomeConfiguration home)
         {
-            Post["api/signin"] = p =>
-            {
-                SignInRequest signInRequest;
-
-                try
-                {
-                    signInRequest = this.Bind<SignInRequest>();
-                }
-                catch (Exception ex)
-                {
-                    return null;
-                }
-
-
-                var userIdentity = UserDatabase.ValidateUser(signInRequest);
-
-                if (userIdentity == null)
-                {
-                    return HttpStatusCode.Unauthorized;
-                }
-
-                var token = tokenizer.Tokenize(userIdentity, Context);
-
-                return new
-                {
-                    Token = token
-                };
-            };
+            Post["api/signin"] = container.Resolve<SignInAction>().Execute(this);
 
             Get["api/dashboard"] = p =>
             {
@@ -103,29 +78,7 @@ namespace NuFridge.Shared.Server.Web
             };
 
             //Get a list of feeds
-            Get["api/feeds"] = p =>
-            {
-                this.RequiresAuthentication();
-
-                int page = int.Parse(Request.Query["page"]);
-                int pageSize = int.Parse(Request.Query["pageSize"]);
-                int totalResults;
-
-                using (ITransaction transaction = store.BeginTransaction())
-                {
-
-                    var feeds = transaction.Query<IFeed>().ToList(pageSize * page, pageSize, out totalResults);
-
-                    var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
-
-                    return new
-                    {
-                        TotalCount = totalResults,
-                        TotalPages = totalPages,
-                        Results = feeds
-                    };
-                }
-            };
+            Get["api/feeds"] = container.Resolve<GetFeedsAction>().Execute(this);
 
             //Search for a feed by name
             Get["api/feeds/search"] = p =>
@@ -156,17 +109,7 @@ namespace NuFridge.Shared.Server.Web
             };
 
             //Get a feed
-            Get["api/feeds/{id}"] = p =>
-            {
-                this.RequiresAuthentication();
-
-                using (ITransaction transaction = store.BeginTransaction())
-                {
-                    int feedId = int.Parse(p.id);
-
-                    return transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
-                }
-            };
+            Get["api/feeds/{id}"] = container.Resolve<GetFeedAction>().Execute(this);
 
             Get["api/feeds/{id}/config"] = p =>
             {
@@ -189,7 +132,7 @@ namespace NuFridge.Shared.Server.Web
                 try
                 {
                     int feedId = int.Parse(p.id);
-
+                    
                     feedConfig = this.Bind<FeedConfiguration>();
 
                     if (feedId != feedConfig.FeedId)
@@ -437,6 +380,7 @@ namespace NuFridge.Shared.Server.Web
             //Not working
             Get["feeds/{feed}/api/v2/package-versions/{packageId}"] = GetPackageVersions(packageRepositoryFactory, store);
         }
+
 
         private dynamic ProcessODataFindPackagesByIdRequest(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, dynamic p)
         {
