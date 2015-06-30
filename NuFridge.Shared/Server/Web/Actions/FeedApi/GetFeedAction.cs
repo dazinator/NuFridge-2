@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nancy;
+﻿using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
 
-namespace NuFridge.Shared.Server.Web.Actions
+namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
     public class GetFeedAction : IAction
     {
@@ -19,13 +14,13 @@ namespace NuFridge.Shared.Server.Web.Actions
             _store = store;
         }
 
-        public dynamic Execute(INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
                 module.RequiresAuthentication();
 
                 using (ITransaction transaction = _store.BeginTransaction())
                 {
-                    int feedId = int.Parse(module.Request.Query.id);
+                    int feedId = int.Parse(parameters.id);
 
                     return transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
                 }

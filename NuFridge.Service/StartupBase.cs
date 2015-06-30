@@ -197,7 +197,7 @@ namespace NuFridge.Service
             ContainerBuilder containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new CommandModule());
             containerBuilder.RegisterModule(new SchedulerModule());
-            containerBuilder.Register((c => _container)).As<IContainer>();
+            containerBuilder.Register((c => _container)).As<IContainer>().SingleInstance();
             containerBuilder.Update(_container);
         }
 

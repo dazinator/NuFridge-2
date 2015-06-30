@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
 using Nancy;
 using Nancy.Authentication.Token;
 using Nancy.ModelBinding;
 
-namespace NuFridge.Shared.Server.Web.Actions
+namespace NuFridge.Shared.Server.Web.Actions.AccountApi
 {
     public class SignInAction : IAction
     {
@@ -19,7 +14,7 @@ namespace NuFridge.Shared.Server.Web.Actions
             _tokenizer = tokenizer;
         }
 
-        public dynamic Execute(INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             SignInRequest signInRequest;
 

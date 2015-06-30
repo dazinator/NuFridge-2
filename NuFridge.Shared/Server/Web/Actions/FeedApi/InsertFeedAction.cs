@@ -1,0 +1,79 @@
+﻿using System;
+using System.IO;
+using Nancy;
+using Nancy.ModelBinding;
+using Nancy.Security;
+using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Server.Configuration;
+using NuFridge.Shared.Server.Storage;
+
+namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+{
+    public class InsertFeedAction : IAction
+    {
+        private readonly IStore _store;
+        private readonly IHomeConfiguration _home;
+
+        public InsertFeedAction(IStore store, IHomeConfiguration home)
+        {
+            _store = store;
+            _home = home;
+        }
+
+        public dynamic Execute(dynamic parameters, INancyModule module)
+        {
+            module.RequiresAuthentication();
+
+            IFeed feed;
+
+            try
+            {
+                feed = module.Bind<Feed>();
+
+                ITransaction transaction = _store.BeginTransaction();
+
+                var existingFeedExists =
+                    transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feed.Name).Count() >
+                    0;
+
+                if (existingFeedExists)
+                {
+                    return HttpStatusCode.Conflict;
+                }
+
+                transaction.Insert(feed);
+                transaction.Commit();
+                transaction.Dispose();
+
+                transaction = _store.BeginTransaction();
+
+                feed =
+                    transaction.Query<IFeed>()
+                        .Where("Name = @feedName")
+                        .Parameter("feedName", feed.Name)
+                        .First();
+
+                var appFolder = _home.InstallDirectory;
+                var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id.ToString());
+
+                IFeedConfiguration config = new FeedConfiguration
+                {
+                    FeedId = feed.Id,
+                    PackagesDirectory = feedFolder
+                };
+
+                transaction.Insert(config);
+                transaction.Commit();
+                transaction.Dispose();
+            }
+            catch (Exception ex)
+            {
+                return HttpStatusCode.InternalServerError;
+            }
+
+
+            return feed;
+        }
+    }
+}

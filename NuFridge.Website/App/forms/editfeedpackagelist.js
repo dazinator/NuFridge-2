@@ -66,9 +66,12 @@
 
             var entry = json.entry;
 
-            if (!Array.isArray(entry)) {
+            if (entry && !Array.isArray(entry)) {
                 entry = [];
                 entry.push(json.entry);
+            }
+            else if (!entry) {
+                entry = [];
             }
 
             var totalPages = Math.ceil(json.count / self.pageSize());
