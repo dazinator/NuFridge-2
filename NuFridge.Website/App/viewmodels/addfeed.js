@@ -10,7 +10,8 @@
 
         self.feedOptions = {
             mode: "Create",
-            feed: self.feed
+            feed: self.feed,
+            loaded: new jQuery.Deferred().resolve().promise()
         };
     };
 
