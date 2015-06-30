@@ -19,9 +19,9 @@ namespace NuFridge.Shared.Server.Statistics
             Transaction = transaction;
         }
 
-        protected Statistic GetRecord()
+        protected IStatistic GetRecord()
         {
-            var record = Transaction.Query<Statistic>().Where("Name = @name").Parameter("name", StatName).First();
+            var record = Transaction.Query<IStatistic>().Where("Name = @name").Parameter("name", StatName).First();
 
             bool statExists = record != null;
 
@@ -61,17 +61,17 @@ namespace NuFridge.Shared.Server.Statistics
         {
             var model = Update();
 
-            var record = GetRecord();
+            IStatistic record = GetRecord();
 
             record.Json = SerializeModel(model);
 
             if (record.Id <= 0)
             {
-                Transaction.Insert(record);
+                Transaction.Insert<IStatistic>(record);
             }
             else
             {
-                Transaction.Update(record);
+                Transaction.Update<IStatistic>(record);
             }
 
             Transaction.Commit();

@@ -20,7 +20,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<FeedConfiguration>().As<IFeedConfiguration>();
             builder.RegisterType<InternalPackage>().As<IInternalPackage>();
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
-
+            builder.RegisterType<Statistic>().As<IStatistic>();
             builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IStore>(), feedId))).InstancePerDependency();
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => CreatePathResolver(c, feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => CreateFileSystem(c, feedId))).InstancePerDependency();

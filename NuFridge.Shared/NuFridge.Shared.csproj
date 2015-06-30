@@ -368,9 +368,11 @@
       <Name>NuFridge.Website</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0001-StoredProcs.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0002-FeedConfigRetentionPolicy.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -4,9 +4,11 @@
         'durandal': '../Scripts/durandal',
         'plugins': '../Scripts/durandal/plugins',
         'transitions': '../Scripts/durandal/transitions',
+        'xml2json': '../Scripts/xml2json',
         'knockoutvalidation': '../Scripts/knockout.validation',
         'knockoutmapping': '../Scripts/knockout.mapping',
         'databinding-feed': 'viewmodels/databinding/feed',
+        'databinding-feedconfig': 'viewmodels/databinding/feedconfig',
         'databinding-package': 'viewmodels/databinding/package',
         'databinding-systeminfo': 'viewmodels/databinding/systeminfo',
         'databinding-user': 'viewmodels/databinding/user',
@@ -44,6 +46,10 @@ define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapp
 
     ko.bindingHandlers.src = {
         update: function (element, valueAccessor) {
+            element.onerror = function () {
+                element.src = 'Semantic/images/cube.png';
+            };
+            
             ko.bindingHandlers.attr.update(element, function () {
                 return { src: valueAccessor() };
             });

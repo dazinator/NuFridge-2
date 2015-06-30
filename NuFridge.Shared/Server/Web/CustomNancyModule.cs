@@ -187,6 +187,57 @@ namespace NuFridge.Shared.Server.Web
                   }
               };
 
+              Get["api/feeds/{id}/config"] = p =>
+              {
+                  this.RequiresAuthentication();
+
+                  using (ITransaction transaction = store.BeginTransaction())
+                  {
+                      int feedId = int.Parse(p.id);
+
+                      return transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                  }
+              };
+
+              Put["api/feeds/{id}/config"] = p =>
+              {
+                  this.RequiresAuthentication();
+
+                  IFeedConfiguration feedConfig;
+
+                  try
+                  {
+                      int feedId = int.Parse(p.id);
+
+                      feedConfig = this.Bind<FeedConfiguration>();
+
+                      if (feedId != feedConfig.FeedId)
+                      {
+                          return HttpStatusCode.BadRequest;
+                      }
+
+                      ITransaction transaction = store.BeginTransaction();
+
+                      var existingFeedExists = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).Count() > 0;
+
+                      if (!existingFeedExists)
+                      {
+                          return HttpStatusCode.NotFound;
+                      }
+
+                      transaction.Update(feedConfig);
+                      transaction.Commit();
+                      transaction.Dispose();
+                  }
+                  catch (Exception ex)
+                  {
+                      return HttpStatusCode.InternalServerError;
+                  }
+
+
+                  return feedConfig;
+              };
+
               //Insert a feed
               Post["api/feeds"] = p =>
               {
@@ -196,7 +247,7 @@ namespace NuFridge.Shared.Server.Web
 
                   try
                   {
-                      feed = this.Bind<IFeed>();
+                      feed = this.Bind<Feed>();
 
                       ITransaction transaction = store.BeginTransaction();
 
@@ -254,7 +305,7 @@ namespace NuFridge.Shared.Server.Web
                   {
                       int feedId = int.Parse(p.id);
 
-                      feed = this.Bind<IFeed>();
+                      feed = this.Bind<Feed>();
 
                       if (feedId != feed.Id)
                       {
@@ -481,6 +532,8 @@ namespace NuFridge.Shared.Server.Web
                           ? queryDictionary["id"].ToString()
                           : string.Empty;
 
+                      ds = ds.Where(pk => pk.FeedId == feed.Id);
+
                       if (!string.IsNullOrWhiteSpace(idSearch))
                       {
                           if (idSearch.StartsWith("'") && idSearch.EndsWith("'"))
@@ -633,6 +686,8 @@ namespace NuFridge.Shared.Server.Web
                           : string.Empty;
 
                       bool includePrerelease = queryDictionary.ContainsKey("includePrerelease") && bool.Parse(queryDictionary["includePrerelease"].ToString());
+
+                      ds = ds.Where(pk => pk.FeedId == feed.Id);
 
                       if (!includePrerelease)
                       {

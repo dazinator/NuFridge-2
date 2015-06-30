@@ -1,0 +1,47 @@
+﻿<div class="ui icon message feedConfigSavingMessage" style="display: none;">
+    <i class="notched circle loading icon"></i>
+    <div class="content">
+        <div class="header">
+            Just one second
+        </div>
+        <p>We are saving your changes to the feed.</p>
+    </div>
+</div>
+
+<div class="ui icon success message feedConfigSaveSuccessMessage" style="display: none;">
+    <i class="notched icon checkmark"></i>
+    <i class="close icon" data-bind="click: showHideSaveSuccessMessage"></i>
+    <div class="content">
+        <div class="header">
+            Your changes have been saved.
+        </div>
+    </div>
+</div>
+
+<div class="ui form" data-bind="with: feedconfig">
+    <div class="field">
+        <div class="inline field">
+            <div class="ui toggle checkbox retentionPolicyEnabled">
+                <input type="checkbox">
+                <label style="font-size: .9285em;font-weight: 700;">Enable Retention Policy</label>
+            </div>
+        </div>
+    </div>
+    <div class="field">
+        <div class="required field" data-bind="css: {error: MaxReleasePackages.isValid() === false}">
+            <label>Max Release Packages</label>
+            <input type="text" data-bind="value: MaxReleasePackages, valueUpdate: 'afterkeydown'">
+        </div>
+    </div>
+    <div class="field">
+        <div class="required field" data-bind="css: {error: MaxPrereleasePackages.isValid() === false}">
+            <label>Max Prerelease Packages</label>
+            <input type="text" data-bind="value: MaxPrereleasePackages, valueUpdate: 'afterkeydown'">
+        </div>
+    </div>
+    <div class="ui buttons">
+        <button class="ui button" data-bind="click: function() { $root.cancelClick(); }, css: {disabled: $root.isSaving() === true, loading: $root.isCancelNavigating() === true}">Cancel</button>
+        <div class="or"></div>
+        <button class="ui positive button" data-bind="click: function() { $root.submitClick(); },  css: { disabled: $root.feedconfig.isValid() === false || $root.isCancelNavigating() === true, loading: $root.isSaving() === true}, text: $root.mode">Save</button>
+    </div>
+</div>

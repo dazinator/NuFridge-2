@@ -4,25 +4,18 @@ namespace NuFridge.Shared.Model
 {
     public class FeedConfiguration : IEntity, IFeedConfiguration
     {
-        public virtual int Id { get; set; }
+        public int Id { get; set; }
 
-        public virtual int FeedId { get; set; }
+        public int FeedId { get; set; }
 
-        public virtual string PackagesDirectory { get; set; }
+        public string PackagesDirectory { get; set; }
 
         public bool RetentionPolicyEnabled { get; set; }
 
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
 
-        public FeedConfiguration()
-        {
-            MaxReleasePackages = 10;
-            MaxPrereleasePackages = 10;
-            RetentionPolicyEnabled = true;
-        }
-
-        public virtual string Name
+        public string Name
         {
             get { return Id.ToString(); }
         }

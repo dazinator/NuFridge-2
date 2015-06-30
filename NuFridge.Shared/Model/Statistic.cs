@@ -7,9 +7,9 @@ using NuFridge.Shared.Model.Interfaces;
 
 namespace NuFridge.Shared.Model
 {
-    public class Statistic : IEntity
+    public class Statistic : IEntity, IStatistic
     {
-        public int Id { get; protected set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -24,5 +24,14 @@ namespace NuFridge.Shared.Model
         {
             Name = name;
         }
+    }
+
+    public interface IStatistic
+    {
+        int Id { get; set; }
+
+        string Name { get; set; }
+
+        string Json { get; set; }
     }
 }

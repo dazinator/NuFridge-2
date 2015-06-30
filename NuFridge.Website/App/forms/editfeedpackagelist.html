@@ -1,0 +1,72 @@
+﻿<div class="ui two column grid doubling">
+    <div class="row">
+        <div class="column">
+            <div class="ui fluid category search packageSearch">
+                <div class="ui icon input" style="width: 100%;">
+                    <input class="prompt" type="text" placeholder="Search packages..." data-bind="value: searchTerm, valueUpdate: 'afterkeydown'">
+                    <i class="search icon" data-bind="click: performSearch"></i>
+                </div>
+                <div class="results"></div>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui icon top right pointing dropdown button uploadPackage floatRight titlePopup">
+                <i class="upload icon"></i>
+                <div class="menu">
+                    <div class="header">
+                        Upload Package from
+                    </div>
+                    <div class="item">
+                        <i class="file icon"></i>
+                        File
+                    </div>
+                    <div class="item">
+                        <i class="cubes icon"></i>
+                        NuGet Feed
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<table class="ui celled striped table">
+    <thead>
+        <tr>
+            <th colspan="3">
+                Packages
+            </th>
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: { data: packages, as: 'package' }">
+    <tr>
+        <td>
+            <h4 class="ui image header">
+                <img data-bind="src: package.IconUrl" class="ui mini rounded image" style="width: 35px; height: 35px;">
+                <div class="content">
+                    <span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span>
+                    <div class="sub header" data-bind="text: package.Authors">
+                    </div>
+                </div>
+            </h4>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <th colspan="1">
+                <div class="ui right floated pagination menu">
+                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
+                        <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
+                    </a>
+                    <!-- ko foreach: new Array(pageCount()) -->
+                    <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
+                    <!-- /ko -->
+                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
+                        <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
+                    </a>
+                </div>
+            </th>
+        </tr>
+    </tfoot>
+</table>

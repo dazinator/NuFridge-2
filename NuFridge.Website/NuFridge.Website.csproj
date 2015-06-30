@@ -88,6 +88,8 @@
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Semantic\images\cube.png" />
+    <EmbeddedResource Include="Scripts\xml2json.js" />
     <EmbeddedResource Include="Scripts\moment.js" />
     <EmbeddedResource Include="Scripts\timeago.js" />
     <EmbeddedResource Include="Scripts\Chart.js" />
@@ -301,6 +303,11 @@
     <EmbeddedResource Include="App\viewmodels\databinding\feeddownloadcountstatistic.js" />
     <EmbeddedResource Include="App\viewmodels\databinding\signinrequest.js" />
     <EmbeddedResource Include="App\system\auth.js" />
+    <EmbeddedResource Include="App\forms\editfeedpackageretention.html" />
+    <EmbeddedResource Include="App\forms\editfeedpackageretention.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feedconfig.js" />
+    <EmbeddedResource Include="App\forms\editfeedpackagelist.html" />
+    <EmbeddedResource Include="App\forms\editfeedpackagelist.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />

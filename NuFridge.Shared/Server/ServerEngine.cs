@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server
         private readonly Lazy<IWebServerInitializer> _webHostInitializer;
         private readonly Lazy<IStoreInitializer> _storeInitializer;
         private readonly IContainer _container;
-        private ILog _log = LogProvider.For<ServerEngine>();
+        private readonly ILog _log = LogProvider.For<ServerEngine>();
 
         public ServerEngine(IContainer container, Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer)
         {
@@ -27,15 +27,21 @@ namespace NuFridge.Shared.Server
 
         void TaskManager_UnobservedTaskException(FluentScheduler.Model.TaskExceptionInformation sender, UnhandledExceptionEventArgs e)
         {
-            _log.Fatal("An error happened with a scheduled task: " + e.ExceptionObject);
+            if (e.IsTerminating)
+            {
+                _log.FatalException("There was a fatal exception running a scheduled task.", e.ExceptionObject as Exception);
+            }
+            else
+            {
+                _log.ErrorException("There was an exception running a scheduled task.", e.ExceptionObject as Exception);
+            }
         }
 
         public void Start()
         {
             IWebServerInitializer webSserverInitializer = _webHostInitializer.Value;
-
+            webSserverInitializer.Starting("Starting the web server");
             webSserverInitializer.Start();
-            webSserverInitializer.Starting("Loading...");
 
             _storeInitializer.Value.Initialize();
 
@@ -43,9 +49,12 @@ namespace NuFridge.Shared.Server
 
             _log.Info("Starting scheduled tasks");
 
-            var jobs = _container.Resolve<IEnumerable<IJob>>();
+            var jobs = _container.Resolve<IEnumerable<IJob>>().ToList();
 
-            _log.Info("Found " + jobs.Count() + " scheduled tasks.");
+            foreach (var job in jobs)
+            {
+                _log.Info("Registering scheduled tasks for " + job.GetType().Name);
+            }
 
             TaskManager.TaskFactory = new AutofacTaskFactory(_container);
             TaskManager.UnobservedTaskException += TaskManager_UnobservedTaskException;

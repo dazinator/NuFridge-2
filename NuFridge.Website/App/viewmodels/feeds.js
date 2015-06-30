@@ -8,7 +8,7 @@
         this.isAddFeedNavigating = ko.observable(false);
     };
 
-    ctor.prototype.previousPage = function(sender, eventArgs) {
+    ctor.prototype.previousPage = function (sender, event) {
         var self = this;
 
         if ($(event.target).closest("a").hasClass("disabled")) {

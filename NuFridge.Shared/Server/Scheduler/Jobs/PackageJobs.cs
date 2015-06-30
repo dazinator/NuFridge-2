@@ -12,7 +12,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     {
         public void AddSchedule(Registry registry)
         {
-            registry.Schedule<RunPackageRetentionPoliciesTask>().ToRunNow().AndEvery(1).Days().At(0, 0);
+            registry.Schedule<RunPackageRetentionPoliciesTask>().ToRunEvery(1).Days().At(0, 0);
         }
     }
 }

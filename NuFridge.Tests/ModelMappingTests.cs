@@ -19,7 +19,7 @@ namespace NuFridge.Tests
         [TestCase(typeof(IFeedConfiguration))]
         [TestCase(typeof(ApiKey))]
         [TestCase(typeof(IInternalPackage))]
-        [TestCase(typeof(Statistic))]
+        [TestCase(typeof(IStatistic))]
         [TestCase(typeof(User))]
         [TestCase(typeof(UserRole))]
         public void HasMappingConfiguration(Type type)

@@ -1,31 +1,36 @@
-﻿define(['plugins/router', 'api', 'auth'], function (router, api, auth) {
+﻿define(['plugins/router', 'api', 'auth', 'databinding-feed'], function (router, api, auth, databindingFeed) {
     var ctor = function () {
         var self = this;
         self.mode = "Loading";
         self.isSaving = ko.observable(false);
         self.isCancelNavigating = ko.observable(false);
         self.showSuccessMessageOnLoad = ko.observable(false);
+        self.feed = ko.validatedObservable(databindingFeed());
     };
 
     ctor.prototype.activate = function(activationData) {
         var self = this;
 
-        self.feed = activationData.feed;
 
-        if (activationData.mode === "Create") {
-            self.mode = "Create";
-        } else if (activationData.mode === "Update") {
-            self.mode = "Update";
+        activationData.loaded.then(function() {
 
-            if (!self.feed()) {
-                throw "A feed must be provided when using the add/edit feed form in update mode.";
+            self.feed = activationData.feed;
+
+            if (activationData.mode === "Create") {
+                self.mode = "Create";
+            } else if (activationData.mode === "Update") {
+                self.mode = "Update";
+
+                if (!self.feed()) {
+                    throw "A feed must be provided when using the add/edit feed form in update mode.";
+                }
+
+                self.showSuccessMessageOnLoad(activationData.showSuccessMessageOnLoad || false);
+
+            } else {
+                throw "Invalid activation data passed in to the add/edit feed form.";
             }
-
-            self.showSuccessMessageOnLoad(activationData.showSuccessMessageOnLoad || false);
-
-        } else {
-            throw "Invalid activation data passed in to the add/edit feed form.";
-        }
+        });
     }
 
     ctor.prototype.compositionComplete = function () {
