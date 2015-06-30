@@ -145,6 +145,7 @@ namespace NuFridge.Shared.Model
                 newPackage.DisplayTitle = package.Id;
             }
 
+            newPackage.Version = package.Version.ToString();
             newPackage.SetSemanticVersion(package.Version);
 
             if (package.ProjectUrl != null)

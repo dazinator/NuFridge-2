@@ -36,7 +36,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             using (var transaction = _store.BeginTransaction())
             {
-                var localPackage = InternalPackage.Create(_feedId, package, isAbsoluteLatestVersion, isLatestVersion);
+                IInternalPackage localPackage = InternalPackage.Create(_feedId, package, isAbsoluteLatestVersion, isLatestVersion);
                 transaction.Insert(localPackage);
                 transaction.Commit();
             }

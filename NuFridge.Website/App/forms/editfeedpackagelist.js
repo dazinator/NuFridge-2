@@ -180,11 +180,10 @@
                 return myXhr;
             },
             success: function (data) {
-                debugger;
+                self.loadPackages(0);
                 $('#fileUploadModal').modal('hide');
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
-                debugger;
                 $('#fileUploadModal').modal('hide');
             },
             data: formData,

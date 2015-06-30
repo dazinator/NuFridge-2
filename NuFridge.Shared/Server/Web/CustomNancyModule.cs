@@ -894,7 +894,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (ITransaction transaction = store.BeginTransaction())
                   {
-                      var feed = transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                      var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                       feedId = feed.Id;
                   }
 
@@ -934,7 +934,7 @@ namespace NuFridge.Shared.Server.Web
 
                   using (ITransaction transaction = store.BeginTransaction())
                   {
-                      var feed = transaction.Query<Feed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                      var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                       feedId = feed.Id;
                   }
 

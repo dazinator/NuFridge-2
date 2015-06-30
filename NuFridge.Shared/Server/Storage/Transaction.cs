@@ -73,7 +73,11 @@ namespace NuFridge.Shared.Server.Storage
 
         public void Insert<TDocument>(string tableName, TDocument instance) where TDocument : class
         {
-            EntityMapping mapping = _mappings.Get(instance.GetType());
+            EntityMapping mapping;
+            if (!_mappings.TryGet(instance.GetType(), out mapping))
+            {
+                mapping = _mappings.Get(typeof(TDocument));
+            }
 
             string orAdd = InsertStatementTemplates.GetOrAdd(mapping.TableName, t => string.Format("INSERT INTO NuFridge.[{0}] ({1}) values ({2})", tableName ?? mapping.TableName, 
                 string.Join(", ", mapping.IndexedColumns.Select(c => c.ColumnName)), string.Join(", ", mapping.IndexedColumns.Select(c => "@" + c.ColumnName))));
@@ -122,10 +126,14 @@ namespace NuFridge.Shared.Server.Storage
 
         public void Delete<TDocument>(TDocument instance) where TDocument : class
         {
-            EntityMapping documentMap = _mappings.Get(instance.GetType());
-            string statement = string.Format("DELETE from NuFridge.[{0}] WHERE Id = @Id", documentMap.TableName);
+            EntityMapping mapping;
+            if (!_mappings.TryGet(instance.GetType(), out mapping))
+            {
+                mapping = _mappings.Get(typeof(TDocument));
+            }
+            string statement = string.Format("DELETE from NuFridge.[{0}] WHERE Id = @Id", mapping.TableName);
             CommandParameters commandParameters = new CommandParameters();
-            commandParameters.Add("Id", documentMap.IdColumn.ReaderWriter.Read(instance));
+            commandParameters.Add("Id", mapping.IdColumn.ReaderWriter.Read(instance));
             CommandParameters args = commandParameters;
             using (SqlCommand command = CreateCommand(statement, args))
             {
