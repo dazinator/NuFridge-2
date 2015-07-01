@@ -245,13 +245,15 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void IncrementDownloadCount(IInternalPackage package)
         {
-            package.DownloadCount++;
-
             using (var transaction = _store.BeginTransaction())
             {
-                transaction.Update(package);
+                var newestPackage = transaction.Load<IInternalPackage>(package.Id);
+                newestPackage.DownloadCount++;
+                transaction.Update(newestPackage);
                 transaction.Commit();
             }
+
+          
         }
     }
 }

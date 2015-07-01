@@ -124,13 +124,17 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                         ds = ds.Where(pk => pk.PackageId == idSearch);
                     }
 
-                    bool includePrerelease = queryDictionary.ContainsKey("includePrerelease") && bool.Parse(queryDictionary["includePrerelease"].ToString());
-
                     ds = ds.Where(pk => pk.FeedId == feed.Id);
 
-                    if (!includePrerelease)
+                    if (queryDictionary.ContainsKey("includePrerelease"))
                     {
-                        ds = ds.Where(pk => !pk.IsPrerelease);
+                        bool includePrerelease = bool.Parse(queryDictionary["includePrerelease"].ToString());
+
+   
+                        if (!includePrerelease)
+                        {
+                            ds = ds.Where(pk => !pk.IsPrerelease);
+                        }
                     }
 
                     if (!string.IsNullOrWhiteSpace(searchTerm))
