@@ -7,6 +7,9 @@
 
     ctor.prototype.activate = function () {
         var self = this;
+
+        new auth().deleteCookie();
+
         self.signInRequest().UserName("admin");
         self.signInRequest().Password("password");
     };

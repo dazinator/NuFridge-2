@@ -17,7 +17,7 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             SignInRequest signInRequest;
-
+            
             try
             {
                 signInRequest = module.Bind<SignInRequest>();

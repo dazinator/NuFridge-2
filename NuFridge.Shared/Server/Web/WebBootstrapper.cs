@@ -90,7 +90,9 @@ namespace NuFridge.Shared.Server.Web
 
         protected override void RequestStartup(ILifetimeScope container, IPipelines pipelines, NancyContext context)
         {
-            TokenAuthentication.Enable(pipelines, new TokenAuthenticationConfiguration(container.Resolve<ITokenizer>()));
+            var tokenConfig = new TokenAuthenticationConfiguration(container.Resolve<ITokenizer>());
+ 
+            TokenAuthentication.Enable(pipelines, tokenConfig);
 
             pipelines.BeforeRequest.AddItemToEndOfPipeline(nancyContext =>
             {

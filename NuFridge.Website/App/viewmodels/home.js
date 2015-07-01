@@ -42,7 +42,9 @@
 
             ko.mapping.fromJS(response, mapping, self.dashboard);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            // Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 
@@ -135,7 +137,9 @@
             self.feedPackageCountDataUpdatedAt(iso8601(new Date()));
 
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            // Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 
@@ -202,7 +206,9 @@
 
 
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            // Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 

@@ -117,7 +117,11 @@
             self.isSearchingForPackages(false);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
             self.isSearchingForPackages(false);
-            router.navigate("#");
+
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
+       
             //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
         });
     };
@@ -239,6 +243,10 @@
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 $('#fileUploadModal').modal('hide');
+
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
             },
             data: formData,
             cache: false,

@@ -61,8 +61,9 @@
             self.systemInfoStartedAt(iso8601(self.systemInfo().StartDate()));
             self.formattedStartDate(moment(self.systemInfo().StartDate()).format('DD/MM/YYYY HH:mm:ss'));
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            router.navigate("#");
-            //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 

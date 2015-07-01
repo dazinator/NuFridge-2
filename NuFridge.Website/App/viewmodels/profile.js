@@ -25,7 +25,9 @@
 
             ko.mapping.fromJS(response, mapping, self.user);
         }).fail(function(xmlHttpRequest, textStatus, errorThrown) {
-
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 

@@ -78,6 +78,10 @@
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 self.afterAjaxSavingMessage(startTime);
                 self.isSaving(false);
+
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
             }
         });
     };
@@ -106,6 +110,10 @@
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 self.afterAjaxSavingMessage(startTime);
                 self.isSaving(false);
+
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
             }
         });
     };
@@ -164,6 +172,10 @@
             },
             error: function(xmlHttpRequest, textStatus, errorThrown) {
                 $('#deleteConfirmModal').modal('hide');
+
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
             }
         });
     };

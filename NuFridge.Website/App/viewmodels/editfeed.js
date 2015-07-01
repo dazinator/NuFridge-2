@@ -38,7 +38,9 @@
                 feedDfd.resolve();
             }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
                 feedDfd.reject();
-                router.navigate("#");
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
                 //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
             });
 
@@ -59,7 +61,9 @@
                 feedConfigDfd.resolve();
             }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
                 feedConfigDfd.reject();
-                router.navigate("#");
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
                 //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
             });
 

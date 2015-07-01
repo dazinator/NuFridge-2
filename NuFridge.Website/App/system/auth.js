@@ -16,13 +16,13 @@
             cache: false,
             success: function (result) {
 
-                $.cookie('AuthToken', result.Token, { path: '/' });
+                $.cookie('AuthToken', result.Token, { path: '/', expires: 7 });
 
                 dfd.resolve();
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
 
-                $.removeCookie('AuthToken', { path: '/' });
+                self.deleteCookie();
 
                 dfd.reject();
             }
@@ -30,6 +30,10 @@
 
         return dfd.promise();
     };
+
+    ctor.prototype.deleteCookie = function() {
+        $.removeCookie('AuthToken', { path: '/' });
+    }
 
     ctor.prototype.getAuthToken = function() {
         return $.cookie('AuthToken');

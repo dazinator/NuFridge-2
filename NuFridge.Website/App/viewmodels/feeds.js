@@ -64,10 +64,12 @@
             ko.mapping.fromJS(response.Results, mapping, self.feeds);
 
 
-        }).fail(function(response) {
+        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
             self.feedsLoaded(true);
 
-            alert("Errors are not handled yet.");
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
         });
     };
 
