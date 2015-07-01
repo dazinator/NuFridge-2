@@ -10,6 +10,10 @@
         self.searchTerm = ko.observable("");
         self.activeSearchTerms = ko.observableArray();
         self.isSearchingForPackages = ko.observable(false);
+        self.isUploadingPackage = ko.observable(false);
+        self.packageUploadPercentage = 0;
+        self.successUploadingPackage = ko.observable(false);
+        self.errorUploadingPackage = ko.observable(false);
     };
 
     ctor.prototype.activate = function(activationData) {
@@ -64,8 +68,6 @@
                 return;
             }
         }
-
-        self.packages.removeAll();
 
         var url = "Feeds/" + self.feed().Name() + "/api/v2/Search()?" + self.getInlineCountParam() + "&" + self.getPagingParams(pageNumber) + "&" + self.getFilterParam();
 
@@ -187,25 +189,33 @@
         return "$inlinecount=allpages";
     };
 
+    ctor.prototype.resetProgressForFileUpload = function() {
+        var self = this;
+
+        $(".fileUploadProgress").find("div.label").text("Your NuGet package is being uploaded.");
+        self.packageUploadPercentage = 0;
+        $('.fileUploadProgress').progress('reset').removeClass('success').removeClass('error').addClass('indicating');
+        self.successUploadingPackage(false);
+        self.errorUploadingPackage(false);
+    }
+
     ctor.prototype.fileUploadAction = function () {
         var self = this;
 
-        $('#fileUploadModal').find(".ui.button").removeClass("disabled").removeClass("loading");
+        self.resetProgressForFileUpload();
 
+  
         var options = {
             closable: false,
             onApprove: function (sender) {
-                var modal = this;
-                $(modal).find(".ui.button.deny").addClass("disabled");
-                $(sender).addClass("loading").addClass("disabled");
-                $(modal).find("label.ui.icon.button.btn-file").addClass("disabled");
-                self.startFileUpload();
+                if (!self.isUploadingPackage()) {
+                    self.startFileUpload();
+                }
                 return false;
             },
             transition: 'horizontal flip'
         };
 
-        $('#attachmentName').removeAttr('name');
         $('#_attachmentName').val("");
 
         $('#fileUploadModal').modal(options).modal('show');
@@ -215,16 +225,36 @@
 
     };
 
-    function progressHandlingFunction(e) {
+    ctor.prototype.progressHandlingFunction = function (e, instance) {
+        var self = instance;
+
         if (e.lengthComputable) {
-            console.log("Loaded: " + e.loaded);
-            console.log("Total: " + e.total);
+            var percentComplete = (e.loaded / e.total) * 100;
+            var diff = percentComplete - self.packageUploadPercentage;
+
+            if (diff >= 1 || percentComplete === 100) {
+                $(".fileUploadProgress").progress('increment', diff);
+                self.packageUploadPercentage = percentComplete;
+            }
+
+            if (percentComplete >= 99) {
+                self.packageUploadPercentage = 100;
+                if (percentComplete === 99) {
+                    $(".fileUploadProgress").progress('increment', 1);
+                }
+                $(".fileUploadProgress").find("div.label").text("Please wait while the server processes the package.");
+            }
+       
+
         }
     }
 
     ctor.prototype.startFileUpload = function () {
         var self = this;
 
+        self.resetProgressForFileUpload();
+
+        self.isUploadingPackage(true);
         var formData = new FormData($('#fileUpload')[0]);
         $.ajax({
             url: 'Feeds/' + self.feed().Name() + "/api/v2/package",
@@ -233,16 +263,31 @@
             xhr: function () {
                 var myXhr = $.ajaxSettings.xhr();
                 if (myXhr.upload) {
-                    myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+                    var func = function(e) {
+                        self.progressHandlingFunction(e, self);
+                    }
+                    myXhr.upload.addEventListener('progress', func, false);
                 }
                 return myXhr;
             },
             success: function (data) {
+                self.successUploadingPackage(true);
+                self.isUploadingPackage(false);
                 self.loadPackages(0);
-                $('#fileUploadModal').modal('hide');
+                $(".fileUploadProgress").find("div.label").text("The package has been pushed to the feed.");
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
-                $('#fileUploadModal').modal('hide');
+                self.errorUploadingPackage(true);
+                self.isUploadingPackage(false);
+                $('.fileUploadProgress').removeClass('success').removeClass('indicating').addClass('error');
+
+                var message = "The package was not pushed to the server.";
+
+                if (xmlHttpRequest.responseText) {
+                    message = xmlHttpRequest.responseText;
+                }
+
+                $(".fileUploadProgress").find("div.label").text(message);
 
                 if (xmlHttpRequest.status === 401) {
                     router.navigate("#signin");
@@ -260,6 +305,12 @@
 
     ctor.prototype.compositionComplete = function () {
         var self = this;
+
+
+        $(".fileUploadProgress").progress({
+            total: 100,
+            value: 0
+        });
 
         $(".packageSearch .prompt").on("keypress", function (e) {
             if (e.keyCode === 13) {

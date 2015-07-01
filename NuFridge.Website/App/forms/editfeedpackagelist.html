@@ -40,50 +40,96 @@
 </div>
 <table class="ui celled striped table">
     <thead>
-        <tr>
-            <th colspan="3">
-                Package Listing
-            </th>
-        </tr>
+    <tr>
+        <th colspan="3">
+            Package Listing
+        </th>
+    </tr>
     </thead>
     <!-- ko if: packages().length > 0 -->
     <tbody data-bind="foreach: { data: packages, as: 'package' }">
-        <tr>
-            <td>
-                <h4 class="ui image header">
-                    <img data-bind="src: package.IconUrl" class="ui mini rounded image" style="width: 35px; height: 35px;">
-                    <div class="content">
-                        <span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span>
-                        <div class="sub header" data-bind="text: package.Authors">
-                        </div>
+    <tr>
+        <td>
+            <h4 class="ui image header">
+                <img data-bind="src: package.IconUrl" class="ui mini rounded image" style="width: 35px; height: 35px;">
+                <div class="content">
+                    <span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span>
+                    <div class="sub header" data-bind="text: package.Authors">
                     </div>
-                </h4>
-            </td>
-        </tr>
+                </div>
+            </h4>
+        </td>
+    </tr>
     </tbody>
     <!-- /ko -->
     <!-- ko if: packages().length === 0 -->
     <tbody>
-        <tr>
-            <td data-bind="text:  activeSearchTerms().length > 0 ? (isSearchingForPackages() ? 'Searching for packages': 'No packages matching your search terms were found.') : (isSearchingForPackages() ? 'Loading packages' : 'No packages have been uploaded to the feed.')"></td>
-        </tr>
+    <tr>
+        <td data-bind="text:  activeSearchTerms().length > 0 ? (isSearchingForPackages() ? 'Searching for packages': 'No packages matching your search terms were found.') : (isSearchingForPackages() ? 'Loading packages' : 'No packages have been uploaded to the feed.')"></td>
+    </tr>
     </tbody>
     <!-- /ko -->
     <tfoot>
-        <tr>
-            <th colspan="1">
-                <div class="ui right floated pagination menu">
-                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
-                        <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
-                    </a>
-                    <!-- ko foreach: new Array(pageCount()) -->
-                    <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
-                    <!-- /ko -->
-                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
-                        <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
-                    </a>
-                </div>
-            </th>
-        </tr>
+    <tr>
+        <th colspan="1">
+            <div class="ui right floated pagination menu">
+                <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
+                    <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
+                </a>
+                <!-- ko foreach: new Array(pageCount()) -->
+                <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
+                <!-- /ko -->
+                <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
+                    <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
+                </a>
+            </div>
+        </th>
+    </tr>
     </tfoot>
 </table>
+
+<div class="ui small modal transition hidden" id="fileUploadModal">
+    <div class="ui icon header">
+        <i class="file icon"></i>
+        <span>Upload NuGet Package</span>
+    </div>
+    <div class="content">
+
+        <div class="ui icon negative message invalidFileExtensionMessage" style="display: none;">
+            <i class="remove icon"></i>
+            <div class="content">
+                <div class="header">
+                    Only files with a .nupkg extension can be uploaded.
+                </div>
+            </div>
+        </div>
+        <form id="fileUpload">
+            <div class="field">
+                <div class="ui action input" style="width: 100%;">
+                    <input type="text" id="_attachmentName" readonly="readonly">
+                    <label for="attachmentName" class="ui icon button btn-file" data-bind="css: {disabled: isUploadingPackage() || successUploadingPackage() }">
+                        <i class="attach basic icon"></i>
+                        <input type="file" id="attachmentName" name="attachmentName" style="display: none">
+                    </label>
+                </div>
+            </div>
+        </form>
+        <div data-bind="visible: isUploadingPackage() || successUploadingPackage() || errorUploadingPackage()">
+            <div class="ui progress fileUploadProgress" data-percent="0" style="margin-top: 20px;">
+                <div class="bar" style="transition-duration: 300ms; -webkit-transition-duration: 300ms; width: 100%;">
+                    <div class="progress">0%</div>
+                </div>
+                <div class="label">Your NuGet package is being uploaded.</div>
+            </div>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button" data-bind="css: {disabled: isUploadingPackage()}">
+            <span data-bind="text: successUploadingPackage() ? 'Close' : 'Cancel'"></span>
+        </div>
+        <div class="ui positive right labeled icon button" data-bind="visible: !successUploadingPackage(), css: {disabled: isUploadingPackage(), loading: isUploadingPackage()}">
+            <span data-bind="text: errorUploadingPackage() ? 'Retry' : 'Upload'"></span>
+            <i class="upload icon"></i>
+        </div>
+    </div>
+</div>
