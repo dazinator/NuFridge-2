@@ -62,7 +62,6 @@ namespace NuFridge.Shared.Model.Interfaces
         string CalculateHash();
         void IncrementDownloadCount();
         SemanticVersion GetSemanticVersion();
-        void SetSemanticVersion(SemanticVersion value);
         string ReportAbuseUrl { get; set; }
     }
 }

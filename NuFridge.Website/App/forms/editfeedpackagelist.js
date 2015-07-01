@@ -8,6 +8,8 @@
         self.currentPage = ko.observable(0);
         self.pageSize = ko.observable(10);
         self.searchTerm = ko.observable("");
+        self.activeSearchTerms = ko.observableArray();
+        self.isSearchingForPackages = ko.observable(false);
     };
 
     ctor.prototype.activate = function(activationData) {
@@ -15,7 +17,7 @@
 
         activationData.loaded.then(function() {
 
-            self.feed = activationData.feed;
+            self.feed(activationData.feed());
 
             if (!self.feed()) {
                 throw "A feed must be provided when using the edit feed package list.";
@@ -30,6 +32,28 @@
         self.loadPackages(0);
     };
 
+    ctor.prototype.arrayContains = function (arr, item) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === item) return true;
+        }
+        return false;
+    };
+
+    ctor.prototype.getUniqueItemsInArray = function (extArr) {
+        var self = this;
+
+        var arr = [];
+        for (var i = 0; i < extArr.length; i++) {
+            var item = extArr[i].toLowerCase();
+            if (!self.arrayContains(arr, item)) {
+                if (item) {
+                    arr.push(item);
+                }
+            }
+        }
+        return arr;
+    }
+
     ctor.prototype.loadPackages = function(pageNumber) {
         var self = this;
 
@@ -41,12 +65,20 @@
             }
         }
 
-        var url = "Feeds/" + self.feed().Name() + "/api/v2/Search()?" + self.getInlineCountParam() + "&" + self.getPagingParams(pageNumber);
+        self.packages.removeAll();
+
+        var url = "Feeds/" + self.feed().Name() + "/api/v2/Search()?" + self.getInlineCountParam() + "&" + self.getPagingParams(pageNumber) + "&" + self.getFilterParam();
 
         if (self.searchTerm()) {
-        var searchParam = self.getSearchTermParam();
+            self.activeSearchTerms(self.getUniqueItemsInArray(self.searchTerm().split(" ")));
+            var searchParam = self.getSearchTermParam();
             url += "&" + searchParam;
+        } else {
+            self.activeSearchTerms.removeAll();
         }
+
+
+        self.isSearchingForPackages(true);
 
         $.ajax({
             url: url,
@@ -82,16 +114,35 @@
             self.totalCount(json.count);
 
             ko.mapping.fromJS(entry, mapping, self.packages);
-
+            self.isSearchingForPackages(false);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+            self.isSearchingForPackages(false);
             router.navigate("#");
             //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
         });
     };
 
+    ctor.prototype.deleteSearchTerm = function(searchTermToDelete) {
+        var self = this;
+
+        var splitTerms = self.activeSearchTerms();
+        var index = splitTerms.indexOf(searchTermToDelete);
+
+        if (index > -1) {
+            splitTerms.splice(index, 1);
+        }
+
+        self.searchTerm(splitTerms.join(" "));
+        self.performSearch();
+    };
+
+    ctor.prototype.getFilterParam = function() {
+        return "$filter=IsLatestVersion";
+    };
+
     ctor.prototype.getSearchTermParam = function() {
         var self = this;
-        return "searchTerm=" + self.searchTerm();
+        return "searchTerm=" + self.activeSearchTerms().join(" ");
     };
 
     ctor.prototype.goToPage = function (pageNumber) {

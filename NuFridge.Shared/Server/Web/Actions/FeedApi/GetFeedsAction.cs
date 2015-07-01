@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Model;
@@ -29,6 +30,10 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             {
                 feeds = transaction.Query<IFeed>().ToList(pageSize * page, pageSize, out totalResults);
             }
+
+            feeds.Where(fd => !string.IsNullOrWhiteSpace(fd.ApiKeyHashed)).ToList().ForEach(fd => fd.HasApiKey = true);
+            feeds.ForEach(fd => fd.ApiKeyHashed = null); //Temporary until API Key table is used
+            feeds.ForEach(fd => fd.ApiKeySalt = null); //Temporary until API Key table is used
 
             var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
 

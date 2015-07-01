@@ -7,6 +7,7 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Server.Web;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -67,16 +68,17 @@ namespace NuFridge.Shared.Server.NuGet
             return GetRawContents(package);
         }
 
-        public void RemovePackage(IInternalPackage package)
+        public void RemovePackage(IInternalPackage internalPackage)
         {
-            //TODO this is a hack
-            DataServicePackage p = new DataServicePackage();
-            p.Id = package.PackageId;
-            p.Version = package.Version;
+            var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
 
-            base.RemovePackage(p);
+            filePath = Path.Combine(FileSystem.Root, filePath);
 
-            _packageIndex.DeletePackage(package);
+            IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
+
+            RemovePackage(package);
+
+            _packageIndex.DeletePackage(internalPackage);
         }
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)

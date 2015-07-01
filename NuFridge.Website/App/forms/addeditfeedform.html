@@ -27,7 +27,12 @@
     </div>
     <div class="field">
         <label>API Key</label>
-        <input type="text" data-bind="value: ApiKey">
+        <div class="ui input" data-bind="css: {action: HasApiKey() === true}">
+            <input type="text" class="apiKeyTextBox" data-bind="value: ApiKey, placeholder: HasApiKey() === true ? 'An API Key has already been set.' : '', disable: HasApiKey">
+            <button class="ui gray right labeled button" data-bind="visible: HasApiKey, click: $root.clearApiKey">
+                Clear
+            </button>
+        </div>
     </div>
 
     <div class="ui buttons">

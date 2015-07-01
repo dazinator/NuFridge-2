@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
@@ -14,6 +15,7 @@ using NuGet;
 namespace NuFridge.Shared.Model
 {
     [Table("Package", Schema = "NuFridge")]
+    [DebuggerDisplay("{PackageId}: {Version} ({Title})")]
     public class InternalPackage : IInternalPackage, IEntity
     {
         public InternalPackage()
@@ -29,36 +31,28 @@ namespace NuFridge.Shared.Model
         public string PackageId { get; set; }
 
  
-        private SemanticVersion _version { get; set; }
+        private SemanticVersion SemanticVersion { get; set; }
+        private string _version { get; set; }
 
-        public string Version { get; set; }
+        public string Version
+        {
+            get { return _version; }
+            set
+            {
+                _version = value;
+                SemanticVersion = SemanticVersion.Parse(value);
+                VersionBuild = SemanticVersion.Version.Build;
+                VersionMinor = SemanticVersion.Version.Minor;
+                VersionMajor = SemanticVersion.Version.Major;
+                VersionRevision = SemanticVersion.Version.Revision;
+                VersionSpecial = SemanticVersion.SpecialVersion;
+            }
+        }
 
         public SemanticVersion GetSemanticVersion()
         {
-            return _version;
+            return SemanticVersion;
         }
-
-        public void SetSemanticVersion(SemanticVersion value)
-        {
-            _version = value;
-            if (value != null)
-            {
-                VersionBuild = value.Version.Build;
-                VersionMinor = value.Version.Minor;
-                VersionMajor = value.Version.Major;
-                VersionRevision = value.Version.Revision;
-                VersionSpecial = value.SpecialVersion;
-            }
-            else
-            {
-                VersionBuild = 0;
-                VersionMinor = 0;
-                VersionMajor = 0;
-                VersionRevision = 0;
-                VersionSpecial = null;
-            }
-        }
-
 
         public int VersionMajor { get; set; }
         public int VersionMinor { get; set; }
@@ -146,7 +140,6 @@ namespace NuFridge.Shared.Model
             }
 
             newPackage.Version = package.Version.ToString();
-            newPackage.SetSemanticVersion(package.Version);
 
             if (package.ProjectUrl != null)
             {

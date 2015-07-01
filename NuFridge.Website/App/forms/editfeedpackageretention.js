@@ -1,7 +1,7 @@
 ﻿define(['plugins/router', 'api', 'auth', 'databinding-feedconfig'], function (router, api, auth, databindingFeedConfig) {
     var ctor = function () {
         var self = this;
-        self.mode = "Loading";
+        self.mode = "Update";
         self.isSaving = ko.observable(false);
         self.isCancelNavigating = ko.observable(false);
         self.feedconfig = ko.validatedObservable(databindingFeedConfig());
@@ -12,10 +12,9 @@
 
         activationData.loaded.then(function() {
 
-            self.feedconfig = activationData.feedconfig;
+            self.feedconfig(activationData.feedconfig());
 
             if (activationData.mode === "Update") {
-                self.mode = "Update";
 
                 if (!self.feedconfig()) {
                     throw "A feed config must be provided when using the edit feed package retention form.";

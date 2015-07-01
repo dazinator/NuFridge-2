@@ -7,6 +7,7 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Storage;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
@@ -42,6 +43,14 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                     return HttpStatusCode.Conflict;
                 }
 
+                if (!string.IsNullOrWhiteSpace(feed.ApiKey))
+                {
+                    ICryptoService cryptoService = new PBKDF2();
+
+                    feed.ApiKeySalt = cryptoService.GenerateSalt();
+                    feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
+                }
+
                 transaction.Insert(feed);
                 transaction.Commit();
                 transaction.Dispose();
@@ -72,6 +81,8 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 return HttpStatusCode.InternalServerError;
             }
 
+            feed.ApiKeyHashed = null; //Temporary until API Key table is used
+            feed.ApiKeySalt = null; //Temporary until API Key table is used
 
             return feed;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nancy;
+﻿using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
@@ -12,18 +7,18 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 {
-    public class DeletePackageAction : IAction
+    public class DeletePackageAction : PackagesBase, IAction
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IStore _store;
 
-        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store) : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _store = store;
         }
 
-        public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string id = parameters.id;
             string version = parameters.version;
@@ -49,7 +44,40 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 return response;
             }
 
+            string deletedPackageId = package.PackageId;
+            bool isDeletedPackageLatestVersion = package.IsLatestVersion;
+            bool isDeletedPackageAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
+
             packageRepository.RemovePackage(package);
+
+            if (isDeletedPackageAbsoluteLatestVersion || isDeletedPackageLatestVersion)
+            {
+                IInternalPackage latestAbsoluteVersionPackage;
+                IInternalPackage latestVersionPackage;
+
+                GetNextLatestVersionPackages(feedId, deletedPackageId, packageRepository, out latestAbsoluteVersionPackage, out latestVersionPackage);
+
+                if (latestAbsoluteVersionPackage != null && !latestAbsoluteVersionPackage.IsAbsoluteLatestVersion)
+                {
+                    latestAbsoluteVersionPackage.IsAbsoluteLatestVersion = true;
+                    using (ITransaction transaction = _store.BeginTransaction())
+                    {
+                        transaction.Update(latestAbsoluteVersionPackage);
+                        transaction.Commit();
+                    }
+                }
+
+                if (latestVersionPackage != null && !latestVersionPackage.IsLatestVersion)
+                {
+                    latestVersionPackage.IsLatestVersion = true;
+                    using (ITransaction transaction = _store.BeginTransaction())
+                    {
+                        transaction.Update(latestVersionPackage);
+                        transaction.Commit();
+                    }
+                }
+            }
+
 
             return new Response { StatusCode = HttpStatusCode.Created };
         }

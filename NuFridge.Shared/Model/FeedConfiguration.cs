@@ -7,11 +7,9 @@ namespace NuFridge.Shared.Model
         public int Id { get; set; }
 
         public int FeedId { get; set; }
-
         public string PackagesDirectory { get; set; }
 
         public bool RetentionPolicyEnabled { get; set; }
-
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
 

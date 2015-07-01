@@ -71,7 +71,7 @@ namespace NuFridge.Tests
                     VersionDownloadCount = -1
                 };
 
-                p.SetSemanticVersion(new SemanticVersion(version));
+                p.Version = version;
 
                 return p;
             }

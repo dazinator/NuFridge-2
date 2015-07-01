@@ -31,7 +31,7 @@ $.fn.dropdown = function(parameters) {
   ;
 
   $allModules
-    .each(function() {
+    .each(function(elementIndex) {
       var
         settings          = ( $.isPlainObject(parameters) )
           ? $.extend(true, {}, $.fn.dropdown.settings, parameters)
@@ -50,6 +50,7 @@ $.fn.dropdown = function(parameters) {
         moduleNamespace = 'module-' + namespace,
 
         $module         = $(this),
+        $context        = $(settings.context),
         $text           = $module.find(selector.text),
         $search         = $module.find(selector.search),
         $input          = $module.find(selector.input),
@@ -80,11 +81,14 @@ $.fn.dropdown = function(parameters) {
 
         initialize: function() {
           module.debug('Initializing dropdown', settings);
+
           if( module.is.alreadySetup() ) {
             module.setup.reference();
           }
           else {
             module.setup.layout();
+            module.refreshData();
+
             module.save.defaults();
             module.restore.selected();
 
@@ -98,6 +102,7 @@ $.fn.dropdown = function(parameters) {
             module.observeChanges();
             module.instantiate();
           }
+
         },
 
         instantiate: function() {
@@ -109,7 +114,7 @@ $.fn.dropdown = function(parameters) {
         },
 
         destroy: function() {
-          module.verbose('Destroying previous dropdown for', $module);
+          module.verbose('Destroying previous dropdown', $module);
           module.remove.tabbable();
           $module
             .off(eventNamespace)
@@ -261,6 +266,8 @@ $.fn.dropdown = function(parameters) {
           layout: function() {
             if( $module.is('select') ) {
               module.setup.select();
+              module.setup.returnedObject();
+              console.log($module);
             }
             if( module.is.search() && !module.has.search() ) {
               module.verbose('Adding search input');
@@ -308,6 +315,7 @@ $.fn.dropdown = function(parameters) {
                 .detach()
                 .prependTo($module)
               ;
+              console.log($module);
             }
             if($input.is('[multiple]')) {
               module.set.multiple();
@@ -319,28 +327,33 @@ $.fn.dropdown = function(parameters) {
             $item = $menu.find(selector.item);
           },
           reference: function() {
-            var
-              index = $allModules.index($module),
-              $firstModules,
-              $lastModules
-            ;
             module.debug('Dropdown behavior was called on select, replacing with closest dropdown');
             // replace module reference
             $module = $module.parent(selector.dropdown);
             module.refresh();
-            // adjust all modules to compensate
-            $firstModules = $allModules.slice(0, index);
-            $lastModules  = $allModules.slice(index + 1);
-            $allModules   = $firstModules.add($module).add($lastModules);
+            module.setup.returnedObject();
             // invoke method in context of current instance
             if(methodInvoked) {
               instance = module;
               module.invoke(query);
             }
+          },
+          returnedObject: function() {
+            var
+              $firstModules = $allModules.slice(0, elementIndex),
+              $lastModules = $allModules.slice(elementIndex + 1)
+            ;
+            // adjust all modules to use correct reference
+            $allModules = $firstModules.add($module).add($lastModules);
           }
         },
 
         refresh: function() {
+          module.refreshSelectors();
+          module.refreshData();
+        },
+
+        refreshSelectors: function() {
           module.verbose('Refreshing selector cache');
           $text   = $module.find(selector.text);
           $search = $module.find(selector.search);
@@ -353,6 +366,20 @@ $.fn.dropdown = function(parameters) {
           $menu    = $module.children(selector.menu);
           $item    = $menu.find(selector.item);
         },
+
+        refreshData: function() {
+          module.verbose('Refreshing cached metadata');
+          $item
+            .removeData(metadata.text)
+            .removeData(metadata.value)
+          ;
+          $module
+            .removeData(metadata.defaultText)
+            .removeData(metadata.defaultValue)
+            .removeData(metadata.placeholderText)
+          ;
+        },
+
 
         toggle: function() {
           module.verbose('Toggling menu visibility');
@@ -1353,6 +1380,10 @@ $.fn.dropdown = function(parameters) {
             if(!values) {
               return false;
             }
+            values = $.isArray(values)
+              ? values
+              : [values]
+            ;
             return $.grep(values, function(value) {
               return (module.get.item(value) === false);
             });
@@ -1492,9 +1523,11 @@ $.fn.dropdown = function(parameters) {
               .find('option')
                 .each(function() {
                   var
-                    name  = $(this).html(),
-                    value = ( $(this).attr('value') !== undefined )
-                      ? $(this).attr('value')
+                    $option  = $(this),
+                    name     = $option.html(),
+                    disabled = $option.attr('disabled'),
+                    value    = ( $option.attr('value') !== undefined )
+                      ? $option.attr('value')
                       : name
                   ;
                   if(settings.placeholder === 'auto' && value === '') {
@@ -1502,8 +1535,9 @@ $.fn.dropdown = function(parameters) {
                   }
                   else {
                     select.values.push({
-                      name: name,
-                      value: value
+                      name     : name,
+                      value    : value,
+                      disabled : disabled
                     });
                   }
                 })
@@ -1692,7 +1726,7 @@ $.fn.dropdown = function(parameters) {
             }
           },
           values: function() {
-            // prevents callbacks from occuring if specified for initial load
+            // prevents callbacks from occuring on initial load
             module.set.initialLoad();
             if(settings.apiSettings) {
               if(settings.saveRemoteData) {
@@ -1751,14 +1785,27 @@ $.fn.dropdown = function(parameters) {
             module.save.defaultValue();
           },
           defaultValue: function() {
-            $module.data(metadata.defaultValue, module.get.value());
+            var
+              value = module.get.value()
+            ;
+            module.verbose('Saving default value as', value);
+            $module.data(metadata.defaultValue, value);
           },
           defaultText: function() {
-            $module.data(metadata.defaultText, $text.text() );
+            var
+              text = module.get.text()
+            ;
+            module.verbose('Saving default text as', text);
+            $module.data(metadata.defaultText, text);
           },
           placeholderText: function() {
+            var
+              text
+            ;
             if($text.hasClass(className.placeholder)) {
-              $module.data(metadata.placeholderText, $text.text());
+              text = module.get.text();
+              module.verbose('Saving placeholder text as', text);
+              $module.data(metadata.placeholderText, text);
             }
           },
           remoteData: function(name, value) {
@@ -1766,6 +1813,7 @@ $.fn.dropdown = function(parameters) {
               module.error(error.noStorage);
               return;
             }
+            module.verbose('Saving remote data to session storage', value, name);
             sessionStorage.setItem(value, name);
           }
         },
@@ -1861,10 +1909,12 @@ $.fn.dropdown = function(parameters) {
             $module.addClass(className.loading);
           },
           placeholderText: function(text) {
-            module.debug('Restoring placeholder text');
             text = text || $module.data(metadata.placeholderText);
-            module.set.text(text);
-            $text.addClass(className.placeholder);
+            if(text) {
+              module.debug('Restoring placeholder text');
+              module.set.text(text);
+              $text.addClass(className.placeholder);
+            }
           },
           tabbable: function() {
             if( module.has.search() ) {
@@ -2009,12 +2059,17 @@ $.fn.dropdown = function(parameters) {
               hasInput     = ($input.length > 0),
               isAddition   = !module.has.value(value),
               currentValue = module.get.values(),
+              stringValue  = (typeof value == 'number')
+                ? value.toString()
+                : value,
               newValue
             ;
             if(hasInput) {
-              if(value == currentValue) {
+              if(stringValue == currentValue) {
                 module.verbose('Skipping value update already same value', value, currentValue);
-                return;
+                if(!module.is.initialLoad()) {
+                  return;
+                }
               }
               module.debug('Updating input value', value, currentValue);
               $input
@@ -2056,7 +2111,7 @@ $.fn.dropdown = function(parameters) {
               : $selectedItem || module.get.item(value)
             ;
             if(!$selectedItem) {
-              return false;
+              return;
             }
             module.debug('Setting selected menu item to', $selectedItem);
             if(module.is.single()) {
@@ -2103,6 +2158,9 @@ $.fn.dropdown = function(parameters) {
                   }
                 }
                 else {
+                  if(settings.apiSettings && settings.saveRemoteData) {
+                    module.save.remoteData(selectedText, selectedValue);
+                  }
                   module.set.value(selectedValue, selectedText, $selected);
                   module.set.text(selectedText);
                   $selected
@@ -2549,17 +2607,40 @@ $.fn.dropdown = function(parameters) {
           },
           onScreen: function($subMenu) {
             var
-              $currentMenu = $subMenu || $menu,
-              onScreen
+              $currentMenu   = $subMenu || $menu,
+              canOpenDownward = true,
+              onScreen = {},
+              calculations
             ;
             $currentMenu.addClass(className.loading);
-            onScreen = ($.fn.visibility !== undefined)
-              ? $currentMenu.visibility('bottom visible')
-              : $(window).scrollTop() + $(window).height() >= $currentMenu.offset().top + $currentMenu.height()
-            ;
-            module.debug('Checking if menu can fit on screen', onScreen, $menu);
+            calculations = {
+              context: {
+                scrollTop : $context.scrollTop(),
+                height    : $context.outerHeight()
+              },
+              menu : {
+                offset: $currentMenu.offset(),
+                height: $currentMenu.outerHeight()
+              }
+            };
+            onScreen = {
+              above : (calculations.context.scrollTop) <= calculations.menu.offset.top - calculations.menu.height,
+              below : (calculations.context.scrollTop + calculations.context.height) >= calculations.menu.offset.top + calculations.menu.height
+            };
+            if(onScreen.below) {
+              module.verbose('Dropdown can fit in context downward', onScreen);
+              canOpenDownward = true;
+            }
+            else if(!onScreen.below && !onScreen.above) {
+              module.verbose('Dropdown cannot fit in either direction, favoring downward', onScreen);
+              canOpenDownward = true;
+            }
+            else {
+              module.verbose('Dropdown cannot fit below, opening upward', onScreen);
+              canOpenDownward = false;
+            }
             $currentMenu.removeClass(className.loading);
-            return onScreen;
+            return canOpenDownward;
           },
           inObject: function(needle, object) {
             var
@@ -2946,10 +3027,12 @@ $.fn.dropdown.settings = {
   on                     : 'click',    // what event should show menu action on item selection
   action                 : 'activate', // action on item selection (nothing, activate, select, combo, hide, function(){})
 
+
   apiSettings            : false,
   saveRemoteData         : true,      // Whether remote name/value pairs should be stored in sessionStorage to allow remote data to be restored on page refresh
-  throttle               : 100,        // How long to wait after last user input to search remotely
+  throttle               : 200,       // How long to wait after last user input to search remotely
 
+  context                : window,      // Context to use when determining if on screen
   direction              : 'auto',     // Whether dropdown should always open in one direction
   keepOnScreen           : true,       // Whether dropdown should check whether it is on screen before showing
 
@@ -3022,7 +3105,7 @@ $.fn.dropdown.settings = {
     labels       : 'Allowing user additions currently requires the use of labels.',
     method       : 'The method you called is not defined.',
     noAPI        : 'The API module is required to load resources remotely',
-    noStorage    : 'Saving remote data requires local storage',
+    noStorage    : 'Saving remote data requires session storage',
     noTransition : 'This module requires ui transitions <https://github.com/Semantic-Org/UI-Transition>'
   },
 
@@ -3098,7 +3181,10 @@ $.fn.dropdown.settings.templates = {
     }
     html += '<div class="menu">';
     $.each(select.values, function(index, option) {
-      html += '<div class="item" data-value="' + option.value + '">' + option.name + '</div>';
+      html += (option.disabled)
+        ? '<div class="disabled item" data-value="' + option.value + '">' + option.name + '</div>'
+        : '<div class="item" data-value="' + option.value + '">' + option.name + '</div>'
+      ;
     });
     html += '</div>';
     return html;

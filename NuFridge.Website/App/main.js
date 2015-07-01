@@ -51,8 +51,15 @@ define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapp
             };
             
             ko.bindingHandlers.attr.update(element, function () {
-                return { src: valueAccessor() };
+                return { src: valueAccessor()() + "?"  };
             });
+        }
+    };
+
+    ko.bindingHandlers.placeholder = {
+        update: function (element, valueAccessor, allBindingsAccessor) {
+            var underlyingObservable = valueAccessor();
+            ko.applyBindingsToNode(element, { attr: { placeholder: underlyingObservable } });
         }
     };
 

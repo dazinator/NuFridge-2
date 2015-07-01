@@ -30,7 +30,7 @@
   font-weight: normal;
   border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
-  border-radius: 0.285714rem;
+  border-radius: 0.28571429rem;
   min-height: 2.85714286em;
 }
 .ui.menu:after {
@@ -94,7 +94,7 @@
           transition: background 0.1s ease, box-shadow 0.1s ease, color 0.1s ease;
 }
 .ui.menu > .item:first-child {
-  border-radius: 0.285714rem 0px 0px 0.285714rem;
+  border-radius: 0.28571429rem 0px 0px 0.28571429rem;
 }
 
 /* Border */
@@ -135,7 +135,7 @@
 .ui.menu .item > i.icon {
   opacity: 0.9;
   float: none;
-  margin: 0em 0.35714em 0em 0em;
+  margin: 0em 0.35714286em 0em 0em;
 }
 
 /*--------------
@@ -186,13 +186,13 @@
 }
 .ui.menu .item > .input input {
   font-size: 1em;
-  padding-top: 0.57142em;
-  padding-bottom: 0.57142em;
+  padding-top: 0.57142857em;
+  padding-bottom: 0.57142857em;
 }
 .ui.menu .item > .input .button,
 .ui.menu .item > .input .label {
-  padding-top: 0.57142em;
-  padding-bottom: 0.57142em;
+  padding-top: 0.57142857em;
+  padding-bottom: 0.57142857em;
 }
 
 /*--------------
@@ -239,7 +239,7 @@
 .ui.menu .dropdown.item .menu {
   left: 0px;
   min-width: calc(100% - 1px);
-  border-radius: 0em 0em 0.285714rem 0.285714rem;
+  border-radius: 0em 0em 0.28571429rem 0.28571429rem;
   background: #ffffff;
   margin: 0em 0px 0px;
   box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
@@ -284,8 +284,8 @@
 /* Secondary */
 .ui.secondary.menu .dropdown.item > .menu,
 .ui.text.menu .dropdown.item > .menu {
-  border-radius: 0.285714rem;
-  margin-top: 0.35714em;
+  border-radius: 0.28571429rem;
+  margin-top: 0.35714286em;
 }
 
 /* Pointing */
@@ -311,7 +311,7 @@
   min-width: 0;
   margin: 0em 0em 0em 0em;
   box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.08);
-  border-radius: 0em 0.285714rem 0.285714rem 0.285714rem;
+  border-radius: 0em 0.28571429rem 0.28571429rem 0.28571429rem;
 }
 .ui.vertical.menu .active.dropdown.item {
   border-top-right-radius: 0em;
@@ -360,7 +360,7 @@
   margin: -0.3em 0em;
   width: 2.5em;
 }
-.ui.vertical.menu .item > img:only-child {
+.ui.vertical.menu .item > img:not(.ui):only-child {
   display: block;
   max-width: 100%;
   width: auto;
@@ -511,15 +511,7 @@ Floated Menu / Item
 ---------------*/
 
 .ui.vertical.menu {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -webkit-flex-direction: column;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  display: block;
   background: #ffffff;
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
 }
@@ -528,22 +520,15 @@ Floated Menu / Item
 
 .ui.vertical.menu .item {
   display: block;
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 auto;
-      -ms-flex: 0 0 auto;
-          flex: 0 0 auto;
-  -webkit-align-self: stretch !important;
-      -ms-flex-item-align: stretch !important;
-          align-self: stretch !important;
   background: none;
   border-top: none;
   border-right: none;
 }
 .ui.vertical.menu > .item:first-child {
-  border-radius: 0.285714rem 0.285714rem 0px 0px;
+  border-radius: 0.28571429rem 0.28571429rem 0px 0px;
 }
 .ui.vertical.menu > .item:last-child {
-  border-radius: 0px 0px 0.285714rem 0.285714rem;
+  border-radius: 0px 0px 0.28571429rem 0.28571429rem;
 }
 
 /*--- Label ---*/
@@ -606,13 +591,13 @@ Floated Menu / Item
   box-shadow: none;
 }
 .ui.vertical.menu > .active.item:first-child {
-  border-radius: 0em 0.285714rem 0em 0em;
+  border-radius: 0em 0.28571429rem 0em 0em;
 }
 .ui.vertical.menu > .active.item:last-child {
-  border-radius: 0em 0em 0.285714rem 0em;
+  border-radius: 0em 0em 0.28571429rem 0em;
 }
 .ui.vertical.menu > .active.item:only-child {
-  border-radius: 0em 0.285714rem 0.285714rem 0em;
+  border-radius: 0em 0.28571429rem 0.28571429rem 0em;
 }
 .ui.vertical.menu .active.item .menu .active.item {
   border-left: none;
@@ -666,7 +651,7 @@ Floated Menu / Item
   font-weight: bold;
   margin-bottom: -1px;
   box-shadow: none;
-  border-radius: 5px 5px 0px 0px;
+  border-radius: 0.28571429rem 0.28571429rem 0px 0px !important;
 }
 
 /* Coupling with segment for attachment */
@@ -674,6 +659,7 @@ Floated Menu / Item
 .ui.tabular.menu ~ .bottom.attached.segment + .bottom.attached.segment {
   border-top: none;
   margin: 0px;
+  width: 100%;
 }
 
 /* Vertical Tabular */
@@ -698,7 +684,7 @@ Floated Menu / Item
   color: rgba(0, 0, 0, 0.95);
   border-color: #d4d4d5;
   margin: 0px -1px 0px 0px;
-  border-radius: 5px 0px 0px 5px;
+  border-radius: 0.28571429rem 0px 0px 0.28571429rem !important;
 }
 
 /* Dropdown */
@@ -723,10 +709,10 @@ Floated Menu / Item
   vertical-align: middle;
 }
 .ui.pagination.menu .item:last-child {
-  border-radius: 0em 0.285714rem 0.285714rem 0em;
+  border-radius: 0em 0.28571429rem 0.28571429rem 0em;
 }
 .ui.compact.menu .item:last-child {
-  border-radius: 0em 0.285714rem 0.285714rem 0em;
+  border-radius: 0em 0.28571429rem 0.28571429rem 0em;
 }
 .ui.pagination.menu .item:last-child:before {
   display: none;
@@ -754,6 +740,8 @@ Floated Menu / Item
 
 .ui.secondary.menu {
   background: none;
+  margin-left: -0.35714286em;
+  margin-right: -0.35714286em;
   border-radius: 0em;
   border: none;
   box-shadow: none;
@@ -766,12 +754,12 @@ Floated Menu / Item
           align-self: center;
   box-shadow: none;
   border: none;
-  background: none;
-  margin: 0em 0.35714em;
   padding: 0.71428571em 0.92857143em;
-  border-radius: 0.285714rem;
+  margin: 0em 0.35714286em;
+  background: none;
   -webkit-transition: color 0.1s ease;
           transition: color 0.1s ease;
+  border-radius: 0.28571429rem;
 }
 
 /* No Divider */
@@ -782,7 +770,7 @@ Floated Menu / Item
 /* Header */
 .ui.secondary.menu .header.item {
   border-radius: 0em;
-  border-right: 0.1em solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(34, 36, 38, 0.15);
   background: none transparent;
 }
 
@@ -804,7 +792,7 @@ Floated Menu / Item
   box-shadow: none;
   background: rgba(0, 0, 0, 0.05);
   color: rgba(0, 0, 0, 0.95);
-  border-radius: 0.285714rem;
+  border-radius: 0.28571429rem;
 }
 
 /* Active Hover */
@@ -830,9 +818,13 @@ Floated Menu / Item
   color: #ffffff !important;
 }
 
-/* Disable variations */
-.ui.secondary.item.menu .item {
-  margin: 0em;
+/* Fix item margins */
+.ui.secondary.item.menu {
+  margin-left: 0em;
+  margin-right: 0em;
+}
+.ui.secondary.item.menu .item:last-child {
+  margin-right: 0em;
 }
 .ui.secondary.attached.menu {
   box-shadow: none;
@@ -844,8 +836,8 @@ Floated Menu / Item
 
 .ui.secondary.vertical.menu > .item {
   border: none;
-  margin: 0em 0em 0.3em;
-  border-radius: 0.285714rem !important;
+  margin: 0em 0em 0.35714286em;
+  border-radius: 0.28571429rem !important;
 }
 .ui.secondary.vertical.menu > .header.item {
   border-radius: 0em;
@@ -866,6 +858,8 @@ Floated Menu / Item
 -----------------------*/
 
 .ui.secondary.pointing.menu {
+  margin-left: 0em;
+  margin-right: 0em;
   border-bottom: 2px solid rgba(34, 36, 38, 0.15);
 }
 .ui.secondary.pointing.menu .item {
@@ -876,7 +870,7 @@ Floated Menu / Item
       -ms-flex-item-align: end;
           align-self: flex-end;
   margin: 0em 0em -2px;
-  padding: 0.85714286em 1em;
+  padding: 0.85714286em 1.14285714em;
   border-bottom-width: 2px;
   -webkit-transition: color 0.1s ease;
           transition: color 0.1s ease;
@@ -1046,14 +1040,14 @@ Floated Menu / Item
   margin-bottom: 0rem;
 }
 .ui.vertical.text.menu .item {
-  margin: 0.5714em 0em;
+  margin: 0.57142857em 0em;
 }
 .ui.vertical.text.menu .item > i.icon {
   float: none;
-  margin: 0em 0.35714em 0em 0em;
+  margin: 0em 0.35714286em 0em 0em;
 }
 .ui.vertical.text.menu .header.item {
-  margin: 0.5714em 0em 0.71428em;
+  margin: 0.57142857em 0em 0.71428571em;
 }
 
 /*--- hover ---*/
@@ -1153,7 +1147,7 @@ Floated Menu / Item
 .ui.labeled.icon.menu .item {
   min-width: 6em;
 }
-.ui.labeled.icon.menu:not(.vetical) .item {
+.ui.labeled.icon.menu:not(.vertical) .item {
   padding-left: 1.71428571em;
   padding-right: 1.71428571em;
 }
@@ -1264,8 +1258,8 @@ Floated Menu / Item
 }
 .ui.menu .grey.active.item,
 .ui.grey.menu .active.item {
-  border-color: #757676 !important;
-  color: #757676 !important;
+  border-color: #767676 !important;
+  color: #767676 !important;
 }
 
 /*--------------
@@ -1273,7 +1267,7 @@ Floated Menu / Item
 ---------------*/
 
 .ui.inverted.menu {
-  border-width: 0px;
+  border: 1px solid transparent;
   background: #1b1c1d;
   box-shadow: none;
 }
@@ -1511,7 +1505,7 @@ Floated Menu / Item
 
 /* Grey */
 .ui.inverted.grey.menu {
-  background-color: #757676;
+  background-color: #767676;
 }
 .ui.inverted.grey.menu .item:before {
   background-color: rgba(34, 36, 38, 0.1);
@@ -1565,7 +1559,7 @@ Floated Menu / Item
   vertical-align: middle;
 }
 .ui.compact.menu .item:last-child {
-  border-radius: 0em 0.285714rem 0.285714rem 0em;
+  border-radius: 0em 0.28571429rem 0.28571429rem 0em;
 }
 .ui.compact.menu .item:last-child:before {
   display: none;
@@ -1661,7 +1655,13 @@ Floated Menu / Item
   right: auto;
   bottom: auto;
 }
+.ui[class*="top fixed"].menu {
+  border-left: none;
+  border-right: none;
+}
 .ui[class*="right fixed"].menu {
+  border-top: none;
+  border-bottom: none;
   border-right: none;
   top: 0px;
   right: 0px;
@@ -1672,12 +1672,16 @@ Floated Menu / Item
 }
 .ui[class*="bottom fixed"].menu {
   border-bottom: none;
+  border-left: none;
+  border-right: none;
   bottom: 0px;
   left: 0px;
   top: auto;
   right: auto;
 }
 .ui[class*="left fixed"].menu {
+  border-top: none;
+  border-bottom: none;
   border-left: none;
   top: 0px;
   left: 0px;
@@ -1707,8 +1711,8 @@ Floated Menu / Item
           transform: translateX(-50%) translateY(-50%) rotate(45deg);
   background: none;
   margin: 0.5px 0em 0em;
-  width: 0.5714em;
-  height: 0.5714em;
+  width: 0.57142857em;
+  height: 0.57142857em;
   border: none;
   border-bottom: 1px solid #d4d4d5;
   border-right: 1px solid #d4d4d5;
@@ -1786,16 +1790,22 @@ Floated Menu / Item
 }
 .ui.top.attached.menu {
   margin-bottom: 0em;
-  border-radius: 0.285714rem 0.285714rem 0em 0em;
+  border-radius: 0.28571429rem 0.28571429rem 0em 0em;
+}
+.ui.top.attached.menu > .item:first-child {
+  border-radius: 0.28571429rem 0em 0em 0em;
 }
 .ui.bottom.attached.menu {
   margin-top: 0em;
   border-top: none;
-  border-radius: 0em 0em 0.285714rem 0.285714rem;
+  border-radius: 0em 0em 0.28571429rem 0.28571429rem;
+}
+.ui.bottom.attached.menu > .item:first-child {
+  border-radius: 0em 0em 0em 0.28571429rem;
 }
 
 /* Tabular Attached */
-.ui.top.attached.menu:not(.tabular) {
+.ui.top.attached.menu:not(.fixed):not(.tabular) {
   border-bottom: none;
 }
 .ui.attached.tabular.menu {

@@ -1,7 +1,7 @@
 ﻿define(['plugins/router', 'api', 'auth', 'databinding-feed'], function (router, api, auth, databindingFeed) {
     var ctor = function () {
         var self = this;
-        self.mode = "Loading";
+        self.mode = ko.observable("Please wait");
         self.isSaving = ko.observable(false);
         self.isCancelNavigating = ko.observable(false);
         self.showSuccessMessageOnLoad = ko.observable(false);
@@ -11,15 +11,14 @@
     ctor.prototype.activate = function(activationData) {
         var self = this;
 
-
         activationData.loaded.then(function() {
 
-            self.feed = activationData.feed;
+            self.feed(activationData.feed());
 
             if (activationData.mode === "Create") {
-                self.mode = "Create";
+                self.mode("Create");
             } else if (activationData.mode === "Update") {
-                self.mode = "Update";
+                self.mode("Update");
 
                 if (!self.feed()) {
                     throw "A feed must be provided when using the add/edit feed form in update mode.";
@@ -32,6 +31,11 @@
             }
         });
     }
+
+    ctor.prototype.clearApiKey = function() {
+        var feed = this;
+        feed.HasApiKey(false);
+    };
 
     ctor.prototype.compositionComplete = function () {
         var self = this;
@@ -190,10 +194,10 @@
             return;
         }
 
-        if (self.mode === "Create") {
+        if (self.mode() === "Create") {
             self.createFeed();
         }
-        else if (self.mode === "Update") {
+        else if (self.mode() === "Update") {
             self.updateFeed();
         }
     };

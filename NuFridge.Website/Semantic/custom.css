@@ -29,7 +29,7 @@
     margin-right: 387px !important;
 }
 
-.page-host { margin-left: 100px !important;}
+.page-host { margin-left: 84px !important;}
 
 #applicationHost .masthead .introduction {
   display: block;
@@ -135,3 +135,32 @@ h1.ui.header.breadcrumb { line-height: 35.9995994567871px;}
 .ui.menu.sidebar a.item:last-child { position: absolute;bottom: 0;}
 
 .ui.vertical.divider.signInRegisterVerticalDivider:after, .ui.vertical.divider.signInRegisterVerticalDivider:before { border-color: white;}
+
+.sidebar.ui.labeled.icon.menu .item { min-width: 1em;}
+
+.ui.pagination.menu .item { min-width: 0em;}
+
+.ui.modal > .content, .ui.modal .content .ui.icon.message   { width: auto;}
+
+  *, *:before, *:after {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+     }
+
+.apiKeyTextBox ::-webkit-input-placeholder {
+    color:    #909;
+}
+.apiKeyTextBox :-moz-placeholder { 
+   color:    #909;
+   opacity:  1;
+}
+.apiKeyTextBox ::-moz-placeholder {
+   color:    #909;
+   opacity:  1;
+}
+.apiKeyTextBox :-ms-input-placeholder {
+   color:    #909;
+}
+
+ .ui.form .field .apiKeyTextBox:disabled { opacity: 1;}

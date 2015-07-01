@@ -1,4 +1,7 @@
-﻿using NuFridge.Shared.Server.Storage;
+﻿using System;
+using System.Data;
+using NuFridge.Shared.Server.Security;
+using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Model.Mappings
 {
@@ -8,6 +11,8 @@ namespace NuFridge.Shared.Model.Mappings
         {
             TableName = "Feed";
             Column(m => m.Name);
+            Column(m => m.ApiKeyHashed);
+            Column(m => m.ApiKeySalt);
             //Column(m => m.FeedUri);
             //Column(m => m.Username);
             //Column(m => m.Password);

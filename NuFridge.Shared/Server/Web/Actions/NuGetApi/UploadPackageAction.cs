@@ -7,23 +7,22 @@ using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 {
-    public class UploadPackageAction : IAction
+    public class UploadPackageAction : PackagesBase, IAction
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
-        private readonly IStore _store;
 
-        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem,
-            IStore store)
+        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store) : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _fileSystem = fileSystem;
-            _store = store;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -39,12 +38,40 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             }
 
             int feedId;
+            IFeed feed;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (ITransaction transaction = Store.BeginTransaction())
             {
-                var feed =
-                    transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+
+                feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                 feedId = feed.Id;
+            }
+
+            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
+            {
+                if (module.Request.Headers[NuGetHeaderApiKeyName] == null)
+                {
+                    var response = module.Response.AsText("Invalid API key.");
+                    response.StatusCode = HttpStatusCode.Forbidden;
+                    return response;
+                }
+
+                ICryptoService cryptoService = new PBKDF2();
+
+                var feedApiKeyHashed = feed.ApiKeyHashed;
+                var feedApiKeySalt = feed.ApiKeySalt;
+
+                var requestApiKey = module.Request.Headers[NuGetHeaderApiKeyName].FirstOrDefault();
+
+                string requestApiKeyHashed = cryptoService.Compute(requestApiKey, feedApiKeySalt);
+                bool isValidApiKey = cryptoService.Compare(requestApiKeyHashed, feedApiKeyHashed);
+
+                if (!isValidApiKey)
+                {
+                    var response = module.Response.AsText("Invalid API key.");
+                    response.StatusCode = HttpStatusCode.Forbidden;
+                    return response;
+                }
             }
 
             string temporaryFilePath;
@@ -64,37 +91,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                     return response;
                 }
 
-                IInternalPackage latestAbsoluteVersionPackage = null;
-                IInternalPackage latestVersionPackage = null;
+                IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feedId);
 
-                var packageRepository = _packageRepositoryFactory.Create(feedId);
-
-                List<IInternalPackage> versionsOfPackage;
-
-                using (ITransaction transaction = _store.BeginTransaction())
-                {
-                    versionsOfPackage = packageRepository.GetVersions(transaction, package.Id, true).ToList();
-                }
-
-                if (versionsOfPackage.Any())
-                {
-                    foreach (var versionOfPackage in versionsOfPackage)
-                    {
-                        if (versionOfPackage.IsAbsoluteLatestVersion)
-                        {
-                            latestAbsoluteVersionPackage = versionOfPackage;
-                        }
-                        if (versionOfPackage.IsLatestVersion)
-                        {
-                            latestVersionPackage = versionOfPackage;
-                        }
-
-                        if (latestVersionPackage != null && latestAbsoluteVersionPackage != null)
-                        {
-                            break;
-                        }
-                    }
-                }
+                IInternalPackage latestAbsoluteVersionPackage;
+                IInternalPackage latestVersionPackage;
+                GetCurrentLatestVersionPackages(feedId, package.Id, packageRepository, out latestAbsoluteVersionPackage, out latestVersionPackage);
 
                 bool isUploadedPackageAbsoluteLatestVersion = true;
                 bool isUploadedPackageLatestVersion = true;
@@ -133,24 +134,21 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 if (isUploadedPackageAbsoluteLatestVersion && latestAbsoluteVersionPackage != null)
                 {
                     latestAbsoluteVersionPackage.IsAbsoluteLatestVersion = false;
-                    using (ITransaction transaction = _store.BeginTransaction())
+                    using (ITransaction transaction = Store.BeginTransaction())
                     {
                         transaction.Update(latestAbsoluteVersionPackage);
+                        transaction.Commit();
                     }
                 }
 
                 if (isUploadedPackageLatestVersion && latestVersionPackage != null)
                 {
                     latestVersionPackage.IsLatestVersion = false;
-                    using (ITransaction transaction = _store.BeginTransaction())
+                    using (ITransaction transaction = Store.BeginTransaction())
                     {
                         transaction.Update(latestVersionPackage);
+                        transaction.Commit();
                     }
-                }
-
-                using (ITransaction transaction = _store.BeginTransaction())
-                {
-                    transaction.Commit();
                 }
 
                 packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
@@ -167,5 +165,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 
             return new Response {StatusCode = HttpStatusCode.Created};
         }
+
+
     }
 }

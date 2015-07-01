@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -138,7 +139,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                         {
                             searchTerm = searchTerm.Substring(1, searchTerm.Length - 2);
                         }
-                        ds = ds.Where(pk => pk.PackageId.Contains(searchTerm));
+
+                        var splitTerms =
+                            searchTerm.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)
+                                .Select(s => s.ToLower())
+                                .Distinct();
+
+                        ds = ds.Where(pk => splitTerms.Any(sc => pk.PackageId.ToLower().Contains(sc.ToLower())));
                     }
 
                     ODataQueryOptions options = new ODataQueryOptions(context, request);

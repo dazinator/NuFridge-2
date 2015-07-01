@@ -8,12 +8,9 @@
                 minLength: {message: 'The feed name must be at least 3 characters long.', params: 3}
             }),
             Id: ko.observable(0),
-            ApiKey: ko.observable("")
+            ApiKey: ko.observable(""),
+            HasApiKey: ko.observable(false)
         }, config);
-
-        data.errors = ko.validation.group({
-            Id: data.Id
-        });
 
         data = $.extend({
             viewFeedUrl: function () {

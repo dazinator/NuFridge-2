@@ -4,6 +4,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
@@ -37,12 +38,24 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 ITransaction transaction = _store.BeginTransaction();
 
                 var existingFeedExists =
-                    transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).Count() >
-                    0;
+                    transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
 
-                if (!existingFeedExists)
+                if (existingFeedExists == null)
                 {
                     return HttpStatusCode.NotFound;
+                }
+
+                if (!string.IsNullOrWhiteSpace(feed.ApiKey))
+                {
+                    ICryptoService cryptoService = new PBKDF2();
+
+                    feed.ApiKeySalt = cryptoService.GenerateSalt();
+                    feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
+                }
+                else if(feed.HasApiKey)
+                {
+                    feed.ApiKeyHashed = existingFeedExists.ApiKeyHashed; //Temporary until API Key table is used
+                    feed.ApiKeySalt = existingFeedExists.ApiKeySalt; //Temporary until API Key table is used
                 }
 
                 transaction.Update(feed);

@@ -50,7 +50,7 @@ namespace NuFridge.Shared.Model
             byte[] numArray = new byte[20];
             lock (RandomSource)
                 RandomSource.GetBytes(numArray);
-            return "API-" + new string(Convert.ToBase64String(numArray).Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
+            return "NuFridge-" + new string(Convert.ToBase64String(numArray).Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
         }
 
 

@@ -8,47 +8,12 @@ namespace NuFridge.Shared.Model
     public class Feed : IFeed, IEntity
     {
         public int Id { get;  set; }
-
         public string Name { get; set; }
-
         public string FeedUri { get; set; }
-
-        public string Username { get; set; }
-
-        public string Password { get; set; }
-
-        public Feed()
-        {
-        }
-
-        [JsonConstructor]
-        public Feed(string name, string feedUri)
-        {
-            Name = name;
-            FeedUri = feedUri;
-            Username = string.Empty;
-        }
-
-        public void SetCredentials(string username, string password)
-        {
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                Username = username;
-                Password = password;
-            }
-            else
-            {
-                Username = null;
-                Password = null;
-            }
-        }
-
-        public ICredentials GetCredentials()
-        {
-            if (string.IsNullOrWhiteSpace(Username))
-                return CredentialCache.DefaultNetworkCredentials;
-            return new NetworkCredential(Username, Password);
-        }
+        public string ApiKey { get; set; }
+        public string ApiKeyHashed { get; set; }
+        public string ApiKeySalt { get; set; }
+        public bool HasApiKey { get; set; }
     }
 
     public interface IFeed
@@ -56,13 +21,10 @@ namespace NuFridge.Shared.Model
         int Id { get; set; }
 
         string Name { get; set; }
-
+        string ApiKeyHashed { get; set; }
+        string ApiKeySalt { get; set; }
         string FeedUri { get; set; }
-
-        string Username { get; set; }
-
-        string Password { get; set; }
-
-        ICredentials GetCredentials();
+        bool HasApiKey { get; set; }
+        string ApiKey { get; set; }
     }
 }
