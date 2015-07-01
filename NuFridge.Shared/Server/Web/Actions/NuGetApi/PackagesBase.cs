@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nancy;
+using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 {
@@ -19,6 +22,38 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             Store = store;
         }
 
+        protected bool IsValidNuGetApiKey(INancyModule module, IFeed feed)
+        {
+            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
+            {
+                if (module.Request.Headers[NuGetHeaderApiKeyName] == null)
+                {
+                    return false;
+                }
+
+                ICryptoService cryptoService = new PBKDF2();
+
+                var feedApiKeyHashed = feed.ApiKeyHashed;
+                var feedApiKeySalt = feed.ApiKeySalt;
+
+                var requestApiKey = module.Request.Headers[NuGetHeaderApiKeyName].FirstOrDefault();
+
+                if (string.IsNullOrWhiteSpace(requestApiKey))
+                {
+                    return false;
+                }
+
+                string requestApiKeyHashed = cryptoService.Compute(requestApiKey, feedApiKeySalt);
+                bool isValidApiKey = cryptoService.Compare(requestApiKeyHashed, feedApiKeyHashed);
+
+                if (!isValidApiKey)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         protected void GetNextLatestVersionPackages(int feedId, string packageId, IInternalPackageRepository packageRepository, out IInternalPackage latestAbsoluteVersionPackage, out IInternalPackage latestVersionPackage)
         {
             List<IInternalPackage> versionsOfPackage;
@@ -28,13 +63,21 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 versionsOfPackage = packageRepository.GetVersions(transaction, packageId, true).ToList();
             }
 
-            latestVersionPackage = versionsOfPackage.Where(vp => !vp.IsPrerelease).Aggregate(versionsOfPackage[0],
-                (highest, candiate) =>
-                    candiate.GetSemanticVersion().CompareTo(highest.GetSemanticVersion()) > 0 ? candiate : highest);
+            if (versionsOfPackage.Any())
+            {
+                latestVersionPackage = versionsOfPackage.Where(vp => !vp.IsPrerelease).Aggregate(versionsOfPackage[0],
+                    (highest, candiate) =>
+                        candiate.GetSemanticVersion().CompareTo(highest.GetSemanticVersion()) > 0 ? candiate : highest);
 
-            latestAbsoluteVersionPackage = versionsOfPackage.Aggregate(versionsOfPackage[0],
-                (highest, candiate) =>
-                    candiate.GetSemanticVersion().CompareTo(highest.GetSemanticVersion()) > 0 ? candiate : highest);
+                latestAbsoluteVersionPackage = versionsOfPackage.Aggregate(versionsOfPackage[0],
+                    (highest, candiate) =>
+                        candiate.GetSemanticVersion().CompareTo(highest.GetSemanticVersion()) > 0 ? candiate : highest);
+            }
+            else
+            {
+                latestVersionPackage = null;
+                latestAbsoluteVersionPackage = null;
+            }
         }
 
         protected void GetCurrentLatestVersionPackages(int feedId, string packageId, IInternalPackageRepository packageRepository, out IInternalPackage latestAbsoluteVersionPackage, out IInternalPackage latestVersionPackage)

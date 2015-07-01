@@ -85,14 +85,6 @@ namespace NuFridge.Shared.Server.NuGet
         {
           //  var packagePath = GetPackageFilePath(package.Id, package.Version);
 
-            var existingPackage = GetPackage(package.Id, package.Version);
-
-            if (existingPackage != null)
-            {
-                throw new Exception(
-                    "A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
-            }
-
             base.AddPackage(package);
 
             _packageIndex.AddPackage(package, isAbsoluteLatestVersion, isLatestVersion);

@@ -1,9 +1,11 @@
-﻿using Nancy;
+﻿using System.Linq;
+using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 {
@@ -25,12 +27,22 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             string feedName = parameters.feed;
 
             int feedId;
+            IFeed feed;
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
                 feedId = feed.Id;
             }
+
+            if (!IsValidNuGetApiKey(module, feed))
+            {
+                var response = module.Response.AsText("Invalid API key.");
+                response.StatusCode = HttpStatusCode.Forbidden;
+                return response;
+            }
+
+
 
             var packageRepository = _packageRepositoryFactory.Create(feedId);
 

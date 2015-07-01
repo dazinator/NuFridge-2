@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nancy;
@@ -18,6 +19,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
+
+        
 
         public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store) : base(store)
         {
@@ -47,31 +50,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 feedId = feed.Id;
             }
 
-            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
+            if (!IsValidNuGetApiKey(module, feed))
             {
-                if (module.Request.Headers[NuGetHeaderApiKeyName] == null)
-                {
-                    var response = module.Response.AsText("Invalid API key.");
-                    response.StatusCode = HttpStatusCode.Forbidden;
-                    return response;
-                }
-
-                ICryptoService cryptoService = new PBKDF2();
-
-                var feedApiKeyHashed = feed.ApiKeyHashed;
-                var feedApiKeySalt = feed.ApiKeySalt;
-
-                var requestApiKey = module.Request.Headers[NuGetHeaderApiKeyName].FirstOrDefault();
-
-                string requestApiKeyHashed = cryptoService.Compute(requestApiKey, feedApiKeySalt);
-                bool isValidApiKey = cryptoService.Compare(requestApiKeyHashed, feedApiKeyHashed);
-
-                if (!isValidApiKey)
-                {
-                    var response = module.Response.AsText("Invalid API key.");
-                    response.StatusCode = HttpStatusCode.Forbidden;
-                    return response;
-                }
+                var response = module.Response.AsText("Invalid API key.");
+                response.StatusCode = HttpStatusCode.Forbidden;
+                return response;
             }
 
             string temporaryFilePath;
@@ -92,6 +75,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 }
 
                 IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feedId);
+
+                var existingPackage = packageRepository.GetPackage(package.Id, package.Version);
+
+                if (existingPackage != null)
+                {
+                    var response = module.Response.AsText("A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
+                    response.StatusCode = HttpStatusCode.Conflict;
+                    return response;
+                }
 
                 IInternalPackage latestAbsoluteVersionPackage;
                 IInternalPackage latestVersionPackage;
@@ -151,8 +143,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                     }
                 }
 
-                packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
-                    isUploadedPackageLatestVersion);
+                    packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
+                        isUploadedPackageLatestVersion);
+
 
             }
             finally
