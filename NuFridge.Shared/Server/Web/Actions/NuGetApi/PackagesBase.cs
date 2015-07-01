@@ -22,11 +22,16 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             Store = store;
         }
 
+        protected bool RequiresApiKeyCheck(IFeed feed)
+        {
+            return !string.IsNullOrWhiteSpace(feed.ApiKeyHashed);
+        }
+
         protected bool IsValidNuGetApiKey(INancyModule module, IFeed feed)
         {
             if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
             {
-                if (module.Request.Headers[NuGetHeaderApiKeyName] == null)
+                if (module.Request.Headers[NuGetHeaderApiKeyName].FirstOrDefault() == null)
                 {
                     return false;
                 }

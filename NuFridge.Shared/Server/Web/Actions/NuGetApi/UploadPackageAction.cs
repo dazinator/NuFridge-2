@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nancy;
+using Nancy.Security;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
@@ -50,11 +51,21 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 feedId = feed.Id;
             }
 
-            if (!IsValidNuGetApiKey(module, feed))
+            if (RequiresApiKeyCheck(feed))
             {
-                var response = module.Response.AsText("Invalid API key.");
-                response.StatusCode = HttpStatusCode.Forbidden;
-                return response;
+                if (!IsValidNuGetApiKey(module, feed))
+                {
+                    if (module.Request.Headers["Authorization"].FirstOrDefault() != null)
+                    {
+                        module.RequiresAuthentication();
+                    }
+                    else
+                    {
+                        var response = module.Response.AsText("Invalid API key.");
+                        response.StatusCode = HttpStatusCode.Forbidden;
+                        return response;
+                    }
+                }
             }
 
             string temporaryFilePath;
