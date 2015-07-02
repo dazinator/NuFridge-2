@@ -110,29 +110,15 @@
             });
 
 
-            var options = {
-                legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
-                animation : false
-
-            };
+            var options = { animation: true, responsive: true, animationEasing: "easeOutCubic" };
 
 
 
             var ctx = document.getElementById("feedPackageCountChart").getContext("2d");
+            var width = $('#feedPackageCountChart').parent().width();
+            $('#feedPackageCountChart').attr("width", width);
+
             self.feedPackageCountChart = new Chart(ctx).Pie(data, options);
-
-            $(window).on('resize.feedpackagechart', function () {
-                self.feedPackageCountChart.destroy();
-                $('#feedPackageCountChart').css("height", "");
-                $('#feedPackageCountChart').css("width", "");
-                var width = $('#feedPackageCountChart').parent().width();
-                $('#feedPackageCountChart').attr("width", width);
-                self.feedPackageCountChart = new Chart(ctx).Pie(data, options);
-            });
-
-            var sttrrr = self.feedPackageCountChart.generateLegend();
-
-            $("#feedPackageCountChartLegend").html(sttrrr);
 
             self.feedPackageCountDataUpdatedAt(iso8601(new Date()));
 
@@ -146,18 +132,7 @@
     ctor.prototype.configureFeedDownloadCountChart = function () {
         var self = this;
 
-        var data = {
-            labels: [],
-            datasets: [
-            {
-                label: "Downloads",
-                fillColor: "rgba(220,220,220,0.5)",
-                strokeColor: "rgba(220,220,220,0.8)",
-                highlightFill: "rgba(220,220,220,0.75)",
-                highlightStroke: "rgba(220,220,220,1)",
-                data: []
-            }]
-        };
+        var data = [];
 
         $.ajax({
             url: api.get_stats_feeddownloadcount,
@@ -177,30 +152,23 @@
 
             $.each(self.feedDownloadCountData(), function () {
                 var feedStat = this;
-
-                data.labels.push(feedStat.FeedName);
-                data.datasets[0].data.push(feedStat.DownloadCount);
+                data.push({
+                    label: feedStat.FeedName,
+                    value: feedStat.DownloadCount,
+                    color: feedStat.Color,
+                    labelColor: 'white',
+                    labelFontSize: '16'
+                });
             });
 
 
-            var options = {animation : false};
+            var options = { animation: true, responsive: true, animationEasing: "easeOutCubic" };
 
             var ctx = document.getElementById("feedDownloadCountChart").getContext("2d");
             var width = $('#feedDownloadCountChart').parent().width();
             $('#feedDownloadCountChart').attr("width", width);
 
-
-
-            self.feedDownloadCountChart = new Chart(ctx).Bar(data, options);
-
-            $(window).on('resize.feeddownloadchart', function () {
-                self.feedDownloadCountChart.destroy();
-                $('#feedDownloadCountChart').css("height", "");
-                $('#feedDownloadCountChart').css("width", "");
-                var width = $('#feedDownloadCountChart').parent().width();
-                $('#feedDownloadCountChart').attr("width", width);
-                self.feedDownloadCountChart = new Chart(ctx).Bar(data, options);
-            });
+            self.feedDownloadCountChart = new Chart(ctx).Pie(data, options);
 
             self.feedDownloadCountDataUpdatedAt(iso8601(new Date()));
 

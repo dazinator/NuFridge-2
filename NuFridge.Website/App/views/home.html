@@ -62,22 +62,47 @@
             </div>
 
         <div class="ui equal width center aligned grid">
-            <div class="row" style="height: 230px;">
+            <div class="row" style="min-height: 230px;">
                 <div class="column">
-                    <div class="ui card" style="width: 100%; height:230px; min-width: 400px;">
+                    <div class="ui card" style="width: 100%; min-height:230px; min-width: 400px;">
                         <div class="content">
                             <div class="header">Feed Package Count <a style="cursor: pointer;" data-bind="click: function(data, event) { $root.refreshFeedPackageCountChart(); }"><i title="Refresh" class="icon refresh titlePopup"></i></a></div>
                             <div class="meta">Last Updated: <span data-bind="timeago: feedPackageCountDataUpdatedAt"></span></div>
                             <div class="description">
-                                <canvas id="feedPackageCountChart" data-bind="visible: feedPackageCountData().length > 0"></canvas>
-                                <div id="feedPackageCountChartLegend" data-bind="visible: feedPackageCountData().length > 0" style="position: absolute; top: 50px; right: 15px;"></div>
+                                <div data-bind="visible: feedPackageCountData().length > 0">
+                                    <canvas id="feedPackageCountChart"></canvas>
+                                    <table class="ui very basic very compact definition celled table">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Feed</th>
+                                            <th>Packages</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: feedPackageCountData">
+                                        <tr>
+                                            <td style="width: 28px;">
+                                                <span class="ui circular label tiny" data-bind="style: {'background-color': Color}" style="display: block; width: 20px; margin-left: 7px;"></span>
+                                            </td>
+                                            <td>
+                                                <div data-bind="text: FeedName"></div>
+                                            </td>
+                                            <td>
+                                                <div data-bind="text: PackageCount"></div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                    
                                 <!-- ko if: feedPackageCountData().length === 0-->
                                 <div class="ui one column grid">
                                     <div class="one column row">
                                         <div class="column"><span>No packages have been pushed.</span></div>
                                     </div>
                                     <div class="one column row">
-                                        <div class="column center aligned"><i class="pie chart icon massive"></i></div>
+                                        <div class="column center aligned"><i class="pie chart icon massive"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- /ko -->
@@ -86,19 +111,44 @@
                     </div>
                 </div>
                 <div class="column">
-                    <div class="ui card" style="width: 100%; height:230px;min-width: 400px;">
+                    <div class="ui card" style="width: 100%; min-height:230px;min-width: 400px;">
                         <div class="content">
                             <div class="header">Feed Downloads <a style="cursor: pointer;" data-bind="click: function(data, event) { $root.refreshFeedDownloadCountChart(); }"><i title="Refresh" class="icon refresh titlePopup"></i></a></div>
                             <div class="meta">Last Updated: <span data-bind="timeago: feedDownloadCountDataUpdatedAt"></span></div>
                             <div class="description">
-                                <canvas id="feedDownloadCountChart" data-bind="visible: feedDownloadCountData().length > 0"></canvas>
+                                <div data-bind="visible: feedDownloadCountData().length > 0">
+                                    <canvas id="feedDownloadCountChart"></canvas>
+                                    <table class="ui very basic very compact definition celled table">
+                                        <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th>Feed</th>
+                                            <th>Downloads</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: feedDownloadCountData">
+                                        <tr>
+                                            <td style="width: 28px;">
+                                                <span class="ui circular label tiny" data-bind="style: {'background-color': Color}" style="display: block; width: 20px; margin-left: 7px;"></span>
+                                            </td>
+                                            <td>
+                                                <div data-bind="text: FeedName"></div>
+                                            </td>
+                                            <td>
+                                                <div data-bind="text: DownloadCount"></div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                                 <!-- ko if: feedDownloadCountData().length === 0-->
                                 <div class="ui one column grid">
                                     <div class="one column row">
                                         <div class="column"><span>No downloads have been recorded.</span></div>
                                     </div>
                                     <div class="one column row">
-                                        <div class="column center aligned"><i class="bar chart icon massive"></i></div>
+                                        <div class="column center aligned"><i class="bar chart icon massive"></i>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- /ko -->

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Statistics.Design;
@@ -32,7 +33,7 @@ namespace NuFridge.Shared.Server.Statistics
                 }
             }
 
-            return list;
+            return list.OrderByDescending(it => it.PackageCount).ToList();
         }
 
         protected override string StatName
