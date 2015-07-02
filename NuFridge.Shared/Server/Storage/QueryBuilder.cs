@@ -13,11 +13,22 @@ namespace NuFridge.Shared.Server.Storage
         private readonly ITransaction _transaction;
         private string _viewOrTableName;
         private string _tableHint;
+        private string distinctColumn;
 
         public QueryBuilder(ITransaction transaction, string viewOrTableName)
         {
             _transaction = transaction;
             _viewOrTableName = viewOrTableName;
+        }
+
+        public IQueryBuilder<TRecord> Distinct(string column)
+        {
+            if (!string.IsNullOrWhiteSpace(column))
+            {
+                distinctColumn = column;
+            }
+
+            return this;
         }
 
         public IQueryBuilder<TRecord> Where(string whereClause)
@@ -85,7 +96,8 @@ namespace NuFridge.Shared.Server.Storage
         {
             Parameter("_minrow", skip + 1);
             Parameter("_maxrow", take + skip);
-            return _transaction.ExecuteReader<TRecord>("SELECT * FROM (SELECT *, Row_Number() over (ORDER BY " + _orderBy + ") as RowNum FROM NuFridge.[" + _viewOrTableName + "] " + _whereClauses + ") RS WHERE RowNum >= @_minrow And RowNum <= @_maxrow", _parameters).ToList();
+            var select = distinctColumn != null ? "DISTINCT " + distinctColumn : "*";
+            return _transaction.ExecuteReader<TRecord>("SELECT " + select + " FROM (SELECT *, Row_Number() over (ORDER BY " + _orderBy + ") as RowNum FROM NuFridge.[" + _viewOrTableName + "] " + _whereClauses + ") RS WHERE RowNum >= @_minrow And RowNum <= @_maxrow", _parameters).ToList();
         }
 
         public List<TRecord> ToList(int skip, int take, out int totalResults)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -17,11 +18,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IStore _store;
+        private readonly IWebPortalConfiguration _portalConfig;
 
-        public RedirectToDownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+        public RedirectToDownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _store = store;
+            _portalConfig = portalConfig;
         }
 
         public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
@@ -52,10 +55,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 
             var response = new Response();
 
+            bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var baseAddress = module.Request.Url.Scheme + "://" + module.Request.Url.HostName + ":" + module.Request.Url.Port + "/feeds/" + feedName;
-
-            var location = string.Format("{0}/packages/{1}/{2}", baseAddress, package.PackageId, package.Version);
+            var location = string.Format("{0}{1}feeds/{2}/packages/{3}/{4}", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feedName, package.PackageId, package.Version);
 
             response.Headers.Add("Location", location);
 

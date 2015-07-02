@@ -5,6 +5,8 @@ namespace NuFridge.Shared.Server.Storage
 {
     public interface IQueryBuilder<TRecord> where TRecord : class
     {
+        IQueryBuilder<TRecord> Distinct(string column);
+
         IQueryBuilder<TRecord> Where(string whereClause);
 
         IQueryBuilder<TRecord> OrderBy(string orderByClause);

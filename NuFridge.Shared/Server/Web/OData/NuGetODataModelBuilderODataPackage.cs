@@ -11,7 +11,7 @@ using NuFridge.Shared.Model.Interfaces;
 
 namespace NuFridge.Shared.Server.Web.OData
 {
-    public class NuGetWebApiODataModelBuilder
+    public class NuGetODataModelBuilderODataPackage
     {
         private IEdmModel _model;
 
@@ -31,7 +31,7 @@ namespace NuFridge.Shared.Server.Web.OData
         {
             var builder = new ODataConventionModelBuilder();
 
-            var entity = builder.EntitySet<IInternalPackage>("Packages");
+            var entity = builder.EntitySet<ODataPackage>("Packages");
             entity.EntityType.HasKey(pkg => pkg.Id);
             entity.EntityType.HasKey(pkg => pkg.Version);
 
@@ -39,11 +39,11 @@ namespace NuFridge.Shared.Server.Web.OData
             searchAction.Parameter<string>("searchTerm");
             searchAction.Parameter<string>("targetFramework");
             searchAction.Parameter<bool>("includePrerelease");
-            searchAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            searchAction.ReturnsCollectionFromEntitySet<ODataPackage>("Packages");
 
             var findPackagesAction = builder.Action("FindPackagesById");
             findPackagesAction.Parameter<string>("id");
-            findPackagesAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            findPackagesAction.ReturnsCollectionFromEntitySet<ODataPackage>("Packages");
 
             var getUpdatesAction = builder.Action("GetUpdates");
             getUpdatesAction.Parameter<string>("packageIds");
@@ -51,10 +51,10 @@ namespace NuFridge.Shared.Server.Web.OData
             getUpdatesAction.Parameter<bool>("includeAllVersions");
             getUpdatesAction.Parameter<string>("targetFrameworks");
             getUpdatesAction.Parameter<string>("versionConstraints");
-            getUpdatesAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            getUpdatesAction.ReturnsCollectionFromEntitySet<ODataPackage>("Packages");
 
             _model = builder.GetEdmModel();
-            _model.SetHasDefaultStream(_model.FindDeclaredType(typeof(IInternalPackage).FullName) as IEdmEntityType, true);
+            _model.SetHasDefaultStream(_model.FindDeclaredType(typeof(ODataPackage).FullName) as IEdmEntityType, true);
         }
     }
 }

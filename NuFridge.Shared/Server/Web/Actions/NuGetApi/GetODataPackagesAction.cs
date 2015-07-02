@@ -10,6 +10,7 @@ using Nancy;
 using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
@@ -18,21 +19,206 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
 {
     public class GetODataPackagesAction : IAction
     {
-        private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
+        protected readonly IInternalPackageRepositoryFactory PackageRepositoryFactory;
+        protected readonly IStore Store;
+        private readonly IWebPortalConfiguration _portalConfig;
 
-        public GetODataPackagesAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+        public GetODataPackagesAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig)
         {
-            _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
+            PackageRepositoryFactory = packageRepositoryFactory;
+            Store = store;
+            _portalConfig = portalConfig;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string feedName = parameters.feed;
-            IFeed feed;
+            var feed = GetFeedModel(feedName);
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            IDictionary<string, object> queryDictionary = module.Request.Query;
+            RemoveSelectParamFromQuery(queryDictionary);
+            AddAdditionalQueryParams(queryDictionary);
+
+            NuGetODataModelBuilderQueryable builder = new NuGetODataModelBuilderQueryable();
+            builder.Build();
+
+            var url = module.Request.Url.SiteBase + module.Request.Url.Path;
+            url = ProcessQueryAndRegenerateUrl(queryDictionary, url);
+
+            HttpMethod method = new HttpMethod(module.Request.Method);
+            var request = new HttpRequestMessage(method, url);
+            request.Properties.AddRange(queryDictionary);
+
+            var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
+
+            using (var dbContext = new DatabaseContext(Store))
+            {
+                var ds = CreateQuery(dbContext, queryDictionary, feed);
+
+                ds = ExecuteQuery(context, request, ds);
+
+                return ProcessResponse(module, request, feed, ds);
+            }
+        }
+
+        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds)
+        {
+            long? total = request.GetInlineCount();
+
+            var packageRepository = PackageRepositoryFactory.Create(feed.Id);
+
+            bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
+
+            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
+
+            var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
+                ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0);
+
+            StreamReader reader = new StreamReader(stream);
+            string text = reader.ReadToEnd();
+
+            return new Response
+            {
+                ContentType = "application/atom+xml; charset=utf-8",
+                Contents = contentStream =>
+                {
+                    var byteData = Encoding.UTF8.GetBytes(text);
+                    contentStream.Write(byteData, 0, byteData.Length);
+                }
+            };
+        }
+
+        private static IQueryable<IInternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<IInternalPackage> ds)
+        {
+            ODataQueryOptions options = new ODataQueryOptions(context, request);
+            
+            var settings = new ODataQuerySettings
+            {
+                PageSize = options.Top != null ? options.Top.Value : 15
+            };
+
+
+            ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
+            return ds;
+        }
+
+        private static IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed)
+        {
+            IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+
+
+            string searchTerm = queryDictionary.ContainsKey("searchTerm")
+                ? queryDictionary["searchTerm"].ToString()
+                : string.Empty;
+
+            //TODO
+            string targetFramework = queryDictionary.ContainsKey("targetFramework")
+                ? queryDictionary["targetFramework"].ToString()
+                : string.Empty;
+
+            string idSearch = queryDictionary.ContainsKey("id")
+                ? queryDictionary["id"].ToString()
+                : string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(idSearch))
+            {
+                if (idSearch.StartsWith("'") && idSearch.EndsWith("'"))
+                {
+                    idSearch = idSearch.Substring(1, idSearch.Length - 2);
+                }
+                ds = ds.Where(pk => pk.PackageId == idSearch);
+            }
+
+            ds = ds.Where(pk => pk.FeedId == feed.Id);
+
+            if (queryDictionary.ContainsKey("includePrerelease"))
+            {
+                bool includePrerelease = bool.Parse(queryDictionary["includePrerelease"].ToString());
+
+
+                if (!includePrerelease)
+                {
+                    ds = ds.Where(pk => !pk.IsPrerelease);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                if (searchTerm.StartsWith("'") && searchTerm.EndsWith("'"))
+                {
+                    searchTerm = searchTerm.Substring(1, searchTerm.Length - 2);
+                }
+
+                var splitTerms =
+                    searchTerm.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.ToLower())
+                        .Distinct().ToList();
+
+                if (splitTerms.Any())
+                {
+                    ds = ds.Where(pk => splitTerms.Any(sc => pk.PackageId.ToLower().Contains(sc.ToLower())));
+                }
+            }
+            return ds;
+        }
+
+        private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
+        {
+            var query = string.Empty;
+
+            var updatesToApply = new List<KeyValuePair<string, object>>();
+
+            //Start - this section could be better
+            foreach (KeyValuePair<string, object> qd in queryDictionary)
+            {
+                string updatedValue;
+                if (GetReplacedODataQueryValue(qd, out updatedValue))
+                {
+                    updatesToApply.Add(new KeyValuePair<string, object>(qd.Key, updatedValue));
+                }
+            }
+
+            foreach (var updateToApply in updatesToApply)
+            {
+                queryDictionary[updateToApply.Key] = updateToApply.Value;
+            }
+
+            foreach (KeyValuePair<string, object> qd in queryDictionary)
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    query = "?";
+                }
+                query += qd.Key + "=" + qd.Value + "&";
+            }
+
+            if (query.EndsWith("&"))
+            {
+                query = query.Substring(0, query.Length - 1);
+            }
+            //End - this section could be better
+
+            url += query;
+            return url;
+        }
+
+        protected virtual void AddAdditionalQueryParams(IDictionary<string, object> queryDictionary)
+        {
+            
+        }
+
+        private static void RemoveSelectParamFromQuery(IDictionary<string, object> queryDictionary)
+        {
+            if (queryDictionary.ContainsKey("$select"))
+            {
+                queryDictionary.Remove("$select");
+            }
+        }
+
+        private IFeed GetFeedModel(string feedName)
+        {
+            IFeed feed;
+            using (ITransaction transaction = Store.BeginTransaction())
             {
                 feed =
                     transaction.Query<IFeed>()
@@ -40,154 +226,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                         .Parameter("feedName", feedName)
                         .First();
             }
-
-            IDictionary<string, object> queryDictionary = module.Request.Query;
-
-                if (queryDictionary.ContainsKey("$select"))
-                {
-                    queryDictionary.Remove("$select");
-                }
-
-
-                NuGetWebApiODataModelBuilder builder = new NuGetWebApiODataModelBuilder();
-                builder.Build();
-
-                var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
-
-                HttpMethod method = new HttpMethod(module.Request.Method);
-
-                var url = module.Request.Url.SiteBase + module.Request.Url.Path;
-
-                var query = string.Empty;
-
-                var updatesToApply = new List<KeyValuePair<string, object>>();
-
-                //Start - this section could be better
-                foreach (KeyValuePair<string, object> qd in queryDictionary)
-                {
-                    string updatedValue;
-                    if (GetReplacedODataQueryValue(qd, out updatedValue))
-                    {
-                        updatesToApply.Add(new KeyValuePair<string, object>(qd.Key, updatedValue));
-                    }
-                }
-
-                foreach (var updateToApply in updatesToApply)
-                {
-                    queryDictionary[updateToApply.Key] = updateToApply.Value;
-                }
-
-                foreach (KeyValuePair<string, object> qd in queryDictionary)
-                {
-                    if (string.IsNullOrWhiteSpace(query))
-                    {
-                        query = "?";
-                    }
-                    query += qd.Key + "=" + qd.Value + "&";
-                }
-
-                if (query.EndsWith("&"))
-                {
-                    query = query.Substring(0, query.Length - 1);
-                }
-                //End - this section could be better
-
-                url += query;
-
-                var request = new HttpRequestMessage(method, url);
-                request.Properties.AddRange(queryDictionary);
-
-                using (var dbContext = new DatabaseContext(_store))
-                {
-                    IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
-
-
-                    string searchTerm = queryDictionary.ContainsKey("searchTerm")
-                        ? queryDictionary["searchTerm"].ToString()
-                        : string.Empty;
-
-                    //TODO
-                    string targetFramework = queryDictionary.ContainsKey("targetFramework")
-                        ? queryDictionary["targetFramework"].ToString()
-                        : string.Empty;
-
-                    string idSearch = queryDictionary.ContainsKey("id")
-                        ? queryDictionary["id"].ToString()
-                        : string.Empty;
-
-                    if (!string.IsNullOrWhiteSpace(idSearch))
-                    {
-                        if (idSearch.StartsWith("'") && idSearch.EndsWith("'"))
-                        {
-                            idSearch = idSearch.Substring(1, idSearch.Length - 2);
-                        }
-                        ds = ds.Where(pk => pk.PackageId == idSearch);
-                    }
-
-                    ds = ds.Where(pk => pk.FeedId == feed.Id);
-
-                    if (queryDictionary.ContainsKey("includePrerelease"))
-                    {
-                        bool includePrerelease = bool.Parse(queryDictionary["includePrerelease"].ToString());
-
-   
-                        if (!includePrerelease)
-                        {
-                            ds = ds.Where(pk => !pk.IsPrerelease);
-                        }
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(searchTerm))
-                    {
-                        if (searchTerm.StartsWith("'") && searchTerm.EndsWith("'"))
-                        {
-                            searchTerm = searchTerm.Substring(1, searchTerm.Length - 2);
-                        }
-
-                        var splitTerms =
-                            searchTerm.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries)
-                                .Select(s => s.ToLower())
-                                .Distinct();
-
-                        ds = ds.Where(pk => splitTerms.Any(sc => pk.PackageId.ToLower().Contains(sc.ToLower())));
-                    }
-
-                    ODataQueryOptions options = new ODataQueryOptions(context, request);
-
-                    var settings = new ODataQuerySettings
-                    {
-                        PageSize = options.Top != null ? options.Top.Value : 15
-                    };
-
-
-                    ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
-
-
-                    long? total = request.GetInlineCount();
-
-
-                    var packageRepository = _packageRepositoryFactory.Create(feed.Id);
-
-                    var baseAddress = module.Request.Url.Scheme + "://" + module.Request.Url.HostName + ":" + module.Request.Url.Port +
-                                      "/feeds/" + feedName + "/api/v2";
-
-                    var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
-                        ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0);
-
-                    StreamReader reader = new StreamReader(stream);
-                    string text = reader.ReadToEnd();
-
-                    return new Response
-                    {
-                        ContentType = "application/atom+xml; charset=utf-8",
-                        Contents = contentStream =>
-                        {
-                            var byteData = Encoding.UTF8.GetBytes(text);
-                            contentStream.Write(byteData, 0, byteData.Length);
-                        }
-                    };
-                }
-            
+            return feed;
         }
 
         //This method could be removed if it used an interface to mask the fact Id is my PK and not the PackageId
