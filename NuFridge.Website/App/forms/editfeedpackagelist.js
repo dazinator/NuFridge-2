@@ -204,6 +204,43 @@
 
         self.resetProgressForFileUpload();
 
+        var fileExtentionRange = '.nupkg';
+
+        $(document).off('change.packagefileupload', '.btn-file :file').on('change.packagefileupload', '.btn-file :file', function () {
+            var input = $(this);
+
+            if (navigator.appVersion.indexOf("MSIE") != -1) {
+                var label = input.val();
+
+                input.trigger('fileselect.packagefileupload', [1, label, 0]);
+            } else {
+                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+                var numFiles = input.get(0).files ? input.get(0).files.length : 1;
+                var size = input.get(0).files[0].size;
+
+                input.trigger('fileselect.packagefileupload', [numFiles, label, size]);
+            }
+        });
+
+        $('.btn-file :file').off('fileselect.packagefileupload').on('fileselect.packagefileupload', function (event, numFiles, label, size) {
+            $('#attachmentName').attr('name', 'attachmentName');
+            var isErrorVisible;
+            var postfix = label.substr(label.lastIndexOf('.'));
+            if (fileExtentionRange.indexOf(postfix.toLowerCase()) > -1) {
+                $('#_attachmentName').val(label);
+
+                isErrorVisible = $('.invalidFileExtensionMessage').transition("is visible");
+                if (isErrorVisible) {
+                    $('.invalidFileExtensionMessage').transition('scale');
+                }
+            } else {
+                isErrorVisible = $('.invalidFileExtensionMessage').transition("is visible");
+                if (!isErrorVisible) {
+                    $('.invalidFileExtensionMessage').transition('scale');
+                }
+            }
+        });
+
   
         var options = {
             closable: false,
@@ -213,7 +250,8 @@
                 }
                 return false;
             },
-            transition: 'horizontal flip'
+            transition: 'horizontal flip',
+            detachable: false
         };
 
         $('#_attachmentName').val("");
@@ -343,44 +381,7 @@
                 title: 'Add Package'
             });
 
-        var fileExtentionRange = '.nupkg';
 
-        $(document).on('change', '.btn-file :file', function () {
-            var input = $(this);
-
-            if (navigator.appVersion.indexOf("MSIE") != -1) {
-                var label = input.val();
-
-                input.trigger('fileselect', [1, label, 0]);
-            } else {
-                var label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-                var numFiles = input.get(0).files ? input.get(0).files.length : 1;
-                var size = input.get(0).files[0].size;
-
-                input.trigger('fileselect', [numFiles, label, size]);
-            }
-        });
-
-        $('.btn-file :file').on('fileselect', function (event, numFiles, label, size) {
-            $('#attachmentName').attr('name', 'attachmentName');
-            var isErrorVisible;
-            var postfix = label.substr(label.lastIndexOf('.'));
-            if (fileExtentionRange.indexOf(postfix.toLowerCase()) > -1) {
-                $('#_attachmentName').val(label);
-
-                isErrorVisible = $('.invalidFileExtensionMessage').transition("is visible");
-                if (isErrorVisible) {
-                    $('.invalidFileExtensionMessage').transition('scale');
-                }
-            } else {
-                isErrorVisible = $('.invalidFileExtensionMessage').transition("is visible");
-                if (!isErrorVisible) {
-                    $('.invalidFileExtensionMessage').transition('scale');
-                }
-
-                $('#attachmentName').removeAttr('name');
-            }
-        });
     };
 
 
