@@ -23,7 +23,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                string name = parameters.name;
+                string name = module.Request.Query.name;
 
                 int totalResults;
                 var feeds = transaction.Query<IFeed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").ToList(0, 10, out totalResults);
