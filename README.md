@@ -20,6 +20,6 @@ http://dev.nufridge.com/
 
 ## Screenshots
 
-![Home](https://www.nufridge.com/images/Home.png)
+![Home](https://www.nufridge.com/images/HomePage.png)
 ![Manage Feeds](https://www.nufridge.com/images/Manage.png)
 ![Edit Feed](https://www.nufridge.com/images/EditFeed.png)
