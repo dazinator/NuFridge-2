@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.ServiceProcess;
 using NuFridge.Shared.Commands.Interfaces;
@@ -20,7 +21,8 @@ namespace NuFridge.Shared.Server.Hosts
                 start(this);
                 _log.Info("The Windows Service has started");
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
-                _log.InfoFormat("{0} version: {1}",  entryAssembly.GetName().Name,  entryAssembly.GetInformationalVersion());
+                FileVersionInfo vi = FileVersionInfo.GetVersionInfo(entryAssembly.Location); 
+                _log.InfoFormat("{0} version: {1}",  entryAssembly.GetName().Name,  vi.ProductVersion);
             }, () =>
             {
                 _log.Info("Stopping the Windows Service");
