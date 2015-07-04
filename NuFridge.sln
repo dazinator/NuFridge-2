@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3045A2
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Installer", "NuFridge.Installer\NuFridge.Installer.csproj", "{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Service", "NuFridge.Service\NuFridge.Service.csproj", "{D66ABC3C-9764-441B-AA1E-419C47BC4A32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Shared", "NuFridge.Shared\NuFridge.Shared.csproj", "{4A3AE0A8-3976-4D91-A29A-41FFEF4AF33C}"
@@ -37,16 +35,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C9E05DB7-77BB-48C0-AF6E-F007E44DEB80}.Release|x86.ActiveCfg = Release|Any CPU
 		{D66ABC3C-9764-441B-AA1E-419C47BC4A32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D66ABC3C-9764-441B-AA1E-419C47BC4A32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D66ABC3C-9764-441B-AA1E-419C47BC4A32}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
