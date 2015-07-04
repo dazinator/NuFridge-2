@@ -68,7 +68,7 @@ namespace NuFridge.Shared.Server.Web
         {
             base.ConfigureConventions(nancyConventions);
 
-            Assembly assembly = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), "NuFridge.Website.dll"));
+            Assembly assembly = Assembly.LoadFile(Path.Combine(Directory.GetParent(System.Reflection.Assembly.GetEntryAssembly().Location).FullName, "NuFridge.Website.dll"));
             string resourceNamespaceRoot = "NuFridge.Website";
             nancyConventions.StaticContentsConventions.Add(ResponseDecorator.StaticContent(EmbeddedStaticContentConventionBuilder.MapVirtualDirectory("", resourceNamespaceRoot, assembly), _portalConfiguration.Value));
             nancyConventions.StaticContentsConventions.Add(ResponseDecorator.StaticContent(EmbeddedStaticContentConventionBuilder.MapFile("/", resourceNamespaceRoot + ".index.html", assembly), _portalConfiguration.Value));

@@ -27,6 +27,7 @@ namespace NuFridge.Shared.Server.Hosts
                 Debugger.Launch();
             RequestAdditionalTime(120000);
             _workerThread = new Thread(RunService);
+            _workerThread.Priority = ThreadPriority.AboveNormal;
             _workerThread.IsBackground = true;
             _workerThread.Start();
         }
