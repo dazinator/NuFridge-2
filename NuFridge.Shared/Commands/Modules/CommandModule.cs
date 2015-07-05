@@ -12,6 +12,7 @@ namespace NuFridge.Shared.Commands.Modules
       base.Load(builder);
       builder.RegisterCommand<RunCommand>("run", "Starts the NuFridge server", "r", "");
       builder.RegisterCommand<HelpCommand>("help", "Prints this help text", "h", "?");
+      builder.RegisterCommand<ConfigureCommand>("configure", "Configures the NuFridge server", "c");
       builder.RegisterType<CommandLocator>().As<ICommandLocator>().SingleInstance();
     }
   }

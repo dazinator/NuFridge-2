@@ -132,6 +132,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -171,6 +172,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
@@ -178,7 +180,14 @@
   <ItemGroup>
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AbstractStandardCommand.cs" />
+    <Compile Include="Commands\ConfigureCommand.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
+    <Compile Include="Installation\ConfigurationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Installation\ConfigurationForm.Designer.cs">
+      <DependentUpon>ConfigurationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Model\DatabaseContext.cs" />
     <Compile Include="Model\Interfaces\IFeedConfiguration.cs" />
     <Compile Include="Model\Mappings\StatisticMap.cs" />
@@ -192,6 +201,11 @@
     <Compile Include="Model\Statistic.cs" />
     <Compile Include="Model\UserRole.cs" />
     <Compile Include="Model\Mappings\UserRoleMap.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Server\Diagnostics\SystemInfo.cs" />
     <Compile Include="Server\Diagnostics\Win\Win32_ComputerSystem.cs">
       <SubType>Component</SubType>
@@ -396,6 +410,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Installation\ConfigurationForm.resx">
+      <DependentUpon>ConfigurationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0000-Tables.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -412,6 +433,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0003-FeedApiKey.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo.PNG" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\continue.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

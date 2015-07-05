@@ -4,10 +4,10 @@ namespace NuFridge.Service
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-          var code = Startup.Run(args);
-          
+            var code = Startup.Run(args);
+            return code;
         }
     }
 }
