@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace NuFridge.Shared.Server.Application
@@ -29,50 +31,22 @@ namespace NuFridge.Shared.Server.Application
                         {
                             var value = registryKey2.GetValue(str);
                             instanceRecord.InstallDirectory = value.ToString();
-                            continue;
-                        }
-
-                        if (str == ApplicationInstanceRecord.SqlDataSourceKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.SqlDataSource = value.ToString();
-                            continue;
-                        }
-
-                        if (str == ApplicationInstanceRecord.SqlInitialCatalogKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.SqlInitialCatalog = value.ToString();
-                            continue;
-                        }
-
-                        if (str == ApplicationInstanceRecord.SqlUsernameKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.SqlUsername = value.ToString();
-                            continue;
-                        }
-
-                        if (str == ApplicationInstanceRecord.SqlPasswordKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.SqlPassword = value.ToString();
-                            continue;
-                        }
-
-                        if (str == ApplicationInstanceRecord.ListenPrefixesKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.ListenPrefixes = value.ToString();
-                            continue;
+                            break;
                         }
                     }
                 }
             }
 
+#if DEBUG
+            if (string.IsNullOrWhiteSpace(instanceRecord.InstallDirectory))
+            {
+                instanceRecord.InstallDirectory = Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName;
+            }
+#endif
+
             if (!instanceRecord.IsValid())
             {
-                throw new Exception("Registry settings are missing.");
+                throw new Exception("Registry install directory is missing.");
             }
 
             return instanceRecord;

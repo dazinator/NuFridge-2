@@ -1,4 +1,5 @@
-﻿using NuFridge.Shared.Server.Application;
+﻿using System.Configuration;
+using NuFridge.Shared.Server.Application;
 
 namespace NuFridge.Shared.Server.Configuration
 {
@@ -11,15 +12,14 @@ namespace NuFridge.Shared.Server.Configuration
         public string SqlPassword { get; set; }
         public string ListenPrefixes { get; set; }
 
-
         public HomeConfiguration(IApplicationInstanceSelector instance)
         {
             InstallDirectory = instance.Current.InstallDirectory;
-            SqlDataSource = instance.Current.SqlDataSource;
-            SqlInitialCatalog = instance.Current.SqlInitialCatalog;
-            SqlUsername = instance.Current.SqlUsername;
-            SqlPassword = instance.Current.SqlPassword;
-            ListenPrefixes = instance.Current.ListenPrefixes;
+            SqlDataSource = ConfigurationManager.AppSettings["SqlServer"];
+            SqlInitialCatalog = ConfigurationManager.AppSettings["SqlDatabase"];
+            SqlUsername = ConfigurationManager.AppSettings["SqlUserId"];
+            SqlPassword = ConfigurationManager.AppSettings["SqlPassword"];
+            ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
         }
     }
 }
