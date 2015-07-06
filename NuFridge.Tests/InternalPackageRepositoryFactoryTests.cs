@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
+using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
 using NUnit.Framework;
@@ -29,7 +30,7 @@ namespace NuFridge.Tests
         public void Setup()
         {
             var builder = new ContainerBuilder();
-
+            builder.RegisterInstance(new Mock<IHomeConfiguration>().Object);
             builder.RegisterModule(new NuGetModule());
             _container = builder.Build();
         }
