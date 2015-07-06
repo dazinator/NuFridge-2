@@ -50,15 +50,7 @@ namespace NuFridge.Shared.Server.NuGet
             return _packageIndex.GetVersions(transaction, packageId, allowPreRelease);
         }
 
-        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
-        {
-            return _packageIndex.GetWebPackages(transaction, filterType, filterColumn, filterValue, orderType, orderProperty, searchTerm, targetFramework, includePrerelease);
-        }
 
-        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
-        {
-                return _packageIndex.GetPackagesContaining(searchTerm, out total, skip, take, allowPreRelease);
-        }
 
         public Stream GetPackageRaw( string packageId, SemanticVersion version)
         {
