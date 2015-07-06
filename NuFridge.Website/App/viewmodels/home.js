@@ -49,8 +49,19 @@
     };
 
     ctor.prototype.deactivate = function () {
+        var self = this;
+
         $(window).off('resize.feedpackagechart');
         $(window).off('resize.feeddownloadchart');
+
+        if (self.feedPackageCountChart && typeof self.feedPackageCountChart.destroy === "function") {
+            self.feedPackageCountChart.destroy();
+        }
+
+        if (self.feedDownloadCountChart && typeof self.feedDownloadCountChart.destroy === "function") {
+            self.feedDownloadCountChart.destroy();
+        }
+
     };
 
     ctor.prototype.goToFeeds = function () {
@@ -61,8 +72,8 @@
     ctor.prototype.refreshFeedPackageCountChart = function () {
         var self = this;
 
-        if (self.feedPackageCountChart && typeof self.feedPackageCountChart.destory === "function") {
-            self.feedPackageCountChart.destory();
+        if (self.feedPackageCountChart && typeof self.feedPackageCountChart.destroy === "function") {
+            self.feedPackageCountChart.destroy();
         }
 
         self.configureFeedPackageCountChart();
@@ -71,8 +82,8 @@
     ctor.prototype.refreshFeedDownloadCountChart = function () {
         var self = this;
 
-        if (self.feedDownloadCountChart && typeof self.feedDownloadCountChart.destory === "function") {
-            self.feedDownloadCountChart.destory();
+        if (self.feedDownloadCountChart && typeof self.feedDownloadCountChart.destroy === "function") {
+            self.feedDownloadCountChart.destroy();
         }
 
         self.configureFeedDownloadCountChart();

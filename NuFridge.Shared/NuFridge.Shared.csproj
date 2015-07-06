@@ -267,6 +267,10 @@
     <Compile Include="Server\Web\Actions\NuGetApi\TabCompletionPackageVersionsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApi\TabCompletionPackageIdsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApi\UploadPackageAction.cs" />
+    <Compile Include="Server\Web\Batch\HeaderParser.cs" />
+    <Compile Include="Server\Web\Batch\HttpParserStreamExtensions.cs" />
+    <Compile Include="Server\Web\Batch\RequestLine.cs" />
+    <Compile Include="Server\Web\Batch\RequestLineParser.cs" />
     <Compile Include="Server\Web\Modules\AccountApiModule.cs" />
     <Compile Include="Server\Web\Modules\DashboardApiModule.cs" />
     <Compile Include="Server\Web\Modules\DiagnosticsApiModule.cs" />
