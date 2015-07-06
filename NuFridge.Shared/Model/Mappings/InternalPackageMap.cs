@@ -41,6 +41,14 @@ namespace NuFridge.Shared.Model.Mappings
             Column(m => m.Owners);
             Column(m => m.IconUrl);
             Column(m => m.Authors);
+
+            Column(m => m.Created);
+            Column(m => m.SupportedFrameworks);
+            Column(m => m.Dependencies);
+            Column(m => m.DevelopmentDependency);
+            Column(m => m.VersionDownloadCount);
+            Column(m => m.Language);
+            Column(m => m.ReportAbuseUrl);
         }
     }
 }

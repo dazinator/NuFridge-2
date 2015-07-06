@@ -7,5 +7,6 @@ namespace NuFridge.Shared.Server.Application
         ApplicationInstanceRecord Current { get; }
         event Action Loaded;
         void LoadInstance();
+        void Save();
     }
 }

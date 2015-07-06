@@ -70,15 +70,15 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void RemovePackage(IInternalPackage internalPackage)
         {
-            var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
+            //var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
 
-            filePath = Path.Combine(FileSystem.Root, filePath);
+            //filePath = Path.Combine(FileSystem.Root, filePath);
 
-            IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
+            //IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
 
-            RemovePackage(package);
+            //RemovePackage(package);
 
-            _packageIndex.DeletePackage(internalPackage);
+            _packageIndex.UnlistPackage(internalPackage);
         }
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)

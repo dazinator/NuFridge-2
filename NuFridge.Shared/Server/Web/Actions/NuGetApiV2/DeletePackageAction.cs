@@ -66,6 +66,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             bool isDeletedPackageLatestVersion = package.IsLatestVersion;
             bool isDeletedPackageAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
 
+            
+
             packageRepository.RemovePackage(package);
 
             if (isDeletedPackageAbsoluteLatestVersion || isDeletedPackageLatestVersion)

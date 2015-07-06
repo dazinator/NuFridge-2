@@ -22,21 +22,18 @@ namespace NuFridge.Shared.Server.Web.OData
 
         public ODataPackage(IInternalPackage package)
         {
-            #region Converted Properties
+
             Version = package.Version;
             Authors = package.Authors;
             Owners = package.Owners;
             IconUrl = package.IconUrl;
             LicenseUrl = package.LicenseUrl;
             ProjectUrl = package.ProjectUrl;
-            Dependencies = String.Join("|", (package.Dependencies ?? new string[0]));
-            #endregion
+            Dependencies = package.Dependencies;
 
-            #region Basic Properties
             Id = package.PackageId;
             Title = package.Title;
-            DisplayTitle = package.DisplayTitle;
-
+            DisplayTitle = package.Title;
             RequireLicenseAcceptance = package.RequireLicenseAcceptance;
             Description = package.Description;
             Summary = package.Summary;
@@ -47,7 +44,7 @@ namespace NuFridge.Shared.Server.Web.OData
             PackageHashAlgorithm = package.PackageHashAlgorithm;
             PackageSize = package.PackageSize;
             LastUpdated = package.LastUpdated;
-            Published = package.Published.GetValueOrDefault().UtcDateTime;
+            Published = package.Published;
             Created = package.Created;
             IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
             IsLatestVersion = package.IsLatestVersion;
@@ -56,56 +53,6 @@ namespace NuFridge.Shared.Server.Web.OData
             DownloadCount = package.DownloadCount;
             VersionDownloadCount = package.VersionDownloadCount;
             DevelopmentDependency = package.DevelopmentDependency;
-            Score = package.Score;
-            #endregion
-        }
-
-        public ODataPackage(DataServicePackage package)
-        {
-            Version = package.Version;
-            Authors = package.Authors;
-            Owners = package.Owners;
-            IconUrl = UriToString(package.IconUrl);
-            LicenseUrl = UriToString(package.LicenseUrl);
-            ProjectUrl = UriToString(package.ProjectUrl);
-            Dependencies = package.Dependencies;
-
-            Id = package.Id;
-            Title = package.Title;
-            DisplayTitle = string.IsNullOrEmpty(Title) ? Id : Title;
-            RequireLicenseAcceptance = package.RequireLicenseAcceptance;
-            Description = package.Description;
-            Summary = package.Summary;
-            ReleaseNotes = package.ReleaseNotes;
-            Language = package.Language;
-            Tags = package.Tags;
-            PackageHash = package.PackageHash;
-            PackageHashAlgorithm = package.PackageHashAlgorithm;
-            LastUpdated = package.LastUpdated.UtcDateTime;
-            Published = package.Published.GetValueOrDefault().UtcDateTime;
-            IsAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
-            IsLatestVersion = package.IsLatestVersion;
-            IsPrerelease = !package.IsReleaseVersion();
-            Listed = package.Listed;
-            DownloadCount = package.DownloadCount;
-
-            //PackageSize = package.PackageSize;
-            //Created = package.Created.UtcDateTime;
-            //VersionDownloadCount = package.VersionDownloadCount;
-        }
-
-        private string UriToString(Uri uri)
-        {
-            if (uri == null) return null;
-
-            try
-            {
-                return uri.GetComponents(UriComponents.HttpRequestUrl, UriFormat.Unescaped);
-            }
-            catch (InvalidOperationException)
-            {
-                return null;
-            }
         }
 
         public string Id { get; set; }
@@ -167,8 +114,6 @@ namespace NuFridge.Shared.Server.Web.OData
         public bool DevelopmentDependency { get; set; }
 
         public int VersionDownloadCount { get; set; }
-
-        public float Score { get; set; }
 
         public bool Equals(ODataPackage other)
         {

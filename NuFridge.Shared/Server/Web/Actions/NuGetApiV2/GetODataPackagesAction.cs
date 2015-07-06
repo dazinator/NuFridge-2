@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net.Http;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Query;
@@ -14,6 +16,7 @@ using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
+using NuGet;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
@@ -54,7 +57,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             HttpMethod method = new HttpMethod(module.Request.Method);
             var request = new HttpRequestMessage(method, url);
-            request.Properties.AddRange(queryDictionary);
+            ListExtensions.AddRange(request.Properties, queryDictionary);
 
             var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
@@ -104,39 +107,40 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 PageSize = options.Top != null ? options.Top.Value : 15
             };
 
-
             ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
             return ds;
+        }
+
+        private string RemoveQuotesFromQueryValue(string value)
+        {
+            int trimStart = value.StartsWith("'") ? 1 : 0;
+            int trimEnd = value.EndsWith("'") ? (value.Length - trimStart - 1) : (value.Length - trimStart);
+            return value.Substring(trimStart, trimEnd);
         }
 
         protected virtual IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed)
         {
             IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
+            ds = ds.Where(pk => pk.FeedId == feed.Id);
+            ds = ds.Where(pk => pk.Listed);
 
             string searchTerm = queryDictionary.ContainsKey("searchTerm")
-                ? queryDictionary["searchTerm"].ToString()
+                ? RemoveQuotesFromQueryValue(queryDictionary["searchTerm"].ToString())
                 : string.Empty;
 
-            //TODO
             string targetFramework = queryDictionary.ContainsKey("targetFramework")
-                ? queryDictionary["targetFramework"].ToString()
+                ? RemoveQuotesFromQueryValue(queryDictionary["targetFramework"].ToString())
                 : string.Empty;
 
             string idSearch = queryDictionary.ContainsKey("id")
-                ? queryDictionary["id"].ToString()
+                ? RemoveQuotesFromQueryValue(queryDictionary["id"].ToString())
                 : string.Empty;
 
             if (!string.IsNullOrWhiteSpace(idSearch))
             {
-                if (idSearch.StartsWith("'") && idSearch.EndsWith("'"))
-                {
-                    idSearch = idSearch.Substring(1, idSearch.Length - 2);
-                }
                 ds = ds.Where(pk => pk.PackageId == idSearch);
             }
-
-            ds = ds.Where(pk => pk.FeedId == feed.Id);
 
             if (queryDictionary.ContainsKey("includePrerelease"))
             {
@@ -149,13 +153,30 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(targetFramework))
+            {
+                var targetFrameworkValue = ((targetFramework ?? "")
+                    .Split(new[] {'|'}, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(VersionUtility.ParseFrameworkName).Distinct().Where(v => v != VersionUtility.UnsupportedFrameworkName)
+                    .ToList()).FirstOrDefault();
+
+                if (targetFrameworkValue != null)
+                {
+
+                    string[] searchFrameworks = PackageRepositoryFactory.GetFrameworkNames()
+                        .Union(new[] { targetFrameworkValue })
+                        .Where(candidate => VersionUtility.IsCompatible(targetFrameworkValue, new[] { candidate }))
+                        .Select(VersionUtility.GetShortFrameworkName)
+                        .Select(s => "|" + s.ToLowerInvariant() + "|")
+                        .Distinct()
+                        .ToArray();
+
+                    ds = ds.Where(pkg => searchFrameworks.Any(sf => ("|" + pkg.SupportedFrameworks + "|").Contains(sf)));
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                if (searchTerm.StartsWith("'") && searchTerm.EndsWith("'"))
-                {
-                    searchTerm = searchTerm.Substring(1, searchTerm.Length - 2);
-                }
-
                 var splitTerms =
                     searchTerm.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(s => s.ToLower())

@@ -14,10 +14,12 @@ namespace NuFridge.Shared.Server.NuGet
     public class PackageIndex
     {
         private readonly int _feedId;
+        private readonly IInternalPackageRepositoryFactory _factory;
         private readonly IStore _store;
 
-        public PackageIndex(IStore store, int feedId)
+        public PackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId)
         {
+            _factory = factory;
             _store = store;
             _feedId = feedId;
 
@@ -34,12 +36,15 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
         {
+            IInternalPackage localPackage;
             using (var transaction = _store.BeginTransaction())
             {
-                IInternalPackage localPackage = InternalPackage.Create(_feedId, package, isAbsoluteLatestVersion, isLatestVersion);
+                localPackage = InternalPackage.Create(_feedId, package, isAbsoluteLatestVersion, isLatestVersion);
                 transaction.Insert(localPackage);
                 transaction.Commit();
             }
+
+            _factory.AddFrameworkNames(localPackage.SupportedFrameworks);
         }
 
         public IQueryable<IInternalPackage> GetPackages()
@@ -47,6 +52,21 @@ namespace NuFridge.Shared.Server.NuGet
             using (var transaction = _store.BeginTransaction())
             {
                 return transaction.Query<IInternalPackage>().Stream().AsQueryable();
+            }
+        }
+
+        public void UnlistPackage(IInternalPackage package)
+        {
+            IInternalPackage internalPackage = GetPackage(package.PackageId, package.GetSemanticVersion());
+            if (internalPackage == null)
+                return;
+
+            internalPackage.Listed = false;
+
+            using (var transaction = _store.BeginTransaction())
+            {
+                transaction.Update(internalPackage);
+                transaction.Commit();
             }
         }
 
@@ -73,101 +93,105 @@ namespace NuFridge.Shared.Server.NuGet
             return CallProcedure(out totalResults, packageId, allowPreRelease, false, true).FirstOrDefault();
         }
 
-        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
+        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId,
+            bool allowPreRelease)
         {
-                var query = transaction.Query<IInternalPackage>();
+            var query = transaction.Query<IInternalPackage>();
 
-                query.Where("FeedId = @feedId");
-                query.Parameter("feedId", _feedId);
+            query.Where("FeedId = @feedId");
+            query.Parameter("feedId", _feedId);
 
-                query.Where("PackageId = @packageId");
-                query.Parameter("packageId", packageId);
+            query.Where("PackageId = @packageId");
+            query.Parameter("packageId", packageId);
 
-                if (!allowPreRelease)
-                {
-                    query.Where("[IsPrerelease] = 0");
-                }
+            if (!allowPreRelease)
+            {
+                query.Where("[IsPrerelease] = 0");
+            }
 
-                var packages = query.Stream();
+            var packages = query.Stream();
 
-                return packages;
+            return packages;
         }
 
-        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
+        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType,
+            string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm,
+            string targetFramework, string includePrerelease)
         {
 
-                var query = transaction.Query<IInternalPackage>();
+            var query = transaction.Query<IInternalPackage>();
 
-                if (filterType == "eq")
+            if (filterType == "eq")
+            {
+                dynamic value = filterValue;
+
+                if (value.ToLower() == "true")
                 {
-                    dynamic value = filterValue;
-
-                    if (value.ToLower() == "true")
-                    {
-                        value = 1;
-                    }
-                    else if (value.ToLower() == "false")
-                    {
-                        value = 0;
-                    }
-
-                    query.Where(string.Format("[{0}] = @filterValue", filterColumn));
-                    query.Parameter("filterValue", value);
+                    value = 1;
                 }
-                else if (filterType == "not")
+                else if (value.ToLower() == "false")
                 {
-                    query.Where(string.Format("[{0}] = @filterValue", filterValue));
-                    query.Parameter("filterValue", 0);
+                    value = 0;
                 }
 
-                if (!string.IsNullOrWhiteSpace(searchTerm))
+                query.Where(string.Format("[{0}] = @filterValue", filterColumn));
+                query.Parameter("filterValue", value);
+            }
+            else if (filterType == "not")
+            {
+                query.Where(string.Format("[{0}] = @filterValue", filterValue));
+                query.Parameter("filterValue", 0);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query.Where("[PackageId] LIKE @packageIdSearch");
+                query.LikeParameter("packageIdSearch", searchTerm.Substring(1, searchTerm.Length - 2));
+            }
+
+            if (!string.IsNullOrWhiteSpace(targetFramework))
+            {
+                //TODO
+            }
+
+            if (!string.IsNullOrWhiteSpace(includePrerelease))
+            {
+                if (includePrerelease.ToLower() == "false")
                 {
-                    query.Where("[PackageId] LIKE @packageIdSearch");
-                    query.LikeParameter("packageIdSearch", searchTerm.Substring(1, searchTerm.Length - 2));
+                    query.Where("[IsPrerelease] = @includePrerelease");
+                    query.Parameter("includePrerelease", 0);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(orderType) && !string.IsNullOrWhiteSpace(orderProperty))
+            {
+                var prop = orderProperty;
+
+                //Id is the PK not the package id
+                if (prop.ToLower() == "id")
+                {
+                    prop = "PackageId";
                 }
 
-                if (!string.IsNullOrWhiteSpace(targetFramework))
-                {
-                    //TODO
-                }
+                //TODO check how secure this is as there are no parameters involved
+                query.OrderBy(String.Format("[{0}] {1}", prop, orderType));
+            }
 
-                if (!string.IsNullOrWhiteSpace(includePrerelease))
-                {
-                    if (includePrerelease.ToLower() == "false")
-                    {
-                        query.Where("[IsPrerelease] = @includePrerelease");
-                        query.Parameter("includePrerelease", 0);
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(orderType) && !string.IsNullOrWhiteSpace(orderProperty))
-                {
-                    var prop = orderProperty;
-
-                    //Id is the PK not the package id
-                    if (prop.ToLower() == "id")
-                    {
-                        prop = "PackageId";
-                    }
-
-                    //TODO check how secure this is as there are no parameters involved
-                    query.OrderBy(String.Format("[{0}] {1}", prop, orderType));
-                }
-
-                query.Where("FeedId = @feedId");
-                query.Parameter("feedId", _feedId);
+            query.Where("FeedId = @feedId");
+            query.Parameter("feedId", _feedId);
 
 
 
-                var packages = query.Stream();
+            var packages = query.Stream();
 
 
 
-                return packages;
-            
+            return packages;
+
         }
 
-        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
+        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0,
+            int take = 30, bool allowPreRelease = true)
         {
             bool flag1 = allowPreRelease;
             bool flag2 = true;
@@ -183,12 +207,14 @@ namespace NuFridge.Shared.Server.NuGet
             return CallProcedure(out total, packageId, num3 != 0, num4 != 0, num5 != 0, skip1, take1);
         }
 
-        public List<IInternalPackage> GetLatestOfAllPackages(out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
+        public List<IInternalPackage> GetLatestOfAllPackages(out int total, int skip = 0, int take = 30,
+            bool allowPreRelease = true)
         {
             return CallProcedure(out total, null, allowPreRelease, false, true, skip, take);
         }
 
-        private List<IInternalPackage> CallProcedure(out int totalResults, string packageId = null, bool allowPreRelease = true, bool partialMatch = false, bool latestOnly = false, int skip = 0, int take = 30)
+        private List<IInternalPackage> CallProcedure(out int totalResults, string packageId = null,
+            bool allowPreRelease = true, bool partialMatch = false, bool latestOnly = false, int skip = 0, int take = 30)
         {
             using (var transaction = _store.BeginTransaction())
             {
@@ -247,13 +273,21 @@ namespace NuFridge.Shared.Server.NuGet
         {
             using (var transaction = _store.BeginTransaction())
             {
-                var newestPackage = transaction.Load<IInternalPackage>(package.Id);
-                newestPackage.DownloadCount++;
-                transaction.Update(newestPackage);
+                IEnumerable<IInternalPackage> packages = GetVersions(transaction, package.PackageId, true).ToList();
+
+                var newestPackage = packages.Single(pk => pk.Id == package.Id);
+
+                newestPackage.VersionDownloadCount++;
+
+                foreach (var versionOfPackage in packages)
+                {
+                    versionOfPackage.DownloadCount = packages.Sum(pk => pk.VersionDownloadCount);
+
+                    transaction.Update(versionOfPackage);
+                }
+
                 transaction.Commit();
             }
-
-          
         }
     }
 }

@@ -13,7 +13,6 @@ namespace NuFridge.Shared.Server.Application
         private const RegistryView View = RegistryView.Registry32;
         private const string KeyName = "Software\\NuFridge";
 
-        //TODO this method is bad
         private ApplicationInstanceRecord Get()
         {
             var instanceRecord = new ApplicationInstanceRecord();
@@ -31,7 +30,13 @@ namespace NuFridge.Shared.Server.Application
                         {
                             var value = registryKey2.GetValue(str);
                             instanceRecord.InstallDirectory = value.ToString();
-                            break;
+                            continue;
+                        }
+                        if (str == ApplicationInstanceRecord.NuGetFrameworkNamesKey)
+                        {
+                            var value = registryKey2.GetValue(str);
+                            instanceRecord.NuGetFrameworkNames = value.ToString();
+                            continue;
                         }
                     }
                 }
@@ -50,6 +55,20 @@ namespace NuFridge.Shared.Server.Application
             }
 
             return instanceRecord;
+        }
+
+        public void Save(ApplicationInstanceRecord record)
+        {
+            using (RegistryKey registryKey1 = RegistryKey.OpenBaseKey(Hive, View))
+            {
+                using (RegistryKey registryKey2 = registryKey1.OpenSubKey(KeyName, true))
+                {
+                    if (registryKey2 == null)
+                        throw new Exception("Registry structure invalid.");
+
+                    registryKey2.SetValue(ApplicationInstanceRecord.NuGetFrameworkNamesKey, record.NuGetFrameworkNames);
+                }
+            }
         }
 
         public ApplicationInstanceRecord GetInstance()

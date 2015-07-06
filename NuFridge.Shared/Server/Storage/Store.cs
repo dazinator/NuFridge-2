@@ -58,9 +58,9 @@ namespace NuFridge.Shared.Server.Storage
                 MultipleActiveResultSets = true,
                 Enlist = false,
                 Pooling = true,
-                ApplicationName = ("NuFridge " + Assembly.GetExecutingAssembly().GetFileVersion()),
+                ApplicationName = "NuFridge",
                 DataSource = _config.SqlDataSource,
-                InitialCatalog = "LukeTest",
+                InitialCatalog = _config.SqlInitialCatalog,
                 UserID = _config.SqlUsername,
                 Password = _config.SqlPassword
             }.ToString();

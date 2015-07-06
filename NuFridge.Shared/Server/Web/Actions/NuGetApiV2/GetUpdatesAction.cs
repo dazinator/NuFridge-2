@@ -217,6 +217,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
             ds = ds.Where(pk => pk.FeedId == feed.Id);
+            ds = ds.Where(pk => pk.Listed);
 
             string packageIds = queryDictionary.ContainsKey("packageIds")
                 ? RemoveQuotesFromQueryValue(queryDictionary["packageIds"].ToString())
@@ -291,9 +292,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 var currentVersion = packageVersion.Version;
                 var matchedPackages = (IEnumerable<IInternalPackage>)ds.Where(pkg => pkg.PackageId == packageVersion.Id).OrderBy(pkg => pkg.Version).ToList();
 
-                if (targetFrameworkValues.Any())
+                if (matchedPackages.Any() && targetFrameworkValues.Any())
                 {
-               //     matchedPackages = matchedPackages.Where(pkg => targetFrameworkValues.Any(fwk => VersionUtility.IsCompatible(fwk, pkg.GetSupportedFrameworks())));
+                   matchedPackages = matchedPackages.Where(pkg => targetFrameworkValues.Any(fwk => VersionUtility.IsCompatible(fwk, pkg.GetSupportedFrameworks())));
                 }
 
                 matchedPackages = matchedPackages.Where(pkg => currentVersion.CompareTo(pkg.GetSemanticVersion()) < 0);
