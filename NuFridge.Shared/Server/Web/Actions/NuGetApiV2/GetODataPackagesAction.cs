@@ -15,7 +15,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataPackagesAction : IAction
     {
@@ -34,6 +34,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
         {
             string feedName = parameters.feed;
             var feed = GetFeedModel(feedName);
+
+            if (feed == null)
+            {
+                var response = module.Response.AsText("Feed does not exist.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
             RemoveSelectParamFromQuery(queryDictionary);
@@ -102,7 +109,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             return ds;
         }
 
-        private static IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed)
+        protected virtual IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed)
         {
             IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 

@@ -6,13 +6,14 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
-    public class TabCompletionPackageVersionsAction : PackagesBase, IAction
+    public class TabCompletionPackageIdsAction : PackagesBase, IAction
     {
         private const int PackagesToReturn = 30;
 
-        public TabCompletionPackageVersionsAction(IStore store) : base(store)
+        public TabCompletionPackageIdsAction(IStore store)
+            : base(store)
         {
             
         }
@@ -27,12 +28,24 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
             }
 
+            if (feed == null)
+            {
+                var response = module.Response.AsText("Feed does not exist.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+
             List<IInternalPackage> packages;
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
 
-            string packageId = parameters.packageId;
+            string partialId = string.Empty;
             bool includePrerelease = false;
+
+            if (queryDictionary.ContainsKey("partialId"))
+            {
+                partialId = queryDictionary["partialId"].ToString();
+            }
 
             if (queryDictionary.ContainsKey("includePrerelease"))
             {
@@ -45,18 +58,27 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                     .Where("FeedId = @feedId")
                     .Parameter("feedId", feed.Id);
 
-                if (!includePrerelease)
+                string latestVersionQuery = "IsLatestVersion = 1";
+
+                if (includePrerelease)
                 {
-                    query = query.Where("IsPrerelease = 0");
+                    latestVersionQuery += " OR IsAbsoluteLatestVersion = 1";
                 }
 
-                query = query.Where("PackageId = @packageId")
-                    .Parameter("packageId", packageId);
+                query = query.Where(latestVersionQuery);
+                
+                if (!string.IsNullOrWhiteSpace(partialId))
+                {
+                    query = query.Where("PackageId like @partialId")
+                    .Parameter("partialId", partialId.Replace("%", "[%]") + "%");
+                }
+
+                query = query.Distinct("PackageId");
 
                 packages = query.ToList(0, PackagesToReturn);
             }
 
-            return module.Response.AsJson(packages.Select(pk => pk.Version));
+            return module.Response.AsJson(packages.Select(pk => pk.PackageId));
         }
     }
 }

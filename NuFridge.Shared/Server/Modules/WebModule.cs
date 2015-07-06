@@ -5,7 +5,7 @@ using NuFridge.Shared.Server.Web.Actions.AccountApi;
 using NuFridge.Shared.Server.Web.Actions.DashboardApi;
 using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;
 using NuFridge.Shared.Server.Web.Actions.FeedApi;
-using NuFridge.Shared.Server.Web.Actions.NuGetApi;
+using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 
 namespace NuFridge.Shared.Server.Modules
 {
@@ -42,7 +42,10 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<SaveFeedConfigurationAction>().AsSelf();
             builder.RegisterType<UpdateFeedAction>().AsSelf();
 
-            //NuGet api module
+            //NuGet api v2 module
+            builder.RegisterType<BatchAction>().AsSelf();
+            builder.RegisterType<GetUpdatesAction>().AsSelf();
+            builder.RegisterType<GetUpdatesCountAction>().AsSelf();
             builder.RegisterType<DeletePackageAction>().AsSelf();
             builder.RegisterType<DownloadPackageAction>().AsSelf();
             builder.RegisterType<GetODataPackagesAction>().AsSelf();

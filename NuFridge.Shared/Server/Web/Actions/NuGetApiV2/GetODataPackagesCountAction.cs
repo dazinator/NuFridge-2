@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Web.Http.OData;
-using System.Web.Http.OData.Query;
 using Nancy;
 using Nancy.Responses;
-using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
-using NuFridge.Shared.Server.Web.OData;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataPackagesCountAction : GetODataPackagesAction
     {

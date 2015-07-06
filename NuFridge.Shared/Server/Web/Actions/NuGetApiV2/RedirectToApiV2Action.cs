@@ -2,7 +2,7 @@
 using Nancy;
 using NuFridge.Shared.Server.Configuration;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
    public class RedirectToApiV2Action : IAction
     {
