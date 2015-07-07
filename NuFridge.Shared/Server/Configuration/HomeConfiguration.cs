@@ -25,6 +25,11 @@ namespace NuFridge.Shared.Server.Configuration
         {
             _instance = instance;
 
+            if (instance.Current == null)
+            {
+                instance.LoadInstance();
+            }
+
             InstallDirectory = instance.Current.InstallDirectory;
             SqlDataSource = ConfigurationManager.AppSettings["SqlServer"];
             SqlInitialCatalog = ConfigurationManager.AppSettings["SqlDatabase"];

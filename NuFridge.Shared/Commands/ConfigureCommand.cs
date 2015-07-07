@@ -3,14 +3,18 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NuFridge.Shared.Installation;
 using NuFridge.Shared.Server.Application;
+using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Commands
 {
     public class ConfigureCommand : AbstractStandardCommand
     {
-        public ConfigureCommand(IApplicationInstanceSelector selector)
+        private readonly IHomeConfiguration _config;
+
+        public ConfigureCommand(IHomeConfiguration config, IApplicationInstanceSelector selector)
             : base(selector)
         {
+            _config = config;
         }
 
         [DllImport("kernel32.dll")]
@@ -27,11 +31,10 @@ namespace NuFridge.Shared.Commands
         {
             base.Start();
 
-            var handle = GetConsoleWindow();
+                var handle = GetConsoleWindow();
+                ShowWindow(handle, SW_HIDE);
 
-            ShowWindow(handle, SW_HIDE);
-
-            using (ConfigurationForm form = new ConfigurationForm())
+            using (ConfigurationForm form = new ConfigurationForm(_config))
             {
                 var value = form.ShowDialog();
                 switch (value)
