@@ -9,12 +9,12 @@ namespace NuFridge.Shared.Commands
 {
     public class ConfigureCommand : AbstractStandardCommand
     {
-        private readonly IHomeConfiguration _config;
 
-        public ConfigureCommand(IHomeConfiguration config, IApplicationInstanceSelector selector)
+
+        public ConfigureCommand(IApplicationInstanceSelector selector)
             : base(selector)
         {
-            _config = config;
+
         }
 
         [DllImport("kernel32.dll")]
@@ -34,7 +34,7 @@ namespace NuFridge.Shared.Commands
                 var handle = GetConsoleWindow();
                 ShowWindow(handle, SW_HIDE);
 
-            using (ConfigurationForm form = new ConfigurationForm(_config))
+            using (ConfigurationForm form = new ConfigurationForm())
             {
                 var value = form.ShowDialog();
                 switch (value)

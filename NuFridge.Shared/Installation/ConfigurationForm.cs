@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,12 +19,10 @@ namespace NuFridge.Shared.Installation
 {
     public partial class ConfigurationForm : Form
     {
-        private readonly IHomeConfiguration _config;
         private ILog _log = LogProvider.For<ConfigurationForm>();
 
-        public ConfigurationForm(IHomeConfiguration config)
+        public ConfigurationForm()
         {
-            _config = config;
             InitializeComponent();
         }
 
@@ -98,16 +97,19 @@ namespace NuFridge.Shared.Installation
 
             _log.Info("Saving app.config settings.");
 
-            var path = Path.Combine(_config.InstallDirectory, "NuFridge.Service.exe.config");
+            var folder = Directory.GetParent(Assembly.GetEntryAssembly().Location);
+            var path = Path.Combine(folder.FullName, "NuFridge.Service.exe.config");
 
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(path);
-            configuration.AppSettings.Settings["SqlServer"].Value = txtSqlServer.Text;
-            configuration.AppSettings.Settings["SqlDatabase"].Value = txtDatabase.Text;
-            configuration.AppSettings.Settings["SqlUserId"].Value = txtUserId.Text;
-            configuration.AppSettings.Settings["SqlPassword"].Value = txtPassword.Text;
-            configuration.AppSettings.Settings["WebsiteUrl"].Value = txtSiteUrl.Text;
+            ExeConfigurationFileMap map = new ExeConfigurationFileMap { ExeConfigFilename = path };
+            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
 
-            configuration.Save();
+            config.AppSettings.Settings["SqlServer"].Value = txtSqlServer.Text;
+            config.AppSettings.Settings["SqlDatabase"].Value = txtDatabase.Text;
+            config.AppSettings.Settings["SqlUserId"].Value = txtUserId.Text;
+            config.AppSettings.Settings["SqlPassword"].Value = txtPassword.Text;
+            config.AppSettings.Settings["WebsiteUrl"].Value = txtSiteUrl.Text;
+
+            config.Save(ConfigurationSaveMode.Full);
 
             ConfigurationManager.RefreshSection("appSettings");
 
