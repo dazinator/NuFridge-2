@@ -1,0 +1,365 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{84F87ACC-E6A4-4641-AC22-CF09EEA9C4AF}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NuFridge.Website</RootNamespace>
+    <AssemblyName>NuFridge.Website</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Data.Edm, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.Edm.5.6.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.OData.5.6.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Services, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.Services.5.6.0\lib\net40\Microsoft.Data.Services.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.Services.Client, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.0\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Spatial, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\System.Spatial.5.6.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="index.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\readmore.js" />
+    <EmbeddedResource Include="Semantic\images\cube.png" />
+    <EmbeddedResource Include="Scripts\xml2json.js" />
+    <EmbeddedResource Include="Scripts\moment.js" />
+    <EmbeddedResource Include="Scripts\timeago.js" />
+    <EmbeddedResource Include="Scripts\Chart.js" />
+    <EmbeddedResource Include="Semantic\animate.min.css" />
+    <EmbeddedResource Include="Scripts\jquery.cookie.js" />
+    <EmbeddedResource Include="Semantic\custom.css" />
+    <EmbeddedResource Include="Semantic\components\accordion.css" />
+    <EmbeddedResource Include="Semantic\components\accordion.js" />
+    <EmbeddedResource Include="Semantic\components\accordion.min.css" />
+    <EmbeddedResource Include="Semantic\components\accordion.min.js" />
+    <EmbeddedResource Include="Semantic\components\ad.css" />
+    <EmbeddedResource Include="Semantic\components\ad.min.css" />
+    <EmbeddedResource Include="Semantic\components\api.js" />
+    <EmbeddedResource Include="Semantic\components\api.min.js" />
+    <EmbeddedResource Include="Semantic\components\breadcrumb.css" />
+    <EmbeddedResource Include="Semantic\components\breadcrumb.min.css" />
+    <EmbeddedResource Include="Semantic\components\button.css" />
+    <EmbeddedResource Include="Semantic\components\button.min.css" />
+    <EmbeddedResource Include="Semantic\components\card.css" />
+    <EmbeddedResource Include="Semantic\components\card.min.css" />
+    <EmbeddedResource Include="Semantic\components\checkbox.css" />
+    <EmbeddedResource Include="Semantic\components\checkbox.js" />
+    <EmbeddedResource Include="Semantic\components\checkbox.min.css" />
+    <EmbeddedResource Include="Semantic\components\checkbox.min.js" />
+    <EmbeddedResource Include="Semantic\components\colorize.js" />
+    <EmbeddedResource Include="Semantic\components\colorize.min.js" />
+    <EmbeddedResource Include="Semantic\components\comment.css" />
+    <EmbeddedResource Include="Semantic\components\comment.min.css" />
+    <EmbeddedResource Include="Semantic\components\container.css" />
+    <EmbeddedResource Include="Semantic\components\container.min.css" />
+    <EmbeddedResource Include="Semantic\components\dimmer.css" />
+    <EmbeddedResource Include="Semantic\components\dimmer.js" />
+    <EmbeddedResource Include="Semantic\components\dimmer.min.css" />
+    <EmbeddedResource Include="Semantic\components\dimmer.min.js" />
+    <EmbeddedResource Include="Semantic\components\divider.css" />
+    <EmbeddedResource Include="Semantic\components\divider.min.css" />
+    <EmbeddedResource Include="Semantic\components\dropdown.css" />
+    <EmbeddedResource Include="Semantic\components\dropdown.js" />
+    <EmbeddedResource Include="Semantic\components\dropdown.min.css" />
+    <EmbeddedResource Include="Semantic\components\dropdown.min.js" />
+    <EmbeddedResource Include="Semantic\components\embed.css" />
+    <EmbeddedResource Include="Semantic\components\embed.js" />
+    <EmbeddedResource Include="Semantic\components\embed.min.css" />
+    <EmbeddedResource Include="Semantic\components\embed.min.js" />
+    <EmbeddedResource Include="Semantic\components\feed.css" />
+    <EmbeddedResource Include="Semantic\components\feed.min.css" />
+    <EmbeddedResource Include="Semantic\components\flag.css" />
+    <EmbeddedResource Include="Semantic\components\flag.min.css" />
+    <EmbeddedResource Include="Semantic\components\form.css" />
+    <EmbeddedResource Include="Semantic\components\form.js" />
+    <EmbeddedResource Include="Semantic\components\form.min.css" />
+    <EmbeddedResource Include="Semantic\components\form.min.js" />
+    <EmbeddedResource Include="Semantic\components\grid.css" />
+    <EmbeddedResource Include="Semantic\components\grid.min.css" />
+    <EmbeddedResource Include="Semantic\components\header.css" />
+    <EmbeddedResource Include="Semantic\components\header.min.css" />
+    <EmbeddedResource Include="Semantic\components\icon.css" />
+    <EmbeddedResource Include="Semantic\components\icon.min.css" />
+    <EmbeddedResource Include="Semantic\components\image.css" />
+    <EmbeddedResource Include="Semantic\components\image.min.css" />
+    <EmbeddedResource Include="Semantic\components\input.css" />
+    <EmbeddedResource Include="Semantic\components\input.min.css" />
+    <EmbeddedResource Include="Semantic\components\item.css" />
+    <EmbeddedResource Include="Semantic\components\item.min.css" />
+    <EmbeddedResource Include="Semantic\components\label.css" />
+    <EmbeddedResource Include="Semantic\components\label.min.css" />
+    <EmbeddedResource Include="Semantic\components\list.css" />
+    <EmbeddedResource Include="Semantic\components\list.min.css" />
+    <EmbeddedResource Include="Semantic\components\loader.css" />
+    <EmbeddedResource Include="Semantic\components\loader.min.css" />
+    <EmbeddedResource Include="Semantic\components\menu.css" />
+    <EmbeddedResource Include="Semantic\components\menu.min.css" />
+    <EmbeddedResource Include="Semantic\components\message.css" />
+    <EmbeddedResource Include="Semantic\components\message.min.css" />
+    <EmbeddedResource Include="Semantic\components\modal.css" />
+    <EmbeddedResource Include="Semantic\components\modal.js" />
+    <EmbeddedResource Include="Semantic\components\modal.min.css" />
+    <EmbeddedResource Include="Semantic\components\modal.min.js" />
+    <EmbeddedResource Include="Semantic\components\nag.css" />
+    <EmbeddedResource Include="Semantic\components\nag.js" />
+    <EmbeddedResource Include="Semantic\components\nag.min.css" />
+    <EmbeddedResource Include="Semantic\components\nag.min.js" />
+    <EmbeddedResource Include="Semantic\components\popup.css" />
+    <EmbeddedResource Include="Semantic\components\popup.js" />
+    <EmbeddedResource Include="Semantic\components\popup.min.css" />
+    <EmbeddedResource Include="Semantic\components\popup.min.js" />
+    <EmbeddedResource Include="Semantic\components\progress.css" />
+    <EmbeddedResource Include="Semantic\components\progress.js" />
+    <EmbeddedResource Include="Semantic\components\progress.min.css" />
+    <EmbeddedResource Include="Semantic\components\progress.min.js" />
+    <EmbeddedResource Include="Semantic\components\rail.css" />
+    <EmbeddedResource Include="Semantic\components\rail.min.css" />
+    <EmbeddedResource Include="Semantic\components\rating.css" />
+    <EmbeddedResource Include="Semantic\components\rating.js" />
+    <EmbeddedResource Include="Semantic\components\rating.min.css" />
+    <EmbeddedResource Include="Semantic\components\rating.min.js" />
+    <EmbeddedResource Include="Semantic\components\reset.css" />
+    <EmbeddedResource Include="Semantic\components\reset.min.css" />
+    <EmbeddedResource Include="Semantic\components\reveal.css" />
+    <EmbeddedResource Include="Semantic\components\reveal.min.css" />
+    <EmbeddedResource Include="Semantic\components\search.css" />
+    <EmbeddedResource Include="Semantic\components\search.js" />
+    <EmbeddedResource Include="Semantic\components\search.min.css" />
+    <EmbeddedResource Include="Semantic\components\search.min.js" />
+    <EmbeddedResource Include="Semantic\components\segment.css" />
+    <EmbeddedResource Include="Semantic\components\segment.min.css" />
+    <EmbeddedResource Include="Semantic\components\shape.css" />
+    <EmbeddedResource Include="Semantic\components\shape.js" />
+    <EmbeddedResource Include="Semantic\components\shape.min.css" />
+    <EmbeddedResource Include="Semantic\components\shape.min.js" />
+    <EmbeddedResource Include="Semantic\components\sidebar.css" />
+    <EmbeddedResource Include="Semantic\components\sidebar.js" />
+    <EmbeddedResource Include="Semantic\components\sidebar.min.css" />
+    <EmbeddedResource Include="Semantic\components\sidebar.min.js" />
+    <EmbeddedResource Include="Semantic\components\site.css" />
+    <EmbeddedResource Include="Semantic\components\site.js" />
+    <EmbeddedResource Include="Semantic\components\site.min.css" />
+    <EmbeddedResource Include="Semantic\components\site.min.js" />
+    <EmbeddedResource Include="Semantic\components\state.js" />
+    <EmbeddedResource Include="Semantic\components\state.min.js" />
+    <EmbeddedResource Include="Semantic\components\statistic.css" />
+    <EmbeddedResource Include="Semantic\components\statistic.min.css" />
+    <EmbeddedResource Include="Semantic\components\step.css" />
+    <EmbeddedResource Include="Semantic\components\step.min.css" />
+    <EmbeddedResource Include="Semantic\components\sticky.css" />
+    <EmbeddedResource Include="Semantic\components\sticky.js" />
+    <EmbeddedResource Include="Semantic\components\sticky.min.css" />
+    <EmbeddedResource Include="Semantic\components\sticky.min.js" />
+    <EmbeddedResource Include="Semantic\components\tab.css" />
+    <EmbeddedResource Include="Semantic\components\tab.js" />
+    <EmbeddedResource Include="Semantic\components\tab.min.css" />
+    <EmbeddedResource Include="Semantic\components\tab.min.js" />
+    <EmbeddedResource Include="Semantic\components\table.css" />
+    <EmbeddedResource Include="Semantic\components\table.min.css" />
+    <EmbeddedResource Include="Semantic\components\transition.css" />
+    <EmbeddedResource Include="Semantic\components\transition.js" />
+    <EmbeddedResource Include="Semantic\components\transition.min.css" />
+    <EmbeddedResource Include="Semantic\components\transition.min.js" />
+    <EmbeddedResource Include="Semantic\components\video.css" />
+    <EmbeddedResource Include="Semantic\components\video.js" />
+    <EmbeddedResource Include="Semantic\components\video.min.css" />
+    <EmbeddedResource Include="Semantic\components\video.min.js" />
+    <EmbeddedResource Include="Semantic\components\visibility.js" />
+    <EmbeddedResource Include="Semantic\components\visibility.min.js" />
+    <EmbeddedResource Include="Semantic\components\visit.js" />
+    <EmbeddedResource Include="Semantic\components\visit.min.js" />
+    <EmbeddedResource Include="Semantic\semantic.css" />
+    <EmbeddedResource Include="Semantic\semantic.js" />
+    <EmbeddedResource Include="Semantic\semantic.min.css" />
+    <EmbeddedResource Include="Semantic\semantic.min.js" />
+    <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.svg" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.svg" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\images\flags.png" />
+    <EmbeddedResource Include="App\main.js" />
+    <EmbeddedResource Include="App\viewmodels\addfeed.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\dashboard.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feed.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\package.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\systeminfo.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\user.js" />
+    <EmbeddedResource Include="App\viewmodels\editfeed.js" />
+    <EmbeddedResource Include="App\viewmodels\feeds.js" />
+    <EmbeddedResource Include="App\viewmodels\home.js" />
+    <EmbeddedResource Include="App\viewmodels\profile.js" />
+    <EmbeddedResource Include="App\viewmodels\settings.js" />
+    <EmbeddedResource Include="App\viewmodels\shell.js" />
+    <EmbeddedResource Include="App\views\addfeed.html" />
+    <EmbeddedResource Include="App\views\detail.html" />
+    <EmbeddedResource Include="App\views\editfeed.html" />
+    <EmbeddedResource Include="App\views\feeds.html" />
+    <EmbeddedResource Include="App\views\home.html" />
+    <EmbeddedResource Include="App\views\profile.html" />
+    <EmbeddedResource Include="App\views\settings.html" />
+    <EmbeddedResource Include="App\views\shell.html" />
+    <None Include="Gruntfile.js" />
+    <EmbeddedResource Include="Scripts\almond-custom.js" />
+    <EmbeddedResource Include="Scripts\bootstrap.js" />
+    <EmbeddedResource Include="Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Scripts\durandal\activator.js" />
+    <EmbeddedResource Include="Scripts\durandal\app.js" />
+    <EmbeddedResource Include="Scripts\durandal\binder.js" />
+    <EmbeddedResource Include="Scripts\durandal\composition.js" />
+    <EmbeddedResource Include="Scripts\durandal\events.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\dialog.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\history.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\http.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\observable.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\router.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\serializer.js" />
+    <EmbeddedResource Include="Scripts\durandal\plugins\widget.js" />
+    <EmbeddedResource Include="Scripts\durandal\system.js" />
+    <EmbeddedResource Include="Scripts\durandal\transitions\entrance.js" />
+    <EmbeddedResource Include="Scripts\durandal\viewEngine.js" />
+    <EmbeddedResource Include="Scripts\durandal\viewLocator.js" />
+    <EmbeddedResource Include="Scripts\jquery-1.9.1.intellisense.js" />
+    <EmbeddedResource Include="Scripts\jquery-1.9.1.js" />
+    <EmbeddedResource Include="Scripts\jquery-1.9.1.min.js" />
+    <EmbeddedResource Include="Scripts\knockout-3.1.0.debug.js" />
+    <EmbeddedResource Include="Scripts\knockout-3.1.0.js" />
+    <EmbeddedResource Include="Scripts\knockout.mapping.js" />
+    <EmbeddedResource Include="Scripts\knockout.validation.js" />
+    <EmbeddedResource Include="Scripts\r.js" />
+    <EmbeddedResource Include="Scripts\require.js" />
+    <EmbeddedResource Include="Scripts\text.js" />
+    <EmbeddedResource Include="App\forms\addeditfeedform.js" />
+    <EmbeddedResource Include="App\forms\addeditfeedform.html" />
+    <EmbeddedResource Include="App\viewmodels\registersignin.js" />
+    <EmbeddedResource Include="App\views\registersignin.html" />
+    <EmbeddedResource Include="App\system\api.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feedpackagecountstatistic.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feeddownloadcountstatistic.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\signinrequest.js" />
+    <EmbeddedResource Include="App\system\auth.js" />
+    <EmbeddedResource Include="App\forms\editfeedpackageretention.html" />
+    <EmbeddedResource Include="App\forms\editfeedpackageretention.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feedconfig.js" />
+    <EmbeddedResource Include="App\forms\editfeedpackagelist.html" />
+    <EmbeddedResource Include="App\forms\editfeedpackagelist.js" />
+    <Content Include="packages.config" />
+    <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
+    <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />
+    <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.woff" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.eot" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.otf" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.ttf" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.woff" />
+    <EmbeddedResource Include="Semantic\themes\default\assets\fonts\icons.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="package.json" />
+    <EmbeddedResource Include="Scripts\jquery-1.9.1.min.map" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>50711</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:50711/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

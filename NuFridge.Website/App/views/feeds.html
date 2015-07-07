@@ -1,0 +1,104 @@
+﻿<div class="ui masthead vertical tab segment">
+    <div class="ui container">
+        <div class="introduction">
+
+            <h1 class="ui header">
+                Feeds
+
+                <div class="sub header">
+
+                    Welcome to NuFridge.
+                </div>
+            </h1>
+
+            <div class="ui hidden divider"></div>
+
+        </div>
+
+
+    </div>
+</div>
+
+<div class="main ui container">
+
+    <div class="ui active tab" data-tab="icons">
+
+        <h2 class="ui header dividing feedsHeader">
+            Manage Feeds<a class="anchor" id="feedsAnchor"></a>
+        </h2>
+
+        <div class="ui icon message" style="display: none;" data-bind="visible: feeds().length === 0">
+            <i class="info circle icon"></i>
+            <div class="content">
+                <div class="header">
+                    Getting started
+                </div>
+                <p>Click on the Add Feed button below to create your first NuGet feed.</p>
+            </div>
+        </div>
+
+        <div class="ui equal width grid">
+            <div class="row">
+                <div class="column">
+                    <div class="ui fluid category search feedSearch">
+                        <div class="ui icon input" style="width: 100%;">
+                            <input class="prompt" type="text" placeholder="Search feeds...">
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results"></div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="ui addFeedButton">
+                        <button class="ui button right floated" data-bind="click: addFeed, css: {loading: $root.isAddFeedNavigating() === true}">
+                            <i class="icon plus"></i>
+                            Add Feed
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <table class="ui celled table selectable" data-bind="visible: feeds().length > 0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: feeds">
+                <tr style="cursor: pointer" data-bind="click: $root.feedClick">
+                    <td><span data-bind="text: Name"></span></td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="1">
+                        <div class="ui right floated pagination menu">
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
+                                <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
+                            </a>
+                            <!-- ko foreach: new Array(pageCount()) -->
+                            <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
+                            <!-- /ko -->
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
+                                <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+
+
+    </div>
+
+            </div>
+
+
+
+
+
+
+
+
