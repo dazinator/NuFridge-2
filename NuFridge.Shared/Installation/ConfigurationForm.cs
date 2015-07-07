@@ -5,23 +5,28 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Installation
 {
     public partial class ConfigurationForm : Form
     {
+        private readonly IHomeConfiguration _config;
         private ILog _log = LogProvider.For<ConfigurationForm>();
 
-        public ConfigurationForm()
+        public ConfigurationForm(IHomeConfiguration config)
         {
+            _config = config;
             InitializeComponent();
         }
+
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
 
@@ -32,7 +37,7 @@ namespace NuFridge.Shared.Installation
 
         private void pbClose_Click(object sender, EventArgs e)
         {
-     
+
             if (MessageBox.Show("Are you sure you wish to cancel the installation of NuFridge?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 this.DialogResult = DialogResult.Abort;
@@ -93,7 +98,9 @@ namespace NuFridge.Shared.Installation
 
             _log.Info("Saving app.config settings.");
 
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            var path = Path.Combine(_config.InstallDirectory, "NuFridge.Service.exe.config");
+
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(path);
             configuration.AppSettings.Settings["SqlServer"].Value = txtSqlServer.Text;
             configuration.AppSettings.Settings["SqlDatabase"].Value = txtDatabase.Text;
             configuration.AppSettings.Settings["SqlUserId"].Value = txtUserId.Text;
