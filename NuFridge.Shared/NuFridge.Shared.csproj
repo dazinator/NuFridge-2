@@ -271,7 +271,6 @@
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageVersionsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageIdsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\UploadPackageAction.cs" />
-    <Compile Include="Server\Web\Batch\HeaderParser.cs" />
     <Compile Include="Server\Web\Batch\HttpParserStreamExtensions.cs" />
     <Compile Include="Server\Web\Batch\RequestLine.cs" />
     <Compile Include="Server\Web\Batch\RequestLineParser.cs" />
