@@ -16,9 +16,9 @@ using NuFridge.Shared.Server.Web.OData;
 
 namespace NuFridge.Shared.Server.Web.Modules
 {
-    public class NuGetApiModule : NancyModule
+    public class NuGetV2ApiModule : NancyModule
     {
-        public NuGetApiModule(IContainer container)
+        public NuGetV2ApiModule(IContainer container)
         {
             //Batch post
             Post["feeds/{feed}/api/v2/$batch"] = p => container.Resolve<BatchAction>().Execute(p, this);
@@ -76,6 +76,12 @@ namespace NuFridge.Shared.Server.Web.Modules
 
             //OData package listing
             Get["feeds/{feed}/api/v2/odata/Packages()"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
+
+            //OData single package listing
+            Get["feeds/{feed}/api/v2/Packages(Id='{PackageId}',Version='{PackageVersion}')"] = p => container.Resolve<GetODataPackageAction>().Execute(p, this);
+
+            //OData single package listing
+            Get["feeds/{feed}/api/v2/odata/Packages(Id='{PackageId}',Version='{PackageVersion}')"] = p => container.Resolve<GetODataPackageAction>().Execute(p, this);
 
             //OData search count
             Get["feeds/{feed}/api/v2/Packages()/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);

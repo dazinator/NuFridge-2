@@ -91,7 +91,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
+            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2/", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
 
             var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
                 ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0);
