@@ -32,9 +32,10 @@ namespace NuFridge.Shared.Installation
         {
             this.label1 = new System.Windows.Forms.Label();
             this.topPanel = new System.Windows.Forms.Panel();
+            this.lblLoadingMessage = new System.Windows.Forms.Label();
+            this.pbClose = new System.Windows.Forms.PictureBox();
             this.pbContinue = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pbClose = new System.Windows.Forms.PictureBox();
             this.txtSqlServer = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -47,16 +48,15 @@ namespace NuFridge.Shared.Installation
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.txtSiteUrl = new System.Windows.Forms.TextBox();
-            this.lblLoadingMessage = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.topPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbContinue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbClose)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -81,6 +81,31 @@ namespace NuFridge.Shared.Installation
             this.topPanel.Size = new System.Drawing.Size(341, 36);
             this.topPanel.TabIndex = 1;
             this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topPanel_MouseDown);
+            // 
+            // lblLoadingMessage
+            // 
+            this.lblLoadingMessage.AutoSize = true;
+            this.lblLoadingMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLoadingMessage.ForeColor = System.Drawing.Color.White;
+            this.lblLoadingMessage.Location = new System.Drawing.Point(12, 10);
+            this.lblLoadingMessage.Name = "lblLoadingMessage";
+            this.lblLoadingMessage.Size = new System.Drawing.Size(76, 13);
+            this.lblLoadingMessage.TabIndex = 1;
+            this.lblLoadingMessage.Text = "Please wait.";
+            this.lblLoadingMessage.Visible = false;
+            // 
+            // pbClose
+            // 
+            this.pbClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbClose.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.pbClose.Image = global::NuFridge.Shared.Properties.Resources.Close;
+            this.pbClose.Location = new System.Drawing.Point(317, 10);
+            this.pbClose.Name = "pbClose";
+            this.pbClose.Size = new System.Drawing.Size(13, 11);
+            this.pbClose.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pbClose.TabIndex = 0;
+            this.pbClose.TabStop = false;
+            this.pbClose.Click += new System.EventHandler(this.pbClose_Click);
             // 
             // pbContinue
             // 
@@ -107,19 +132,6 @@ namespace NuFridge.Shared.Installation
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
-            // 
-            // pbClose
-            // 
-            this.pbClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbClose.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbClose.Image = global::NuFridge.Shared.Properties.Resources.Close;
-            this.pbClose.Location = new System.Drawing.Point(317, 10);
-            this.pbClose.Name = "pbClose";
-            this.pbClose.Size = new System.Drawing.Size(13, 11);
-            this.pbClose.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pbClose.TabIndex = 0;
-            this.pbClose.TabStop = false;
-            this.pbClose.Click += new System.EventHandler(this.pbClose_Click);
             // 
             // txtSqlServer
             // 
@@ -246,18 +258,6 @@ namespace NuFridge.Shared.Installation
             this.txtSiteUrl.TabIndex = 14;
             this.txtSiteUrl.Text = "http://localhost:8080";
             // 
-            // lblLoadingMessage
-            // 
-            this.lblLoadingMessage.AutoSize = true;
-            this.lblLoadingMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLoadingMessage.ForeColor = System.Drawing.Color.White;
-            this.lblLoadingMessage.Location = new System.Drawing.Point(12, 10);
-            this.lblLoadingMessage.Name = "lblLoadingMessage";
-            this.lblLoadingMessage.Size = new System.Drawing.Size(76, 13);
-            this.lblLoadingMessage.TabIndex = 1;
-            this.lblLoadingMessage.Text = "Please wait.";
-            this.lblLoadingMessage.Visible = false;
-            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -338,7 +338,6 @@ namespace NuFridge.Shared.Installation
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ConfigurationForm";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ConfigurationForm";
             this.TopMost = true;
@@ -346,9 +345,9 @@ namespace NuFridge.Shared.Installation
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.ConfigurationForm_Paint);
             this.topPanel.ResumeLayout(false);
             this.topPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbClose)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbContinue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbClose)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
