@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,12 +19,10 @@ namespace NuFridge.Shared.Installation
 {
     public partial class ConfigurationForm : Form
     {
-        private readonly IHomeConfiguration _config;
         private ILog _log = LogProvider.For<ConfigurationForm>();
 
-        public ConfigurationForm(IHomeConfiguration config)
+        public ConfigurationForm()
         {
-            _config = config;
             InitializeComponent();
         }
 
@@ -98,7 +97,8 @@ namespace NuFridge.Shared.Installation
 
             _log.Info("Saving app.config settings.");
 
-            var path = Path.Combine(_config.InstallDirectory, "NuFridge.Service.exe.config");
+            var folder = Directory.GetParent(Assembly.GetEntryAssembly().Location);
+            var path = Path.Combine(folder.FullName, "NuFridge.Service.exe.config");
 
             Configuration configuration = ConfigurationManager.OpenExeConfiguration(path);
             configuration.AppSettings.Settings["SqlServer"].Value = txtSqlServer.Text;
