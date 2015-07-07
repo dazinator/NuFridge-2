@@ -109,7 +109,7 @@ namespace NuFridge.Shared.Installation
             config.AppSettings.Settings["SqlPassword"].Value = txtPassword.Text;
             config.AppSettings.Settings["WebsiteUrl"].Value = txtSiteUrl.Text;
 
-            config.Save();
+            config.Save(ConfigurationSaveMode.Full);
 
             ConfigurationManager.RefreshSection("appSettings");
 
