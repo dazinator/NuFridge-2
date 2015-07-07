@@ -9,6 +9,7 @@ using System.Runtime.Versioning;
 using System.Xml.Serialization;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Security;
 using NuGet;
 
@@ -30,7 +31,7 @@ namespace NuFridge.Shared.Model
 
         public string PackageId { get; set; }
 
- 
+
         private SemanticVersion SemanticVersion { get; set; }
         private string _version { get; set; }
 
@@ -66,9 +67,9 @@ namespace NuFridge.Shared.Model
 
         public string Copyright { get; set; }
 
-        public DateTimeOffset? Published { get; set; }
+        public DateTime Published { get; set; }
 
-        public string[] Dependencies { get; set; }
+        public string Dependencies { get; set; }
 
         public string Hash { get; set; }
 
@@ -76,8 +77,10 @@ namespace NuFridge.Shared.Model
 
         public string Summary { get; set; }
 
-                  [NotMapped]
+        [NotMapped]
         public long Size { get; set; }
+
+        public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies { get; set; }
 
         public bool IsReleaseVersion()
         {
@@ -94,14 +97,16 @@ namespace NuFridge.Shared.Model
             return Size;
         }
 
-        public List<string> GetDependencies()
-        {
-            return Dependencies.ToList();
-        }
-
         public string CalculateHash()
         {
             return Hash;
+        }
+
+        public string SupportedFrameworks { get; set; }
+
+        public IEnumerable<FrameworkName> GetSupportedFrameworks()
+        {
+            return (SupportedFrameworks ?? "").Split(new [] {"|"}, StringSplitOptions.RemoveEmptyEntries).Select(VersionUtility.ParseFrameworkName).Distinct();
         }
 
         public static IInternalPackage Create(int feedId, IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
@@ -111,7 +116,6 @@ namespace NuFridge.Shared.Model
                  PackageId = package.Id,
                  FeedId = feedId,
                  Description = package.Description,
-                 Published = package.Published ?? DateTimeOffset.UtcNow,
                  LastUpdated = DateTime.UtcNow,
                  ReleaseNotes = package.ReleaseNotes,
                  Summary = package.Summary,
@@ -121,22 +125,22 @@ namespace NuFridge.Shared.Model
                  IsLatestVersion = isLatestVersion,
                  Copyright = package.Copyright,
                  IsPrerelease = !package.IsReleaseVersion(),
-
                  Listed = true,
-
                  RequireLicenseAcceptance = package.RequireLicenseAcceptance,
                  Tags = package.Tags,
-
+                 Language = package.Language,
+                 FrameworkAssemblies = package.FrameworkAssemblies,
+                 DependencySets = package.DependencySets,
+                 DevelopmentDependency = package.DevelopmentDependency,
              };
+
+            newPackage.SupportedFrameworks = string.Join("|", package.GetSupportedFrameworks().Select(VersionUtility.GetShortFrameworkName));
+
+            newPackage.Published = package.Published.HasValue ? package.Published.Value.LocalDateTime : DateTime.Now;
 
             if (string.IsNullOrWhiteSpace(newPackage.Title))
             {
                 newPackage.Title = package.Id;
-            }
-
-            if (string.IsNullOrWhiteSpace(newPackage.DisplayTitle))
-            {
-                newPackage.DisplayTitle = package.Id;
             }
 
             newPackage.Version = package.Version.ToString();
@@ -175,10 +179,21 @@ namespace NuFridge.Shared.Model
             using (Stream stream = package.GetStream())
             {
                 newPackage.Hash = HashCalculator.Hash(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+                newPackage.Created = FastZipPackageBase.GetPackageCreatedDateTime(stream);
+
                 newPackage.Size = stream.Length;
             }
 
             return newPackage;
+        }
+
+        [NotMapped]
+        public IEnumerable<PackageDependencySet> DependencySets
+        {
+            get { return PackageDependencySetConverter.Parse((Dependencies ?? string.Empty).Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries)); }
+            set { Dependencies = string.Join("|", value.SelectMany(PackageDependencySetConverter.Flatten)); }
         }
 
 
@@ -187,30 +202,33 @@ namespace NuFridge.Shared.Model
             get { return PackageId; }
         }
 
-           [NotMapped]
-        public string DisplayTitle { get; set; }
         public bool RequireLicenseAcceptance { get; set; }
-           [NotMapped]
+
         public string Language { get; set; }
         public string Tags { get; set; }
-           [NotMapped]
+        [NotMapped]
         public string PackageHashAlgorithm { get; set; }
-           [NotMapped]
+        [NotMapped]
         public long PackageSize { get; set; }
+
         public DateTime LastUpdated { get; set; }
-           [NotMapped]
+
+
         public DateTime Created { get; set; }
         public bool IsAbsoluteLatestVersion { get; set; }
         public bool IsLatestVersion { get; set; }
         public bool IsPrerelease { get; set; }
         public bool Listed { get; set; }
+
         public int DownloadCount { get; set; }
-           [NotMapped]
+
+
         public int VersionDownloadCount { get; set; }
-           [NotMapped]
+
+
         public bool DevelopmentDependency { get; set; }
-        [NotMapped]
-        public float Score { get; set; }
+
+
         public string Authors { get; set; }
         public string Owners { get; set; }
         public string IconUrl { get; set; }
@@ -222,7 +240,7 @@ namespace NuFridge.Shared.Model
         {
             DownloadCount++;
         }
-           [NotMapped]
+        [NotMapped]
         public string ReportAbuseUrl { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Autofac;
 using Moq;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -66,7 +67,7 @@ namespace NuFridge.Tests
 
             builder.RegisterModule(new NuGetModule());
             MockStore(builder);
-
+            builder.RegisterInstance(new Mock<IHomeConfiguration>().Object);
             _container = builder.Build();
         }
     }

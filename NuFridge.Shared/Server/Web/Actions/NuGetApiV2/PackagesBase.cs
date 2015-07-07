@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
-using NuGet;
 using SimpleCrypto;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public abstract class PackagesBase
     {

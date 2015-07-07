@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed'], function (router, api, auth, databindingPackage, xml2Json, databindingFeed) {
+﻿define(['plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed', 'readmore'], function (router, api, auth, databindingPackage, xml2Json, databindingFeed, readmore) {
     var ctor = function () {
         var self = this;
         self.packages = ko.observableArray();
@@ -26,8 +26,6 @@
             if (!self.feed()) {
                 throw "A feed must be provided when using the edit feed package list.";
             }
-
-            self.loadPackages();
         });
     };
 
@@ -116,6 +114,7 @@
             self.totalCount(json.count);
 
             ko.mapping.fromJS(entry, mapping, self.packages);
+
             self.isSearchingForPackages(false);
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
             self.isSearchingForPackages(false);
@@ -339,11 +338,16 @@
 
     };
 
+    ctor.prototype.downloadLatestPackageVersion = function(pkg) {
+        var self = this;
 
+        window.location = pkg.GetDownloadLink(self.feed().Name());
+    };
 
     ctor.prototype.compositionComplete = function () {
         var self = this;
 
+        self.loadPackages();
 
         $(".fileUploadProgress").progress({
             total: 100,
@@ -380,7 +384,6 @@
                 hoverable: true,
                 title: 'Add Package'
             });
-
 
     };
 

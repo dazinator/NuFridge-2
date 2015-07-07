@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
@@ -12,7 +7,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class RedirectToDownloadPackageAction : IAction
     {
@@ -38,6 +33,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             using (ITransaction transaction = _store.BeginTransaction())
             {
                 var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                if (feed == null)
+                {
+                    var errorResponse = module.Response.AsText("Feed does not exist.");
+                    errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                    return errorResponse;
+                }
                 feedId = feed.Id;
             }
 

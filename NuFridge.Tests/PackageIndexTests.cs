@@ -14,12 +14,14 @@ namespace NuFridge.Tests
     {
         protected TestPackageIndex Index;
         protected Mock<IStore> Store;
+        protected Mock<IInternalPackageRepositoryFactory> Factory;
 
         [SetUp]
         public void CreateIndexer()
         {
             Store = new Mock<IStore>();
-            Index = new TestPackageIndex(Store.Object, 1);
+            Factory = new Mock<IInternalPackageRepositoryFactory>();
+            Index = new TestPackageIndex(Factory.Object, Store.Object, 1);
         }
 
         //[Test]
@@ -56,7 +58,7 @@ namespace NuFridge.Tests
 
         public class TestPackageIndex : PackageIndex
         {
-            public TestPackageIndex(IStore store, int feedId) : base(store, feedId)
+            public TestPackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId) : base(factory, store, feedId)
             {
                 
             }

@@ -41,7 +41,7 @@
         <button class="ui positive button" data-bind="click: function() { $root.submitClick(); },  css: { disabled: $root.feed.isValid() === false || $root.isCancelNavigating() === true, loading: $root.isSaving() === true}, text: $root.mode">Save</button>
     </div>
 
-    <div class="ui buttons floatRight" data-bind="visible: $root.mode === 'Update', click: function() { $root.deleteClick(); }">
+    <div class="ui buttons floatRight" data-bind="visible: $root.mode() === 'Update', click: function() { $root.deleteClick(); }">
         <button class="ui red button">Delete</button>
     </div>
 </div>

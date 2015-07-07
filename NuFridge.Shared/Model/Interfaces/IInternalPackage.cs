@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using NuGet;
 
 namespace NuFridge.Shared.Model.Interfaces
@@ -15,7 +16,7 @@ namespace NuFridge.Shared.Model.Interfaces
 
         string ReleaseNotes { get; set; }
 
-        DateTimeOffset? Published { get; set; }
+        DateTime Published { get; set; }
 
         string Title { get; set; }
 
@@ -32,10 +33,7 @@ namespace NuFridge.Shared.Model.Interfaces
         bool IsReleaseVersion();
 
         long GetSize();
-
-        List<string> GetDependencies();
-
-        string DisplayTitle { get; set; }
+        IEnumerable<FrameworkName> GetSupportedFrameworks();
         bool RequireLicenseAcceptance { get; set; }
         string Language { get; set; }
         string Tags { get; set; }
@@ -48,10 +46,9 @@ namespace NuFridge.Shared.Model.Interfaces
         bool IsLatestVersion { get; set; }
         bool IsPrerelease { get; set; }
         bool Listed { get; set; }
-        string[] Dependencies { get; set; }
+        string Dependencies { get; set; }
         int VersionDownloadCount { get; set; }
         bool DevelopmentDependency { get; set; }
-        float Score { get; set; }
         string Authors { get; set; }
         string Owners { get; set; }
         string IconUrl { get; set; }
@@ -63,5 +60,6 @@ namespace NuFridge.Shared.Model.Interfaces
         void IncrementDownloadCount();
         SemanticVersion GetSemanticVersion();
         string ReportAbuseUrl { get; set; }
+        string SupportedFrameworks { get; set; }
     }
 }

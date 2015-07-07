@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Nancy;
 using Nancy.Security;
@@ -22,45 +23,71 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
         {
             module.RequiresAuthentication();
 
+
+            int feedId = int.Parse(parameters.id);
+
+            IFeed feed;
+            IFeedConfiguration config;
+            List<IInternalPackage> packages;
+
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                int feedId = int.Parse(parameters.id);
+                feed = transaction.Query<IFeed>()
+                    .Where("Id = @feedId")
+                    .Parameter("feedId", feedId)
+                    .First();
+            }
 
-                var feed = transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
+            if (feed == null)
+            {
+                return HttpStatusCode.NotFound;
+            }
 
-                if (feed == null)
+            using (ITransaction transaction = _store.BeginTransaction())
+            {
+                config =
+                    transaction.Query<IFeedConfiguration>()
+                        .Where("FeedId = @feedId")
+                        .Parameter("feedId", feedId)
+                        .First();
+            }
+
+            using (ITransaction transaction = _store.BeginTransaction())
+            {
+                packages =
+                    transaction.Query<IInternalPackage>()
+                    .Where("FeedId = @feedId")
+                    .Parameter("feedId", feedId)
+                    .ToList();
+            }
+
+            string packageDirectory = config.PackagesDirectory;
+
+            using (ITransaction transaction = _store.BeginTransaction())
+            {
+                foreach (var package in packages)
                 {
-                    return HttpStatusCode.NotFound;
+                    transaction.Delete(package);
                 }
-
-                var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
 
                 transaction.Delete(feed);
                 transaction.Delete(config);
 
-                if (Directory.Exists(config.PackagesDirectory))
-                {
-                    try
-                    {
-                        Directory.Delete(config.PackagesDirectory);
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-
-                        //TODO standardized error responses
-                        var response = module.Response.AsText(ex.Message);
-
-                        response.StatusCode = HttpStatusCode.InternalServerError;
-
-                        return response;
-                    }
-                }
-
                 transaction.Commit();
             }
 
-            //TODO responses
+            if (Directory.Exists(packageDirectory))
+            {
+                try
+                {
+                    Directory.Delete(packageDirectory);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
             return module.Response.AsJson(new object());
         }
     }

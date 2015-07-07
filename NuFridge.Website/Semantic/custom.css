@@ -164,3 +164,7 @@ h1.ui.header.breadcrumb { line-height: 35.9995994567871px;}
 }
 
  .ui.form .field .apiKeyTextBox:disabled { opacity: 1;}
+
+.ui.table .ui.items>.item>.image:not(.ui) { width: auto;}
+
+.ui.table .ui.items>.item>.content p { margin: 0;}

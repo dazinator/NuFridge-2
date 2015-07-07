@@ -9,7 +9,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class DownloadPackageAction : IAction
     {
@@ -34,6 +34,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             {
                 var feed =
                     transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+
+                if (feed == null)
+                {
+                    var response = module.Response.AsText("Feed does not exist.");
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+
                 feedId = feed.Id;
             }
 
@@ -60,7 +68,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
                 result = module.Response.FromStream(stream, "application/zip");
 
                 result.Headers.Add("Content-Length", stream.Length.ToString());
-
+                result.Headers.Add("Content-Disposition", "attachment; filename=" + package.PackageId + "." + package.Version + ".nupkg");
                 using (var md5 = MD5.Create())
                 {
                     result.Headers.Add("Content-MD5", BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower());

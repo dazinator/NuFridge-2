@@ -16,6 +16,7 @@
         'databinding-dashboard': 'viewmodels/databinding/dashboard',
         'databinding-feedpackagecountstatistic': 'viewmodels/databinding/feedpackagecountstatistic',
         'databinding-feeddownloadcountstatistic': 'viewmodels/databinding/feeddownloadcountstatistic',
+        'readmore': '../Scripts/readmore',
         'cookie': '../Scripts/jquery.cookie',
         'api': 'system/api',
         'chart': '../Scripts/Chart',
@@ -60,6 +61,33 @@ define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapp
         update: function (element, valueAccessor, allBindingsAccessor) {
             var underlyingObservable = valueAccessor();
             ko.applyBindingsToNode(element, { attr: { placeholder: underlyingObservable } });
+        }
+    };
+
+    ko.bindingHandlers.tooltip = {
+        init: function (element, valueAccessor) {
+            var value = valueAccessor() || {};
+
+            $(element)
+                .popup({
+                    hoverable: true,
+                    title: value
+                });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                $(element).popup('destroy');
+            });
+        }
+    };
+
+    ko.bindingHandlers.readmore = {
+        init: function (element, valueAccessor) {
+            var value = valueAccessor() || {};
+            $(element).readmore(value);
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                $(element).readmore('destroy');
+            });
         }
     };
 

@@ -52,7 +52,7 @@ namespace NuFridge.Shared.Server.Web
             return stream;
         }
 
-        private static ODataEntry MapPackageToEntry(string baseAddress, ODataPackage package)
+        internal static ODataEntry MapPackageToEntry(string baseAddress, ODataPackage package)
         {
 
             var entryId = "Packages(Id='" + package.Id + "',Version='" + package.Version + "')";
@@ -65,9 +65,8 @@ namespace NuFridge.Shared.Server.Web
                 MediaResource = new ODataStreamReferenceValue()
                 {
                     ContentType = "application/zip",
-                    ReadLink = new Uri(baseAddress + "/package/" + package.Id + "/" + package.Version),
+                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version),
                 },
-
                 Properties = GetProperties(package)
             };
 

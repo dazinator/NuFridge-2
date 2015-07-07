@@ -50,15 +50,7 @@ namespace NuFridge.Shared.Server.NuGet
             return _packageIndex.GetVersions(transaction, packageId, allowPreRelease);
         }
 
-        public IEnumerable<IInternalPackage> GetWebPackages(ITransaction transaction, string filterType, string filterColumn, string filterValue, string orderType, string orderProperty, string searchTerm, string targetFramework, string includePrerelease)
-        {
-            return _packageIndex.GetWebPackages(transaction, filterType, filterColumn, filterValue, orderType, orderProperty, searchTerm, targetFramework, includePrerelease);
-        }
 
-        public List<IInternalPackage> GetPackagesContaining(string searchTerm, out int total, int skip = 0, int take = 30, bool allowPreRelease = true)
-        {
-                return _packageIndex.GetPackagesContaining(searchTerm, out total, skip, take, allowPreRelease);
-        }
 
         public Stream GetPackageRaw( string packageId, SemanticVersion version)
         {
@@ -70,15 +62,15 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void RemovePackage(IInternalPackage internalPackage)
         {
-            var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
+            //var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
 
-            filePath = Path.Combine(FileSystem.Root, filePath);
+            //filePath = Path.Combine(FileSystem.Root, filePath);
 
-            IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
+            //IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
 
-            RemovePackage(package);
+            //RemovePackage(package);
 
-            _packageIndex.DeletePackage(internalPackage);
+            _packageIndex.UnlistPackage(internalPackage);
         }
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)

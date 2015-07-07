@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using FluentScheduler;
@@ -32,7 +33,6 @@ namespace NuFridge.Service
         private IContainer _container;
         private ICommand _commandInstance;
         private string[] _commandLineArguments;
-        private bool _forceConsole;
 
         protected OptionSet CommonOptions
         {
@@ -57,7 +57,6 @@ namespace NuFridge.Service
             _commandLineArguments = commandLineArguments;
             _displayName = displayName;
             _commonOptions = new OptionSet();
-            _commonOptions.Add("console", "Don't run as a service.", v => _forceConsole = true);
         }
 
         public int Run()
@@ -142,16 +141,14 @@ namespace NuFridge.Service
         private ICommandHost SelectMostAppropriateHost()
         {
             _log.Trace("Selecting the host");
-            if (_forceConsole)
-            {
-                _log.Trace("The --console switch was passed");
-                return new ConsoleHost(_displayName);
-            }
+
             if (Environment.UserInteractive)
             {
                 _log.Trace("The program is running using a console host");
                 return new ConsoleHost(_displayName);
             }
+
+
             _log.Trace("The program is using a Windows Service host");
             return new WindowsServiceHost();
         }

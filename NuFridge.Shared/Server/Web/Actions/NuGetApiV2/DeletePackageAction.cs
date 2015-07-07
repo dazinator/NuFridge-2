@@ -1,13 +1,11 @@
-﻿using System.Linq;
-using Nancy;
+﻿using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
-using SimpleCrypto;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class DeletePackageAction : PackagesBase, IAction
     {
@@ -32,6 +30,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             using (ITransaction transaction = _store.BeginTransaction())
             {
                 feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+
+                if (feed == null)
+                {
+                    var response = module.Response.AsText("Feed does not exist.");
+                    response.StatusCode = HttpStatusCode.BadRequest;
+                    return response;
+                }
+
                 feedId = feed.Id;
             }
 
@@ -59,6 +65,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
             string deletedPackageId = package.PackageId;
             bool isDeletedPackageLatestVersion = package.IsLatestVersion;
             bool isDeletedPackageAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
+
+            
 
             packageRepository.RemovePackage(package);
 

@@ -32,10 +32,10 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://www.nufridge.com"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://www.nufridge.com"/>
     <ROW Property="Manufacturer" Value="NuFridge"/>
-    <ROW Property="ProductCode" Value="2057:{2A51431D-64B0-4443-9FF1-9C0850809FF6} " Type="16"/>
+    <ROW Property="ProductCode" Value="2057:{4A41098D-EE29-4488-A9A5-B4ADDFC1749A} " Type="16"/>
     <ROW Property="ProductLanguage" Value="2057"/>
     <ROW Property="ProductName" Value="NuFridge"/>
-    <ROW Property="ProductVersion" Value="1.0.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.1.1" Type="32"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:ReallySuppress"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{0DD80922-B054-4147-8318-24BE4786CC76}"/>
@@ -148,8 +148,7 @@
     <ROW Component="InstallationDirectory" ComponentId="{A0D1B291-6E87-4CDF-8AD0-B30225845B64}" Directory_="APPDIR" Attributes="4" KeyPath="InstallationDirectory"/>
     <ROW Component="Licence.txt" ComponentId="{25098E3F-A4EC-4B4E-8BBD-1E9581B68C1A}" Directory_="Documents_Dir" Attributes="0" KeyPath="Licence.txt" Type="0"/>
     <ROW Component="Linq2Rest.dll" ComponentId="{A4115A9B-460B-4761-9A43-36D14F28EE25}" Directory_="Service_Dir" Attributes="0" KeyPath="Linq2Rest.dll"/>
-    <ROW Component="ListenPrefixes" ComponentId="{F70E7D5E-E852-4260-A7E4-4F1BA44AD799}" Directory_="APPDIR" Attributes="4" KeyPath="ListenPrefixes"/>
-    <ROW Component="Logs" ComponentId="{A64DBC12-1F96-483D-BD12-0E8C76AA57F5}" Directory_="Logs_Dir" Attributes="128"/>
+    <ROW Component="Logs" ComponentId="{12FA6E72-1153-438F-9167-7BA1EF833E7C}" Directory_="Logs_Dir" Attributes="0"/>
     <ROW Component="Microsoft.Data.Edm.dll" ComponentId="{56FDF05E-E349-4C48-A5A7-B428176F9B6D}" Directory_="Service_Dir" Attributes="0" KeyPath="Microsoft.Data.Edm.dll"/>
     <ROW Component="Microsoft.Data.Edm.resources.dll" ComponentId="{ED9270FB-D79E-45D8-B72E-79263CFDB950}" Directory_="de_Dir" Attributes="0" KeyPath="Microsoft.Data.Edm.resources.dll"/>
     <ROW Component="Microsoft.Data.Edm.resources.dll_1" ComponentId="{21398707-A155-4036-9044-B05E9FE49D87}" Directory_="es_Dir" Attributes="0" KeyPath="Microsoft.Data.Edm.resources.dll_1"/>
@@ -221,10 +220,6 @@
     <ROW Component="ProductName" ComponentId="{9ADB3DAA-9494-4DB9-B276-26516AAB3FCA}" Directory_="APPDIR" Attributes="4" KeyPath="ProductName"/>
     <ROW Component="Simple.OData.Client.Net40.dll" ComponentId="{9BF1BF44-406D-4177-BE56-EE9DC9648B6F}" Directory_="Service_Dir" Attributes="0" KeyPath="Simple.OData.Client.Net40.dll"/>
     <ROW Component="SimpleCrypto.dll" ComponentId="{3E336B3B-70B4-4A47-B422-89C1DDA42C7A}" Directory_="Service_Dir" Attributes="0" KeyPath="SimpleCrypto.dll"/>
-    <ROW Component="SqlDataSource" ComponentId="{F37CD947-C671-4440-843B-CC2E1AE47724}" Directory_="APPDIR" Attributes="4" KeyPath="SqlDataSource"/>
-    <ROW Component="SqlInitialCatalog" ComponentId="{80658EBA-3F3E-417D-AFD6-FD310757C393}" Directory_="APPDIR" Attributes="4" KeyPath="SqlInitialCatalog"/>
-    <ROW Component="SqlPassword" ComponentId="{54075D9E-0885-4805-ABBC-456871BBDFEB}" Directory_="APPDIR" Attributes="4" KeyPath="SqlPassword"/>
-    <ROW Component="SqlUsername" ComponentId="{810A93F3-BE43-4884-9ACC-88C6B1A9BD00}" Directory_="APPDIR" Attributes="4" KeyPath="SqlUsername"/>
     <ROW Component="System.Net.Http.Extensions.dll" ComponentId="{06C8FDB8-9F50-4DD4-9248-D5EF38509018}" Directory_="Service_Dir" Attributes="0" KeyPath="System.Net.Http.Extensions.dll"/>
     <ROW Component="System.Net.Http.Formatting.dll" ComponentId="{D4D6EA4B-07E7-414A-A57E-BC5F1C8DBDF5}" Directory_="Service_Dir" Attributes="0" KeyPath="System.Net.Http.Formatting.dll"/>
     <ROW Component="System.Net.Http.Primitives.dll" ComponentId="{05FB10EA-AE71-4F84-8956-857B08C591C2}" Directory_="Service_Dir" Attributes="0" KeyPath="System.Net.Http.Primitives.dll"/>
@@ -245,7 +240,7 @@
     <ROW Component="keyStore" ComponentId="{EBCAAE2A-4154-4FB8-A47F-72B4FA5B8542}" Directory_="keyStore_Dir" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_IA_ENABLE Antlr3.Runtime.dll Autofac.dll DbUp.dll EntityFramework.SqlServer.dll EntityFramework.dll FluentScheduler.dll Humanizer.dll Humanizer.resources.dll Humanizer.resources.dll_1 Humanizer.resources.dll_10 Humanizer.resources.dll_11 Humanizer.resources.dll_12 Humanizer.resources.dll_13 Humanizer.resources.dll_14 Humanizer.resources.dll_15 Humanizer.resources.dll_16 Humanizer.resources.dll_17 Humanizer.resources.dll_18 Humanizer.resources.dll_19 Humanizer.resources.dll_2 Humanizer.resources.dll_20 Humanizer.resources.dll_21 Humanizer.resources.dll_22 Humanizer.resources.dll_23 Humanizer.resources.dll_24 Humanizer.resources.dll_25 Humanizer.resources.dll_26 Humanizer.resources.dll_27 Humanizer.resources.dll_28 Humanizer.resources.dll_29 Humanizer.resources.dll_3 Humanizer.resources.dll_30 Humanizer.resources.dll_31 Humanizer.resources.dll_32 Humanizer.resources.dll_33 Humanizer.resources.dll_34 Humanizer.resources.dll_35 Humanizer.resources.dll_36 Humanizer.resources.dll_37 Humanizer.resources.dll_4 Humanizer.resources.dll_5 Humanizer.resources.dll_6 Humanizer.resources.dll_7 Humanizer.resources.dll_8 Humanizer.resources.dll_9 ICSharpCode.SharpZipLib.dll InstallationDirectory Licence.txt Linq2Rest.dll ListenPrefixes Logs Microsoft.Data.Edm.dll Microsoft.Data.Edm.resources.dll Microsoft.Data.Edm.resources.dll_1 Microsoft.Data.Edm.resources.dll_2 Microsoft.Data.Edm.resources.dll_3 Microsoft.Data.Edm.resources.dll_4 Microsoft.Data.Edm.resources.dll_5 Microsoft.Data.Edm.resources.dll_6 Microsoft.Data.Edm.resources.dll_7 Microsoft.Data.Edm.resources.dll_8 Microsoft.Data.OData.dll Microsoft.Data.OData.resources.dll Microsoft.Data.OData.resources.dll_1 Microsoft.Data.OData.resources.dll_2 Microsoft.Data.OData.resources.dll_3 Microsoft.Data.OData.resources.dll_4 Microsoft.Data.OData.resources.dll_5 Microsoft.Data.OData.resources.dll_6 Microsoft.Data.OData.resources.dll_7 Microsoft.Data.OData.resources.dll_8 Microsoft.OData.Core.dll Microsoft.OData.Core.resources.dll Microsoft.OData.Core.resources.dll_1 Microsoft.OData.Core.resources.dll_2 Microsoft.OData.Core.resources.dll_3 Microsoft.OData.Core.resources.dll_4 Microsoft.OData.Core.resources.dll_5 Microsoft.OData.Core.resources.dll_6 Microsoft.OData.Core.resources.dll_7 Microsoft.OData.Core.resources.dll_8 Microsoft.OData.Edm.dll Microsoft.OData.Edm.resources.dll Microsoft.OData.Edm.resources.dll_1 Microsoft.OData.Edm.resources.dll_2 Microsoft.OData.Edm.resources.dll_3 Microsoft.OData.Edm.resources.dll_4 Microsoft.OData.Edm.resources.dll_5 Microsoft.OData.Edm.resources.dll_6 Microsoft.OData.Edm.resources.dll_7 Microsoft.OData.Edm.resources.dll_8 Microsoft.Spatial.dll Microsoft.Spatial.resources.dll Microsoft.Spatial.resources.dll_1 Microsoft.Spatial.resources.dll_2 Microsoft.Spatial.resources.dll_3 Microsoft.Spatial.resources.dll_4 Microsoft.Spatial.resources.dll_5 Microsoft.Spatial.resources.dll_6 Microsoft.Spatial.resources.dll_7 Microsoft.Spatial.resources.dll_8 Microsoft.Threading.Tasks.Extensions.Des Microsoft.Threading.Tasks.Extensions.dll Microsoft.Threading.Tasks.dll Microsoft.Web.XmlTransform.dll NLog.dll Nancy.Authentication.Basic.dll Nancy.Authentication.Stateless.dll Nancy.Authentication.Token.dll Nancy.Bootstrappers.Autofac.dll Nancy.Hosting.Self.dll Nancy.Serialization.JsonNet.dll Nancy.dll Newtonsoft.Json.dll NuFridge.Service.exe NuFridge.Service.exe.config NuFridge.Shared.dll NuFridge.Website.dll NuGet.Core.dll ProductName Simple.OData.Client.Net40.dll SimpleCrypto.dll SqlDataSource SqlInitialCatalog SqlPassword SqlUsername System.Net.Http.Extensions.dll System.Net.Http.Formatting.dll System.Net.Http.Primitives.dll System.Spatial.dll System.Spatial.resources.dll System.Spatial.resources.dll_1 System.Spatial.resources.dll_2 System.Spatial.resources.dll_3 System.Spatial.resources.dll_4 System.Spatial.resources.dll_5 System.Spatial.resources.dll_6 System.Spatial.resources.dll_7 System.Spatial.resources.dll_8 System.Web.Http.OData.dll System.Web.Http.WebHost.dll System.Web.Http.dll Version keyStore"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_IA_ENABLE Antlr3.Runtime.dll Autofac.dll DbUp.dll EntityFramework.SqlServer.dll EntityFramework.dll FluentScheduler.dll Humanizer.dll Humanizer.resources.dll Humanizer.resources.dll_1 Humanizer.resources.dll_10 Humanizer.resources.dll_11 Humanizer.resources.dll_12 Humanizer.resources.dll_13 Humanizer.resources.dll_14 Humanizer.resources.dll_15 Humanizer.resources.dll_16 Humanizer.resources.dll_17 Humanizer.resources.dll_18 Humanizer.resources.dll_19 Humanizer.resources.dll_2 Humanizer.resources.dll_20 Humanizer.resources.dll_21 Humanizer.resources.dll_22 Humanizer.resources.dll_23 Humanizer.resources.dll_24 Humanizer.resources.dll_25 Humanizer.resources.dll_26 Humanizer.resources.dll_27 Humanizer.resources.dll_28 Humanizer.resources.dll_29 Humanizer.resources.dll_3 Humanizer.resources.dll_30 Humanizer.resources.dll_31 Humanizer.resources.dll_32 Humanizer.resources.dll_33 Humanizer.resources.dll_34 Humanizer.resources.dll_35 Humanizer.resources.dll_36 Humanizer.resources.dll_37 Humanizer.resources.dll_4 Humanizer.resources.dll_5 Humanizer.resources.dll_6 Humanizer.resources.dll_7 Humanizer.resources.dll_8 Humanizer.resources.dll_9 ICSharpCode.SharpZipLib.dll InstallationDirectory Licence.txt Linq2Rest.dll Logs Microsoft.Data.Edm.dll Microsoft.Data.Edm.resources.dll Microsoft.Data.Edm.resources.dll_1 Microsoft.Data.Edm.resources.dll_2 Microsoft.Data.Edm.resources.dll_3 Microsoft.Data.Edm.resources.dll_4 Microsoft.Data.Edm.resources.dll_5 Microsoft.Data.Edm.resources.dll_6 Microsoft.Data.Edm.resources.dll_7 Microsoft.Data.Edm.resources.dll_8 Microsoft.Data.OData.dll Microsoft.Data.OData.resources.dll Microsoft.Data.OData.resources.dll_1 Microsoft.Data.OData.resources.dll_2 Microsoft.Data.OData.resources.dll_3 Microsoft.Data.OData.resources.dll_4 Microsoft.Data.OData.resources.dll_5 Microsoft.Data.OData.resources.dll_6 Microsoft.Data.OData.resources.dll_7 Microsoft.Data.OData.resources.dll_8 Microsoft.OData.Core.dll Microsoft.OData.Core.resources.dll Microsoft.OData.Core.resources.dll_1 Microsoft.OData.Core.resources.dll_2 Microsoft.OData.Core.resources.dll_3 Microsoft.OData.Core.resources.dll_4 Microsoft.OData.Core.resources.dll_5 Microsoft.OData.Core.resources.dll_6 Microsoft.OData.Core.resources.dll_7 Microsoft.OData.Core.resources.dll_8 Microsoft.OData.Edm.dll Microsoft.OData.Edm.resources.dll Microsoft.OData.Edm.resources.dll_1 Microsoft.OData.Edm.resources.dll_2 Microsoft.OData.Edm.resources.dll_3 Microsoft.OData.Edm.resources.dll_4 Microsoft.OData.Edm.resources.dll_5 Microsoft.OData.Edm.resources.dll_6 Microsoft.OData.Edm.resources.dll_7 Microsoft.OData.Edm.resources.dll_8 Microsoft.Spatial.dll Microsoft.Spatial.resources.dll Microsoft.Spatial.resources.dll_1 Microsoft.Spatial.resources.dll_2 Microsoft.Spatial.resources.dll_3 Microsoft.Spatial.resources.dll_4 Microsoft.Spatial.resources.dll_5 Microsoft.Spatial.resources.dll_6 Microsoft.Spatial.resources.dll_7 Microsoft.Spatial.resources.dll_8 Microsoft.Threading.Tasks.Extensions.Des Microsoft.Threading.Tasks.Extensions.dll Microsoft.Threading.Tasks.dll Microsoft.Web.XmlTransform.dll NLog.dll Nancy.Authentication.Basic.dll Nancy.Authentication.Stateless.dll Nancy.Authentication.Token.dll Nancy.Bootstrappers.Autofac.dll Nancy.Hosting.Self.dll Nancy.Serialization.JsonNet.dll Nancy.dll Newtonsoft.Json.dll NuFridge.Service.exe NuFridge.Service.exe.config NuFridge.Shared.dll NuFridge.Website.dll NuGet.Core.dll ProductName Simple.OData.Client.Net40.dll SimpleCrypto.dll System.Net.Http.Extensions.dll System.Net.Http.Formatting.dll System.Net.Http.Primitives.dll System.Spatial.dll System.Spatial.resources.dll System.Spatial.resources.dll_1 System.Spatial.resources.dll_2 System.Spatial.resources.dll_3 System.Spatial.resources.dll_4 System.Spatial.resources.dll_5 System.Spatial.resources.dll_6 System.Spatial.resources.dll_7 System.Spatial.resources.dll_8 System.Web.Http.OData.dll System.Web.Http.WebHost.dll System.Web.Http.dll Version keyStore"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -390,6 +385,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiPersistentDataComponent">
     <ROW PersistentRow="Logs_Dir" Type="1" Condition="1"/>
+    <ROW PersistentRow="NuFridge.Service.exe.config" Type="0" Condition="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiPersistentPropComponent">
     <ROW Property="AI_IA_ENABLE" Registry="AI_IA_ENABLE" HklmSearch="AI_IA_ENABLE" HkcuSearch="AI_IA_ENABLE_1"/>
@@ -544,8 +540,8 @@
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="[Text_Next]" Argument="[AI_Text_Next_Orig]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="3" Options="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
-    <ROW Directory_="Logs_Dir" Component_="Logs" ManualDelete="false"/>
     <ROW Directory_="keyStore_Dir" Component_="keyStore" ManualDelete="false"/>
+    <ROW Directory_="Logs_Dir" Component_="Logs" ManualDelete="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AiBackupCleanup" Type="1" Source="ResourceCleaner.dll" Target="OnAiBackupCleanup" WithoutSeq="true"/>
@@ -586,6 +582,7 @@
     <ROW Action="AI_WinOptFeaturesRemove" Type="11265" Source="WinOptionalFeatures.dll" Target="OnWinOptFeaturesRemove" WithoutSeq="true"/>
     <ROW Action="AI_WinOptFeaturesRollback" Type="11521" Source="WinOptionalFeatures.dll" Target="OnWinOptFeaturesRollback" WithoutSeq="true"/>
     <ROW Action="AI_WinOptFeaturesUninstall" Type="1" Source="WinOptionalFeatures.dll" Target="OnWinOptFeaturesUninstall"/>
+    <ROW Action="NuFridge.Service.exe" Type="3090" Source="NuFridge.Service.exe" Target="&quot;-configure&quot;"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -612,8 +609,9 @@
     <ROW Action="AI_AiBackupRollback" Sequence="1502"/>
     <ROW Action="AI_AiRestoreDeferred" Sequence="6598"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
     <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
+    <ROW Action="NuFridge.Service.exe" Condition="( NOT Installed AND NOT OLDPRODUCTS )" Sequence="5701"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -656,16 +654,11 @@
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpTelephone" Value="[ARPHELPTELEPHONE]" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallationDirectory" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="InstallationDirectory" Value="[APPDIR]" Component_="InstallationDirectory"/>
-    <ROW Registry="ListenPrefixes" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="ListenPrefixes" Component_="ListenPrefixes"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="ModifyPath" Value="[AI_UNINSTALLER] /i [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName"/>
     <ROW Registry="ProductName" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="+" Component_="ProductName"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
-    <ROW Registry="SqlDataSource" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="SqlDataSource" Component_="SqlDataSource"/>
-    <ROW Registry="SqlInitialCatalog" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="SqlInitialCatalog" Component_="SqlInitialCatalog"/>
-    <ROW Registry="SqlPassword" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="SqlPassword" Component_="SqlPassword"/>
-    <ROW Registry="SqlUsername" Root="2" Key="Software\[Manufacturer]\[ProductName]" Name="SqlUsername" Component_="SqlUsername"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
@@ -676,6 +669,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="_" Component_="NuFridge.Service.exe" FileName="*" DirProperty="APPDIR" InstallMode="2"/>
+    <ROW FileKey="__1" Component_="NuFridge.Service.exe" DirProperty="Logs_Dir" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiServCtrlComponent">
     <ROW ServiceControl="NuFridge.Service.exe" Name="NuFridge Server" Event="161" Wait="1" Component_="NuFridge.Service.exe"/>

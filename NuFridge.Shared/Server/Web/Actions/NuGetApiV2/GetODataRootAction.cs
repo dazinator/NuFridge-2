@@ -6,7 +6,7 @@ using Microsoft.Data.OData;
 using Nancy;
 using NuFridge.Shared.Server.Web.OData;
 
-namespace NuFridge.Shared.Server.Web.Actions.NuGetApi
+namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataRootAction : IAction
     {

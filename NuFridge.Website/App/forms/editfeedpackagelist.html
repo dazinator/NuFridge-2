@@ -20,10 +20,10 @@
                         <i class="file icon"></i>
                         File
                     </div>
-                    <div class="item">
+                    <!--<div class="item">
                         <i class="cubes icon"></i>
                         NuGet Feed
-                    </div>
+                    </div>-->
                 </div>
             </div>
         </div>
@@ -40,51 +40,74 @@
 </div>
 <table class="ui celled striped table">
     <thead>
-    <tr>
-        <th colspan="3">
-            Package Listing
-        </th>
-    </tr>
+        <tr>
+            <th colspan="3">
+                Package Listing
+            </th>
+        </tr>
     </thead>
     <!-- ko if: packages().length > 0 -->
     <tbody data-bind="foreach: { data: packages, as: 'package' }">
-    <tr>
-        <td>
-            <h4 class="ui image header">
-                <img data-bind="src: package.IconUrl" class="ui mini rounded image" style="width: 35px; height: 35px;">
-                <div class="content">
-                    <span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span>
-                    <div class="sub header" data-bind="text: package.Authors">
+        <tr>
+            <td>
+
+                <div class="ui items">
+                    <div class="item">
+                        <div class="image">
+                            <img data-bind="src: package.IconUrl" class="ui mini rounded image" style="width: 50px; height: 50px;">
+                        </div>
+                        <div class="content">
+                            <a class="header"><span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span><span class="meta" data-bind="text: ' - ' + package.Version()"></span></a>
+                            <div class="meta" data-bind="foreach: package.OwnersArray">
+                                <span class="ui blue label tiny" data-bind="text: $data.trim()"></span>
+                            </div>
+                            <div class="description">
+                                <p class="readmore" data-bind="text: package.Description, readmore: {speed: 100, embedCSS: true, collapsedHeight: 60}"></p>
+                            </div>
+                            <div class="extra" >
+                                <div class="ui grid two column">
+                                    <div class="column" style="padding: 0;">
+                                        <p data-bind="text: package.DownloadCount() +  ' Downloads'" style="margin-top: 10px;"></p>
+                                    </div>
+                                    <div class="column" style="padding: 0;">
+                                        <div class="ui icon small menu compact right floated">
+                                            <a class="item" data-bind="tooltip: 'Download ' + package.Version(), click: function() { $root.downloadLatestPackageVersion($data) }">
+                                                <i class="download icon"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </h4>
-        </td>
-    </tr>
+            </td>
+        </tr>
     </tbody>
     <!-- /ko -->
     <!-- ko if: packages().length === 0 -->
     <tbody>
-    <tr>
-        <td data-bind="text:  activeSearchTerms().length > 0 ? (isSearchingForPackages() ? 'Searching for packages': 'No packages matching your search terms were found.') : (isSearchingForPackages() ? 'Loading packages' : 'No packages have been uploaded to the feed.')"></td>
-    </tr>
+        <tr>
+            <td data-bind="text:  activeSearchTerms().length > 0 ? (isSearchingForPackages() ? 'Searching for packages': 'No packages matching your search terms were found.') : (isSearchingForPackages() ? 'Loading packages' : 'No packages have been uploaded to the feed.')"></td>
+        </tr>
     </tbody>
     <!-- /ko -->
     <tfoot>
-    <tr>
-        <th colspan="1">
-            <div class="ui right floated pagination menu">
-                <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
-                    <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
-                </a>
-                <!-- ko foreach: new Array(pageCount()) -->
-                <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
-                <!-- /ko -->
-                <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
-                    <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
-                </a>
-            </div>
-        </th>
-    </tr>
+        <tr>
+            <th colspan="1">
+                <div class="ui right floated pagination menu">
+                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
+                        <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
+                    </a>
+                    <!-- ko foreach: new Array(pageCount()) -->
+                    <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
+                    <!-- /ko -->
+                    <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
+                        <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
+                    </a>
+                </div>
+            </th>
+        </tr>
     </tfoot>
 </table>
 

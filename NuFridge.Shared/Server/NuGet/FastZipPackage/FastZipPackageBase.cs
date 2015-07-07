@@ -29,7 +29,7 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
             return _zipFile.GetInputStream(entry);
         }
 
-        public static DateTimeOffset GetPackageCreatedDateTime(Stream stream)
+        public static DateTime GetPackageCreatedDateTime(Stream stream)
         {
             return new ZipFile(stream).Cast<ZipEntry>().Where(f => f.Name.EndsWith(".nuspec")).Select(f => f.DateTime).FirstOrDefault();
         }

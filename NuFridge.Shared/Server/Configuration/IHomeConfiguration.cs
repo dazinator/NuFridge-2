@@ -8,5 +8,8 @@
         string SqlPassword { get; }
         string SqlInitialCatalog { get; }
         string ListenPrefixes { get; }
+        string NuGetFrameworkNames { get; set; }
+
+        void Save();
     }
 }
