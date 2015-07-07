@@ -203,26 +203,31 @@ namespace NuFridge.Shared.Model
         }
 
         public bool RequireLicenseAcceptance { get; set; }
-        [NotMapped]
+
         public string Language { get; set; }
         public string Tags { get; set; }
         [NotMapped]
         public string PackageHashAlgorithm { get; set; }
         [NotMapped]
         public long PackageSize { get; set; }
+
         public DateTime LastUpdated { get; set; }
-        [NotMapped]
+
+
         public DateTime Created { get; set; }
         public bool IsAbsoluteLatestVersion { get; set; }
         public bool IsLatestVersion { get; set; }
         public bool IsPrerelease { get; set; }
         public bool Listed { get; set; }
+
         public int DownloadCount { get; set; }
-        [NotMapped]
+
+
         public int VersionDownloadCount { get; set; }
-        [NotMapped]
+
+
         public bool DevelopmentDependency { get; set; }
-        [NotMapped]
+
 
         public string Authors { get; set; }
         public string Owners { get; set; }

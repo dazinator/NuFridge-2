@@ -1,6 +1,6 @@
 ﻿define(function() {
     return function(config) {
-        var self = {}, data;
+        var self = {};
 
         function getValue(value, defaultValue) {
             if (value) {
@@ -16,27 +16,37 @@
             return defaultValue;
         }
 
-        data = $.extend({
-            Title: ko.observable(getValue(config.properties.Title, "")),
-            Created: ko.observable(getValue(config.properties.Created.text, "")),
-            DownloadCount: ko.observable(getValue(config.properties.DownloadCount.text, "")),
-            Id: ko.observable(getValue(config.properties.Id, "")),
-            Copyright: ko.observable(getValue(config.properties.Copyright,  "")),
-            Authors: ko.observable(getValue(config.properties.Authors, "")),
-            LicenseUrl: ko.observable(getValue(config.properties.LicenseUrl, "")),
-            LastUpdated: ko.observable(getValue(config.properties.LastUpdated.text, "")),
-            ProjectUrl: ko.observable(getValue(config.properties.ProjectUrl, "")),
-            RequireLicenseAcceptance: ko.observable(getValue(config.properties.RequireLicenseAcceptance.text, "")),
-            Summary: ko.observable(getValue(config.properties.Summary, "")),
-            Tags: ko.observable(getValue(config.properties.Tags, "")),
-            Version: ko.observable(getValue(config.properties.Version, "")),
-            PackageHash: ko.observable(getValue(config.properties.PackageHash, "")),
-            IconUrl: ko.observable(getValue(config.properties.IconUrl, "")),
-            IsLatestVersion: ko.observable(getValue(config.properties.IsLatestVersion.text, "")),
-            IsAbsoluteLatestVersion: ko.observable(getValue(config.properties.IsAbsoluteLatestVersion.text, "")),
-            Description: ko.observable(getValue(config.properties.Description, "")),
-            IsPrerelease: ko.observable(getValue(config.properties.IsPrerelease, ""))
-        }, {});
+        var data = new function() {
+            this.Title = ko.observable(getValue(config.properties.Title, ""));
+            this.Created = ko.observable(getValue(config.properties.Created.text, ""));
+            this.DownloadCount = ko.observable(getValue(parseInt(config.properties.DownloadCount.text), 0));
+            this.Id = ko.observable(getValue(config.properties.Id, ""));
+            this.Copyright = ko.observable(getValue(config.properties.Copyright, ""));
+            this.Authors = ko.observable(getValue(config.properties.Authors, ""));
+            this.Owners = ko.observable(getValue(config.properties.Owners, ""));
+            this.LicenseUrl = ko.observable(getValue(config.properties.LicenseUrl, ""));
+            this.LastUpdated = ko.observable(getValue(config.properties.LastUpdated.text, ""));
+            this.ProjectUrl = ko.observable(getValue(config.properties.ProjectUrl, ""));
+            this.RequireLicenseAcceptance = ko.observable(getValue(config.properties.RequireLicenseAcceptance.text, ""));
+            this.Summary = ko.observable(getValue(config.properties.Summary, ""));
+            this.Tags = ko.observable(getValue(config.properties.Tags, ""));
+            this.Version = ko.observable(getValue(config.properties.Version, ""));
+            this.PackageHash = ko.observable(getValue(config.properties.PackageHash, ""));
+            this.IconUrl = ko.observable(getValue(config.properties.IconUrl, ""));
+            this.IsLatestVersion = ko.observable(getValue(config.properties.IsLatestVersion.text, ""));
+            this.IsAbsoluteLatestVersion = ko.observable(getValue(config.properties.IsAbsoluteLatestVersion.text, ""));
+            this.Description = ko.observable(getValue(config.properties.Description, ""));
+            this.IsPrerelease = ko.observable(getValue(config.properties.IsPrerelease, ""));
+            this.OwnersArray = ko.computed(function () {
+                var innerSelf = this;
+                return innerSelf.Owners().split(",");
+            }, this);
+            this.GetDownloadLink = function(feedName) {
+                var innerSelf = this;
+                innerSelf.DownloadCount(innerSelf.DownloadCount() + 1);
+                return window.location.origin + "/feeds/" + feedName + "/packages/" + innerSelf.Id() + "/" + innerSelf.Version();
+            }
+        }();
 
 
         ko.mapping.fromJS(data, {}, self);
