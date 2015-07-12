@@ -29,7 +29,7 @@ namespace NuFridge.Shared.Server.Web
                     if (url1 != null)
                         return (Response)new RedirectResponse(new Uri(url1).ToString());
                 }
-                return (Response)ErrorResponse.BadRequest();
+                return new Response {StatusCode = HttpStatusCode.BadRequest};
             };
         }
 

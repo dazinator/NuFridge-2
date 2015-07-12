@@ -41,10 +41,6 @@ namespace NuFridge.Shared.Server.Web
             {
                 return NancyInternalConfiguration.WithOverrides(builder =>
                 {
-                    builder.StatusCodeHandlers = new List<Type>
-            {
-                typeof (ErrorStatusCodeHandler)
-            };
                     builder.Serializers.Clear();
                     builder.Serializers.Add(typeof(JsonNetSerializer));
                     builder.Serializers.Add(typeof(DefaultXmlSerializer));
@@ -98,6 +94,12 @@ namespace NuFridge.Shared.Server.Web
             {
                 _log.TraceFormat("{0} {1}", nancyContext.Request.Method.PadRight(5, ' '), nancyContext.Request.Url);
                 return (Response)null;
+            });
+
+            pipelines.OnError.AddItemToEndOfPipeline((z, a) =>
+            {
+                _log.ErrorException("Unhandled error on request: " + context.Request.Url + " : " + a.Message, a);
+                return context.Response;
             });
 
             base.RequestStartup(container, pipelines, context);

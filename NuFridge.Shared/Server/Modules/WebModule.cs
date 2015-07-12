@@ -15,7 +15,6 @@ namespace NuFridge.Shared.Server.Modules
         {
             base.Load(builder);
             builder.RegisterType<WebBootstrapper>().As<IPortalBootstrapper>().SingleInstance();
-            builder.RegisterModule(new WebInfrastructureModule());
             builder.RegisterModule(new AuthenticationModule());
             builder.RegisterType<WebServerInitializer>().As<IWebServerInitializer>().SingleInstance();
 

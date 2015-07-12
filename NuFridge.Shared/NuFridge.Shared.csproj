@@ -281,6 +281,7 @@
     <Compile Include="Server\Web\Modules\DiagnosticsApiModule.cs" />
     <Compile Include="Server\Web\Modules\FeedApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
+    <Compile Include="Server\Web\Nancy\ErrorHandler.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />
@@ -346,7 +347,6 @@
     <Compile Include="Server\Modules\NuGetModule.cs" />
     <Compile Include="Server\Modules\ServerConfigurationModule.cs" />
     <Compile Include="Server\Modules\StorageModule.cs" />
-    <Compile Include="Server\Modules\WebInfrastructureModule.cs" />
     <Compile Include="Server\Modules\WebModule.cs" />
     <Compile Include="Model\InternalPackage.cs" />
     <Compile Include="Server\NuGet\PackageIndex.cs" />
@@ -395,8 +395,6 @@
     <Compile Include="Server\Configuration\IWebPortalConfiguration.cs" />
     <Compile Include="Server\Web\ResponseDecorator.cs" />
     <Compile Include="Server\Web\EmbeddedStaticContentConventionBuilder.cs" />
-    <Compile Include="Server\Web\ErrorResponse.cs" />
-    <Compile Include="Server\Web\ErrorStatusCodeHandler.cs" />
     <Compile Include="Server\Web\IPortalBootstrapper.cs" />
     <Compile Include="Server\Web\IWebServerInitializer.cs" />
     <Compile Include="Exceptions\SecurityException.cs" />
