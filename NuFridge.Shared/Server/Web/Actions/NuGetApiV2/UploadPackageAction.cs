@@ -17,9 +17,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
 
-        
 
-        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store) : base(store)
+
+        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store)
+            : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _fileSystem = fileSystem;
@@ -158,20 +159,17 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     }
                 }
 
-                    packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
-                        isUploadedPackageLatestVersion);
+                packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
+                    isUploadedPackageLatestVersion);
 
 
             }
             finally
             {
-                if (File.Exists(temporaryFilePath))
-                {
-                    _fileSystem.DeleteFile(temporaryFilePath);
-                }
+                _fileSystem.DeleteFile(temporaryFilePath);
             }
 
-            return new Response {StatusCode = HttpStatusCode.Created};
+            return new Response { StatusCode = HttpStatusCode.Created };
         }
 
 

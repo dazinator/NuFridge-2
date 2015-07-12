@@ -51,7 +51,7 @@ namespace NuFridge.Tests
 
             Mock<IFeedConfiguration> mock = new Mock<IFeedConfiguration>();
 
-            mock.SetupProperty(fc => fc.PackagesDirectory, "TestDirectory");
+            mock.SetupProperty(fc => fc.Directory, "TestDirectory");
             mock.SetupProperty(fc => fc.Id, 1);
             mock.SetupProperty(fc => fc.FeedId, 1);
 

@@ -207,7 +207,7 @@ namespace NuFridge.Tests
 
             Mock<IFeedConfiguration> feedConfig = new Mock<IFeedConfiguration>();
             feedConfig.Setup(fc => fc.FeedId).Returns(1);
-            feedConfig.Setup(fc => fc.PackagesDirectory).Returns("Fake directory");
+            feedConfig.Setup(fc => fc.Directory).Returns("Fake directory");
             feedConfig.Setup(fc => fc.MaxReleasePackages).Returns(maxReleasePackages);
             feedConfig.Setup(fc => fc.MaxPrereleasePackages).Returns(maxPrereleasePackages);
             feedConfig.Setup(fc => fc.RetentionPolicyEnabled).Returns(retentionPolicyEnabled);

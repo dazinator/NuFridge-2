@@ -61,7 +61,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                     .ToList();
             }
 
-            string packageDirectory = config.PackagesDirectory;
+            string packageDirectory = config.Directory;
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
@@ -80,7 +80,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             {
                 try
                 {
-                    Directory.Delete(packageDirectory);
+                    Directory.Delete(packageDirectory, true);
                 }
                 catch (Exception ex)
                 {

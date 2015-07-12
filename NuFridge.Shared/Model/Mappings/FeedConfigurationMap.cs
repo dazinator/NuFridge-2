@@ -8,7 +8,7 @@ namespace NuFridge.Shared.Model.Mappings
         public FeedConfigurationMap()
         {
             TableName = "FeedConfiguration";
-            Column(col => col.PackagesDirectory);
+            Column(col => col.Directory);
             Column(col => col.FeedId);
             Column(col => col.MaxPrereleasePackages);
             Column(col => col.MaxReleasePackages);

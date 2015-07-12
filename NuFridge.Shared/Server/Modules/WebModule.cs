@@ -58,6 +58,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<RedirectToApiV2Action>().AsSelf();
             builder.RegisterType<GetODataMetadataAction>().AsSelf();
             builder.RegisterType<GetODataRootAction>().AsSelf();
+            builder.RegisterType<UploadSymbolPackageAction>().AsSelf();
         }
     }
 }

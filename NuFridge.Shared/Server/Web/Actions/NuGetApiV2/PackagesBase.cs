@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Nancy;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
+using NuGet;
 using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
@@ -21,6 +24,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         protected bool RequiresApiKeyCheck(IFeed feed)
         {
             return !string.IsNullOrWhiteSpace(feed.ApiKeyHashed);
+        }
+
+        protected bool HasSourceAndSymbols(IPackage package)
+        {
+            var hasSymbols = package.GetFiles("lib")
+                .Any(pf => string.Equals(Path.GetExtension(pf.Path), ".pdb",
+                    StringComparison.InvariantCultureIgnoreCase));
+
+            return hasSymbols && package.GetFiles("src").Any();
         }
 
         protected bool IsValidNuGetApiKey(INancyModule module, IFeed feed)

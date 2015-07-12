@@ -64,12 +64,12 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                         .First();
 
                 var appFolder = _home.InstallDirectory;
-                var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id.ToString());
+                var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id + "-" + feed.Name);
 
                 IFeedConfiguration config = new FeedConfiguration
                 {
                     FeedId = feed.Id,
-                    PackagesDirectory = feedFolder
+                    Directory = feedFolder
                 };
 
                 transaction.Insert(config);

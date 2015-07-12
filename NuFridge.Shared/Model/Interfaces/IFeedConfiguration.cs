@@ -12,7 +12,9 @@ namespace NuFridge.Shared.Model.Interfaces
 
         int FeedId { get; set; }
 
-        string PackagesDirectory { get; set; }
+        string Directory { get; set; }
+        string PackagesDirectory { get; }
+        string SymbolsDirectory { get; }
 
         bool RetentionPolicyEnabled { get; set; }
 

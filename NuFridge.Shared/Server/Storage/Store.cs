@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters;
@@ -53,6 +54,11 @@ namespace NuFridge.Shared.Server.Storage
 
         private string SetConnectionStringOptions(string connectionString)
         {
+            if (string.IsNullOrWhiteSpace(_config.SqlDataSource))
+            {
+                throw new Exception("No SQL Server settings were found in the config file.");
+            }
+
             return new SqlConnectionStringBuilder(connectionString)
             {
                 MultipleActiveResultSets = true,

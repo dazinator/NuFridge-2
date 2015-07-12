@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml;
-using Autofac;
-using Microsoft.Data.OData;
+﻿using Autofac;
 using Nancy;
-using Nancy.Responses;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
-using NuFridge.Shared.Server.Web.Batch;
-using NuFridge.Shared.Server.Web.OData;
 
 namespace NuFridge.Shared.Server.Web.Modules
 {
@@ -20,6 +8,9 @@ namespace NuFridge.Shared.Server.Web.Modules
     {
         public NuGetV2ApiModule(IContainer container)
         {
+            //Upload symbol package
+            Put["feeds{feed}/api/v2/symbols"] = p => container.Resolve<UploadSymbolPackageAction>().Execute(p, this);
+
             //Batch post
             Post["feeds/{feed}/api/v2/$batch"] = p => container.Resolve<BatchAction>().Execute(p, this);
 
