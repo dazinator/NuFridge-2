@@ -64,7 +64,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                         .First();
 
                 var appFolder = _home.InstallDirectory;
-                var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id + "-" + feed.Name);
+                var feedFolder = Path.Combine(appFolder, "Feeds", feed.Id.ToString());
 
                 IFeedConfiguration config = new FeedConfiguration
                 {

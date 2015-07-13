@@ -67,12 +67,6 @@ namespace NuFridge.Shared.Server.Storage
             ReaderWriter = PropertyReaderFactory.Create<object>(property.DeclaringType, property.Name);
             if (property.PropertyType.IsGenericType && typeof(Nullable<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()))
                 IsNullable = true;
-            if (property.PropertyType == typeof(string) && property.Name.EndsWith("Id"))
-            {
-                DbType = DbType.String;
-                if (_maxLength == 0)
-                    MaxLength = 50;
-            }
             if (property.PropertyType.IsEnum)
             {
                 MaxLength = 50;
