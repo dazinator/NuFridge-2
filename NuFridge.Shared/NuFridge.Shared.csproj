@@ -281,7 +281,6 @@
     <Compile Include="Server\Web\Modules\DiagnosticsApiModule.cs" />
     <Compile Include="Server\Web\Modules\FeedApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
-    <Compile Include="Server\Web\Nancy\ErrorHandler.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />
