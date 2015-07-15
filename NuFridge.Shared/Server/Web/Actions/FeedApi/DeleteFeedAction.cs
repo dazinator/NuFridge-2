@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Nancy;
 using Nancy.Security;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
@@ -12,6 +13,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
     public class DeleteFeedAction : IAction
     {
         private readonly IStore _store;
+        private readonly ILog _log = LogProvider.For<DeleteFeedAction>();
 
         public DeleteFeedAction(IStore store)
         {
@@ -84,7 +86,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 }
                 catch (Exception ex)
                 {
-
+                    _log.ErrorException(ex.Message, ex);
                 }
             }
 

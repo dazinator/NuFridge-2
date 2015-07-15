@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             List<IFeed> feeds;
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                feeds = transaction.Query<IFeed>().ToList(pageSize * page, pageSize, out totalResults);
+                feeds = transaction.Query<IFeed>().OrderBy("Name").ToList(pageSize * page, pageSize, out totalResults);
             }
 
             feeds.Where(fd => !string.IsNullOrWhiteSpace(fd.ApiKeyHashed)).ToList().ForEach(fd => fd.HasApiKey = true);

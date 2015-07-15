@@ -26,7 +26,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 string name = module.Request.Query.name;
 
                 int totalResults;
-                var feeds = transaction.Query<IFeed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").ToList(0, 10, out totalResults);
+                var feeds = transaction.Query<IFeed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").OrderBy("Name").ToList(0, 10, out totalResults);
 
                 var category = new FeedSearchResponse.Category("Default");
                 response.Results.Add(category);

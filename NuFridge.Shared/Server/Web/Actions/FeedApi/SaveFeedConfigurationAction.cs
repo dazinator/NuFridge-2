@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
@@ -11,6 +12,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
     public class SaveFeedConfigurationAction : IAction
     {
         private readonly IStore _store;
+        private readonly ILog _log = LogProvider.For<SaveFeedConfigurationAction>();
 
         public SaveFeedConfigurationAction(IStore store)
         {
@@ -49,6 +51,8 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             }
             catch (Exception ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 return HttpStatusCode.InternalServerError;
             }
 

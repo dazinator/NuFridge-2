@@ -8,6 +8,7 @@ using System.Text;
 using Autofac;
 using Newtonsoft.Json;
 using NuFridge.Shared.Exceptions;
+using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Server.Storage
 {
@@ -20,6 +21,7 @@ namespace NuFridge.Shared.Server.Storage
         private readonly object _sync = new object();
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly RelationalMappings _mappings;
+        private readonly ILog _log = LogProvider.For<Transaction>();
 
         private readonly SqlConnection _connection;
         private readonly SqlTransaction _transaction;
@@ -92,6 +94,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     if (ex.Number == 2627 || ex.Number == 2601)
                     {
                         UniqueRule uniqueRule = mapping.UniqueConstraints.FirstOrDefault(u => ex.Message.Contains(u.ConstraintName));
@@ -119,6 +123,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }
@@ -143,6 +149,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }
@@ -159,6 +167,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }
@@ -174,6 +184,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }
@@ -272,6 +284,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }
@@ -298,6 +312,8 @@ namespace NuFridge.Shared.Server.Storage
                 }
                 catch (SqlException ex)
                 {
+                    _log.ErrorException(ex.Message, ex);
+
                     throw WrapException(command, ex);
                 }
             }

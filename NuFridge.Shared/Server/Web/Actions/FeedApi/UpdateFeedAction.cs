@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
 using SimpleCrypto;
@@ -11,6 +12,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
     public class UpdateFeedAction : IAction
     {
         private readonly IStore _store;
+        private readonly ILog _log = LogProvider.For<UpdateFeedAction>();
 
         public UpdateFeedAction(IStore store)
         {
@@ -64,6 +66,8 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             }
             catch (Exception ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 return HttpStatusCode.InternalServerError;
             }
 

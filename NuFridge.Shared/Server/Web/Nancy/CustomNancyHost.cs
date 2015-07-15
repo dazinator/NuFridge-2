@@ -14,6 +14,7 @@ using Nancy.Extensions;
 using Nancy.Helpers;
 using Nancy.Hosting.Self;
 using Nancy.IO;
+using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Server.Web.Nancy
 {
@@ -25,6 +26,7 @@ namespace NuFridge.Shared.Server.Web.Nancy
         private readonly INancyEngine _engine;
         private readonly HostConfiguration _configuration;
         private readonly INancyBootstrapper _bootstrapper;
+        private readonly ILog _log = LogProvider.For<CustomNancyHost>();
 
         public AuthenticationSchemeSelector AuthenticationSchemeSelector { get; set; }
 
@@ -82,6 +84,7 @@ namespace NuFridge.Shared.Server.Web.Nancy
             }
             catch (Exception ex)
             {
+                _log.ErrorException(ex.Message, ex);
                 _configuration.UnhandledExceptionCallback(ex);
                 throw;
             }
@@ -112,6 +115,8 @@ namespace NuFridge.Shared.Server.Web.Nancy
             }
             catch (HttpListenerException ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 if (ex.ErrorCode == 5)
                     return false;
                 throw;
@@ -259,6 +264,8 @@ namespace NuFridge.Shared.Server.Web.Nancy
             }
             catch (Exception ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 _configuration.UnhandledExceptionCallback(ex);
                 try
                 {
@@ -283,6 +290,8 @@ namespace NuFridge.Shared.Server.Web.Nancy
             }
             catch (Exception ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 _configuration.UnhandledExceptionCallback(ex);
             }
         }

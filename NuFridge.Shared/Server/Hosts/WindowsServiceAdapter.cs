@@ -44,10 +44,10 @@ namespace NuFridge.Shared.Server.Hosts
                 if (ExceptionKnowledgeBase.TryInterpret(ex, out entry))
                 {
                     string str = entry.ToString();
-                    _log.ErrorException(str, ex);
+                    _log.FatalException(str, ex);
                     throw new Exception(str, ex);
                 }
-                _log.ErrorException(ex.Message, ex);
+                _log.FatalException(ex.Message, ex);
                 throw;
             }
         }

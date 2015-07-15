@@ -43,17 +43,21 @@ namespace NuFridge.Shared.Server.Web
             }
             catch (AutomaticUrlReservationCreationFailureException ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 throw new Exception(ExceptionExtensions.SuggestUrlReservations(listenPrefixes));
             }
             catch (HttpListenerException ex)
             {
+                _log.ErrorException(ex.Message, ex);
+
                 string message = ex.SuggestSolution(listenPrefixes);
                 if (message != null)
                     throw new Exception(message, ex);
                 throw;
             }
             foreach (Uri uri in listenPrefixes)
-                _log.InfoFormat("NuFridge server available at: {0}://localhost:{1}{2}", uri.Scheme, uri.Port, uri.PathAndQuery);
+                _log.InfoFormat("NuFridge server running at: {0}://localhost:{1}{2}", uri.Scheme, uri.Port, uri.PathAndQuery);
         }
 
         public void Starting(string message)
