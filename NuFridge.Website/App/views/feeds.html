@@ -75,14 +75,14 @@
                 <tr>
                     <th colspan="1">
                         <div class="ui right floated pagination menu">
-                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
-                                <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }, click: $root.previousPage">
+                                <i class="left chevron icon"></i>
                             </a>
                             <!-- ko foreach: new Array(pageCount()) -->
                             <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
                             <!-- /ko -->
-                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
-                                <i class="right chevron icon" data-bind="click: $root.nextPage"></i>
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }, click: $root.nextPage">
+                                <i class="right chevron icon"></i>
                             </a>
                         </div>
                     </th>

@@ -14,6 +14,7 @@ namespace NuFridge.Shared.Model
         public string ApiKeyHashed { get; set; }
         public string ApiKeySalt { get; set; }
         public bool HasApiKey { get; set; }
+        public string RootUrl { get; set; }
     }
 
     public interface IFeed
@@ -26,5 +27,6 @@ namespace NuFridge.Shared.Model
         string FeedUri { get; set; }
         bool HasApiKey { get; set; }
         string ApiKey { get; set; }
+        string RootUrl { get; set; }
     }
 }

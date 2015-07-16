@@ -9,12 +9,27 @@
             }),
             Id: ko.observable(0),
             ApiKey: ko.observable(""),
-            HasApiKey: ko.observable(false)
+            HasApiKey: ko.observable(false),
+            RootUrl: ko.observable(false)
         }, config);
 
         data = $.extend({
             viewFeedUrl: function () {
-                return '#feeds/view/' + data.Id;
+                var id;
+
+                if (typeof(data.Id) === "function") {
+                    id = data.Id();
+                } else {
+                    id = data.Id;
+                }
+
+                return '#feeds/view/' + id;
+            },
+            GetPushPackagesUrl: function() {
+                return data.RootUrl() + "/api/packages";
+            },
+            GetODataUrl: function() {
+                return data.RootUrl() + "/api/v2";
             }
         }, data);
 
