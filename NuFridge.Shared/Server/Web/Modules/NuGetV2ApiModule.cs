@@ -37,7 +37,7 @@ namespace NuFridge.Shared.Server.Web.Modules
 
             //Redirect to package download url
             Get["feeds/{feed}/api/v2/package/{id}/{version}"] = p => container.Resolve<RedirectToDownloadPackageAction>().Execute(p, this);
-
+            
             //Download package
             Get["feeds/{feed}/packages/{id}/{version}"] = p => container.Resolve<DownloadPackageAction>().Execute(p, this);
 
