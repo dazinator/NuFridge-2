@@ -1,0 +1,38 @@
+﻿<div class="ui form">
+    <div class="field">
+        <div class="required field">
+            <label>Hostname</label>
+            <input type="text">
+        </div>
+    </div>
+    <div class="field">
+        <div class="required field">
+            <label>Port</label>
+            <input type="text">
+        </div>
+    </div>
+    <div class="field">
+        <div class="required field">
+            <label>Username</label>
+            <input type="text">
+        </div>
+    </div>
+    <div class="field">
+        <div class="required field">
+            <label>Password</label>
+            <input type="text">
+        </div>
+    </div>
+        <div class="field">
+        <div class="required field">
+            <label>Enable SSL</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="ui buttons">
+        <button class="ui button" data-bind="click: function () { $root.cancelClick(); }, css: { disabled: $root.isSaving() === true, loading: $root.isCancelNavigating() === true }">Cancel</button>
+        <div class="or"></div>
+        <button class="ui positive button" data-bind="click: function () { $root.submitClick(); }, css: { disabled: $root.isCancelNavigating() === true, loading: $root.isSaving() === true }">Save</button>
+    </div>
+</div>
