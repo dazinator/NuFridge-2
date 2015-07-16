@@ -11,7 +11,7 @@ namespace NuFridge.Shared.Server.Application
     {
         private const RegistryHive Hive = RegistryHive.LocalMachine;
         private const RegistryView View = RegistryView.Registry32;
-        private const string KeyName = "Software\\NuFridge";
+        private const string KeyName = "Software\\NuFridge\\NuFridge";
 
         private ApplicationInstanceRecord Get()
         {
