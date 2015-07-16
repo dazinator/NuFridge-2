@@ -1,2 +1,2 @@
-﻿CREATE INDEX [IX_Package_FeedId_IsLatestVersion_Listed] ON [NuFridge].[NuFridge].[Package] ([FeedId], [IsLatestVersion], [Listed]) INCLUDE ([PackageId])
-CREATE INDEX [IX_Package_FeedId_IsAbsoluteLatestVersion_Listed] ON [NuFridge].[NuFridge].[Package] ([FeedId], [IsAbsoluteLatestVersion], [Listed]) INCLUDE ([SupportedFrameworks])
+﻿CREATE INDEX [IX_Package_FeedId_IsLatestVersion_Listed] ON [NuFridge].[Package] ([FeedId], [IsLatestVersion], [Listed]) INCLUDE ([PackageId])
+CREATE INDEX [IX_Package_FeedId_IsAbsoluteLatestVersion_Listed] ON [NuFridge].[Package] ([FeedId], [IsAbsoluteLatestVersion], [Listed]) INCLUDE ([SupportedFrameworks])
