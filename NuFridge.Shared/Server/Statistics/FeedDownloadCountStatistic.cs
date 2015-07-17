@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Statistics
 
                 if (packages.Any(pk => pk.DownloadCount > 0))
                 {
-                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.DownloadCount), generator.NextColour()));
+                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
                 }
             }
 
