@@ -29,6 +29,11 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
                 var usersCount = transaction.Query<User>().Count();
                 var packagesCount = transaction.Query<IInternalPackage>().Count();
 
+                if (usersCount == 0)
+                {
+                    usersCount = 1;
+                }
+
                 return new
                 {
                     feedCount = feedsCount,

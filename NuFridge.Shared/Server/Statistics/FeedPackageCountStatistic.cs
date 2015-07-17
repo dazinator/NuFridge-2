@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Statistics
            
             foreach (var feed in feeds)
             {
-                var packageCount = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).Count();
+                var packageCount = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Where("IsLatestVersion = 1 OR IsAbsoluteLatestVersion = 1").Parameter("feedId", feed.Id).Count();
 
                 if (packageCount > 0)
                 {
