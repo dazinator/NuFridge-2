@@ -50,7 +50,7 @@
                 return data.RootUrl() + "/api/v2/Packages(Id='{PackageId}',Version='{PackageVersion}')";
             },
             GetLegacyODataPackageUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/Packages(Id='{PackageId}',Version='{PackageVersion}')";
+                return data.RootUrl() + "/api/odata/Packages(Id='{PackageId}',Version='{PackageVersion}')";
             },
             GetODataPackagesUrl: function () {
                 return data.RootUrl() + "/api/v2/Packages()";
