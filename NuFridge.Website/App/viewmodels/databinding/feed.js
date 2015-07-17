@@ -32,19 +32,19 @@
                 return data.RootUrl() + "/api/v2";
             },
             GetLegacyODataUrl: function() {
-                return data.RootUrl() + "/api/v2/odata";
+                return data.RootUrl() + "/api/odata";
             },
             GetODataMetadataUrl: function() {
                 return data.RootUrl() + "/api/v2/$metadata";
             },
             GetLegacyODataMetadataUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/$metadata";
+                return data.RootUrl() + "/api/odata/$metadata";
             },
             GetODataSearchUrl: function () {
                 return data.RootUrl() + "/api/v2/Search()";
             },
             GetLegacyODataSearchUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/Search()";
+                return data.RootUrl() + "/api/odata/Search()";
             },
             GetODataPackageUrl: function () {
                 return data.RootUrl() + "/api/v2/Packages(Id='{PackageId}',Version='{PackageVersion}')";
@@ -56,13 +56,13 @@
                 return data.RootUrl() + "/api/v2/Packages()";
             },
             GetLegacyODataPackagesUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/Packages()";
+                return data.RootUrl() + "/api/odata/Packages()";
             },
             GetODataBatchUrl: function () {
                 return data.RootUrl() + "/api/v2/$batch";
             },
             GetLegacyODataBatchUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/$batch";
+                return data.RootUrl() + "/api/odata/$batch";
             },
             GetDownloadUrl: function() {
                 return data.RootUrl() + "/api/v2/packages/{id}/{version}";
@@ -74,7 +74,7 @@
                 return data.RootUrl() + "/api/v2/FindPackagesById()";
             },
             GetLegacyFindPackagesByIdUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/FindPackagesById()";
+                return data.RootUrl() + "/api/odata/FindPackagesById()";
             },
             GetTabCompletionPackageIdsUrl: function () {
                 return data.RootUrl() + "/api/v2/package-ids";
@@ -86,13 +86,13 @@
                 return data.RootUrl() + "/api/v2/GetUpdates()";
             },
             GetLegacyGetUpdatesUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/GetUpdates()";
+                return data.RootUrl() + "/api/odata/GetUpdates()";
             },
             GetSymbolsUrl: function () {
                 return data.RootUrl() + "/api/v2/symbols";
             },
             GetLegacySymbolsUrl: function () {
-                return data.RootUrl() + "/api/v2/odata/symbols";
+                return data.RootUrl() + "/api/odata/symbols";
             }
         }, data);
 
