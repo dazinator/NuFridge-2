@@ -5,6 +5,11 @@ namespace NuFridge.Shared.Model
 {
     public class FeedConfiguration : IEntity, IFeedConfiguration
     {
+        public FeedConfiguration()
+        {
+            RpDeletePackages = true; //Make this configurable
+        }
+
         public int Id { get; set; }
 
         public int FeedId { get; set; }
@@ -13,6 +18,7 @@ namespace NuFridge.Shared.Model
         public bool RetentionPolicyEnabled { get; set; }
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
+        public bool RpDeletePackages { get; set; }
 
         public string Name
         {

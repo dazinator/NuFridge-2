@@ -15,7 +15,7 @@ namespace NuFridge.Shared.Model.Interfaces
         string Directory { get; set; }
         string PackagesDirectory { get; }
         string SymbolsDirectory { get; }
-
+        bool RpDeletePackages { get; set; }
         bool RetentionPolicyEnabled { get; set; }
 
         int MaxPrereleasePackages { get; set; }

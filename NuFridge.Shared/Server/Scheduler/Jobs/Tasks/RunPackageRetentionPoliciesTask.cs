@@ -145,7 +145,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 {
                     try
                     {
-                        packageRepo.RemovePackage(packageToDelete);
+                        if (config.RpDeletePackages)
+                        {
+                            packageRepo.DeletePackage(packageToDelete);
+                        }
+                        else
+                        {
+                            packageRepo.RemovePackage(packageToDelete);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -156,6 +163,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
             return toDeleteCount > 0 ? toDeleteCount : 0;
         }
+
+       
 
         private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
         {
@@ -186,7 +195,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 {
                     try
                     {
-                        packageRepo.RemovePackage(packageToDelete);
+                        if (config.RpDeletePackages)
+                        {
+                            packageRepo.DeletePackage(packageToDelete);
+                        }
+                        else
+                        {
+                            packageRepo.RemovePackage(packageToDelete);
+                        }
+        
                     }
                     catch (Exception ex)
                     {

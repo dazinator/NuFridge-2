@@ -60,16 +60,21 @@ namespace NuFridge.Shared.Server.NuGet
             return GetRawContents(package);
         }
 
+        public void DeletePackage(IInternalPackage internalPackage)
+        {
+            var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
+
+            filePath = Path.Combine(FileSystem.Root, filePath);
+
+            IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
+
+            base.RemovePackage(package);
+
+            _packageIndex.DeletePackage(internalPackage);
+        }
+
         public void RemovePackage(IInternalPackage internalPackage)
         {
-            //var filePath = GetPackageFilePath(internalPackage.PackageId, internalPackage.GetSemanticVersion());
-
-            //filePath = Path.Combine(FileSystem.Root, filePath);
-
-            //IPackage package = FastZipPackage.FastZipPackage.Open(filePath, new CryptoHashProvider());
-
-            //RemovePackage(package);
-
             _packageIndex.UnlistPackage(internalPackage);
         }
 

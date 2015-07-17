@@ -27,5 +27,6 @@ namespace NuFridge.Shared.Server.NuGet
         void IncrementDownloadCount(IInternalPackage package);
 
 
+        void DeletePackage(IInternalPackage packageToDelete);
     }
 }
