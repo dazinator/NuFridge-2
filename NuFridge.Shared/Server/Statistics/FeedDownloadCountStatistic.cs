@@ -26,7 +26,7 @@ namespace NuFridge.Shared.Server.Statistics
             {
                 var packages = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
 
-                if (packages.Any(pk => pk.DownloadCount > 0))
+                if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {
                     list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
                 }
