@@ -7,7 +7,7 @@ namespace NuFridge.Shared.Model
     {
         public FeedConfiguration()
         {
-            RpDeletePackages = true; //Make this configurable
+
         }
 
         public int Id { get; set; }

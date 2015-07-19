@@ -23,17 +23,25 @@
         <div class="inline field">
             <div class="ui toggle checkbox retentionPolicyEnabled">
                 <input type="checkbox">
-                <label style="font-size: .9285em;font-weight: 700;">Enable Retention Policy</label>
+                <label style="font-size: .9285em; font-weight: 700;">Enable Retention Policy</label>
             </div>
         </div>
     </div>
-    <div class="field">
+    <div class="field" data-bind="visible: RetentionPolicyEnabled">
+        <div class="inline field">
+            <div class="ui toggle checkbox retentionPolicyDeleteEnabled">
+                <input type="checkbox">
+                <label style="font-size: .9285em;font-weight: 700;">Delete Packages</label>
+            </div>
+        </div>
+    </div>
+    <div class="field" data-bind="visible: RetentionPolicyEnabled">
         <div class="required field" data-bind="css: {error: MaxReleasePackages.isValid() === false}">
             <label>Max Release Packages</label>
             <input type="text" data-bind="value: MaxReleasePackages, valueUpdate: 'afterkeydown'">
         </div>
     </div>
-    <div class="field">
+    <div class="field" data-bind="visible: RetentionPolicyEnabled">
         <div class="required field" data-bind="css: {error: MaxPrereleasePackages.isValid() === false}">
             <label>Max Prerelease Packages</label>
             <input type="text" data-bind="value: MaxPrereleasePackages, valueUpdate: 'afterkeydown'">

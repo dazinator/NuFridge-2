@@ -1,4 +1,5 @@
-﻿using NuFridge.Shared.Model.Interfaces;
+﻿using System.Data;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Model.Mappings
@@ -13,6 +14,7 @@ namespace NuFridge.Shared.Model.Mappings
             Column(col => col.MaxPrereleasePackages);
             Column(col => col.MaxReleasePackages);
             Column(col => col.RetentionPolicyEnabled);
+            VirtualColumn("RetentionPolicyDeletePackages", DbType.Boolean, configuration => configuration.RpDeletePackages, (configuration, b) => configuration.RpDeletePackages = b);
         }
     }
 }
