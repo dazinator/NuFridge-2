@@ -311,6 +311,8 @@
     <EmbeddedResource Include="App\forms\editfeedpackagelist.js" />
     <EmbeddedResource Include="App\forms\smtpconfiguration.html" />
     <EmbeddedResource Include="App\forms\smtpconfiguration.js" />
+    <EmbeddedResource Include="App\views\signout.html" />
+    <EmbeddedResource Include="App\viewmodels\signout.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />

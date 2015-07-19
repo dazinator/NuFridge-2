@@ -13,7 +13,7 @@
             { route: 'feeds/view/:id', title: 'View Feed', moduleId: 'viewmodels/editfeed', nav: false },
             { route: 'feeds/create', title: 'Create Feed', moduleId: 'viewmodels/addfeed', nav: false },
             { route: 'signin', title: 'Sign in', moduleId: 'viewmodels/registersignin', nav: false },
-            { route: 'signout', title: 'Sign out', nav: true, icon: "sign out icon" }
+            { route: 'signout', title: 'Sign out', nav: true, moduleId:'viewmodels/signout', icon: "sign out icon" }
         ]).buildNavigationModel();
 
         router.on('router:navigation:processing').then(function() {
