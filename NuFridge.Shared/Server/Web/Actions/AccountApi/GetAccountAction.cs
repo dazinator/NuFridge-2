@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
@@ -37,7 +38,7 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
                 return GetUser(module.Context.CurrentUser.UserName);
             }
 
-            return null;
+            return new Response() {StatusCode = HttpStatusCode.Unauthorized};
         }
 
         private User GetUser(string username)
