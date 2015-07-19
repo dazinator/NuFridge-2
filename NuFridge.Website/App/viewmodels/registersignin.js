@@ -10,7 +10,7 @@
 
         new auth().deleteCookie();
 
-        self.signInRequest().UserName("admin");
+        self.signInRequest().UserName("administrator");
         self.signInRequest().Password("password");
     };
 

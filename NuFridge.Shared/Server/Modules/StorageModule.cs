@@ -14,13 +14,13 @@ namespace NuFridge.Shared.Server.Modules
 
             builder.Register((c => new StoreFactory(c.Resolve<IContainer>(), c.Resolve<IHomeConfiguration>(), c.Resolve<IServerStorageConfiguration>().ExternalDatabaseConnectionString))).As<IStoreFactory>().SingleInstance();
             builder.RegisterType<DatabaseMigrator>().As<IDatabaseMigrator>().SingleInstance();
-            builder.RegisterType<FeedStoreInitializer>().AsSelf();
+            builder.RegisterType<AdminUserInitializer>().AsSelf();
             builder.RegisterType<MigrationInitializer>().AsSelf();
 
             builder.Register((c => new StoreInitializer(c.Resolve<IStore>(), new IInitializeRelationalStore[]
       {
           c.Resolve<MigrationInitializer>(),
-          c.Resolve<FeedStoreInitializer>()
+          c.Resolve<AdminUserInitializer>()
       }))).As<IStoreInitializer>();
 
             builder.Register((c => c.Resolve<IStoreFactory>().Store)).As<IStore>().SingleInstance();

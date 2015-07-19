@@ -359,7 +359,7 @@
     <Compile Include="Server\Storage\IDatabaseMigrator.cs" />
     <Compile Include="Server\Storage\Initializers\MigrationInitializer.cs" />
     <Compile Include="Server\Storage\IStoreInitializer.cs" />
-    <Compile Include="Server\Storage\Initializers\FeedStoreInitializer.cs" />
+    <Compile Include="Server\Storage\Initializers\AdminUserInitializer.cs" />
     <Compile Include="Server\Storage\IInitializeRelationalStore.cs" />
     <Compile Include="Server\Storage\IServerStorageConfiguration.cs" />
     <Compile Include="Server\ServerEngine.cs" />
@@ -463,6 +463,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0008-RetentionPolicyChanges.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0010-CreateUsersTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0009-DropUsersTable - Copy.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

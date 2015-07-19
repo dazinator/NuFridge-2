@@ -14,7 +14,7 @@ namespace NuFridge.Shared.Server.Web
 
         static UserDatabase()
         {
-            Users.Add(new Tuple<string, string>("admin", "password"));
+            Users.Add(new Tuple<string, string>("administrator", "password"));
         }
 
         public static IUserIdentity ValidateUser(SignInRequest signInRequest)

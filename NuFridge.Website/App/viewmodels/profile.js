@@ -11,7 +11,7 @@
         var self = this;
 
         $.ajax({
-            url: "/api/account/administrator",
+            url: "/api/account",
             cache: false,
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json'
