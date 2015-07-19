@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server.Web
 {
     public class ODataPackages
     {
-        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<IInternalPackage> packages, int feedId, int total)
+        public static Stream CreatePackagesStream(string baseUrl, IInternalPackageRepository packageRepository, string baseAddress, IEnumerable<IInternalPackage> packages, int feedId, int total, string strSelectFields)
         {
             var writerSettings = new ODataMessageWriterSettings()
             {
@@ -37,9 +37,16 @@ namespace NuFridge.Shared.Server.Web
 
             var pks = packages.Select(pk => new ODataPackage(pk));
 
+            string[] selectFields = strSelectFields.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToLower()).ToArray();
+
+            if (selectFields.Contains("id"))
+            {
+                selectFields[Array.IndexOf(selectFields, "id")] = "packageid";
+            }
+
             foreach (var package in pks)
             {
-                feedWriter.WriteStart(MapPackageToEntry(baseAddress, package));
+                feedWriter.WriteStart(MapPackageToEntry(baseAddress, package, selectFields));
                 feedWriter.WriteEnd();
             }
 
@@ -52,7 +59,7 @@ namespace NuFridge.Shared.Server.Web
             return stream;
         }
 
-        internal static ODataEntry MapPackageToEntry(string baseAddress, ODataPackage package)
+        internal static ODataEntry MapPackageToEntry(string baseAddress, ODataPackage package, string[] properties)
         {
 
             var entryId = "Packages(Id='" + package.Id + "',Version='" + package.Version + "')";
@@ -67,7 +74,7 @@ namespace NuFridge.Shared.Server.Web
                     ContentType = "application/zip",
                     ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version),
                 },
-                Properties = GetProperties(package)
+                Properties = GetProperties(package, properties)
             };
 
             return oDataEntry;
@@ -75,35 +82,15 @@ namespace NuFridge.Shared.Server.Web
 
 
 
-        private static IEnumerable<ODataProperty> GetProperties(object obj)
+        private static IEnumerable<ODataProperty> GetProperties(object obj, string[] propertiesToInclude)
         {
-            return obj.GetType().GetProperties().Select(property => new ODataProperty() { Name = property.Name, Value = property.GetValue(obj) }).ToArray();
-        }
+            var properties =
+                obj.GetType()
+                    .GetProperties()
+                    .Select(property => new ODataProperty() {Name = property.Name, Value = property.GetValue(obj)})
+                    .ToArray();
 
-        public static Stream CreatePackageStream(string baseAddress, ODataPackage package)
-        {
-            var writerSettings = new ODataMessageWriterSettings()
-            {
-                Indent = true, // pretty printing
-                CheckCharacters = false,
-                BaseUri = new Uri("http://localhost:12345"),
-                Version = ODataVersion.V3
-            };
-
-            writerSettings.SetContentType(ODataFormat.Atom);
-
-            var responseMessage = new MemoryResponseMessage();
-            var writer = new ODataMessageWriter(responseMessage, writerSettings);
-
-            var feedWriter = writer.CreateODataEntryWriter();
-            feedWriter.WriteStart(MapPackageToEntry(baseAddress, package));
-            feedWriter.WriteEnd();
-            feedWriter.Flush();
-
-            var stream = responseMessage.GetStream();
-            stream.Seek(0, SeekOrigin.Begin);
-
-            return stream;
+            return properties.Where(pr => propertiesToInclude.Contains(pr.Name.ToLower()));
         }
     }
 }

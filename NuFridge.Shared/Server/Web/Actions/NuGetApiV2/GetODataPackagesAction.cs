@@ -46,7 +46,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
-            RemoveSelectParamFromQuery(queryDictionary);
+            string selectValue = GetAndRemoveSelectParamFromQuery(queryDictionary);
+
             AddAdditionalQueryParams(queryDictionary);
 
             NuGetODataModelBuilderQueryable builder = new NuGetODataModelBuilderQueryable();
@@ -67,11 +68,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 ds = ExecuteQuery(context, request, ds);
 
-                return ProcessResponse(module, request, feed, ds);
+                return ProcessResponse(module, request, feed, ds, selectValue);
             }
         }
 
-        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds)
+        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectFields)
         {
             long? total = request.GetInlineCount();
 
@@ -82,7 +83,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2/", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
 
             var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
-                ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0);
+                ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectFields);
 
             StreamReader reader = new StreamReader(stream);
             string text = reader.ReadToEnd();
@@ -235,12 +236,16 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             
         }
 
-        private static void RemoveSelectParamFromQuery(IDictionary<string, object> queryDictionary)
+        private static string GetAndRemoveSelectParamFromQuery(IDictionary<string, object> queryDictionary)
         {
             if (queryDictionary.ContainsKey("$select"))
             {
+                DynamicDictionaryValue select = (DynamicDictionaryValue)queryDictionary["$select"];
                 queryDictionary.Remove("$select");
+                return (string)select.Value;
             }
+
+            return null;
         }
 
         private IFeed GetFeedModel(string feedName)

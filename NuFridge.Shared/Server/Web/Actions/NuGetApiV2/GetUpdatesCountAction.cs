@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
         }
 
-        protected override dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds)
+        protected override dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectValue)
         {
             long? total = request.GetInlineCount();
 

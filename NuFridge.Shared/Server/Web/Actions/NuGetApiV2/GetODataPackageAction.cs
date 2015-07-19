@@ -96,7 +96,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var entryWriter = writer.CreateODataEntryWriter();
 
-            entryWriter.WriteStart(ODataPackages.MapPackageToEntry(baseAddress, new ODataPackage(package)));
+            entryWriter.WriteStart(ODataPackages.MapPackageToEntry(baseAddress, new ODataPackage(package), new string[0]));
             entryWriter.WriteEnd();
 
             var msgStream = responseMessage.GetStream();
