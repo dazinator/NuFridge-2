@@ -168,6 +168,7 @@
             cache: false,
             success: function (result) {
                 $('#deleteConfirmModal').modal('hide');
+
                 router.navigate('#feeds');
             },
             error: function(xmlHttpRequest, textStatus, errorThrown) {
@@ -193,7 +194,8 @@
                 self.deleteFeed();
                 return false;
             },
-            transition: 'horizontal flip'
+            transition: 'horizontal flip',
+            detachable: false
         };
 
         $('#deleteConfirmModal').modal(options).modal('show');
