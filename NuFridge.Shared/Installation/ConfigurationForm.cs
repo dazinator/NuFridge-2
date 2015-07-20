@@ -19,10 +19,12 @@ namespace NuFridge.Shared.Installation
 {
     public partial class ConfigurationForm : Form
     {
+        private readonly string _installDirectory;
         private ILog _log = LogProvider.For<ConfigurationForm>();
 
-        public ConfigurationForm()
+        public ConfigurationForm(string installDirectory)
         {
+            _installDirectory = installDirectory;
             InitializeComponent();
         }
 
@@ -200,6 +202,25 @@ namespace NuFridge.Shared.Installation
         private void ConfigurationForm_Load(object sender, EventArgs e)
         {
             Text = @"NuFridge Installation";
+
+            if (!string.IsNullOrWhiteSpace(_installDirectory))
+            {
+                if (Directory.Exists(_installDirectory))
+                {
+                    var path = Path.Combine(_installDirectory, "Service", "NuFridge.Service.exe.config");
+                    if (File.Exists(path))
+                    {
+                        ExeConfigurationFileMap map = new ExeConfigurationFileMap { ExeConfigFilename = path };
+                        Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
+
+                        txtSqlServer.Text = config.AppSettings.Settings["SqlServer"].Value;
+                        txtDatabase.Text = config.AppSettings.Settings["SqlDatabase"].Value;
+                        txtUserId.Text = config.AppSettings.Settings["SqlUserId"].Value;
+                        txtPassword.Text = config.AppSettings.Settings["SqlPassword"].Value;
+                        txtSiteUrl.Text = config.AppSettings.Settings["WebsiteUrl"].Value;
+                    }
+                }
+            }
         }
 
         private void topPanel_MouseDown(object sender, MouseEventArgs e)

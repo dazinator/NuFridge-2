@@ -9,12 +9,13 @@ namespace NuFridge.Shared.Commands
 {
     public class ConfigureCommand : AbstractStandardCommand
     {
-
+        private readonly string _installDirectory;
 
         public ConfigureCommand(IApplicationInstanceSelector selector)
             : base(selector)
         {
-
+            selector.LoadInstance();
+            _installDirectory = selector.Current.InstallDirectory;
         }
 
         [DllImport("kernel32.dll")]
@@ -34,7 +35,7 @@ namespace NuFridge.Shared.Commands
                 var handle = GetConsoleWindow();
                 ShowWindow(handle, SW_HIDE);
 
-            using (ConfigurationForm form = new ConfigurationForm())
+                using (ConfigurationForm form = new ConfigurationForm(_installDirectory))
             {
                 var value = form.ShowDialog();
                 switch (value)

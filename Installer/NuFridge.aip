@@ -641,7 +641,7 @@
     <ROW Action="AI_AiBackupRollback" Sequence="1502"/>
     <ROW Action="AI_AiRestoreDeferred" Sequence="6598"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
-    <ROW Action="NuFridge.Service.exe" Condition="( NOT Installed AND NOT OLDPRODUCTS )" Sequence="5701"/>
+    <ROW Action="NuFridge.Service.exe" Condition="( NOT Installed )" Sequence="5701"/>
     <ROW Action="AI_UPDATER_UNINSTALL" Condition="($updater.exe = 2) AND (?updater.exe = 3) AND NOT (UPGRADINGPRODUCTCODE)" Sequence="1551"/>
     <ROW Action="AI_AppSearchEx" Sequence="102"/>
     <ROW Action="AI_GetArpIconPath" Sequence="1401"/>
