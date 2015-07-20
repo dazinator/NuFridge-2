@@ -64,7 +64,14 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 throw;
             }
 
-            return _packageAction.Execute(feed, tempPath, module);
+            try
+            {
+                return _packageAction.Execute(feed, tempPath, module);
+            }
+            catch (Exception ex)
+            {
+                return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
         }
     }
 }
