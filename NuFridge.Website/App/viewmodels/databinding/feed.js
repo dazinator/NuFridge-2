@@ -25,8 +25,11 @@
 
                 return '#feeds/view/' + id;
             },
-            GetPushPackagesUrl: function() {
+            GetLegacyPushPackagesUrl: function() {
                 return data.RootUrl() + "/api/packages";
+            },
+            GetPushPackagesUrl: function() {
+                return data.RootUrl() + "/api/v2/package";
             },
             GetODataUrl: function() {
                 return data.RootUrl() + "/api/v2";
