@@ -49,10 +49,17 @@ namespace NuFridge.Shared.Server.Application
             }
 #endif
 
+            if (string.IsNullOrWhiteSpace(instanceRecord.NuGetFrameworkNames))
+            {
+                instanceRecord.NuGetFrameworkNames = String.Empty;
+            }
+
             if (!instanceRecord.IsValid())
             {
                 throw new Exception("Registry install directory is missing.");
             }
+
+
 
             return instanceRecord;
         }
@@ -61,13 +68,29 @@ namespace NuFridge.Shared.Server.Application
         {
             using (RegistryKey registryKey1 = RegistryKey.OpenBaseKey(Hive, View))
             {
-                using (RegistryKey registryKey2 = registryKey1.OpenSubKey(KeyName, true))
-                {
-                    if (registryKey2 == null)
-                        throw new Exception("Registry structure invalid.");
+                RegistryKey registryKey2 = registryKey1.OpenSubKey(KeyName, true);
 
+                if (registryKey2 == null)
+                {
+                    try
+                    {
+                        registryKey2 = registryKey1.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
+                    }
+                    catch (Exception ex)
+                    {
+                       throw new Exception("Failed to create a subkey in the registry when updating the known NuGet framework names.", ex);
+                    }
+                }
+
+                try
+                {
                     registryKey2.SetValue(ApplicationInstanceRecord.NuGetFrameworkNamesKey, record.NuGetFrameworkNames);
                 }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to update a subkey in the registry when updating the known NuGet framework names.", ex);
+                }
+
             }
         }
 

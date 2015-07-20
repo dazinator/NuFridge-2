@@ -28,6 +28,11 @@ namespace NuFridge.Shared.Server.NuGet
             LoadFrameworkNames(config.NuGetFrameworkNames);
         }
 
+        public void Init()
+        {
+            _config.Save();
+        }
+
         public void AddFrameworkNames(string names)
         {
             bool updateConfig = false;
@@ -92,5 +97,6 @@ namespace NuFridge.Shared.Server.NuGet
         IInternalPackageRepository Create(int feedId);
         ISet<FrameworkName> GetFrameworkNames();
         void AddFrameworkNames(string names);
+        void Init();
     }
 }

@@ -238,6 +238,8 @@
     <Compile Include="Server\Statistics\FeedDownloadCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\FeedPackageCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\StatisticBase.cs" />
+    <Compile Include="Server\Storage\Initializers\EntityFrameworkInitializer.cs" />
+    <Compile Include="Server\Storage\Initializers\InternalPackageRepositoryFactoryInitializer.cs" />
     <Compile Include="Server\Storage\ReferenceCollection.cs" />
     <Compile Include="Server\Storage\ReferenceCollectionReaderWriter.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\GetAccountAction.cs" />
@@ -255,6 +257,7 @@
     <Compile Include="Server\Web\Actions\FeedApi\InsertFeedAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\SaveFeedConfigurationAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\UpdateFeedAction.cs" />
+    <Compile Include="Server\Web\Actions\FeedApi\UploadPackageFromUrlAction.cs" />
     <Compile Include="Server\Web\Actions\IAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\BatchAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\DeletePackageAction.cs" />
@@ -280,6 +283,7 @@
     <Compile Include="Server\Web\Modules\DashboardApiModule.cs" />
     <Compile Include="Server\Web\Modules\DiagnosticsApiModule.cs" />
     <Compile Include="Server\Web\Modules\FeedApiModule.cs" />
+    <Compile Include="Server\Web\Modules\NuGetV1ApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
@@ -360,7 +364,7 @@
     <Compile Include="Server\Storage\Initializers\MigrationInitializer.cs" />
     <Compile Include="Server\Storage\IStoreInitializer.cs" />
     <Compile Include="Server\Storage\Initializers\AdminUserInitializer.cs" />
-    <Compile Include="Server\Storage\IInitializeRelationalStore.cs" />
+    <Compile Include="Server\Storage\IInitializeStore.cs" />
     <Compile Include="Server\Storage\IServerStorageConfiguration.cs" />
     <Compile Include="Server\ServerEngine.cs" />
     <Compile Include="Server\ServerState.cs" />
@@ -469,6 +473,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0009-DropUsersTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Server\Web\Actions\NuGetApiV1\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

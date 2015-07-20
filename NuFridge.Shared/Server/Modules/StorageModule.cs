@@ -16,12 +16,16 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<DatabaseMigrator>().As<IDatabaseMigrator>().SingleInstance();
             builder.RegisterType<AdminUserInitializer>().AsSelf();
             builder.RegisterType<MigrationInitializer>().AsSelf();
+            builder.RegisterType<InternalPackageRepositoryFactoryInitializer>().AsSelf();
+            builder.RegisterType<EntityFrameworkInitializer>().AsSelf();
 
-            builder.Register((c => new StoreInitializer(c.Resolve<IStore>(), new IInitializeRelationalStore[]
-      {
-          c.Resolve<MigrationInitializer>(),
-          c.Resolve<AdminUserInitializer>()
-      }))).As<IStoreInitializer>();
+            builder.Register((c => new StoreInitializer(c.Resolve<IStore>(), new IInitializeStore[]
+            {
+                c.Resolve<MigrationInitializer>(),
+                c.Resolve<AdminUserInitializer>(),
+                c.Resolve<InternalPackageRepositoryFactoryInitializer>(),
+                c.Resolve<EntityFrameworkInitializer>()
+            }))).As<IStoreInitializer>();
 
             builder.Register((c => c.Resolve<IStoreFactory>().Store)).As<IStore>().SingleInstance();
             builder.Register((c => c.Resolve<IStore>().BeginTransaction())).As<ITransaction>().InstancePerLifetimeScope();

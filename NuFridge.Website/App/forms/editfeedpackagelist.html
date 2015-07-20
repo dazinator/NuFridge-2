@@ -20,10 +20,10 @@
                         <i class="file icon"></i>
                         File
                     </div>
-                    <!--<div class="item">
-                        <i class="cubes icon"></i>
-                        NuGet Feed
-                    </div>-->
+                    <div class="item">
+                        <i class="cloud icon"></i>
+                        URL
+                    </div>
                 </div>
             </div>
         </div>
@@ -110,6 +110,32 @@
         </tr>
     </tfoot>
 </table>
+
+<div class="ui small modal transition hidden" id="urlUploadModal">
+    <div class="ui icon header">
+        <i class="cloud icon"></i>
+        <span>Upload Package via URL</span>
+    </div>
+    <div class="content">
+        <form class="ui form">
+            <div class="field">
+                <label>Package URL</label>
+                <input type="text" data-bind="value: urlUploadValue">
+            </div>
+        </form>
+        <p class="urlUploadMessage"></p>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button" data-bind="css: {disabled: isUploadingPackage()}">
+            <span data-bind="text: successUploadingPackage() ? 'Close' : 'Cancel'"></span>
+        </div>
+        <div class="ui positive right labeled icon button" data-bind="visible: !successUploadingPackage(), css: {disabled: isUploadingPackage(), loading: isUploadingPackage()}">
+            <span data-bind="text: errorUploadingPackage() ? 'Retry' : 'Upload'"></span>
+            <i class="upload icon"></i>
+        </div>
+    </div>
+</div>
+
 
 <div class="ui small modal transition hidden" id="fileUploadModal">
     <div class="ui icon header">

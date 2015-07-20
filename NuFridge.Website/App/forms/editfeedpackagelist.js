@@ -14,6 +14,7 @@
         self.packageUploadPercentage = 0;
         self.successUploadingPackage = ko.observable(false);
         self.errorUploadingPackage = ko.observable(false);
+        self.urlUploadValue = ko.observable("");
     };
 
     ctor.prototype.activate = function(activationData) {
@@ -196,7 +197,67 @@
         $('.fileUploadProgress').progress('reset').removeClass('success').removeClass('error').addClass('indicating');
         self.successUploadingPackage(false);
         self.errorUploadingPackage(false);
-    }
+    };
+
+    ctor.prototype.startUrlUpload = function() {
+        var self = this;
+
+        $(".urlUploadMessage").text("Please wait while the package is pushed to the feed.");
+
+        self.isUploadingPackage(true);
+
+        $.ajax({
+            url: '/api/feeds/' + self.feed().Id() + "/upload?url=" + self.urlUploadValue(),
+            type: 'POST',
+            headers: new auth().getAuthHttpHeader(),
+            success: function (data) {
+                self.successUploadingPackage(true);
+                self.isUploadingPackage(false);
+                self.loadPackages(0);
+                $(".urlUploadMessage").text("The package has been pushed to the feed.");
+            },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+                self.errorUploadingPackage(true);
+                self.isUploadingPackage(false);
+
+                var message = "The package was not pushed to the server.";
+
+                if (xmlHttpRequest.responseText) {
+                    message = xmlHttpRequest.responseText;
+                }
+
+                $(".urlUploadMessage").text(message);
+
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        }, 'json');
+    };
+
+    ctor.prototype.urlUploadAction = function () {
+        var self = this;
+
+        self.urlUploadValue("");
+        $(".urlUploadMessage").text("");
+
+        var options = {
+            closable: false,
+            onApprove: function (sender) {
+                if (!self.isUploadingPackage()) {
+                    self.startUrlUpload();
+                }
+                return false;
+            },
+            transition: 'horizontal flip',
+            detachable: false
+        };
+
+        $('#urlUploadModal').modal(options).modal('show');
+    };
 
     ctor.prototype.fileUploadAction = function () {
         var self = this;
@@ -258,9 +319,7 @@
         $('#fileUploadModal').modal(options).modal('show');
     };
 
-    ctor.prototype.feedUploadAction = function () {
 
-    };
 
     ctor.prototype.progressHandlingFunction = function (e, instance) {
         var self = instance;
@@ -369,8 +428,8 @@
                     case "File":
                         self.fileUploadAction();
                         break;
-                    case "NuGet Feed":
-                        self.feedUploadAction();
+                    case "URL":
+                        self.urlUploadAction();
                         break;
                     default:
                         alert("Not handled");

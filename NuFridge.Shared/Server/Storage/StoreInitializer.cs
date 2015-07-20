@@ -3,9 +3,9 @@
     public class StoreInitializer : IStoreInitializer
     {
         private readonly IStore _store;
-        private readonly IInitializeRelationalStore[] _initializers;
+        private readonly IInitializeStore[] _initializers;
 
-        public StoreInitializer(IStore store, IInitializeRelationalStore[] initializers)
+        public StoreInitializer(IStore store, IInitializeStore[] initializers)
         {
             _store = store;
             _initializers = initializers;
@@ -13,7 +13,7 @@
 
         public void Initialize()
         {
-            foreach (IInitializeRelationalStore initializeRelationalStore in _initializers)
+            foreach (IInitializeStore initializeRelationalStore in _initializers)
                 initializeRelationalStore.Initialize(_store);
         }
 

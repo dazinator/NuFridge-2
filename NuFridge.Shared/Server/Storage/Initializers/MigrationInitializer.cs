@@ -1,6 +1,6 @@
 ﻿namespace NuFridge.Shared.Server.Storage.Initializers
 {
-    public class MigrationInitializer : IInitializeRelationalStore
+    public class MigrationInitializer : IInitializeStore
     {
         private readonly IDatabaseMigrator _migrator;
 

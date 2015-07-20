@@ -35,6 +35,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<DeleteFeedAction>().AsSelf();
             builder.RegisterType<FeedSearchAction>().AsSelf();
             builder.RegisterType<GetFeedAction>().AsSelf();
+            builder.RegisterType<UploadPackageFromUrlAction>().AsSelf();
             builder.RegisterType<GetFeedConfigurationAction>().AsSelf();
             builder.RegisterType<GetFeedsAction>().AsSelf();
             builder.RegisterType<InsertFeedAction>().AsSelf();

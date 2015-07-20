@@ -46,7 +46,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
-            string selectValue = GetAndRemoveSelectParamFromQuery(queryDictionary);
+            string selectValue = GetAndRemoveSelectParamFromQuery(queryDictionary) ?? String.Empty;
 
             AddAdditionalQueryParams(queryDictionary);
 

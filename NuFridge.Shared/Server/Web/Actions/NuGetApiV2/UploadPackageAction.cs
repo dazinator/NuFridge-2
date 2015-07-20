@@ -26,6 +26,44 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             _fileSystem = fileSystem;
         }
 
+        public dynamic Execute(int feedId, string filePath, INancyModule module)
+        {
+            IFeed feed;
+
+            using (ITransaction transaction = Store.BeginTransaction())
+            {
+
+                feed = transaction.Load<IFeed>(feedId);
+
+                if (feed == null)
+                {
+                    var errorResponse = module.Response.AsText("Feed does not exist.");
+                    errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                    return errorResponse;
+                }
+
+                feedId = feed.Id;
+            }
+
+            if (RequiresApiKeyCheck(feed))
+            {
+                if (module.Request.Headers["Authorization"].FirstOrDefault() != null)
+                {
+                    module.RequiresAuthentication();
+                }
+                else
+                {
+                    var errorResponse = module.Response.AsText("Invalid API key.");
+                    errorResponse.StatusCode = HttpStatusCode.Forbidden;
+                    return errorResponse;
+                }
+            }
+
+            var response = ProcessPackage(filePath, module, feedId);
+
+            return response;
+        }
+
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             var file = module.Request.Files.FirstOrDefault();
@@ -33,9 +71,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             if (file == null)
             {
-                var response = module.Response.AsText("Must provide package with valid id and version.");
-                response.StatusCode = HttpStatusCode.BadRequest;
-                return response;
+                var errorResponse = module.Response.AsText("Must provide package with valid id and version.");
+                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                return errorResponse;
             }
 
             int feedId;
@@ -48,9 +86,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 if (feed == null)
                 {
-                    var response = module.Response.AsText("Feed does not exist.");
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
+                    var errorResponse = module.Response.AsText("Feed does not exist.");
+                    errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                    return errorResponse;
                 }
 
                 feedId = feed.Id;
@@ -66,9 +104,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     }
                     else
                     {
-                        var response = module.Response.AsText("Invalid API key.");
-                        response.StatusCode = HttpStatusCode.Forbidden;
-                        return response;
+                        var errorResponse = module.Response.AsText("Invalid API key.");
+                        errorResponse.StatusCode = HttpStatusCode.Forbidden;
+                        return errorResponse;
                     }
                 }
             }
@@ -79,6 +117,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 file.Value.CopyTo(stream);
             }
 
+            var response = ProcessPackage(temporaryFilePath, module, feedId);
+
+            return response;
+        }
+
+        private Response ProcessPackage(string temporaryFilePath, INancyModule module, int feedId)
+        {
             try
             {
                 IPackage package = FastZipPackage.Open(temporaryFilePath, new CryptoHashProvider());

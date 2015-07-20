@@ -90,7 +90,12 @@ namespace NuFridge.Shared.Server.Web
                     .Select(property => new ODataProperty() {Name = property.Name, Value = property.GetValue(obj)})
                     .ToArray();
 
-            return properties.Where(pr => propertiesToInclude.Contains(pr.Name.ToLower()));
+            if (propertiesToInclude.Any())
+            {
+                return properties.Where(pr => propertiesToInclude.Contains(pr.Name.ToLower()));
+            }
+
+            return properties;
         }
     }
 }

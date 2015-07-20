@@ -1,6 +1,6 @@
 ﻿namespace NuFridge.Shared.Server.Storage
 {
-    public interface IInitializeRelationalStore
+    public interface IInitializeStore
     {
         void Initialize(IStore store);
     }
