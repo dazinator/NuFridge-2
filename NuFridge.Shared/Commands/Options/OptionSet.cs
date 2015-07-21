@@ -85,7 +85,7 @@ namespace NuFridge.Shared.Commands.Options
                     list.Add(option.Names[index]);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 foreach (string key in list)
                     Dictionary.Remove(key);
@@ -93,7 +93,7 @@ namespace NuFridge.Shared.Commands.Options
             }
         }
 
-        public OptionSet Add(Option option)
+        public new OptionSet Add(Option option)
         {
             base.Add(option);
             return this;

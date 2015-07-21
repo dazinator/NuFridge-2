@@ -11,7 +11,6 @@ namespace NuFridge.Shared.Server.Hosts
         private readonly ILog _log = LogProvider.For<ConsoleHost>();
 
         private readonly string _displayName;
-        private readonly bool _showLogo;
 
         public ConsoleHost(string displayName)
         {
@@ -24,13 +23,6 @@ namespace NuFridge.Shared.Server.Hosts
             {
                 Console.ResetColor();
                 Console.Title = _displayName;
-                if (_showLogo)
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(_displayName + " version " + typeof(ConsoleHost).Assembly.GetFileVersion());
-                    Console.WriteLine();
-                    Console.ResetColor();
-                }
                 start(this);
                 Console.ResetColor();
                 shutdown();

@@ -42,6 +42,12 @@ namespace NuFridge.Shared.Server.Web.Modules
             Get["feeds/{feed}/packages/{id}/{version}"] = p => container.Resolve<DownloadPackageAction>().Execute(p, this);
 
             //Upload package
+            Post["feeds/{feed}"] = p => container.Resolve<RedirectToUploadPackageAction>().Execute(p, this);
+
+            //Upload package
+            Put["feeds/{feed}"] = p => container.Resolve<RedirectToUploadPackageAction>().Execute(p, this);
+
+            //Upload package
             Post["feeds/{feed}/api/packages/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().Execute(p, this);
 
             //Upload package

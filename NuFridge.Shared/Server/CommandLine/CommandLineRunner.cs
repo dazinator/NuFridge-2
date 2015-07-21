@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Server.CommandLine
                 else
                     OemEncoding = Encoding.GetEncoding(850);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 OemEncoding = Encoding.UTF8;
             }
@@ -144,13 +144,13 @@ namespace NuFridge.Shared.Server.CommandLine
             {
                 KillProcessAndChildren(process.Id);
             }
-            catch (Exception ex1)
+            catch (Exception)
             {
                 try
                 {
                     process.Kill();
                 }
-                catch (Exception ex2)
+                catch (Exception)
                 {
                 }
             }
@@ -173,7 +173,7 @@ namespace NuFridge.Shared.Server.CommandLine
             {
                 Process.GetProcessById(pid).Kill();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
             }
         }

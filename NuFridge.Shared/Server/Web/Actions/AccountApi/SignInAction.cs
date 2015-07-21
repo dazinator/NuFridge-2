@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
             {
                 signInRequest = module.Bind<SignInRequest>();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

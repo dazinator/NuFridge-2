@@ -77,10 +77,10 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
                 {
                     _targetFramework = new FrameworkName(identifier, new Version(version), profile);
                 }
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                 }
-                catch (FormatException ex)
+                catch (FormatException)
                 {
                 }
                 return _targetFramework;

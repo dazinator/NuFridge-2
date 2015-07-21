@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Http.OData;
+using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Query;
 using Nancy;
 using NuFridge.Shared.Model;
@@ -89,7 +90,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
         protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectValue)
         {
-            long? total = request.GetInlineCount();
+            long? total = request.ODataProperties().TotalCount;
 
             var packageRepository = _packageRepositoryFactory.Create(feed.Id);
 

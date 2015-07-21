@@ -42,12 +42,10 @@ namespace NuFridge.Shared.Commands
                 {
                     case DialogResult.Abort:
                         throw new Exception("User aborted configuration.");
-                        break;
                     case DialogResult.OK:
                         return;
                     default:
                         throw new NotImplementedException("Not handled");
-                        break;
                 }
             }
         }

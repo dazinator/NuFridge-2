@@ -27,7 +27,7 @@ namespace NuFridge.Shared.Server.FileSystem
             {
                 return !Directory.GetFileSystemEntries(path).Any();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

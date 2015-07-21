@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Web.Http.OData.Extensions;
 using Nancy;
 using Nancy.Responses;
 using NuFridge.Shared.Model;
@@ -30,7 +31,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
         protected override dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectValue)
         {
-            long? total = request.GetInlineCount();
+            long? total = request.ODataProperties().TotalCount;
 
             return new TextResponse(HttpStatusCode.OK, total.ToString());
         }

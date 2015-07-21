@@ -52,6 +52,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<GetODataPackagesAction>().AsSelf();
             builder.RegisterType<GetODataPackagesCountAction>().AsSelf();
             builder.RegisterType<RedirectToDownloadPackageAction>().AsSelf();
+            builder.RegisterType<RedirectToUploadPackageAction>().AsSelf();
             builder.RegisterType<UploadPackageAction>().AsSelf();
             builder.RegisterType<TabCompletionPackageIdsAction>().AsSelf();
             builder.RegisterType<TabCompletionPackageVersionsAction>().AsSelf();

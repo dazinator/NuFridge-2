@@ -14,7 +14,7 @@ namespace NuFridge.Shared.Server.Storage
       _mappings = mappings;
     }
 
-    protected virtual JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+    protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
     {
       EntityMapping map;
       _mappings.TryGet(member.DeclaringType, out map);
