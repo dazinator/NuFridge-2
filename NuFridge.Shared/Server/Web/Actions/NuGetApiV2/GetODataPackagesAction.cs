@@ -65,9 +65,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             using (var dbContext = new DatabaseContext(Store))
             {
-                var ds = CreateQuery(dbContext, queryDictionary, feed);
+                bool enableStableOrdering;
+                var ds = CreateQuery(dbContext, queryDictionary, feed, out enableStableOrdering);
 
-                ds = ExecuteQuery(context, request, ds);
+                ds = ExecuteQuery(context, request, ds, enableStableOrdering);
 
                 return ProcessResponse(module, request, feed, ds, selectValue);
             }
@@ -81,7 +82,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2/", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
+            var baseAddress = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/v2/";
 
             var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
                 ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectFields);
@@ -100,14 +101,16 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             };
         }
 
-        private static IQueryable<IInternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<IInternalPackage> ds)
+        private static IQueryable<IInternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<IInternalPackage> ds, bool enableStableOrdering)
         {
             ODataQueryOptions options = new ODataQueryOptions(context, request);
-            
+
             var settings = new ODataQuerySettings
             {
-                PageSize = options.Top != null ? options.Top.Value : 15
+                PageSize = options.Top?.Value ?? 15,
+                EnsureStableOrdering = enableStableOrdering
             };
+
 
             ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
             return ds;
@@ -120,8 +123,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return value.Substring(trimStart, trimEnd);
         }
 
-        protected virtual IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed)
+        protected virtual IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
         {
+            enableStableOrdering = true;
+
             IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
             ds = ds.Where(pk => pk.FeedId == feed.Id);
@@ -142,6 +147,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             if (!string.IsNullOrWhiteSpace(idSearch))
             {
                 ds = ds.Where(pk => pk.PackageId == idSearch);
+                ds = ds.OrderByDescending(pk => pk.VersionMajor)
+                    .ThenByDescending(pk => pk.VersionMinor)
+                    .ThenByDescending(pk => pk.VersionBuild)
+                    .ThenByDescending(pk => pk.VersionRevision);
+
+                enableStableOrdering = false;
             }
 
             if (queryDictionary.ContainsKey("includePrerelease"))
@@ -281,6 +292,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                         {
                             updated = true;
                             split[i] = "PackageId";
+                        }
+                        else if (split[i].ToLower().Contains("(id)"))
+                        {
+                            updated = true;
+                            split[i] = split[i].Replace("(id)", "(PackageId)").Replace("(Id)", "(PackageId)").Replace("(ID)", "(PackageId)");
                         }
                     }
                 }

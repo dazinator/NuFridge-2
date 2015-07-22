@@ -96,7 +96,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2/", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
+            var baseAddress = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/v2/";
 
             var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
                 ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectValue);
@@ -121,7 +121,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var settings = new ODataQuerySettings
             {
-                PageSize = options.Top != null ? options.Top.Value : 15
+                PageSize = options.Top?.Value ?? 15
             };
 
 
@@ -147,6 +147,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                         {
                             updated = true;
                             split[i] = "PackageId";
+                        }
+                        else if (split[i].ToLower().Contains("(id)"))
+                        {
+                            updated = true;
+                            split[i] = split[i].Replace("(id)", "(PackageId)").Replace("(Id)", "(PackageId)").Replace("(ID)", "(PackageId)");
                         }
                     }
                 }
