@@ -222,6 +222,7 @@
     <Compile Include="Server\Scheduler\AutofacTaskFactory.cs" />
     <Compile Include="Server\Scheduler\Jobs\IJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\PackageJobs.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Tasks\ReindexPackagesForFeedTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\RunPackageRetentionPoliciesTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateSystemInformationTask.cs" />
     <Compile Include="Server\Scheduler\Jobs\Tasks\UpdateFeedDownloadCountStatisticTask.cs" />

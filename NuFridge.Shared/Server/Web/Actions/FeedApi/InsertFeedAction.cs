@@ -75,7 +75,23 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 };
 
                 transaction.Insert(config);
-                transaction.Commit();
+
+                try
+                {
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Dispose();
+
+                    transaction = _store.BeginTransaction();
+                    transaction.Delete(feed);
+                    transaction.Commit();
+                    transaction.Dispose();
+
+                    throw;
+                }
+
                 transaction.Dispose();
             }
             catch (Exception ex)
