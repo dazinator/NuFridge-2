@@ -20,11 +20,6 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
         public void Execute()
         {
-            List<Feed> feeds;
-            using (var transaction = _store.BeginTransaction())
-            {
-                feeds = transaction.Query<Feed>().ToList();
-            }
         }
     }
 }

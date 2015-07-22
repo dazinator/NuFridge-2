@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using FluentScheduler;
+using Hangfire;
+using Hangfire.SqlServer;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Scheduler.Jobs;
@@ -15,13 +17,16 @@ namespace NuFridge.Shared.Server
     {
         private readonly Lazy<IWebServerInitializer> _webHostInitializer;
         private readonly Lazy<IStoreInitializer> _storeInitializer;
+        private BackgroundJobServer _backgroundJobServer; 
+        private readonly IStore _store;
         private readonly IContainer _container;
         private readonly ILog _log = LogProvider.For<ServerEngine>();
 
-        public ServerEngine(IContainer container, Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer)
+        public ServerEngine(IContainer container, Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer, IStore store)
         {
             _webHostInitializer = webHostInitializer;
             _storeInitializer = storeInitializer;
+            _store = store;
             _container = container;
         }
 
@@ -56,14 +61,16 @@ namespace NuFridge.Shared.Server
                 _log.Info("Registering scheduled tasks for " + job.GetType().Name);
             }
 
-            TaskManager.TaskFactory = new AutofacTaskFactory(_container);
-            TaskManager.UnobservedTaskException += TaskManager_UnobservedTaskException;
-            TaskManager.Initialize(new SchedulerRegistry(jobs));
+            var options = new SqlServerStorageOptions() {PrepareSchemaIfNecessary = true};
+            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options);
+
+            _backgroundJobServer = new BackgroundJobServer();
         }
 
         public void Stop()
         {
             _webHostInitializer.Value.Stop();
+            _backgroundJobServer.Dispose();
         }
     }
 }
