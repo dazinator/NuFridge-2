@@ -21,6 +21,8 @@ namespace NuFridge.Shared.Server.Modules
                 .AssignableTo<JobBase>()
                 .As<JobBase>()
                 .AsSelf();
+
+            builder.RegisterType<ReindexPackagesForFeedJob>().AsSelf();
         }
     }
 }

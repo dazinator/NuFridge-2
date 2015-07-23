@@ -30,76 +30,86 @@
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
 
-                <table class="ui compact table" data-bind="visible: succeededJobs().length > 0">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Completed At</th>
-                            <th>Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: succeededJobs, visible: succeededJobs().length > 0">
-                        <tr>
-                            <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: $root.formatDate(Value.SucceededAt)"></td>
-                            <td data-bind="text: Value.TotalDuration + 'ms'"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <table class="ui compact table" data-bind="visible: succeededJobs().length > 0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Completed At</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: succeededJobs, visible: succeededJobs().length > 0">
+                    <tr>
+                        <td class="collapsing">
+                            <i class="add square icon" style="cursor: pointer;" data-bind="click: function(){ $('.succeededJobExpandSection-' + Key).toggle(); }"></i> <span data-bind="text: Value.Job.Method.ClassName"></span>
+                            <div style="display: none;" data-bind="attr: {class: 'succeededJobExpandSection-' + Key}">
+                                <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                                <div>
+                                    Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                        <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-bind="text: $root.formatDate(Value.SucceededAt)"></td>
+                        <td data-bind="text: Value.TotalDuration + 'ms'"></td>
+                    </tr>
+                </tbody>
+            </table>
 
             <div data-bind="visible: succeededJobs().length === 0">No succeeded jobs</div>
         </div>
         <div data-tab="second" class="ui bottom attached tab segment">
-                <table class="ui compact table" data-bind="visible: failedJobs().length > 0">
-                    <thead>
-                        <tr>    
-                            <th>Message</th>
-                            <th>Failed At</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: failedJobs, visible: failedJobs().length > 0">
-                        <tr>
-                            <td data-bind="text: Value.ExceptionMessage"></td>
-                            <td data-bind="text: $root.formatDate(Value.FailedAt)"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <table class="ui compact table" data-bind="visible: failedJobs().length > 0">
+                <thead>
+                    <tr>
+                        <th>Message</th>
+                        <th>Failed At</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: failedJobs, visible: failedJobs().length > 0">
+                    <tr>
+                        <td data-bind="text: Value.ExceptionMessage"></td>
+                        <td data-bind="text: $root.formatDate(Value.FailedAt)"></td>
+                    </tr>
+                </tbody>
+            </table>
             <div data-bind="visible: failedJobs().length === 0">No failed jobs</div>
         </div>
         <div data-tab="third" class="ui bottom attached tab segment">
-                <table class="ui compact table" data-bind="visible: processingJobs().length > 0">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Started At</th>
-                            <th>Server</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: processingJobs, visible: processingJobs().length > 0">
-                        <tr>
-                            <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: $root.formatDate(Value.StartedAt)"></td>
-                            <td data-bind="text: Value.ServerId + 'ms'"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <table class="ui compact table" data-bind="visible: processingJobs().length > 0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Started At</th>
+                        <th>Server</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: processingJobs, visible: processingJobs().length > 0">
+                    <tr>
+                        <td data-bind="text: Value.Job.Method.ClassName"></td>
+                        <td data-bind="text: $root.formatDate(Value.StartedAt)"></td>
+                        <td data-bind="text: Value.ServerId"></td>
+                    </tr>
+                </tbody>
+            </table>
             <div data-bind="visible: processingJobs().length === 0">No processing jobs</div>
         </div>
         <div data-tab="fourth" class="ui bottom attached tab segment">
-                <table class="ui compact table" data-bind="visible: scheduledJobs().length > 0">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Scheduled At</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="foreach: scheduledJobs, visible: scheduledJobs().length > 0">
-                        <tr>
-                            <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: $root.formatDate(Value.ScheduledAt)"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <table class="ui compact table" data-bind="visible: scheduledJobs().length > 0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Scheduled At</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: scheduledJobs, visible: scheduledJobs().length > 0">
+                    <tr>
+                        <td data-bind="text: Value.Job.Method.ClassName"></td>
+                        <td data-bind="text: $root.formatDate(Value.ScheduledAt)"></td>
+                    </tr>
+                </tbody>
+            </table>
             <div data-bind="visible: scheduledJobs().length === 0">No scheduled jobs</div>
         </div>
     </div>
