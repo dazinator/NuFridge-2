@@ -44,7 +44,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Method</th>
                         <th>URL</th>
                         <th>Notes</th>
                     </tr>
@@ -52,25 +51,21 @@
                 <tbody>
                     <tr>
                         <td>Push Package</td>
-                        <td>POST</td>
                         <td><a data-bind="text: feed().GetPushPackagesUrl(), href: feed().GetPushPackagesUrl()" target="_blank"></a></td>
                         <td>Use this for pushing NuGet packages.</td>
                     </tr>
                     <tr>
                         <td>Push Package</td>
-                        <td>POST</td>
                         <td><a data-bind="text: feed().GetLegacyPushPackagesUrl(), href: feed().GetLegacyPushPackagesUrl()" target="_blank"></a></td>
                         <td>Use this for pushing NuGet packages.</td>
                     </tr>
                     <tr>
                         <td>OData Query</td>
-                        <td>GET</td>
                         <td><a data-bind="text: feed().GetODataUrl(), href: feed().GetODataUrl()" target="_blank"></a></td>
                         <td>Use this for the Visual Studio NuGet package manager.</td>
                     </tr>
                     <tr>
                         <td>OData Query</td>
-                        <td>GET</td>
                         <td><a data-bind="text: feed().GetLegacyODataUrl(), href: feed().GetLegacyODataUrl()" target="_blank"></a></td>
                         <td>Use this for the Visual Studio NuGet package manager.</td>
                     </tr>
