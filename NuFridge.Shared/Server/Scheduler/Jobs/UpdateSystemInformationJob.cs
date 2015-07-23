@@ -11,7 +11,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         private IStore Store { get; set; }
         private readonly ILog _logger = LogProvider.For<UpdateSystemInformationJob>();
 
-        public UpdateSystemInformationJob(IStore store, IServerEngine engine) : base()
+        public UpdateSystemInformationJob(IStore store, IServerEngine engine) 
         {
             _engine = engine;
             Store = store;

@@ -10,6 +10,26 @@
         self.isCancelNavigating = ko.observable(false);
     };
 
+    ctor.prototype.ReindexPackages = function() {
+        var self;
+
+        $.ajax({
+            url: "/api/feeds/" + router.activeInstruction().params[0] + "/reindex",
+            type: 'POST',
+            headers: new auth().getAuthHttpHeader(),
+            cache: false,
+            success: function (result) {
+
+            },
+            error: function (xmlHttpRequest, textStatus, errorThrown) {
+                if (xmlHttpRequest.status === 401) {
+                    router.navigate("#signin");
+                }
+            }
+        });
+
+    };
+
     ctor.prototype.activate = function () {
 
         var self = this;

@@ -27,11 +27,17 @@
 
         <div class="ui top attached tabular menu feedMenu">
             <a class="item active" data-tab="first">Overview</a>
-            <a class="item" data-tab="second">Packages</a>
-            <a class="item" data-tab="third">Retention Policy</a>
-            <a class="item settingTab" data-tab="fourth">Settings</a>
+            <a class="item" data-tab="second">Endpoints</a>
+            <a class="item" data-tab="third">Packages</a>
+            <a class="item" data-tab="fourth">Retention Policy</a>
+            <a class="item settingTab" data-tab="fifth">Settings</a>
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
+            <button class="ui primary button" data-bind="click: ReindexPackages">
+                Reindex Packages
+            </button>
+        </div>
+        <div data-tab="second" class="ui bottom attached tab segment">
             <h3>NuGet V2 API Endpoints</h3>
 
             <table class="ui compact table">
@@ -68,139 +74,19 @@
                         <td><a data-bind="text: feed().GetLegacyODataUrl(), href: feed().GetLegacyODataUrl()" target="_blank"></a></td>
                         <td>Use this for the Visual Studio NuGet package manager.</td>
                     </tr>
-                    <tr>
-                        <td>OData Metadata</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetODataMetadataUrl(), href: feed().GetODataMetadataUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Metadata</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyODataMetadataUrl(), href: feed().GetLegacyODataMetadataUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Batch</td>
-                        <td>POST</td>
-                        <td><a data-bind="text: feed().GetODataBatchUrl(), href: feed().GetODataBatchUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Batch</td>
-                        <td>POST</td>
-                        <td><a data-bind="text: feed().GetLegacyODataBatchUrl(), href: feed().GetLegacyODataBatchUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Search</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetODataSearchUrl(), href: feed().GetODataSearchUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Search</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyODataSearchUrl(), href: feed().GetLegacyODataSearchUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Packages</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetODataPackagesUrl(), href: feed().GetODataPackagesUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>OData Packages</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyODataPackagesUrl(), href: feed().GetLegacyODataPackagesUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Download Package</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetDownloadUrl(), href: feed().GetDownloadUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Delete Package</td>
-                        <td>DELETE</td>
-                        <td><a data-bind="text: feed().GetDeleteUrl(), href: feed().GetDeleteUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Get Updates</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetGetUpdatesUrl(), href: feed().GetGetUpdatesUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Get Updates</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyGetUpdatesUrl(), href: feed().GetLegacyGetUpdatesUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Get Package</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetODataPackageUrl(), href: feed().GetODataPackageUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Get Package</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyODataPackageUrl(), href: feed().GetLegacyODataPackageUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Find Packages By Id</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetFindPackagesByIdUrl(), href: feed().GetFindPackagesByIdUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Find Packages By Id</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacyFindPackagesByIdUrl(), href: feed().GetLegacyFindPackagesByIdUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Package Ids</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetTabCompletionPackageIdsUrl(), href: feed().GetTabCompletionPackageIdsUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Package Versions</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetTabCompletionPackageVersionsUrl(), href: feed().GetTabCompletionPackageVersionsUrl()" target="_blank"></a></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>Symbols</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetSymbolsUrl(), href: feed().GetSymbolsUrl()" target="_blank"></a></td>
-                        <td>Not supported in this version. Use the OData Query URL for accessing symbols once implemented.</td>
-                    </tr>
-                    <tr>
-                        <td>Symbols</td>
-                        <td>GET</td>
-                        <td><a data-bind="text: feed().GetLegacySymbolsUrl(), href: feed().GetLegacySymbolsUrl()" target="_blank"></a></td>
-                        <td>Not supported in this version. Use the OData Query URL for accessing symbols once implemented.</td>
-                    </tr>
                 </tbody>
             </table>
 
         </div>
-        <div data-tab="second" class="ui bottom attached tab segment">
+        <div data-tab="third" class="ui bottom attached tab segment">
             <div data-bind="compose: { model: '../forms/editfeedpackagelist', view: '../forms/editfeedpackagelist', activationData: feedOptions }">
             </div>
         </div>
-        <div data-tab="third" class="ui bottom attached tab segment">
+        <div data-tab="fourth" class="ui bottom attached tab segment">
             <div data-bind="compose: { model: '../forms/editfeedpackageretention', view: '../forms/editfeedpackageretention', activationData: feedConfigOptions }">
             </div>
         </div>
-        <div data-tab="fourth" class="ui bottom attached tab segment settingTab">
+        <div data-tab="fifth" class="ui bottom attached tab segment settingTab">
             <div data-bind="compose: { model: '../forms/addeditfeedform', view: '../forms/addeditfeedform', activationData: feedOptions }">
             </div>
         </div>

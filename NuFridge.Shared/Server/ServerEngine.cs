@@ -57,17 +57,14 @@ namespace NuFridge.Shared.Server
 
             foreach (var task in tasks)
             {
-                if (task.IsRecurring)
+                _log.Info("Scheduling recurring job " + task.GetType().Name);
+
+                RecurringJob.AddOrUpdate(task.JobId, () => task.Execute(JobCancellationToken.Null), task.Cron);
+
+                if (task.TriggerOnRegister)
                 {
-                    _log.Info("Scheduling recurring job " + task.GetType().Name);
-
-                    RecurringJob.AddOrUpdate(task.JobId, () => task.Execute(JobCancellationToken.Null), task.Cron);
-
-                    if (task.TriggerOnRegister)
-                    {
-                        var jobId = BackgroundJob.Enqueue(() => task.Execute(JobCancellationToken.Null));
-                        jobIdsToWaitFor.Add(jobId);
-                    }
+                    var jobId = BackgroundJob.Enqueue(() => task.Execute(JobCancellationToken.Null));
+                    jobIdsToWaitFor.Add(jobId);
                 }
             }
 

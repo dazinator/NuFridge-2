@@ -41,6 +41,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<InsertFeedAction>().AsSelf();
             builder.RegisterType<SaveFeedConfigurationAction>().AsSelf();
             builder.RegisterType<UpdateFeedAction>().AsSelf();
+            builder.RegisterType<ReindexPackagesAction>().AsSelf();
 
             //NuGet api v2 module
             builder.RegisterType<BatchAction>().AsSelf();

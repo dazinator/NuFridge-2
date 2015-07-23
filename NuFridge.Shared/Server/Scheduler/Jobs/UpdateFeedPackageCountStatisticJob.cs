@@ -10,7 +10,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         private IStore Store { get; set; }
         private readonly ILog _logger = LogProvider.For<UpdateFeedPackageCountStatisticJob>();
 
-        public UpdateFeedPackageCountStatisticJob(IStore store)
+        public UpdateFeedPackageCountStatisticJob(IStore store) 
         {
             Store = store;
         }

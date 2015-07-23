@@ -1,10 +1,11 @@
 ﻿using Hangfire;
 using Hangfire.Logging;
+using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
-    public class ReindexPackagesForFeedJob : JobBase
+    public class ReindexPackagesForFeedJob
     {
         private readonly IStore _store;
         private readonly ILog _logger = LogProvider.For<ReindexPackagesForFeedJob>();
@@ -14,14 +15,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _store = store;
         }
 
-        public override void Execute(IJobCancellationToken cancellationToken)
+        public void Execute(IJobCancellationToken cancellationToken, int feedId)
         {
-            _logger.Info("Executing " + JobId + " job");
+            _logger.Info("Executing " + JobId + " job for feed id " + feedId);
 
             cancellationToken.ThrowIfCancellationRequested();
+
+
         }
 
-        public override string JobId => typeof (ReindexPackagesForFeedJob).Name;
-        public override bool IsRecurring => false;
+        public string JobId => typeof (ReindexPackagesForFeedJob).Name;
     }
 }
