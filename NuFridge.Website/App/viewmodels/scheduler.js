@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'auth', 'databinding-schedulejob', 'databinding-schedulerstats'], function (router, auth, schedulejob, stats) {
+﻿define(['plugins/router', 'auth', 'databinding-schedulejob', 'moment'], function (router, auth, schedulejob, moment) {
     var ctor = function () {
         this.succeededPageCount = ko.observable(1);
         this.succeededTotalCount = ko.observable(0);
@@ -20,7 +20,11 @@
         this.scheduledCurrentPage = ko.observable(0);
         this.scheduledJobs = ko.observableArray();
 
-        this.stats = ko.observable(new stats());
+        
+    };
+
+    ctor.prototype.formatDate = function(value) {
+        return moment(value).format('DD/MM/YYYY HH:mm:ss');
     };
 
     ctor.prototype.compositionComplete = function () {

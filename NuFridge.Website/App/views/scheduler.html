@@ -41,7 +41,7 @@
                     <tbody data-bind="foreach: succeededJobs, visible: succeededJobs().length > 0">
                         <tr>
                             <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: Value.SucceededAt"></td>
+                            <td data-bind="text: $root.formatDate(Value.SucceededAt)"></td>
                             <td data-bind="text: Value.TotalDuration + 'ms'"></td>
                         </tr>
                     </tbody>
@@ -60,7 +60,7 @@
                     <tbody data-bind="foreach: failedJobs, visible: failedJobs().length > 0">
                         <tr>
                             <td data-bind="text: Value.ExceptionMessage"></td>
-                            <td data-bind="text: Value.FailedAt"></td>
+                            <td data-bind="text: $root.formatDate(Value.FailedAt)"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -78,7 +78,7 @@
                     <tbody data-bind="foreach: processingJobs, visible: processingJobs().length > 0">
                         <tr>
                             <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: Value.StartedAt"></td>
+                            <td data-bind="text: $root.formatDate(Value.StartedAt)"></td>
                             <td data-bind="text: Value.ServerId + 'ms'"></td>
                         </tr>
                     </tbody>
@@ -96,7 +96,7 @@
                     <tbody data-bind="foreach: scheduledJobs, visible: scheduledJobs().length > 0">
                         <tr>
                             <td data-bind="text: Value.Job.Method.ClassName"></td>
-                            <td data-bind="text: Value.ScheduledAt"></td>
+                            <td data-bind="text: $root.formatDate(Value.ScheduledAt)"></td>
                         </tr>
                     </tbody>
                 </table>
