@@ -9,6 +9,7 @@
             { route: '', title: 'Home', moduleId: 'viewmodels/home', nav: true, icon: "home icon" },
             { route: 'feeds', title: 'Feeds', moduleId: 'viewmodels/feeds', nav: true, icon: "cubes icon" },
             { route: 'profile', title: 'Profile', moduleId: 'viewmodels/profile', nav: true, icon: "user icon" },
+            { route: 'scheduler', title: 'Scheduler', moduleId: 'viewmodels/scheduler', nav: true, icon: "calendar icon" },
             { route: 'settings', title: 'Settings', moduleId: 'viewmodels/settings', nav: true, icon: "setting icon"},
             { route: 'feeds/view/:id', title: 'View Feed', moduleId: 'viewmodels/editfeed', nav: false },
             { route: 'feeds/create', title: 'Create Feed', moduleId: 'viewmodels/addfeed', nav: false },

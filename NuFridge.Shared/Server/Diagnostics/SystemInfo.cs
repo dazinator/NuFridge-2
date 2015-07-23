@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
+using Hangfire;
 using NuFridge.Shared.Server.Diagnostics.Win;
 using NuFridge.Shared.Server.FileSystem;
 
@@ -24,7 +25,8 @@ namespace NuFridge.Shared.Server.Diagnostics
         #region Win32_Process
         public DateTime StartDate { get; set; }
         public string ExecutablePath { get; set; }
-        public uint ThreadCount { get; set; }
+        public int ServerThreadCount { get; set; }
+        public int SchedulerThreadCount { get; set; }
         public string WorkingSetSize { get; set; }
         public string ProcessName { get; set; }
         #endregion
@@ -71,7 +73,12 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
             return null;
         }
 
-        public SystemInfo(Win32ComputerSystem system, Win32Process process)
+        public SystemInfo()
+        {
+            
+        }
+
+        public SystemInfo(Win32ComputerSystem system, Win32Process process, IServerEngine engine)
         {
             if (system != null)
             {
@@ -83,10 +90,12 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
                 SystemType = string.Format("{0} ({1})", system.PcSystemType, system.SystemType);
             }
 
+            uint totalThreadCount = 0;
+
             if (process != null)
             {
                 ProcessName = process.Name;
-                ThreadCount = process.ThreadCount;
+                totalThreadCount = process.ThreadCount;
                 ExecutablePath = process.ExecutablePath;
                 StartDate = process.CreationDate.ToUniversalTime();
 
@@ -95,6 +104,17 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
             }
 
             LastUpdated = DateTime.Now;
+
+            if (totalThreadCount > 0)
+            {
+                ServerThreadCount = ((int)totalThreadCount - engine.BackgroundJobServerOptions.WorkerCount);
+                SchedulerThreadCount = engine.BackgroundJobServerOptions.WorkerCount;
+            }
+            else
+            {
+                ServerThreadCount = 0;
+                SchedulerThreadCount = engine.BackgroundJobServerOptions.WorkerCount;
+            }
 
             ulong freeBytesAvailable;
             ulong totalNumberOfBytes;

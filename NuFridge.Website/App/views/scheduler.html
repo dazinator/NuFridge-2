@@ -1,0 +1,106 @@
+﻿<div class="ui masthead vertical tab segment">
+    <div class="ui container">
+        <div class="introduction">
+
+            <h1 class="ui header">
+                Scheduler
+
+                <div class="sub header">
+
+                    Welcome to NuFridge.
+                </div>
+            </h1>
+
+            <div class="ui hidden divider"></div>
+        </div>
+    </div>
+</div>
+<div class="main ui container">
+    <div class="ui active tab" data-tab="icons">
+
+        <h2 class="ui header dividing profileHeader">
+            History
+        </h2>
+
+        <div class="ui top attached tabular menu schedulerMenu">
+            <a class="item active" data-tab="first">Succeeded <div class="ui green horizontal label" data-bind="text: succeededTotalCount"></div></a>
+            <a class="item" data-tab="second">Failed <div class="ui red horizontal label" data-bind="text: failedTotalCount"></div></a>
+            <a class="item" data-tab="third">Processing <div class="ui horizontal label" data-bind="text: processingTotalCount"></div></a>
+            <a class="item" data-tab="fourth">Scheduled <div class="ui horizontal label" data-bind="text: scheduledTotalCount"></div></a>
+        </div>
+        <div data-tab="first" class="ui bottom attached tab segment active">
+
+                <table class="ui compact table" data-bind="visible: succeededJobs().length > 0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Completed At</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: succeededJobs, visible: succeededJobs().length > 0">
+                        <tr>
+                            <td data-bind="text: Value.Job.Method.ClassName"></td>
+                            <td data-bind="text: Value.SucceededAt"></td>
+                            <td data-bind="text: Value.TotalDuration + 'ms'"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            <div data-bind="visible: succeededJobs().length === 0">No succeeded jobs</div>
+        </div>
+        <div data-tab="second" class="ui bottom attached tab segment">
+                <table class="ui compact table" data-bind="visible: failedJobs().length > 0">
+                    <thead>
+                        <tr>    
+                            <th>Message</th>
+                            <th>Failed At</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: failedJobs, visible: failedJobs().length > 0">
+                        <tr>
+                            <td data-bind="text: Value.ExceptionMessage"></td>
+                            <td data-bind="text: Value.FailedAt"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            <div data-bind="visible: failedJobs().length === 0">No failed jobs</div>
+        </div>
+        <div data-tab="third" class="ui bottom attached tab segment">
+                <table class="ui compact table" data-bind="visible: processingJobs().length > 0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Started At</th>
+                            <th>Server</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: processingJobs, visible: processingJobs().length > 0">
+                        <tr>
+                            <td data-bind="text: Value.Job.Method.ClassName"></td>
+                            <td data-bind="text: Value.StartedAt"></td>
+                            <td data-bind="text: Value.ServerId + 'ms'"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            <div data-bind="visible: processingJobs().length === 0">No processing jobs</div>
+        </div>
+        <div data-tab="fourth" class="ui bottom attached tab segment">
+                <table class="ui compact table" data-bind="visible: scheduledJobs().length > 0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Scheduled At</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: scheduledJobs, visible: scheduledJobs().length > 0">
+                        <tr>
+                            <td data-bind="text: Value.Job.Method.ClassName"></td>
+                            <td data-bind="text: Value.ScheduledAt"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            <div data-bind="visible: scheduledJobs().length === 0">No scheduled jobs</div>
+        </div>
+    </div>
+</div>

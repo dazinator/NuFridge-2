@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Hangfire;
 using Newtonsoft.Json;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
@@ -57,7 +58,7 @@ namespace NuFridge.Shared.Server.Statistics
             return model;
         }
 
-        public void UpdateModel()
+        public void UpdateModel(IJobCancellationToken cancellationToken)
         {
             var model = Update();
 
@@ -73,6 +74,8 @@ namespace NuFridge.Shared.Server.Statistics
             {
                 Transaction.Update<IStatistic>(record);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             Transaction.Commit();
         }

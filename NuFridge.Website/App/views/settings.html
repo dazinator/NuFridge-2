@@ -2,7 +2,8 @@
     <div class="ui container">
         <div class="introduction">
 
-            <h1 class="ui header">Settings
+            <h1 class="ui header">
+                Settings
 
                 <div class="sub header">
                     Welcome to NuFridge.
@@ -21,7 +22,8 @@
     <div class="ui active tab" data-tab="icons">
 
 
-        <h2 class="ui header dividing settingsHeader">Settings
+        <h2 class="ui header dividing settingsHeader">
+            Settings
         </h2>
 
         <div class="ui top attached tabular menu settingMenu">
@@ -79,8 +81,12 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Thread Count</td>
-                        <td data-bind="text: ThreadCount"></td>
+                        <td>Server Thread Count</td>
+                        <td data-bind="text: ServerThreadCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Scheduler Thread Count</td>
+                        <td data-bind="text: SchedulerThreadCount"></td>
                     </tr>
                     <tr>
                         <td>Working Set</td>

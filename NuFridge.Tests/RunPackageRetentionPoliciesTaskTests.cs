@@ -9,7 +9,7 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Scheduler.Jobs.Tasks;
+using NuFridge.Shared.Server.Scheduler.Jobs;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 using NUnit.Framework;
@@ -231,7 +231,7 @@ namespace NuFridge.Tests
             queryMock.Setup(qu => qu.Count()).Returns(packageMocks.Count());
         }
 
-        public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesTask
+        public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesJob
         {
             public TestableRunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
                 : base(store, packageRepositoryFactory)

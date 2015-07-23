@@ -8,10 +8,12 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
     public class GetDiagnosticInformationAction : IAction
     {
         private readonly IStore _store;
+        private readonly IServerEngine _engine;
 
-        public GetDiagnosticInformationAction(IStore store)
+        public GetDiagnosticInformationAction(IStore store, IServerEngine engine)
         {
             _store = store;
+            _engine = engine;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -20,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                var model = new SystemInformationStatistic(transaction).GetModel();
+                var model = new SystemInformationStatistic(transaction, _engine).GetModel();
 
                 return model;
             }

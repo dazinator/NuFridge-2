@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
-using FluentScheduler;
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Scheduler.Jobs;
 using Module = Autofac.Module;
@@ -18,8 +17,10 @@ namespace NuFridge.Shared.Server.Modules
         {
             base.Load(builder);
 
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AssignableTo<IJob>().As<IJob>();
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AssignableTo<ITask>().AsSelf();
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .AssignableTo<JobBase>()
+                .As<JobBase>()
+                .AsSelf();
         }
     }
 }

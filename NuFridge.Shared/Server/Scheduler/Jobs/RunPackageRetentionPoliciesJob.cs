@@ -2,28 +2,33 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FluentScheduler;
+using Hangfire;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
+namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
-    public class RunPackageRetentionPoliciesTask : ITask
+    public class RunPackageRetentionPoliciesJob : JobBase
     {
         private IStore Store { get; set; }
         private IInternalPackageRepositoryFactory PackageRepositoryFactory { get; set; }
-        private readonly ILog _log = LogProvider.For<RunPackageRetentionPoliciesTask>();
+        private readonly ILog _log = LogProvider.For<RunPackageRetentionPoliciesJob>();
 
-        public RunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
+        public override string JobId => typeof(RunPackageRetentionPoliciesJob).Name;
+
+        public override bool TriggerOnRegister => false;
+        public override string Cron => "0 0 * * *"; //Every day at 00:00
+
+        public RunPackageRetentionPoliciesJob(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
         {
             Store = store;
             PackageRepositoryFactory = packageRepositoryFactory;
         }
 
-        public void Execute()
+        public override void Execute(IJobCancellationToken cancellationToken)
         {
             _log.Info("Running package retention policies.");
 
@@ -47,16 +52,16 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 }
             }
 
-            RunPolicies(feedDictionary);
+            RunPolicies(feedDictionary, cancellationToken);
 
             _log.Info("Finished running package retention policies.");
         }
 
-        private void RunPolicies(Dictionary<IFeed, IFeedConfiguration> feedDictionary)
+        private void RunPolicies(Dictionary<IFeed, IFeedConfiguration> feedDictionary, IJobCancellationToken cancellationToken)
         {
             foreach (var feedKvp in feedDictionary)
             {
-                RunPolicy(feedKvp.Key, feedKvp.Value);
+                RunPolicy(feedKvp.Key, feedKvp.Value, cancellationToken);
             }
         }
 
@@ -68,13 +73,29 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             return Directory.Exists(path);
         }
 
-        private void RunPolicy(IFeed feed, IFeedConfiguration config)
+        private void RunPolicy(IFeed feed, IFeedConfiguration config, IJobCancellationToken cancellationToken)
         {
             var directory = config.PackagesDirectory;
 
             if (!config.RetentionPolicyEnabled)
             {
                 _log.Debug(string.Format("The '{0}' feed does not use a package retention policy, no packages will be deleted.", feed.Name));
+                return;
+            }
+
+            if (config.MaxPrereleasePackages < 0)
+            {
+                config.MaxPrereleasePackages = 0;
+            }
+
+            if (config.MaxReleasePackages < 0)
+            {
+                config.MaxReleasePackages = 0;
+            }
+
+            if (config.MaxPrereleasePackages == 0 && config.MaxReleasePackages == 0)
+            {
+                _log.Debug(string.Format("The '{0}' feed is set to not keep any packages, the retention policy will not be run.", feed.Name));
                 return;
             }
 
@@ -85,6 +106,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
             }
 
             _log.Info(string.Format("Running package retention policy for '{0}'. Max release packages: {1}, Max prerelease packages: {2}.", feed.Name, config.MaxReleasePackages, config.MaxPrereleasePackages));
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             List<IInternalPackage> packages;
 
@@ -105,18 +128,18 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
                 if (releasePackages.Count() > config.MaxReleasePackages)
                 {
-                    releasePackagesDeleted += FindAndRemoveOldReleasePackages(config, releasePackages);
+                    releasePackagesDeleted += FindAndRemoveOldReleasePackages(config, releasePackages, cancellationToken);
                 }
                 if (prereleasePackages.Count() > config.MaxPrereleasePackages)
                 {
-                    prereleasePackagesDeleted += FindAndRemoveOldPrereleasePackages(config, prereleasePackages);
+                    prereleasePackagesDeleted += FindAndRemoveOldPrereleasePackages(config, prereleasePackages, cancellationToken);
                 }
             }
 
             _log.Info(string.Format("Finished package retention policy for '{0}'. {1} release packages deleted. {2} prerelease packages deleted.", feed.Name, releasePackagesDeleted, prereleasePackagesDeleted));
         }
 
-        private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
+        private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages, IJobCancellationToken cancellationToken)
         {
             packages.Sort((a, b) => b.GetSemanticVersion().CompareTo(a.GetSemanticVersion()));
 
@@ -140,6 +163,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
                 var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 foreach (var packageToDelete in toDeletePackages)
                 {
@@ -166,7 +191,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
 
        
 
-        private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<IInternalPackage> packages)
+        private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<IInternalPackage> packages, IJobCancellationToken cancellationToken)
         {
             packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 
@@ -190,6 +215,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Tasks
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
                 var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 foreach (var packageToDelete in toDeletePackages)
                 {

@@ -338,6 +338,10 @@
     <EmbeddedResource Include="App\forms\smtpconfiguration.js" />
     <EmbeddedResource Include="App\views\signout.html" />
     <EmbeddedResource Include="App\viewmodels\signout.js" />
+    <EmbeddedResource Include="App\viewmodels\scheduler.js" />
+    <EmbeddedResource Include="App\views\scheduler.html" />
+    <EmbeddedResource Include="App\viewmodels\databinding\schedulejob.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\schedulerstats.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />

@@ -16,6 +16,8 @@
         'databinding-dashboard': 'viewmodels/databinding/dashboard',
         'databinding-feedpackagecountstatistic': 'viewmodels/databinding/feedpackagecountstatistic',
         'databinding-feeddownloadcountstatistic': 'viewmodels/databinding/feeddownloadcountstatistic',
+        'databinding-schedulerstats': 'viewmodels/databinding/schedulerstats',
+        'databinding-schedulejob': 'viewmodels/databinding/schedulejob',
         'readmore': '../Scripts/readmore',
         'cookie': '../Scripts/jquery.cookie',
         'api': 'system/api',

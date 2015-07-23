@@ -8,11 +8,12 @@ namespace NuFridge.Shared.Server.Statistics
 {
     public class SystemInformationStatistic : StatisticBase<SystemInfo>
     {
+        private readonly IServerEngine _engine;
 
-        public SystemInformationStatistic(ITransaction transaction)
+        public SystemInformationStatistic(ITransaction transaction, IServerEngine engine)
             : base(transaction)
         {
-
+            _engine = engine;
         }
 
         protected override SystemInfo Update()
@@ -20,7 +21,7 @@ namespace NuFridge.Shared.Server.Statistics
             var system = SystemInfo.GetComputerSystem();
             var process = SystemInfo.GetProcess();
 
-            var systemInfo = new SystemInfo(system, process);
+            var systemInfo = new SystemInfo(system, process, _engine);
 
             system.Dispose();
             process.Dispose();
