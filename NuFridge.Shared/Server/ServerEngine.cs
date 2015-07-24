@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Autofac;
@@ -40,11 +41,11 @@ namespace NuFridge.Shared.Server
 
             _log.Info("Starting job server.");
 
-            var options = new SqlServerStorageOptions() {PrepareSchemaIfNecessary = true};
+            var options = new SqlServerStorageOptions() { PrepareSchemaIfNecessary = true };
             GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options);
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
-            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute {Attempts = 0});
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute { Attempts = 0 });
             BackgroundJobServerOptions = new BackgroundJobServerOptions();
 
             _backgroundJobServer = new BackgroundJobServer(BackgroundJobServerOptions);
@@ -116,6 +117,37 @@ namespace NuFridge.Shared.Server
         public void Stop()
         {
             _webHostInitializer.Value.Stop();
+
+            _log.Info("Shutting down the job server. Any jobs being processed will be terminated after 3 minutes.");
+
+            var monitorApi = JobStorage.Current.GetMonitoringApi();
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
+            bool jobsRanForOver3Mins = false;
+
+            while (monitorApi.ProcessingCount() > 0 && !jobsRanForOver3Mins)
+            {
+                if (watch.Elapsed.TotalMinutes >= 3)
+                {
+                    jobsRanForOver3Mins = true;
+                }
+
+                _log.Info("Waiting for " + monitorApi.ProcessingCount() + " jobs to complete.");
+                Thread.Sleep(5000);
+            }
+
+            watch.Stop();
+
+            var processingJobs = monitorApi.ProcessingJobs(0, 10);
+
+            foreach (var processingJob in processingJobs)
+            {
+                _log.Warn("The " + processingJob.Value.Job.Type.Name + " job will be terminated as it execeeded the 3 minute timeout.");
+            }
+
+            _webHostInitializer.Value.Dispose();
 
             _backgroundJobServer.Dispose();
         }

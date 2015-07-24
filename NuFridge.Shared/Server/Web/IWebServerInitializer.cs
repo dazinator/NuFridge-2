@@ -1,6 +1,8 @@
-﻿namespace NuFridge.Shared.Server.Web
+﻿using System;
+
+namespace NuFridge.Shared.Server.Web
 {
-    public interface IWebServerInitializer
+    public interface IWebServerInitializer : IDisposable
     {
         void Start();
 

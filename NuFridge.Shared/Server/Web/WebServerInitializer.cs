@@ -124,6 +124,18 @@ namespace NuFridge.Shared.Server.Web
             _log.ErrorException("Unhandled exception from web server: " + exception.Message, exception);
         }
 
+        public void Dispose()
+        {
+            try
+            {
+                _host.Dispose();
+            }
+            catch (Exception ex)
+            {
+                _log.ErrorException(ex.Message, ex);
+            }
+        }
+
         public void Stop()
         {
             if (_host == null)
@@ -132,7 +144,6 @@ namespace NuFridge.Shared.Server.Web
             try
             {
                 _host.Stop();
-                _host.Dispose();
             }
             catch (Exception ex)
             {
