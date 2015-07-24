@@ -340,6 +340,7 @@
     <EmbeddedResource Include="App\viewmodels\signout.js" />
     <EmbeddedResource Include="App\viewmodels\scheduler.js" />
     <EmbeddedResource Include="App\views\scheduler.html" />
+    <EmbeddedResource Include="App\viewmodels\databinding\schedulejobpaging.js" />
     <EmbeddedResource Include="App\viewmodels\databinding\schedulejob.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />

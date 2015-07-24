@@ -168,3 +168,9 @@ h1.ui.header.breadcrumb { line-height: 35.9995994567871px;}
 .ui.table .ui.items>.item>.image:not(.ui) { width: auto;}
 
 .ui.table .ui.items>.item>.content p { margin: 0;}
+
+.unselectable {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

@@ -42,7 +42,7 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void IncrementDownloadCount(IInternalPackage package)
         {
-            _packageIndex.IncrementDownloadCount((IInternalPackage)package);
+            _packageIndex.IncrementDownloadCount(package);
         }
 
         public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
@@ -52,7 +52,7 @@ namespace NuFridge.Shared.Server.NuGet
 
 
 
-        public Stream GetPackageRaw( string packageId, SemanticVersion version)
+        public Stream GetPackageRaw(string packageId, SemanticVersion version)
         {
             IInternalPackage package = GetPackage(packageId, version);
             if (package == null)
@@ -78,13 +78,16 @@ namespace NuFridge.Shared.Server.NuGet
             _packageIndex.UnlistPackage(internalPackage);
         }
 
+        public void IndexPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
+        {
+            _packageIndex.AddPackage(package, isAbsoluteLatestVersion, isLatestVersion);
+        }
+
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
         {
-          //  var packagePath = GetPackageFilePath(package.Id, package.Version);
-
             base.AddPackage(package);
 
-            _packageIndex.AddPackage(package, isAbsoluteLatestVersion, isLatestVersion);
+            IndexPackage(package, isAbsoluteLatestVersion, isLatestVersion);
         }
 
         public void Dispose()

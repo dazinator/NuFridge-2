@@ -20,20 +20,11 @@ namespace NuFridge.Shared.Model
         public int MaxReleasePackages { get; set; }
         public bool RpDeletePackages { get; set; }
 
-        public string Name
-        {
-            get { return Id.ToString(); }
-        }
+        public string Name => Id.ToString();
 
 
-        public string PackagesDirectory
-        {
-            get { return Path.Combine(Directory, "Packages"); }
-        }
+        public string PackagesDirectory => Path.Combine(Directory, "Packages");
 
-        public string SymbolsDirectory
-        {
-            get { return Path.Combine(Directory, "Symbols"); }
-        }
+        public string SymbolsDirectory => Path.Combine(Directory, "Symbols");
     }
 }

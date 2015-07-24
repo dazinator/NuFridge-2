@@ -143,24 +143,14 @@ namespace NuFridge.Shared.Server.Web.Modules
             {
                 var module = this;
 
-                this.RequiresAuthentication();
+                module.RequiresAuthentication();
 
-                int page = int.Parse(module.Request.Query["page"]);
-                int pageSize = int.Parse(module.Request.Query["pageSize"]);
-
-                IMonitoringApi monitoringApi = JobStorage.Current.GetMonitoringApi();
-
-                var jobsCount = monitoringApi.ScheduledCount();
-                var jobs = monitoringApi.ScheduledJobs(pageSize * page, pageSize);
-
-                var totalPages = (int)Math.Ceiling((double)jobsCount / pageSize);
-
-                return new
+                using (IStorageConnection connection = JobStorage.Current.GetConnection())
                 {
-                    TotalCount = jobsCount,
-                    TotalPages = totalPages,
-                    Results = jobs
-                };
+                    List<RecurringJobDto> recurringJobs = connection.GetRecurringJobs();
+
+                    return recurringJobs;
+                }
             };
 
             Get["api/scheduler/jobs/deleted"] = p =>

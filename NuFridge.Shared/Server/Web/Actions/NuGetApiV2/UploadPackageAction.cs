@@ -146,68 +146,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return response;
                 }
 
-                IInternalPackage latestAbsoluteVersionPackage;
-                IInternalPackage latestVersionPackage;
-                GetCurrentLatestVersionPackages(feedId, package.Id, packageRepository, out latestAbsoluteVersionPackage, out latestVersionPackage);
+                bool isUploadedPackageLatestVersion;
+                bool isUploadedPackageAbsoluteLatestVersion;
+                UpdateLatestVersionFlagsForPackageId(feedId, package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
 
-                bool isUploadedPackageAbsoluteLatestVersion = true;
-                bool isUploadedPackageLatestVersion = true;
-
-                if (latestAbsoluteVersionPackage != null)
-                {
-                    if (package.Version.CompareTo(latestAbsoluteVersionPackage.GetSemanticVersion()) <= 0)
-                    {
-                        isUploadedPackageAbsoluteLatestVersion = false;
-                    }
-                }
-
-                if (latestVersionPackage != null)
-                {
-                    if (package.Version.CompareTo(latestVersionPackage.GetSemanticVersion()) <= 0)
-                    {
-                        isUploadedPackageLatestVersion = false;
-                    }
-                    else
-                    {
-                        if (!package.IsReleaseVersion())
-                        {
-                            isUploadedPackageLatestVersion = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if (!package.IsReleaseVersion())
-                    {
-                        isUploadedPackageLatestVersion = false;
-                    }
-                }
-
-
-                if (isUploadedPackageAbsoluteLatestVersion && latestAbsoluteVersionPackage != null)
-                {
-                    latestAbsoluteVersionPackage.IsAbsoluteLatestVersion = false;
-                    using (ITransaction transaction = Store.BeginTransaction())
-                    {
-                        transaction.Update(latestAbsoluteVersionPackage);
-                        transaction.Commit();
-                    }
-                }
-
-                if (isUploadedPackageLatestVersion && latestVersionPackage != null)
-                {
-                    latestVersionPackage.IsLatestVersion = false;
-                    using (ITransaction transaction = Store.BeginTransaction())
-                    {
-                        transaction.Update(latestVersionPackage);
-                        transaction.Commit();
-                    }
-                }
-
-                packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
-                    isUploadedPackageLatestVersion);
-
-
+                packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
             }
             finally
             {

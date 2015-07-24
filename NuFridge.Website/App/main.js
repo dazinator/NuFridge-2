@@ -16,8 +16,8 @@
         'databinding-dashboard': 'viewmodels/databinding/dashboard',
         'databinding-feedpackagecountstatistic': 'viewmodels/databinding/feedpackagecountstatistic',
         'databinding-feeddownloadcountstatistic': 'viewmodels/databinding/feeddownloadcountstatistic',
-        'databinding-schedulerstats': 'viewmodels/databinding/schedulerstats',
         'databinding-schedulejob': 'viewmodels/databinding/schedulejob',
+        'databinding-schedulejobpaging': 'viewmodels/databinding/schedulejobpaging',
         'readmore': '../Scripts/readmore',
         'cookie': '../Scripts/jquery.cookie',
         'api': 'system/api',
@@ -148,8 +148,7 @@ define(['durandal/system', 'durandal/app', 'durandal/viewLocator', 'knockoutmapp
     app.title = 'NuFridge';
 
     app.configurePlugins({
-        router: true,
-        dialog: true
+        router: true
     });
 
     app.start().then(function() {
