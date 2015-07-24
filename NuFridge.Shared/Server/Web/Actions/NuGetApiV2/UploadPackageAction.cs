@@ -4,6 +4,7 @@ using System.Linq;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
@@ -18,7 +19,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
-
+        private readonly ILog _log = LogProvider.For<UploadPackageAction>();
 
 
         public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store)
@@ -116,7 +117,24 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string temporaryFilePath;
             using (var stream = _fileSystem.CreateTemporaryFile(".nupkg", out temporaryFilePath))
             {
-                file.Value.CopyTo(stream);
+                try
+                {
+                    _log.Debug("Copying the uploaded package to the temp folder at " + temporaryFilePath);
+
+                    file.Value.CopyTo(stream);
+                }
+                catch (IOException ex)
+                {
+                    _log.ErrorException("There was an IO error adding the package to the temp folder. " + ex.Message, ex);
+
+                    if (File.Exists(temporaryFilePath))
+                    {
+                        _log.Info("Deleting the file at " + temporaryFilePath + " as it did not get copied to the temp folder correctly.");
+                        File.Delete(temporaryFilePath);
+                    }
+
+                    return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
+                }
             }
 
             var response = ProcessPackage(temporaryFilePath, module, feedId);
@@ -168,7 +186,5 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             return new Response { StatusCode = HttpStatusCode.Created };
         }
-
-
     }
 }
