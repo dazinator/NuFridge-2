@@ -59,7 +59,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
             PackageRepo.Verify(pr => pr.RemovePackage(It.IsAny<IInternalPackage>()), Times.Never);
@@ -72,7 +72,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
             PackageRepo.Verify(pr => pr.RemovePackage(It.IsAny<IInternalPackage>()), Times.Never);
@@ -112,7 +112,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Once);
             PackageRepo.Verify(pr => pr.RemovePackage(mock.Object), Times.Once);
@@ -145,7 +145,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Once);
             PackageRepo.Verify(pr => pr.RemovePackage(mock.Object), Times.Once);
@@ -168,7 +168,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
         }
@@ -190,7 +190,7 @@ namespace NuFridge.Tests
 
             TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
 
-            task.Execute();
+            //task.Execute();
 
             PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Never);
         }
