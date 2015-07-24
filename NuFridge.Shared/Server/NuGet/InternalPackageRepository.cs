@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
-using NuFridge.Shared.Model;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.Storage;
-using NuFridge.Shared.Server.Web;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -19,7 +15,7 @@ namespace NuFridge.Shared.Server.NuGet
         private readonly PackageIndex _packageIndex;
 
         private readonly object _fileLock = new object();
-
+        private readonly ILog _log = LogProvider.For<InternalPackageRepository>();
 
         public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
         {
@@ -85,7 +81,26 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
         {
-            base.AddPackage(package);
+            try
+            {
+                base.AddPackage(package);
+            }
+            catch (IOException ex)
+            {
+                _log.ErrorException("There was an IO error adding the package to the packages folder. " + ex.Message, ex);
+
+                var filePath = GetPackageFilePath(package);
+                
+                if (FileSystem.FileExists(filePath))
+                {
+                    var fullPath = FileSystem.GetFullPath(filePath);
+
+                    _log.Info("Deleting the file at " + fullPath + " as it did not get copied to the packages folder correctly.");
+                    FileSystem.DeleteFile(filePath);
+                }
+                throw;
+            }
+         
 
             IndexPackage(package, isAbsoluteLatestVersion, isLatestVersion);
         }

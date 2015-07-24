@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using Nancy;
+using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
@@ -150,7 +152,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 bool isUploadedPackageAbsoluteLatestVersion;
                 UpdateLatestVersionFlagsForPackageId(feedId, package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
 
-                packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
+                try
+                {
+                    packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
+                }
+                catch (IOException ex)
+                {
+                    return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
+                }
             }
             finally
             {
