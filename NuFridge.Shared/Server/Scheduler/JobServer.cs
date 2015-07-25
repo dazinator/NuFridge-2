@@ -73,7 +73,9 @@ namespace NuFridge.Shared.Server.Scheduler
 
         public void Start(Action<string> updateStatusAction)
         {
-            _log.Info("Starting job server");
+            updateStatusAction("Starting the job scheduler");
+
+            _log.Info("Starting the job scheduler");
 
             var options = new SqlServerStorageOptions {PrepareSchemaIfNecessary = true};
             GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options);
@@ -87,8 +89,6 @@ namespace NuFridge.Shared.Server.Scheduler
             _log.Info("Successfully started job server");
 
             var tasks = _container.Resolve<IEnumerable<JobBase>>().ToList();
-
-            updateStatusAction("Scheduling jobs");
 
             List<string> jobIdsToWaitFor = new List<string>();
 
@@ -105,17 +105,17 @@ namespace NuFridge.Shared.Server.Scheduler
                 }
             }
 
-            updateStatusAction("Waiting for startup jobs to complete");
+            
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 
             foreach (var jobIdToWaitFor in jobIdsToWaitFor)
             {
-                WaitForEnqueuedTaskToComplete(monitorApi, jobIdToWaitFor);
+                WaitForEnqueuedTaskToComplete(monitorApi, jobIdToWaitFor, updateStatusAction);
             }
         }
 
-        private void WaitForEnqueuedTaskToComplete(IMonitoringApi monitorApi, string jobIdToWaitFor)
+        private void WaitForEnqueuedTaskToComplete(IMonitoringApi monitorApi, string jobIdToWaitFor, Action<string> updateStatusAction)
         {
             var job = monitorApi.JobDetails(jobIdToWaitFor);
 
@@ -129,7 +129,8 @@ namespace NuFridge.Shared.Server.Scheduler
                 return;
             }
 
-            _log.Info("Waiting for the " + job.Job.Type.Name + " to complete");
+            _log.Info("Waiting for the " + job.Job.Type.Name + " job to complete");
+            updateStatusAction("Waiting for the " + job.Job.Type.Name + " job to complete");
 
             if (job.History.Any())
             {
@@ -138,7 +139,7 @@ namespace NuFridge.Shared.Server.Scheduler
 
             Thread.Sleep(2000);
 
-            WaitForEnqueuedTaskToComplete(monitorApi, jobIdToWaitFor);
+            WaitForEnqueuedTaskToComplete(monitorApi, jobIdToWaitFor, updateStatusAction);
         }
     }
 

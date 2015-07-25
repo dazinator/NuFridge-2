@@ -15,10 +15,8 @@ namespace NuFridge.Shared.Server.Storage
 
         public void Initialize(Action<string> updateStatusAction)
         {
-            updateStatusAction("Upgrading database");
-
             foreach (IInitializeStore initializeRelationalStore in _initializers)
-                initializeRelationalStore.Initialize(_store);
+                initializeRelationalStore.Initialize(_store, updateStatusAction);
         }
 
         public void Stop()

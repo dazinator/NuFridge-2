@@ -19,8 +19,10 @@ namespace NuFridge.Shared.Server.Storage.Initializers
             _factory = factory;
         }
 
-        public void Initialize(IStore store)
+        public void Initialize(IStore store, Action<string> updateStatusAction)
         {
+            updateStatusAction("Initializing the internal package repository factory");
+
             _log.Debug("Initializing the internal package repository factory.");
 
             _factory.Init();

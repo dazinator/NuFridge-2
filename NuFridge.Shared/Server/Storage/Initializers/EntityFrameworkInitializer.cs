@@ -12,9 +12,11 @@ namespace NuFridge.Shared.Server.Storage.Initializers
     {
         private readonly ILog _log = LogProvider.For<EntityFrameworkInitializer>();
 
-        public void Initialize(IStore store)
+        public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            _log.Info("Initializing the database.");
+            updateStatusAction("Initializing the database");
+
+            _log.Info("Initializing the database");
 
             using (var dbContext = new DatabaseContext(store))
             {

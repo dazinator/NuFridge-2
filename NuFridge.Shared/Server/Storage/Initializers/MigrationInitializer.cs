@@ -1,4 +1,6 @@
-﻿namespace NuFridge.Shared.Server.Storage.Initializers
+﻿using System;
+
+namespace NuFridge.Shared.Server.Storage.Initializers
 {
     public class MigrationInitializer : IInitializeStore
     {
@@ -9,8 +11,10 @@
             _migrator = migrator;
         }
 
-        public void Initialize(IStore store)
+        public void Initialize(IStore store, Action<string> updateStatusAction)
         {
+            updateStatusAction("Upgrading the database");
+
             _migrator.Migrate(store);
         }
     }
