@@ -2,7 +2,7 @@
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web;
-using NuFridge.Shared.Server.Web.Startup;
+using NuFridge.Shared.Server.Web.Listeners;
 
 namespace NuFridge.Shared.Server
 {

@@ -114,6 +114,7 @@
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Startup\index.html" />
     <EmbeddedResource Include="Scripts\readmore.js" />
     <EmbeddedResource Include="Semantic\images\cube.png" />
     <EmbeddedResource Include="Scripts\xml2json.js" />

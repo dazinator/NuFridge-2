@@ -6,7 +6,7 @@ using NuFridge.Shared.Server.Web.Actions.DashboardApi;
 using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;
 using NuFridge.Shared.Server.Web.Actions.FeedApi;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
-using NuFridge.Shared.Server.Web.Startup;
+using NuFridge.Shared.Server.Web.Listeners;
 
 namespace NuFridge.Shared.Server.Modules
 {

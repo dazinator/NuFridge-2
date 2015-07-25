@@ -312,8 +312,8 @@
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />
-    <Compile Include="Server\Web\Startup\ShutdownPageListener.cs" />
-    <Compile Include="Server\Web\Startup\StartupPageListener.cs" />
+    <Compile Include="Server\Web\Listeners\ShutdownPageListener.cs" />
+    <Compile Include="Server\Web\Listeners\StartupPageListener.cs" />
     <Compile Include="Server\Web\TemporaryAdminUserIdentity.cs" />
     <Compile Include="Server\Web\IWebPackage.cs" />
     <Compile Include="Server\Web\MemoryResponseMessage.cs" />
