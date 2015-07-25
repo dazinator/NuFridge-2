@@ -26,7 +26,8 @@
             <a class="item active" data-tab="first">Succeeded <div class="ui green horizontal label" data-bind="text: succeededTotalCount"></div></a>
             <a class="item" data-tab="second">Failed <div class="ui red horizontal label" data-bind="text: failedTotalCount"></div></a>
             <a class="item" data-tab="third">Processing <div class="ui horizontal label" data-bind="text: processingTotalCount"></div></a>
-            <a class="item" data-tab="fourth">Scheduled <div class="ui horizontal label" data-bind="text: scheduledJobs().length"></div></a>
+            <a class="item" data-tab="fourth">Scheduled<div class="ui horizontal label" data-bind="text: scheduledJobs().length"></div></a>
+            <a class="item" data-tab="fifth">Deleted <div class="ui horizontal label" data-bind="text: deletedTotalCount"></div></a>
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
             <div class="meta" style="color: rgba(0, 0, 0, .4);">
@@ -135,7 +136,39 @@
                 </tr>
                 </tbody>
             </table>
-            <div data-bind="visible: scheduledJobs().length === 0"><br/>No scheduled jobs</div>
+            <div data-bind="visible: scheduledJobs().length === 0"><br/>No scheduled jobs
+            </div>
+        </div>
+        <div data-tab="fifth" class="ui bottom attached tab segment">
+            <div class="meta" style="color: rgba(0, 0, 0, .4);">
+                Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
+            </div>
+            <table class="ui compact table" data-bind="visible: deletedJobs().length > 0">
+                <thead>
+                    <tr>
+                        <th class="eight wide">Name</th>
+                        <th class="four wide">Deleted At</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: deletedJobs, visible: deletedJobs().length > 0">
+                    <tr>
+                        <td class="collapsing">
+                            <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.deletedJobExpandClick"></i> <span data-bind="text: Name"></span>
+                            <div style="display: none;" data-bind="attr: {class: 'deletedJobExpandSection-' + Key}">
+                                <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                                <div>
+                                    Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                        <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td data-bind="text: $root.formatDate(Value.DeletedAt)"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div data-bind="visible: deletedJobs().length === 0"><br />No deleted jobs</div>
         </div>
     </div>
 </div>

@@ -82,8 +82,30 @@ namespace NuFridge.Shared.Server.Scheduler
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute {Attempts = 0});
-            BackgroundJobServerOptions = new BackgroundJobServerOptions();
 
+            var monitorApi = JobStorage.Current.GetMonitoringApi();
+
+            var processingJobs = monitorApi.ProcessingJobs(0, int.MaxValue);
+
+            if (processingJobs.Any())
+            {
+                updateStatusAction("Deleting " + processingJobs.Count() + " jobs which are currently stuck processing. This happens when NuFridge is shutdown during job execution.");
+
+                _log.Warn("Deleting " + processingJobs.Count() + " jobs which are currently stuck processing. This happens when NuFridge is shutdown during job execution.");
+
+                foreach (var processingJob in processingJobs)
+                {
+                    BackgroundJob.Delete(processingJob.Key);
+                }
+            }
+
+            using (var connection = JobStorage.Current.GetConnection())
+            {
+                _log.Debug("Removing timed out servers which have not been active for one minute.");
+                connection.RemoveTimedOutServers(TimeSpan.FromMinutes(1));
+            }
+
+            BackgroundJobServerOptions = new BackgroundJobServerOptions();
             _backgroundJobServer = new BackgroundJobServer(BackgroundJobServerOptions);
 
             _log.Info("Successfully started job server");
@@ -104,9 +126,46 @@ namespace NuFridge.Shared.Server.Scheduler
 
             updateStatusAction("Enqueuing " + jobsToRunNow.Count() + " jobs");
 
-            List<string> jobIdsToWaitFor = jobsToRunNow.Select(task => BackgroundJob.Enqueue(() => task.Execute(JobCancellationToken.Null))).ToList();
+            List<string> jobIdsToWaitFor = new List<string>();
 
-            var monitorApi = JobStorage.Current.GetMonitoringApi();
+            foreach (var jobBase in jobsToRunNow)
+            {
+                RecurringJobDto job;
+
+                using (IStorageConnection connection = JobStorage.Current.GetConnection())
+                {
+                    job = connection.GetRecurringJobs().First(jb => jb.Id == jobBase.JobId);
+                }
+
+                var cronSchedule = NCrontab.CrontabSchedule.Parse(jobBase.Cron);
+                var nextExecuting = DateTime.MinValue;
+
+                var lastExecution = job.LastExecution;
+                if (lastExecution.HasValue)
+                {
+                    nextExecuting = cronSchedule.GetNextOccurrence(lastExecution.Value);
+
+                    var minutesUntilNextRun = nextExecuting.Subtract(DateTime.UtcNow).TotalMinutes;
+
+                    if (minutesUntilNextRun > 1)
+                    {
+                        _log.Debug("Executing the " + jobBase.JobId + " job as the next scheduled run is " + minutesUntilNextRun +
+                                   " minutes away");
+
+                        jobIdsToWaitFor.Add(BackgroundJob.Enqueue(() => jobBase.Execute(JobCancellationToken.Null)));
+                    }
+                    else
+                    {
+                        _log.Debug("Not executing the " + jobBase.JobId + " job as the next scheduled run is " + minutesUntilNextRun + " minutes away");
+                    }
+                }
+                else
+                {
+                    _log.Debug("Executing the " + jobBase.JobId + " job as it has not been run before");
+
+                    jobIdsToWaitFor.Add(BackgroundJob.Enqueue(() => jobBase.Execute(JobCancellationToken.Null)));
+                }
+            }
 
             foreach (var jobIdToWaitFor in jobIdsToWaitFor)
             {

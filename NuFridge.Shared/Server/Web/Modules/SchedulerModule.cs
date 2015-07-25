@@ -5,6 +5,7 @@ using Autofac;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.Storage;
+using Hangfire.Storage.Monitoring;
 using Microsoft.Owin;
 using Nancy;
 using Nancy.Security;
@@ -165,7 +166,7 @@ namespace NuFridge.Shared.Server.Web.Modules
                 IMonitoringApi monitoringApi = JobStorage.Current.GetMonitoringApi();
 
                 var jobsCount = monitoringApi.DeletedListCount();
-                var jobs = monitoringApi.DeletedJobs(pageSize * page, pageSize);
+                JobList<DeletedJobDto> jobs = monitoringApi.DeletedJobs(pageSize * page, pageSize);
 
                 var totalPages = (int)Math.Ceiling((double)jobsCount / pageSize);
 
