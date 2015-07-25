@@ -49,7 +49,7 @@ namespace NuFridge.Shared.Server
 
             _jobServer.Value.Stop(_shutdownPageListener.Value.UpdateStatus);
 
-            _shutdownPageListener.Value.UpdateStatus("Performing final cleanup");
+            _shutdownPageListener.Value.UpdateStatus("Performing final cleanup before shutdown");
 
             _webHostInitializer.Value.Dispose();
 

@@ -58,19 +58,16 @@
             url: window.location.pathname,
             success: function (data, textStatus, request) {
                 var status = request.getResponseHeader('NuFridge-Status');
-                if (status === "startup") {
+                if (status === "shutdown") {
                     $(".loadingApplicationSpinner .text.loader").text(data);
                     isCheckingStatus = false;
                     dfd.resolve();
                 } else {
-                    $(".loadingApplicationSpinner .text.loader").text('NuFridge has started, the page will be reloaded.');
-                    setTimeout(function () { location.reload(true); }, 2000);
+                    $(".loadingApplicationSpinner .text.loader").text('Please reload the page.');
                 }
             },
             error: function () {
-                $(".loadingApplicationSpinner .text.loader").text('There was an error communicating with the server.');
-                isCheckingStatus = false;
-                dfd.reject();
+                $(".loadingApplicationSpinner .text.loader").text('NuFridge has been stopped.');
             }
         });
 
@@ -81,7 +78,7 @@
         checkStatus().always(function() {
             setInterval(function() {
                 checkStatus();
-            }, 2000);
+            }, 4000);
         });
     });
 </script>

@@ -50,7 +50,7 @@ namespace NuFridge.Shared.Server.Scheduler
 
                 var processingCount = monitorApi.ProcessingCount();
 
-                updateStatusAction("Waiting for " + processingCount + " jobs to complete");
+                updateStatusAction("Waiting for " + processingCount + " jobs to complete to continue shutdown");
 
                 _log.Info("Waiting for " + processingCount + " jobs to complete.");
 
@@ -90,22 +90,21 @@ namespace NuFridge.Shared.Server.Scheduler
 
             var tasks = _container.Resolve<IEnumerable<JobBase>>().ToList();
 
-            List<string> jobIdsToWaitFor = new List<string>();
+
+            updateStatusAction("Adding " + tasks.Count() + " jobs to the scheduler");
 
             foreach (var task in tasks)
             {
                 _log.Info("Scheduling recurring job " + task.GetType().Name);
 
                 RecurringJob.AddOrUpdate(task.JobId, () => task.Execute(JobCancellationToken.Null), task.Cron);
-
-                if (task.TriggerOnRegister)
-                {
-                    var jobId = BackgroundJob.Enqueue(() => task.Execute(JobCancellationToken.Null));
-                    jobIdsToWaitFor.Add(jobId);
-                }
             }
 
-            
+            var jobsToRunNow = tasks.Where(tk => tk.TriggerOnRegister).ToList();
+
+            updateStatusAction("Enqueuing " + jobsToRunNow.Count() + " jobs");
+
+            List<string> jobIdsToWaitFor = jobsToRunNow.Select(task => BackgroundJob.Enqueue(() => task.Execute(JobCancellationToken.Null))).ToList();
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using NuFridge.Shared.Logging;
@@ -12,8 +15,9 @@ namespace NuFridge.Shared.Server.Web.Listeners
         private bool ShowStartupPage { get; set; }
         private readonly HttpListener _listener = new HttpListener();
         private Thread _listenerThread;
-        private readonly ILog _log = LogProvider.For<StartupPageListener>();
+        private readonly ILog _log = LogProvider.For<ShutdownPageListener>();
         private string TextStatus { get; set; } = "Loading.";
+        private string HtmlPageFormat { get; set; }
 
         private readonly IWebPortalConfiguration _portalConfiguration;
 
@@ -73,12 +77,76 @@ namespace NuFridge.Shared.Server.Web.Listeners
                 return;
             }
 
-            byte[] data = Encoding.UTF8.GetBytes(TextStatus);
+            string dataToOutput = HtmlPageFormat;
 
+            if (context.Request.AcceptTypes != null && context.Request.AcceptTypes.Contains("text/html"))
+            {
+                if (dataToOutput == null)
+                {
+                    Assembly assembly =
+                        Assembly.LoadFile(
+                            Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName,
+                                "NuFridge.Website.dll"));
+                    string resourceNamespaceRoot = "NuFridge.Website";
+
+                    string indexPageName = resourceNamespaceRoot + ".Shutdown.index.html";
+                    string jqueryJsName = resourceNamespaceRoot + ".Scripts.jquery-1.9.1.min.js";
+                    string customCssName = resourceNamespaceRoot + ".Semantic.custom.css";
+                    string semanticUiCssName = resourceNamespaceRoot + ".Semantic.semantic.css";
+
+                    using (Stream stream = assembly.GetManifestResourceStream(indexPageName))
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            dataToOutput = reader.ReadToEnd();
+                        }
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(jqueryJsName))
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            dataToOutput = dataToOutput.Replace("%jqueryscript%", "<script>" + reader.ReadToEnd() + "</script>");
+                        }
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(customCssName))
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            dataToOutput = dataToOutput.Replace("%customcss%", "<style>" + reader.ReadToEnd() + "</style>");
+                        }
+                    }
+
+                    using (Stream stream = assembly.GetManifestResourceStream(semanticUiCssName))
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            dataToOutput = dataToOutput.Replace("%semanticuicss%", "<style>" + reader.ReadToEnd() + "</style>");
+                        }
+                    }
+
+                    HtmlPageFormat = dataToOutput;
+                }
+
+                dataToOutput = dataToOutput.Replace("%status%", TextStatus);
+
+                context.Response.ContentType = "text/html";
+            }
+            else
+            {
+                dataToOutput = TextStatus;
+                context.Response.ContentType = "plain/text";
+            }
+
+            context.Response.AddHeader("NuFridge-Status", "shutdown");
+
+            byte[] data = Encoding.UTF8.GetBytes(dataToOutput);
+            context.Response.ContentLength64 = data.Length;
             var output = context.Response.OutputStream;
             output.Write(data, 0, data.Length);
 
-            context.Response.AddHeader("NuFridge-Status", "shutdown");
+
 
             context.Response.StatusCode = 200;
             context.Response.Close();
