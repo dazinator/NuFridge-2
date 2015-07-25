@@ -1,4 +1,6 @@
-﻿namespace NuFridge.Shared.Server.Storage
+﻿using System;
+
+namespace NuFridge.Shared.Server.Storage
 {
     public class StoreInitializer : IStoreInitializer
     {
@@ -11,8 +13,10 @@
             _initializers = initializers;
         }
 
-        public void Initialize()
+        public void Initialize(Action<string> updateStatusAction)
         {
+            updateStatusAction("Upgrading database");
+
             foreach (IInitializeStore initializeRelationalStore in _initializers)
                 initializeRelationalStore.Initialize(_store);
         }

@@ -7,7 +7,5 @@ namespace NuFridge.Shared.Server
         void Start();
 
         void Stop();
-
-        BackgroundJobServerOptions BackgroundJobServerOptions { get; }
     }
 }

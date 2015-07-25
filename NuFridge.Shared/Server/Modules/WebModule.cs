@@ -6,6 +6,7 @@ using NuFridge.Shared.Server.Web.Actions.DashboardApi;
 using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;
 using NuFridge.Shared.Server.Web.Actions.FeedApi;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
+using NuFridge.Shared.Server.Web.Startup;
 
 namespace NuFridge.Shared.Server.Modules
 {
@@ -17,6 +18,8 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<WebBootstrapper>().As<IPortalBootstrapper>().SingleInstance();
             builder.RegisterModule(new AuthenticationModule());
             builder.RegisterType<WebServerInitializer>().As<IWebServerInitializer>().SingleInstance();
+            builder.RegisterType<StartupPageListener>().As<IStartupPageListener>();
+            builder.RegisterType<ShutdownPageListener>().As<IShutdownPageListener>();
 
             //Account api module
             builder.RegisterType<GetAccountAction>().AsSelf();

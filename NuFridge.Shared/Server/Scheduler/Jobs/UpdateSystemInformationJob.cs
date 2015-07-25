@@ -7,13 +7,13 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
     public class UpdateSystemInformationJob : JobBase
     {
-        private readonly IServerEngine _engine;
+        private readonly IJobServer _jobServer;
         private IStore Store { get; set; }
         private readonly ILog _logger = LogProvider.For<UpdateSystemInformationJob>();
 
-        public UpdateSystemInformationJob(IStore store, IServerEngine engine) 
+        public UpdateSystemInformationJob(IStore store, IJobServer jobServer) 
         {
-            _engine = engine;
+            _jobServer = jobServer;
             Store = store;
         }
 
@@ -23,7 +23,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             using (ITransaction transaction = Store.BeginTransaction())
             {
-                SystemInformationStatistic stat = new SystemInformationStatistic(transaction, _engine);
+                SystemInformationStatistic stat = new SystemInformationStatistic(transaction, _jobServer);
 
                 stat.UpdateModel(cancellationToken);
             }

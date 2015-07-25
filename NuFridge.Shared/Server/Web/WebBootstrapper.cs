@@ -23,9 +23,6 @@ namespace NuFridge.Shared.Server.Web
         private readonly Lazy<IWebPortalConfiguration> _portalConfiguration;
         private readonly ILog _log = LogProvider.For<WebBootstrapper>();
 
-        public ServerState State { get; set; }
-
-        public string StatusMessage { get; set; }
 
         protected override byte[] FavIcon
         {
@@ -75,6 +72,7 @@ namespace NuFridge.Shared.Server.Web
             base.ApplicationStartup(_container, pipelines);
 
             DiagnosticsHook.Disable(pipelines);
+            StaticConfiguration.DisableErrorTraces = false;
         }
 
         protected override void ConfigureRequestContainer(ILifetimeScope requestScope, NancyContext context)

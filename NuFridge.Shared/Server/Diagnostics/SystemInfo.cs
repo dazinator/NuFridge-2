@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Hangfire;
 using NuFridge.Shared.Server.Diagnostics.Win;
 using NuFridge.Shared.Server.FileSystem;
+using NuFridge.Shared.Server.Scheduler;
 
 namespace NuFridge.Shared.Server.Diagnostics
 {
@@ -78,7 +79,7 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
             
         }
 
-        public SystemInfo(Win32ComputerSystem system, Win32Process process, IServerEngine engine)
+        public SystemInfo(Win32ComputerSystem system, Win32Process process, IJobServer jobServer)
         {
             if (system != null)
             {
@@ -107,13 +108,13 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
 
             if (totalThreadCount > 0)
             {
-                ServerThreadCount = ((int)totalThreadCount - engine.BackgroundJobServerOptions.WorkerCount);
-                SchedulerThreadCount = engine.BackgroundJobServerOptions.WorkerCount;
+                ServerThreadCount = ((int)totalThreadCount - jobServer.BackgroundJobServerOptions.WorkerCount);
+                SchedulerThreadCount = jobServer.BackgroundJobServerOptions.WorkerCount;
             }
             else
             {
                 ServerThreadCount = 0;
-                SchedulerThreadCount = engine.BackgroundJobServerOptions.WorkerCount;
+                SchedulerThreadCount = jobServer.BackgroundJobServerOptions.WorkerCount;
             }
 
             ulong freeBytesAvailable;
