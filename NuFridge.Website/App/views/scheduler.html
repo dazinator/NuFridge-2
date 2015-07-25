@@ -24,45 +24,54 @@
 
         <div class="ui top attached tabular menu schedulerMenu">
             <a class="item active" data-tab="first">Succeeded <div class="ui green horizontal label" data-bind="text: succeededTotalCount"></div></a>
-            <a class="item" data-tab="second">Failed <div class="ui red horizontal label" data-bind="text: failedTotalCount"></div></a>
-            <a class="item" data-tab="third">Processing <div class="ui horizontal label" data-bind="text: processingTotalCount"></div></a>
-            <a class="item" data-tab="fourth">Scheduled<div class="ui horizontal label" data-bind="text: scheduledJobs().length"></div></a>
-            <a class="item" data-tab="fifth">Deleted <div class="ui horizontal label" data-bind="text: deletedTotalCount"></div></a>
+            <a class="item" data-tab="second">
+                Failed
+                <div class="ui red horizontal label" data-bind="text: failedTotalCount"></div>
+            </a>
+            <a class="item" data-tab="third">Deleted <div class="ui horizontal orange label" data-bind="text: deletedTotalCount"></div></a>
+            <a class="item" data-tab="fourth">Processing <div class="ui horizontal label" data-bind="text: processingTotalCount"></div></a>
+            <a class="item" data-tab="fifth">Scheduled<div class="ui horizontal label" data-bind="text: scheduledJobs().length"></div></a>
+
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
+            <h3>Succeeded Jobs</h3>
+            <p>Jobs are set as succeeded when they complete without errors.</p>
             <div class="meta" style="color: rgba(0, 0, 0, .4);">
                 Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
             </div>
             <table class="ui compact table" data-bind="visible: succeededJobs().length > 0">
                 <thead>
-                    <tr>
-                        <th class="eight wide">Name</th>
-                        <th class="four wide">Completed At</th>
-                        <th class="four wide">Duration</th>
-                    </tr>
+                <tr>
+                    <th class="eight wide">Name</th>
+                    <th class="four wide">Completed At</th>
+                    <th class="four wide">Duration</th>
+                </tr>
                 </thead>
                 <tbody data-bind="foreach: succeededJobs, visible: succeededJobs().length > 0">
-                    <tr>
-                        <td class="collapsing">
-                            <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.succeededJobExpandClick"></i> <span data-bind="text: Name"></span>
-                            <div style="display: none;" data-bind="attr: {class: 'succeededJobExpandSection-' + Key}">
-                                <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
-                                <div>
-                                    Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                <tr>
+                    <td class="collapsing">
+                        <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.succeededJobExpandClick"></i> <span data-bind="text: Name"></span>
+                        <div style="display: none;" data-bind="attr: {class: 'succeededJobExpandSection-' + Key}">
+                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>
+                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
                                         <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                     </span>
-                                </div>
                             </div>
-                        </td>
-                        <td data-bind="text: $root.formatDate(Value.SucceededAt)"></td>
-                        <td data-bind="text: Value.TotalDuration + 'ms'"></td>
-                    </tr>
+                        </div>
+                    </td>
+                    <td data-bind="text: $root.formatDate(Value.SucceededAt)"></td>
+                    <td data-bind="text: Value.TotalDuration + 'ms'"></td>
+                </tr>
                 </tbody>
             </table>
 
-            <div data-bind="visible: succeededJobs().length === 0"><br />No succeeded jobs</div>
+            <div data-bind="visible: succeededJobs().length === 0"><br/>No succeeded jobs
+            </div>
         </div>
         <div data-tab="second" class="ui bottom attached tab segment">
+            <h3>Failed Jobs</h3>
+            <p>Jobs are failed when an exception is thrown during execution.</p>
             <div class="meta" style="color: rgba(0, 0, 0, .4);">
                 Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
             </div>
@@ -80,9 +89,47 @@
                 </tr>
                 </tbody>
             </table>
-            <div data-bind="visible: failedJobs().length === 0"><br />No failed jobs</div>
+            <div data-bind="visible: failedJobs().length === 0">
+                <br/>No failed jobs
+            </div>
         </div>
         <div data-tab="third" class="ui bottom attached tab segment">
+            <h3>Deleted Jobs</h3>
+            <p>Jobs are deleted when NuFridge starts if they are stuck in the Processing state. This typically happens when NuFridge is not shutdown gracefully.</p>
+            <div class="meta" style="color: rgba(0, 0, 0, .4);">
+                Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
+            </div>
+            <table class="ui compact table" data-bind="visible: deletedJobs().length > 0">
+                <thead>
+                <tr>
+                    <th class="eight wide">Name</th>
+                    <th class="four wide">Deleted At</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: deletedJobs, visible: deletedJobs().length > 0">
+                <tr>
+                    <td class="collapsing">
+                        <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.deletedJobExpandClick"></i> <span data-bind="text: Name"></span>
+                        <div style="display: none;" data-bind="attr: {class: 'deletedJobExpandSection-' + Key}">
+                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>
+                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                        <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
+                                    </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-bind="text: $root.formatDate(Value.DeletedAt)"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div data-bind="visible: deletedJobs().length === 0"><br/>No deleted jobs
+            </div>
+        </div>
+        <div data-tab="fourth" class="ui bottom attached tab segment">
+            <h3>Processing Jobs</h3>
+            <p>Jobs are set as processing when the job is picked up by the server for execution.</p>
             <div class="meta" style="color: rgba(0, 0, 0, .4);">
                 Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
             </div>
@@ -102,8 +149,8 @@
                             <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
                             <div>
                                 Arguments: <span data-bind="foreach: Value.Job.Arguments">
-                                    <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
-                                </span>
+                                        <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
+                                    </span>
                             </div>
                         </div>
                     </td>
@@ -112,9 +159,12 @@
                 </tr>
                 </tbody>
             </table>
-            <div data-bind="visible: processingJobs().length === 0"><br />No processing jobs</div>
+            <div data-bind="visible: processingJobs().length === 0"><br/>No processing jobs
+            </div>
         </div>
-        <div data-tab="fourth" class="ui bottom attached tab segment">
+        <div data-tab="fifth" class="ui bottom attached tab segment">
+            <h3>Scheduled Jobs</h3>
+            <p>The jobs below are scheduled to run on a set interval.</p>
             <div class="meta" style="color: rgba(0, 0, 0, .4);">
                 Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
             </div>
@@ -136,39 +186,9 @@
                 </tr>
                 </tbody>
             </table>
-            <div data-bind="visible: scheduledJobs().length === 0"><br/>No scheduled jobs
+            <div data-bind="visible: scheduledJobs().length === 0">
+                <br/>No scheduled jobs
             </div>
-        </div>
-        <div data-tab="fifth" class="ui bottom attached tab segment">
-            <div class="meta" style="color: rgba(0, 0, 0, .4);">
-                Last Updated: <span data-bind="timeago: $root.ajaxUpdatedAt"></span>
-            </div>
-            <table class="ui compact table" data-bind="visible: deletedJobs().length > 0">
-                <thead>
-                    <tr>
-                        <th class="eight wide">Name</th>
-                        <th class="four wide">Deleted At</th>
-                    </tr>
-                </thead>
-                <tbody data-bind="foreach: deletedJobs, visible: deletedJobs().length > 0">
-                    <tr>
-                        <td class="collapsing">
-                            <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.deletedJobExpandClick"></i> <span data-bind="text: Name"></span>
-                            <div style="display: none;" data-bind="attr: {class: 'deletedJobExpandSection-' + Key}">
-                                <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
-                                <div>
-                                    Arguments: <span data-bind="foreach: Value.Job.Arguments">
-                                        <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-bind="text: $root.formatDate(Value.DeletedAt)"></td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div data-bind="visible: deletedJobs().length === 0"><br />No deleted jobs</div>
         </div>
     </div>
 </div>
