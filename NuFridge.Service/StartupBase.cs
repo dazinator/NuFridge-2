@@ -25,18 +25,11 @@ namespace NuFridge.Service
     {
          private readonly ILog _log = LogProvider.For<StartupBase>();
         private readonly string _displayName;
-        private readonly OptionSet _commonOptions;
         private IContainer _container;
         private ICommand _commandInstance;
         private string[] _commandLineArguments;
 
-        protected OptionSet CommonOptions
-        {
-            get
-            {
-                return _commonOptions;
-            }
-        }
+        protected OptionSet CommonOptions { get; }
 
         public IContainer Container
         {
@@ -52,7 +45,7 @@ namespace NuFridge.Service
         {
             _commandLineArguments = commandLineArguments;
             _displayName = displayName;
-            _commonOptions = new OptionSet();
+            CommonOptions = new OptionSet();
         }
 
         public int Run()
@@ -64,14 +57,14 @@ namespace NuFridge.Service
             fileTarget.EnableArchiveFileCompression = true;
             fileTarget.ConcurrentWrites = false;
             fileTarget.ArchiveAboveSize = 10000000; //10MB
-            fileTarget.ArchiveEvery = FileArchivePeriod.Hour;
-            fileTarget.ArchiveOldFileOnStartup = true;
-            fileTarget.MaxArchiveFiles = 8;
-            fileTarget.ArchiveFileName = "Logs/server-{#}-logs.zip";
-            config.AddTarget("file", fileTarget);
-
-            fileTarget.FileName = "${basedir}/Logs/server.log";
+            fileTarget.ArchiveEvery = FileArchivePeriod.Day;
+            fileTarget.ArchiveOldFileOnStartup = false;
+            fileTarget.MaxArchiveFiles = 10;
+            fileTarget.ArchiveFileName = "${basedir}\\Logs\\archive-{#}-log.zip";
+            fileTarget.FileName = "${basedir}\\Logs\\log.txt";
             fileTarget.Layout = "${longdate} ${level} ${logger}: ${message}";
+
+            config.AddTarget("file", fileTarget);
 
             var consoleTarget = new ColoredConsoleTarget();
             consoleTarget.Layout = "${time}: ${message}";
@@ -81,20 +74,20 @@ namespace NuFridge.Service
            
             config.LoggingRules.Add(rule1);
 
-            var rule2 = new LoggingRule("*", LogLevel.Info, fileTarget);
+            var rule2 = new LoggingRule("*", LogLevel.Debug, fileTarget);
             config.LoggingRules.Add(rule2);
 
             LogManager.Configuration = config;
 
-            TaskScheduler.UnobservedTaskException += (EventHandler<UnobservedTaskExceptionEventArgs>)((sender, args) =>
+            TaskScheduler.UnobservedTaskException += ((sender, args) =>
             {
                 _log.ErrorException("Unhandled task exception occurred: {0}", args.Exception.UnpackFromContainers(), args.Exception.GetErrorSummary());
                 args.SetObserved();
             });
-            AppDomain.CurrentDomain.UnhandledException += (UnhandledExceptionEventHandler)((sender, args) =>
+            AppDomain.CurrentDomain.UnhandledException += ((sender, args) =>
             {
                 Exception error = args.ExceptionObject as Exception;
-                _log.FatalException("Unhandled AppDomain exception occurred: {0}", error, error == null ? args.ExceptionObject : error.Message);
+                _log.FatalException("Unhandled AppDomain exception occurred: {0}", error, error?.Message ?? args.ExceptionObject);
             });
             try
             {
@@ -118,12 +111,9 @@ namespace NuFridge.Service
                 foreach (Exception error in ex.LoaderExceptions)
                 {
                     _log.ErrorException(error.Message, error);
-                    if (error is FileNotFoundException)
-                    {
-                        FileNotFoundException notFoundException = error as FileNotFoundException;
-                        if (!string.IsNullOrEmpty(notFoundException.FusionLog))
-                            _log.ErrorFormat("Fusion log: {0}", notFoundException.FusionLog);
-                    }
+                    FileNotFoundException notFoundException = error as FileNotFoundException;
+                    if (!string.IsNullOrEmpty(notFoundException?.FusionLog))
+                        _log.ErrorFormat("Fusion log: {0}", notFoundException.FusionLog);
                 }
                 return 43;
             }
