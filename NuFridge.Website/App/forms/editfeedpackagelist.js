@@ -15,6 +15,7 @@
         self.successUploadingPackage = ko.observable(false);
         self.errorUploadingPackage = ko.observable(false);
         self.urlUploadValue = ko.observable("");
+        self.feedUploadValue = ko.observable("");
     };
 
     ctor.prototype.activate = function(activationData) {
@@ -238,8 +239,32 @@
         }, 'json');
     };
 
+    ctor.prototype.feedUploadAction = function () {
+        var self = this;
+
+        self.successUploadingPackage(false);
+        self.errorUploadingPackage(false);
+
+        var options = {
+            closable: false,
+            onApprove: function (sender) {
+                if (!self.isUploadingPackage()) {
+                    self.startFeedUpload();
+                }
+                return false;
+            },
+            transition: 'horizontal flip',
+            detachable: false
+        };
+
+        $('#feedUploadModal').modal(options).modal('show');
+    };
+
     ctor.prototype.urlUploadAction = function () {
         var self = this;
+
+        self.successUploadingPackage(false);
+        self.errorUploadingPackage(false);
 
         self.urlUploadValue("");
         $(".urlUploadMessage").text("");
@@ -430,6 +455,9 @@
                         break;
                     case "URL":
                         self.urlUploadAction();
+                        break;
+                    case "NuGet Feed":
+                        self.feedUploadAction();
                         break;
                     default:
                         alert("Not handled");
