@@ -14,6 +14,7 @@ namespace NuFridge.Shared.Server.Configuration
         public string SqlUsername { get; set; }
         public string SqlPassword { get; set; }
         public string ListenPrefixes { get; set; }
+        public string WindowsDebuggingToolsPath { get; set; }
 
         public string NuGetFrameworkNames
         {
@@ -36,6 +37,7 @@ namespace NuFridge.Shared.Server.Configuration
             SqlUsername = ConfigurationManager.AppSettings["SqlUserId"];
             SqlPassword = ConfigurationManager.AppSettings["SqlPassword"];
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
+            WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
         }
 
         public void Save()

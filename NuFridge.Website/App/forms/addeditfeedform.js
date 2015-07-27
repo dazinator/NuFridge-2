@@ -129,11 +129,11 @@
         var diff = (startTime - endTime) / 1000;
         var seconds = Math.abs(diff);
 
-        if (seconds < 3) {
+        if (seconds < 2) {
             setTimeout(function () {
                 self.showHideSavingMessage();
                 dfd.resolve();
-            }, (3 - seconds) * 1000);
+            }, (2 - seconds) * 1000);
         } else {
             self.showHideSavingMessage();
             dfd.resolve();

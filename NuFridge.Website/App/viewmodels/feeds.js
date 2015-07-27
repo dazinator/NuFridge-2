@@ -8,6 +8,50 @@
         this.isAddFeedNavigating = ko.observable(false);
     };
 
+    ctor.prototype.getPreviousPageArray = function () {
+        var self = this;
+
+        
+        var size = self.currentPage();
+        if (size > 10) {
+            size = 10;
+        }
+        else if (size < 0) {
+            size = 0;
+        }
+
+        var arr = new Array(size);
+        var itemCurrent = self.currentPage();
+        var arrayLength = arr.length;
+        if (arrayLength > 0) {
+            for (var i = arrayLength; i > 0; --i)
+                arr[i - 1] = (itemCurrent--);
+        }
+        return arr;
+    };
+
+    ctor.prototype.getNextPageArray = function () {
+        var self = this;
+
+        var size = self.pageCount() - (self.currentPage() + 1);
+
+        if (size > 10) {
+            size = 10;
+        }
+        else if (size < 0) {
+            size = 0;
+        }
+
+        var arr = new Array(size);
+        var itemCurrent = self.currentPage() + 2;
+        var arrayLength = arr.length;
+        for (var i = 0; i < arrayLength; i++) {
+            arr[i] = (itemCurrent++);
+        }
+        return arr;
+    };
+
+
     ctor.prototype.previousPage = function (sender, event) {
         var self = this;
 

@@ -4,6 +4,7 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
@@ -25,6 +26,9 @@ namespace NuFridge.Shared.Server.Modules
             builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IInternalPackageRepositoryFactory>(), c.Resolve<IStore>(), feedId))).InstancePerDependency();
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => CreatePathResolver(c, feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => CreateFileSystem(c, feedId))).InstancePerDependency();
+
+            builder.RegisterType<SymbolSource>().AsSelf();
+            builder.Register(c => new SymbolTools(c.Resolve<IHomeConfiguration>().WindowsDebuggingToolsPath)).AsSelf();
 
             builder.RegisterType<InternalPackageRepositoryFactory>().As<IInternalPackageRepositoryFactory>().SingleInstance();
 

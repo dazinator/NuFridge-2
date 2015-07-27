@@ -6,6 +6,8 @@ using NuFridge.Shared.Server.Web.Actions.DashboardApi;
 using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;
 using NuFridge.Shared.Server.Web.Actions.FeedApi;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
+using NuFridge.Shared.Server.Web.Actions.SchedulerApi;
+using NuFridge.Shared.Server.Web.Actions.SymbolsApi;
 using NuFridge.Shared.Server.Web.Listeners;
 
 namespace NuFridge.Shared.Server.Modules
@@ -63,7 +65,20 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<RedirectToApiV2Action>().AsSelf();
             builder.RegisterType<GetODataMetadataAction>().AsSelf();
             builder.RegisterType<GetODataRootAction>().AsSelf();
+
+            //Symbols module
             builder.RegisterType<UploadSymbolPackageAction>().AsSelf();
+            builder.RegisterType<GetSymbolFileAction>().AsSelf();
+            builder.RegisterType<GetSourceFilesAction>().AsSelf();
+
+            //Scheduler module
+            builder.RegisterType<GetProcessingJobsAction>().AsSelf();
+            builder.RegisterType<GetSucceededJobsAction>().AsSelf();
+            builder.RegisterType<GetFailedJobsAction>().AsSelf();
+            builder.RegisterType<GetScheduledJobsAction>().AsSelf();
+            builder.RegisterType<GetDeletedJobsAction>().AsSelf();
+            builder.RegisterType<GetJobDetailsAction>().AsSelf();
+            builder.RegisterType<GetServersAction>().AsSelf();
         }
     }
 }

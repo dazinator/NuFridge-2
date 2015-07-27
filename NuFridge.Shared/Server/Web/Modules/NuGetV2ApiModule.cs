@@ -8,9 +8,6 @@ namespace NuFridge.Shared.Server.Web.Modules
     {
         public NuGetV2ApiModule(IContainer container)
         {
-            //Upload symbol package
-            Put["feeds{feed}/api/v2/symbols"] = p => container.Resolve<UploadSymbolPackageAction>().Execute(p, this);
-
             //Batch post
             Post["feeds/{feed}/api/v2/$batch"] = p => container.Resolve<BatchAction>().Execute(p, this);
 

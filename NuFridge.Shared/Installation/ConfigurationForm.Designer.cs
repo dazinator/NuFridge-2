@@ -53,6 +53,10 @@ namespace NuFridge.Shared.Installation
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.txtDebuggingTools = new System.Windows.Forms.TextBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.topPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbClose)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbContinue)).BeginInit();
@@ -66,7 +70,7 @@ namespace NuFridge.Shared.Installation
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label1.Location = new System.Drawing.Point(-1, 35);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(342, 1);
+            this.label1.Size = new System.Drawing.Size(468, 1);
             this.label1.TabIndex = 0;
             // 
             // topPanel
@@ -78,7 +82,7 @@ namespace NuFridge.Shared.Installation
             this.topPanel.Controls.Add(this.pbClose);
             this.topPanel.Location = new System.Drawing.Point(0, 0);
             this.topPanel.Name = "topPanel";
-            this.topPanel.Size = new System.Drawing.Size(341, 36);
+            this.topPanel.Size = new System.Drawing.Size(467, 36);
             this.topPanel.TabIndex = 1;
             this.topPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topPanel_MouseDown);
             // 
@@ -99,7 +103,7 @@ namespace NuFridge.Shared.Installation
             this.pbClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pbClose.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbClose.Image = global::NuFridge.Shared.Properties.Resources.Close;
-            this.pbClose.Location = new System.Drawing.Point(317, 10);
+            this.pbClose.Location = new System.Drawing.Point(443, 10);
             this.pbClose.Name = "pbClose";
             this.pbClose.Size = new System.Drawing.Size(13, 11);
             this.pbClose.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -113,9 +117,9 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbContinue.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbContinue.Image = global::NuFridge.Shared.Properties.Resources._continue;
-            this.pbContinue.Location = new System.Drawing.Point(79, 375);
+            this.pbContinue.Location = new System.Drawing.Point(79, 455);
             this.pbContinue.Name = "pbContinue";
-            this.pbContinue.Size = new System.Drawing.Size(175, 62);
+            this.pbContinue.Size = new System.Drawing.Size(301, 62);
             this.pbContinue.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbContinue.TabIndex = 3;
             this.pbContinue.TabStop = false;
@@ -128,7 +132,7 @@ namespace NuFridge.Shared.Installation
             this.pictureBox1.Image = global::NuFridge.Shared.Properties.Resources.logo;
             this.pictureBox1.Location = new System.Drawing.Point(15, 40);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(265, 91);
+            this.pictureBox1.Size = new System.Drawing.Size(391, 91);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
@@ -139,7 +143,7 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSqlServer.Location = new System.Drawing.Point(90, 208);
             this.txtSqlServer.Name = "txtSqlServer";
-            this.txtSqlServer.Size = new System.Drawing.Size(214, 20);
+            this.txtSqlServer.Size = new System.Drawing.Size(340, 20);
             this.txtSqlServer.TabIndex = 4;
             // 
             // label2
@@ -170,7 +174,7 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDatabase.Location = new System.Drawing.Point(90, 234);
             this.txtDatabase.Name = "txtDatabase";
-            this.txtDatabase.Size = new System.Drawing.Size(214, 20);
+            this.txtDatabase.Size = new System.Drawing.Size(340, 20);
             this.txtDatabase.TabIndex = 6;
             // 
             // label4
@@ -190,7 +194,7 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUserId.Location = new System.Drawing.Point(90, 260);
             this.txtUserId.Name = "txtUserId";
-            this.txtUserId.Size = new System.Drawing.Size(214, 20);
+            this.txtUserId.Size = new System.Drawing.Size(340, 20);
             this.txtUserId.TabIndex = 8;
             // 
             // label5
@@ -210,7 +214,7 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPassword.Location = new System.Drawing.Point(90, 286);
             this.txtPassword.Name = "txtPassword";
-            this.txtPassword.Size = new System.Drawing.Size(214, 20);
+            this.txtPassword.Size = new System.Drawing.Size(340, 20);
             this.txtPassword.TabIndex = 10;
             // 
             // label6
@@ -254,7 +258,7 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSiteUrl.Location = new System.Drawing.Point(90, 341);
             this.txtSiteUrl.Name = "txtSiteUrl";
-            this.txtSiteUrl.Size = new System.Drawing.Size(214, 20);
+            this.txtSiteUrl.Size = new System.Drawing.Size(340, 20);
             this.txtSiteUrl.TabIndex = 14;
             this.txtSiteUrl.Text = "http://localhost:8080";
             // 
@@ -273,9 +277,9 @@ namespace NuFridge.Shared.Installation
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label10.Location = new System.Drawing.Point(335, 0);
+            this.label10.Location = new System.Drawing.Point(461, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(1, 500);
+            this.label10.Size = new System.Drawing.Size(1, 580);
             this.label10.TabIndex = 17;
             // 
             // label11
@@ -283,9 +287,9 @@ namespace NuFridge.Shared.Installation
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label11.Location = new System.Drawing.Point(0, 0);
+            this.label11.Location = new System.Drawing.Point(126, 0);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(1, 500);
+            this.label11.Size = new System.Drawing.Size(1, 580);
             this.label11.TabIndex = 18;
             // 
             // label12
@@ -295,7 +299,7 @@ namespace NuFridge.Shared.Installation
             this.label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label12.Location = new System.Drawing.Point(0, 447);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(342, 1);
+            this.label12.Size = new System.Drawing.Size(468, 1);
             this.label12.TabIndex = 19;
             // 
             // label13
@@ -305,15 +309,62 @@ namespace NuFridge.Shared.Installation
             this.label13.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label13.Location = new System.Drawing.Point(0, 0);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(342, 1);
+            this.label13.Size = new System.Drawing.Size(468, 1);
             this.label13.TabIndex = 20;
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(19, 376);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(95, 13);
+            this.label14.TabIndex = 21;
+            this.label14.Text = "Symbol Support";
+            // 
+            // label15
+            // 
+            this.label15.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(31, 404);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(163, 13);
+            this.label15.TabIndex = 23;
+            this.label15.Text = "Windows Debugging Tools Path:";
+            // 
+            // txtDebuggingTools
+            // 
+            this.txtDebuggingTools.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDebuggingTools.Location = new System.Drawing.Point(200, 401);
+            this.txtDebuggingTools.Name = "txtDebuggingTools";
+            this.txtDebuggingTools.Size = new System.Drawing.Size(230, 20);
+            this.txtDebuggingTools.TabIndex = 22;
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(220, 424);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(186, 13);
+            this.linkLabel1.TabIndex = 24;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Download Windows Debugging Tools";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // ConfigurationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(336, 448);
+            this.ClientSize = new System.Drawing.Size(462, 528);
+            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.label15);
+            this.Controls.Add(this.txtDebuggingTools);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
@@ -378,5 +429,9 @@ namespace NuFridge.Shared.Installation
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox txtDebuggingTools;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

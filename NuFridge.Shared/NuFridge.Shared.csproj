@@ -240,6 +240,10 @@
     <Compile Include="Server\Modules\FullModule.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\NuGet\PackageDependencySetConverter.cs" />
+    <Compile Include="Server\NuGet\Symbols\ReadStream.cs" />
+    <Compile Include="Server\NuGet\Symbols\SymbolSource.cs" />
+    <Compile Include="Server\NuGet\Symbols\SymbolSourceMapper.cs" />
+    <Compile Include="Server\NuGet\Symbols\SymbolTools.cs" />
     <Compile Include="Server\Scheduler\AutofacContainerPerJobFilterAttribute.cs" />
     <Compile Include="Server\Scheduler\AutofacPerLifetimeScopeJobActivator.cs" />
     <Compile Include="Server\Scheduler\HangfirePerLifetimeScopeConfigurer.cs" />
@@ -302,7 +306,16 @@
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageVersionsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageIdsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\UploadPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\UploadSymbolPackageAction.cs" />
+    <Compile Include="Server\Web\Actions\SymbolsApi\GetSourceFilesAction.cs" />
+    <Compile Include="Server\Web\Actions\SymbolsApi\GetSymbolFileAction.cs" />
+    <Compile Include="Server\Web\Actions\SymbolsApi\UploadSymbolPackageAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetDeletedJobsAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetFailedJobsAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetJobDetailsAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetProcessingJobsAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetScheduledJobsAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetServersAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetSucceededJobsAction.cs" />
     <Compile Include="Server\Web\Batch\HttpParserStreamExtensions.cs" />
     <Compile Include="Server\Web\Batch\RequestLine.cs" />
     <Compile Include="Server\Web\Batch\RequestLineParser.cs" />
@@ -313,6 +326,7 @@
     <Compile Include="Server\Web\Modules\NuGetV1ApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
     <Compile Include="Server\Web\Modules\SchedulerModule.cs" />
+    <Compile Include="Server\Web\Modules\SymbolsModule.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />
@@ -506,7 +520,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Server\Web\Actions\NuGetApiV1\" />
-    <Folder Include="Server\Web\Actions\SchedulerApi\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

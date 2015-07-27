@@ -9,7 +9,7 @@
         string SqlInitialCatalog { get; }
         string ListenPrefixes { get; }
         string NuGetFrameworkNames { get; set; }
-
+        string WindowsDebuggingToolsPath { get;}
         void Save();
     }
 }

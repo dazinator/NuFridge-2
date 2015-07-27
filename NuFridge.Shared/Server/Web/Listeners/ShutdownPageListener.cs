@@ -77,6 +77,13 @@ namespace NuFridge.Shared.Server.Web.Listeners
                 return;
             }
 
+            if (context.Request.HttpMethod != "GET")
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                context.Response.Close();
+                return;
+            }
+
             string dataToOutput = HtmlPageFormat;
 
             if (context.Request.AcceptTypes != null && context.Request.AcceptTypes.Contains("text/html"))

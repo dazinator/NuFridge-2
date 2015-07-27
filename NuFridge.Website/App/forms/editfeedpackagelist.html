@@ -103,8 +103,12 @@
                 <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }">
                     <i class="left chevron icon" data-bind="click: $root.previousPage"></i>
                 </a>
-                <!-- ko foreach: new Array(pageCount()) -->
-                <a class="item" data-bind="css: { active: $root.currentPage() == $index()}, click: function () { $root.goToPage($index()); }, text: $index() + 1"></a>
+                <!-- ko foreach: $root.getPreviousPageArray() -->
+                <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data - 1); }"></a>
+                <!-- /ko -->
+                <span class="item active" data-bind="text: $root.currentPage() + 1"></span>
+                <!-- ko foreach: $root.getNextPageArray() -->
+                <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data - 1); }"></a>
                 <!-- /ko -->
                 <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }">
                     <i class="right chevron icon" data-bind="click: $root.nextPage"></i>

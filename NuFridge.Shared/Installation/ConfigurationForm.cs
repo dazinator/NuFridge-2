@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -111,6 +112,16 @@ namespace NuFridge.Shared.Installation
             config.AppSettings.Settings["SqlPassword"].Value = txtPassword.Text;
             config.AppSettings.Settings["WebsiteUrl"].Value = txtSiteUrl.Text;
 
+            if (config.AppSettings.Settings.AllKeys.Contains("WindowsDebuggingToolsPath"))
+            {
+                config.AppSettings.Settings["WindowsDebuggingToolsPath"].Value = "";
+            }
+            else
+            {
+                config.AppSettings.Settings.Add("WindowsDebuggingToolsPath", "");
+            }
+
+
             config.Save(ConfigurationSaveMode.Full);
 
             ConfigurationManager.RefreshSection("appSettings");
@@ -196,6 +207,18 @@ namespace NuFridge.Shared.Installation
                 return false;
             }
 
+            if (!string.IsNullOrWhiteSpace(txtDebuggingTools.Text))
+            {
+                var symStorePath = Path.Combine(txtDebuggingTools.Text, "symstore.exe");
+
+                if (!File.Exists(symStorePath))
+                {
+                    MessageBox.Show("Could not find the symstore.exe file in the " + txtDebuggingTools.Text + " folder.\r\n Either install the windows debugging tools or leave the debugging tools path empty (this can be updated later).");
+
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -210,15 +233,29 @@ namespace NuFridge.Shared.Installation
                     var path = Path.Combine(_installDirectory, "Service", "NuFridge.Service.exe.config");
                     if (File.Exists(path))
                     {
-                        ExeConfigurationFileMap map = new ExeConfigurationFileMap { ExeConfigFilename = path };
-                        Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
+                        ExeConfigurationFileMap map = new ExeConfigurationFileMap {ExeConfigFilename = path};
+                        Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map,
+                            ConfigurationUserLevel.None);
 
                         txtSqlServer.Text = config.AppSettings.Settings["SqlServer"].Value;
                         txtDatabase.Text = config.AppSettings.Settings["SqlDatabase"].Value;
                         txtUserId.Text = config.AppSettings.Settings["SqlUserId"].Value;
                         txtPassword.Text = config.AppSettings.Settings["SqlPassword"].Value;
                         txtSiteUrl.Text = config.AppSettings.Settings["WebsiteUrl"].Value;
+
+                        if (config.AppSettings.Settings.AllKeys.Contains("WindowsDebuggingToolsPath"))
+                        {
+                            txtDebuggingTools.Text = config.AppSettings.Settings["WindowsDebuggingToolsPath"].Value;
+                        }
                     }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(txtDebuggingTools.Text))
+            {
+                if (Directory.Exists(@"C:\Program Files (x86)\Windows Kits\8.1\Debuggers\x86"))
+                {
+                    txtDebuggingTools.Text = @"C:\Program Files (x86)\Windows Kits\8.1\Debuggers\x86";
                 }
             }
         }
@@ -236,5 +273,10 @@ namespace NuFridge.Shared.Installation
         {
 
         }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+            {
+                Process.Start("https://msdn.microsoft.com/en-us/windows/hardware/hh852365.aspx");
+            }
     }
 }
