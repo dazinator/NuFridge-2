@@ -267,11 +267,10 @@ namespace NuFridge.Shared.Installation
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(20, 168);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(436, 26);
+            this.label9.Size = new System.Drawing.Size(399, 26);
             this.label9.TabIndex = 16;
-            this.label9.Text = "Please create the database specified below manually and give the user the db_owne" +
-    "r role. \r\nThe database will be populated automatically when NuFridge is run for " +
-    "the first time.";
+            this.label9.Text = "Please create the database specified below manually.\r\nThe database will be popula" +
+    "ted automatically when NuFridge is run for the first time.";
             // 
             // label10
             // 

@@ -226,31 +226,6 @@ namespace NuFridge.Shared.Installation
         {
             Text = @"NuFridge Installation";
 
-            if (!string.IsNullOrWhiteSpace(_installDirectory))
-            {
-                if (Directory.Exists(_installDirectory))
-                {
-                    var path = Path.Combine(_installDirectory, "Service", "NuFridge.Service.exe.config");
-                    if (File.Exists(path))
-                    {
-                        ExeConfigurationFileMap map = new ExeConfigurationFileMap {ExeConfigFilename = path};
-                        Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map,
-                            ConfigurationUserLevel.None);
-
-                        txtSqlServer.Text = config.AppSettings.Settings["SqlServer"].Value;
-                        txtDatabase.Text = config.AppSettings.Settings["SqlDatabase"].Value;
-                        txtUserId.Text = config.AppSettings.Settings["SqlUserId"].Value;
-                        txtPassword.Text = config.AppSettings.Settings["SqlPassword"].Value;
-                        txtSiteUrl.Text = config.AppSettings.Settings["WebsiteUrl"].Value;
-
-                        if (config.AppSettings.Settings.AllKeys.Contains("WindowsDebuggingToolsPath"))
-                        {
-                            txtDebuggingTools.Text = config.AppSettings.Settings["WindowsDebuggingToolsPath"].Value;
-                        }
-                    }
-                }
-            }
-
             if (string.IsNullOrWhiteSpace(txtDebuggingTools.Text))
             {
                 if (Directory.Exists(@"C:\Program Files (x86)\Windows Kits\8.1\Debuggers\x86"))
