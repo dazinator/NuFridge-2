@@ -117,9 +117,9 @@ namespace NuFridge.Shared.Installation
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbContinue.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pbContinue.Image = global::NuFridge.Shared.Properties.Resources._continue;
-            this.pbContinue.Location = new System.Drawing.Point(79, 455);
+            this.pbContinue.Location = new System.Drawing.Point(148, 454);
             this.pbContinue.Name = "pbContinue";
-            this.pbContinue.Size = new System.Drawing.Size(301, 62);
+            this.pbContinue.Size = new System.Drawing.Size(175, 62);
             this.pbContinue.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pbContinue.TabIndex = 3;
             this.pbContinue.TabStop = false;
@@ -132,7 +132,7 @@ namespace NuFridge.Shared.Installation
             this.pictureBox1.Image = global::NuFridge.Shared.Properties.Resources.logo;
             this.pictureBox1.Location = new System.Drawing.Point(15, 40);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(391, 91);
+            this.pictureBox1.Size = new System.Drawing.Size(265, 91);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
@@ -267,10 +267,11 @@ namespace NuFridge.Shared.Installation
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(20, 168);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(260, 26);
+            this.label9.Size = new System.Drawing.Size(436, 26);
             this.label9.TabIndex = 16;
-            this.label9.Text = "Please create the database specified below manually.\r\nThe tables will be created " +
-    "automatically during install.";
+            this.label9.Text = "Please create the database specified below manually and give the user the db_owne" +
+    "r role. \r\nThe database will be populated automatically when NuFridge is run for " +
+    "the first time.";
             // 
             // label10
             // 
@@ -287,7 +288,7 @@ namespace NuFridge.Shared.Installation
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label11.Location = new System.Drawing.Point(126, 0);
+            this.label11.Location = new System.Drawing.Point(0, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(1, 580);
             this.label11.TabIndex = 18;
@@ -297,7 +298,7 @@ namespace NuFridge.Shared.Installation
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label12.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label12.Location = new System.Drawing.Point(0, 447);
+            this.label12.Location = new System.Drawing.Point(0, 527);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(468, 1);
             this.label12.TabIndex = 19;
@@ -387,6 +388,8 @@ namespace NuFridge.Shared.Installation
             this.Controls.Add(this.label1);
             this.Controls.Add(this.topPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximumSize = new System.Drawing.Size(462, 528);
+            this.MinimumSize = new System.Drawing.Size(462, 528);
             this.Name = "ConfigurationForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
