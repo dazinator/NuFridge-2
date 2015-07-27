@@ -331,8 +331,6 @@
     <EmbeddedResource Include="App\viewmodels\databinding\feeddownloadcountstatistic.js" />
     <EmbeddedResource Include="App\viewmodels\databinding\signinrequest.js" />
     <EmbeddedResource Include="App\system\auth.js" />
-    <EmbeddedResource Include="App\forms\editfeedpackageretention.html" />
-    <EmbeddedResource Include="App\forms\editfeedpackageretention.js" />
     <EmbeddedResource Include="App\viewmodels\databinding\feedconfig.js" />
     <EmbeddedResource Include="App\forms\editfeedpackagelist.html" />
     <EmbeddedResource Include="App\forms\editfeedpackagelist.js" />
