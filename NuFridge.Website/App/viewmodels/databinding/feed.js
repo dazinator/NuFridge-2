@@ -92,10 +92,7 @@
                 return data.RootUrl() + "/api/odata/GetUpdates()";
             },
             GetSymbolsUrl: function () {
-                return data.RootUrl() + "/api/v2/symbols";
-            },
-            GetLegacySymbolsUrl: function () {
-                return data.RootUrl() + "/api/odata/symbols";
+                return data.RootUrl() + "/api/symbols";
             }
         }, data);
 

@@ -64,10 +64,15 @@
                         <td><a data-bind="text: feed().GetODataUrl(), href: feed().GetODataUrl()" target="_blank"></a></td>
                         <td>Use this for the Visual Studio NuGet package manager.</td>
                     </tr>
+                <tr>
+                    <td>OData Query</td>
+                    <td><a data-bind="text: feed().GetLegacyODataUrl(), href: feed().GetLegacyODataUrl()" target="_blank"></a></td>
+                    <td>Use this for the Visual Studio NuGet package manager.</td>
+                </tr>
                     <tr>
-                        <td>OData Query</td>
-                        <td><a data-bind="text: feed().GetLegacyODataUrl(), href: feed().GetLegacyODataUrl()" target="_blank"></a></td>
-                        <td>Use this for the Visual Studio NuGet package manager.</td>
+                        <td>Symbol Server</td>
+                        <td><a data-bind="text: feed().GetSymbolsUrl(), href: feed().GetSymbolsUrl()" target="_blank"></a></td>
+                        <td>Use this as a symbol server in Visual Studio.</td>
                     </tr>
                 </tbody>
             </table>
