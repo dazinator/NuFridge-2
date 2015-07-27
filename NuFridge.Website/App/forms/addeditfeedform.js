@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'api', 'auth', 'databinding-feed'], function (router, api, auth, databindingFeed) {
+﻿define(['plugins/router', 'api', 'auth', 'databinding-feed', 'databinding-feedconfig'], function (router, api, auth, databindingFeed, databindingFeedConfig) {
     var ctor = function () {
         var self = this;
         self.mode = ko.observable("Please wait");
@@ -6,6 +6,7 @@
         self.isCancelNavigating = ko.observable(false);
         self.showSuccessMessageOnLoad = ko.observable(false);
         self.feed = ko.validatedObservable(databindingFeed());
+        self.feedconfig = ko.validatedObservable(databindingFeedConfig());
     };
 
     ctor.prototype.activate = function(activationData) {
@@ -14,6 +15,7 @@
         activationData.loaded.then(function() {
 
             self.feed(activationData.feed());
+            self.feedconfig(activationData.feedconfig());
 
             if (activationData.mode === "Create") {
                 self.mode("Create");
@@ -44,6 +46,34 @@
             self.showHideSaveSuccessMessage();
             self.showSuccessMessageOnLoad(false);
         }
+
+        $('.ui.checkbox.retentionPolicyEnabled').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedconfig().RetentionPolicyEnabled(true);
+            },
+            onUnchecked: function () {
+                self.feedconfig().RetentionPolicyEnabled(false);
+            }
+        });
+
+        if (self.feedconfig().RetentionPolicyEnabled() === true) {
+            $('.ui.checkbox.retentionPolicyEnabled').checkbox('check');
+        }
+
+        $('.ui.checkbox.retentionPolicyDeleteEnabled').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedconfig().RpDeletePackages(true);
+            },
+            onUnchecked: function () {
+                self.feedconfig().RpDeletePackages(false);
+            }
+        });
+
+        if (self.feedconfig().RpDeletePackages() === true) {
+            $('.ui.checkbox.retentionPolicyDeleteEnabled').checkbox('check');
+        }
     };
 
 
@@ -70,10 +100,13 @@
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json',
             cache: false,
-            success: function (result) {
+            success: function (response) {
+
                 self.afterAjaxSavingMessage(startTime).done(function () {
-                    router.navigate("#feeds/view/" + result.Id + "?ss=1");
+                    router.navigate("#feeds/view/" + response.Id + "?ss=1");
                 });
+
+
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
                 self.afterAjaxSavingMessage(startTime);
@@ -84,6 +117,8 @@
                 }
             }
         });
+
+
     };
 
     ctor.prototype.updateFeed = function () {
@@ -102,9 +137,28 @@
             dataType: 'json',
             cache: false,
             success: function (result) {
-                self.afterAjaxSavingMessage(startTime).done(function() {
-                    self.showHideSaveSuccessMessage();
-                    self.isSaving(false);
+
+                $.ajax({
+                    url: api.put_feed + "/" + self.feedconfig().FeedId() + "/config",
+                    type: 'PUT',
+                    headers: new auth().getAuthHttpHeader(),
+                    data: ko.toJS(self.feedconfig()),
+                    dataType: 'json',
+                    cache: false,
+                    success: function (result) {
+                        self.afterAjaxSavingMessage(startTime).done(function () {
+                            self.showHideSaveSuccessMessage();
+                            self.isSaving(false);
+                        });
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        self.afterAjaxSavingMessage(startTime);
+                        self.isSaving(false);
+
+                        if (xmlHttpRequest.status === 401) {
+                            router.navigate("#signin");
+                        }
+                    }
                 });
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {

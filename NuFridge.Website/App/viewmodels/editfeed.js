@@ -94,14 +94,9 @@
         self.feedOptions = {
             mode: "Update",
             feed: self.feed,
-            showSuccessMessageOnLoad: self.showSuccessMessageOnLoad(),
-            loaded: feedDfd.promise()
-        };
-
-        self.feedConfigOptions = {
-            mode: "Update",
             feedconfig: self.feedconfig,
-            loaded: feedConfigDfd.promise()
+            showSuccessMessageOnLoad: self.showSuccessMessageOnLoad(),
+            loaded: $.when(feedDfd.promise(), feedConfigDfd.promise())
         };
 
         if (router.activeInstruction().params.length >= 2) {

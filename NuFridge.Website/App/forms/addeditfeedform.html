@@ -18,20 +18,50 @@
     </div>
 </div>
 
-<div class="ui form" data-bind="with: feed">
+<div class="ui form">
+    <h3>General Settings</h3>
     <div class="field">
-        <div class="required field" data-bind="css: {error: Name.isValid() === false}">
+        <div class="required field" data-bind="css: {error: feed().Name.isValid() === false}">
             <label>Feed Name</label>
-            <input type="text" data-bind="value: Name, valueUpdate: 'afterkeydown'">
+            <input type="text" data-bind="value: feed().Name, valueUpdate: 'afterkeydown'">
         </div>
     </div>
     <div class="field">
         <label>API Key</label>
-        <div class="ui input" data-bind="css: {action: HasApiKey() === true}">
-            <input type="text" class="apiKeyTextBox" data-bind="value: ApiKey, placeholder: HasApiKey() === true ? 'An API Key has already been set.' : '', disable: HasApiKey">
-            <button class="ui gray right labeled button" data-bind="visible: HasApiKey, click: $root.clearApiKey">
+        <div class="ui input" data-bind="css: {action: feed().HasApiKey() === true}">
+            <input type="text" class="apiKeyTextBox" data-bind="value: feed().ApiKey, placeholder: feed().HasApiKey() === true ? 'An API Key has already been set.' : '', disable: feed().HasApiKey">
+            <button class="ui gray right labeled button" data-bind="visible: feed().HasApiKey, click: $root.clearApiKey">
                 Clear
             </button>
+        </div>
+    </div>
+    <h3 data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">Retention Policy Settings</h3>
+    <div class="field" data-bind="visible: mode() === 'Update'">
+        <div class="inline field">
+            <div class="ui toggle checkbox retentionPolicyEnabled">
+                <input type="checkbox">
+                <label style="font-size: .9285em; font-weight: 700;">Enable Retention Policy</label>
+            </div>
+        </div>
+    </div>
+    <div class="field" data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">
+        <div class="inline field">
+            <div class="ui toggle checkbox retentionPolicyDeleteEnabled">
+                <input type="checkbox">
+                <label style="font-size: .9285em; font-weight: 700;">Delete Packages</label>
+            </div>
+        </div>
+    </div>
+    <div class="field" data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">
+        <div class="required field" data-bind="css: {error: feedconfig().MaxReleasePackages.isValid() === false}">
+            <label>Max Release Packages</label>
+            <input type="text" data-bind="value: feedconfig().MaxReleasePackages, valueUpdate: 'afterkeydown'">
+        </div>
+    </div>
+    <div class="field" data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">
+        <div class="required field" data-bind="css: {error: feedconfig().MaxPrereleasePackages.isValid() === false}">
+            <label>Max Prerelease Packages</label>
+            <input type="text" data-bind="value: feedconfig().MaxPrereleasePackages, valueUpdate: 'afterkeydown'">
         </div>
     </div>
 
