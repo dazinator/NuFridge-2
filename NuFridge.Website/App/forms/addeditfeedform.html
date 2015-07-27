@@ -35,7 +35,7 @@
             </button>
         </div>
     </div>
-    <h3 data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">Retention Policy Settings</h3>
+    <h3 data-bind="visible: mode() === 'Update'">Retention Policy Settings</h3>
     <div class="field" data-bind="visible: mode() === 'Update'">
         <div class="inline field">
             <div class="ui toggle checkbox retentionPolicyEnabled">
@@ -62,6 +62,15 @@
         <div class="required field" data-bind="css: {error: feedconfig().MaxPrereleasePackages.isValid() === false}">
             <label>Max Prerelease Packages</label>
             <input type="text" data-bind="value: feedconfig().MaxPrereleasePackages, valueUpdate: 'afterkeydown'">
+        </div>
+    </div>
+    <h3 data-bind="visible: mode() === 'Update'">Folder Paths</h3>
+
+    <div class="required field" data-bind="visible: mode() === 'Update'">
+        <label>Feed Directory</label>
+        <p>Changing the current directory will cause all existing packages to be moved to the new directory.</p>
+        <div class="ui input">
+            <input type="text" class="feedDirectoryTextBox" data-bind="value: feedconfig().Directory">
         </div>
     </div>
 
