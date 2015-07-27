@@ -71,7 +71,8 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 IFeedConfiguration config = new FeedConfiguration
                 {
                     FeedId = feed.Id,
-                    Directory = feedFolder
+                    Directory = feedFolder, 
+                    RpDeletePackages = true
                 };
 
                 transaction.Insert(config);
