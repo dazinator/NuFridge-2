@@ -16,6 +16,11 @@
         self.errorUploadingPackage = ko.observable(false);
         self.urlUploadValue = ko.observable("");
         self.feedUploadValue = ko.observable("");
+        self.showPrereleasePackages = ko.observable(false);
+
+        self.showPrereleasePackages.subscribe(function(newValue) {
+            self.loadPackages(0);
+        });
     };
 
     ctor.prototype.getPreviousPageArray = function () {
@@ -186,8 +191,13 @@
         self.performSearch();
     };
 
-    ctor.prototype.getFilterParam = function() {
-        return "$filter=IsLatestVersion";
+    ctor.prototype.getFilterParam = function () {
+        var self = this;
+        if (self.showPrereleasePackages()) {
+            return "$filter=IsAbsoluteLatestVersion";
+        } else {
+            return "$filter=IsLatestVersion";
+        }
     };
 
     ctor.prototype.getSearchTermParam = function() {
