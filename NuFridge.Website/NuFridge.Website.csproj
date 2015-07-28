@@ -114,6 +114,7 @@
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Scripts\signalr.js" />
     <EmbeddedResource Include="Shutdown\index.html" />
     <EmbeddedResource Include="Startup\index.html" />
     <EmbeddedResource Include="Scripts\readmore.js" />
@@ -342,6 +343,7 @@
     <EmbeddedResource Include="App\views\scheduler.html" />
     <EmbeddedResource Include="App\viewmodels\databinding\schedulejobpaging.js" />
     <EmbeddedResource Include="App\viewmodels\databinding\schedulejob.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\feedimportstatus.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />

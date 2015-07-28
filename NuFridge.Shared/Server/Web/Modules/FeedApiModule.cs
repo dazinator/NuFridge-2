@@ -19,6 +19,7 @@ namespace NuFridge.Shared.Server.Web.Modules
             Delete["api/feeds/{id}"] = p => container.Resolve<DeleteFeedAction>().Execute(p, this);
             Post["api/feeds/{id}/upload"] = p => container.Resolve<UploadPackageFromUrlAction>().Execute(p, this);
             Post["api/feeds/{id}/reindex"] = p => container.Resolve<ReindexPackagesAction>().Execute(p, this);
+            Post["api/feeds/{id}/import"] = p => container.Resolve<ImportPackagesFromFeedAction>().Execute(p, this);
         }
     }
 }

@@ -18,13 +18,15 @@
         'databinding-feeddownloadcountstatistic': 'viewmodels/databinding/feeddownloadcountstatistic',
         'databinding-schedulejob': 'viewmodels/databinding/schedulejob',
         'databinding-schedulejobpaging': 'viewmodels/databinding/schedulejobpaging',
+        'databinding-feedimportstatus': 'viewmodels/databinding/feedimportstatus',
         'readmore': '../Scripts/readmore',
         'cookie': '../Scripts/jquery.cookie',
         'api': 'system/api',
         'chart': '../Scripts/Chart',
         'timeago': '../Scripts/timeago',
         'moment': '../Scripts/moment',
-        'auth': 'system/auth'
+        'auth': 'system/auth',
+        'signalr': '../Scripts/signalr'
     }
 });
 

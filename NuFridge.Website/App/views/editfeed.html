@@ -36,6 +36,14 @@
             <button class="ui primary button" data-bind="click: ReindexPackages">
                 Reindex Packages
             </button>
+            <button class="ui primary button" data-bind="click: signalRTest">
+                Test SignalR
+            </button>
+
+            <div data-bind="text: feedimportstatus().RemainingCount() + ' Remaining Packages'"></div>
+            <div data-bind="text: feedimportstatus().CompletedCount() + ' Completed Packages'"></div>
+            <div data-bind="text: feedimportstatus().FailedCount() + ' Failed Packages'"></div>
+            <div data-bind="text: feedimportstatus().TotalCount() + ' Total Packages'"></div>
         </div>
         <div data-tab="second" class="ui bottom attached tab segment">
             <h3>NuGet V2 API Endpoints</h3>
