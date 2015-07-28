@@ -254,7 +254,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             {
                 DynamicDictionaryValue select = (DynamicDictionaryValue)queryDictionary["$select"];
                 queryDictionary.Remove("$select");
-                return (string)select.Value;
+                var value = (string)select.Value;
+                return value;
             }
 
             return null;

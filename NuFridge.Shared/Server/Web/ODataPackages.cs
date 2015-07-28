@@ -5,7 +5,9 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.Edm.Library;
 using Microsoft.Data.OData;
+using Microsoft.Data.OData.Atom;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
@@ -39,11 +41,6 @@ namespace NuFridge.Shared.Server.Web
 
             string[] selectFields = strSelectFields.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToLower()).ToArray();
 
-            if (selectFields.Contains("id"))
-            {
-                selectFields[Array.IndexOf(selectFields, "id")] = "packageid";
-            }
-
             foreach (var package in pks)
             {
                 feedWriter.WriteStart(MapPackageToEntry(baseAddress, package, selectFields));
@@ -76,6 +73,15 @@ namespace NuFridge.Shared.Server.Web
                 },
                 Properties = GetProperties(package, properties)
             };
+
+            var atom = oDataEntry.Atom();
+            atom.Title = package.Id;
+
+            List<AtomPersonMetadata> authors = new List<AtomPersonMetadata>();
+            authors.AddRange(package.Authors.Split(new [] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(s => new AtomPersonMetadata {Name = s}).ToArray());
+            atom.Authors = authors;
+
+            atom.Summary = package.Summary;
 
             return oDataEntry;
         }
