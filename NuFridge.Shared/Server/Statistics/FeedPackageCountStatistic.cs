@@ -33,7 +33,13 @@ namespace NuFridge.Shared.Server.Statistics
                 }
             }
 
-            return list.OrderByDescending(it => it.PackageCount).ToList();
+            var orderedList = list.OrderByDescending(it => it.PackageCount).ToList();
+            if (orderedList.Count() > 10)
+            {
+                orderedList = orderedList.Take(10).ToList();
+            }
+
+            return orderedList;
         }
 
         protected override string StatName
