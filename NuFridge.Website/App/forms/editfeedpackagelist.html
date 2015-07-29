@@ -124,42 +124,71 @@
 <div class="ui small modal transition hidden" id="feedUploadModal">
     <div class="ui icon header">
         <i class="cube icon"></i>
-        <span>Upload Packages from a NuGet Feed</span>
+        <span>Import Packages from a NuGet Feed</span>
     </div>
     <div class="content">
-        <form class="ui form" data-bind="visible: !isUploadingPackage() && !successUploadingPackage()">
+
+        <div class="grouped fields" data-bind="visible: feedImportMode() === null">
+            <label>Which method of import do you want to use?</label>
+            <div class="field">
+                <div class="ui radio checkbox specificNuGetPackageModeCheckBox">
+                    <input type="radio">
+                    <label>A specific NuGet package</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox searchTermNuGetPackageModeCheckBox">
+                    <input type="radio">
+                    <label>NuGet Packages matching a search term</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="ui radio checkbox allNuGetPackageModeCheckBox">
+                    <input type="radio">
+                    <label>All NuGet packages</label>
+                </div>
+            </div>
+        </div>
+
+        <form class="ui form" data-bind="visible: !isUploadingPackage() && !successUploadingPackage() && feedImportMode() !== null">
             <div class="field">
                 <label>Feed URL</label>
                 <input type="text" data-bind="value: feedimportoptions().FeedUrl">
             </div>
-            <div class="field">
-                <label>Specific Package Id</label>
+            <div class="field" data-bind="visible: feedImportMode() === 1">
+                <label>Package Id</label>
                 <input type="text" data-bind="value: feedimportoptions().SpecificPackageId">
             </div>
-            <div class="field">
-                <label>Search Package Id</label>
+            <div class="field" data-bind="visible: feedImportMode() === 2">
+                <label>Package Search Term</label>
                 <input type="text" data-bind="value: feedimportoptions().SearchPackageId">
             </div>
-            <div class="field">
+            <label style="font-size: .9285em; font-weight: 700;">Package Versions</label>
+            <div>
+                <div class="ui selection dropdown importFeedVersionSelectorDropDown">
+                    <input type="hidden" name="gender">
+                    <i class="dropdown icon"></i>
+                    <div class="default text"></div>
+                    <div class="menu">
+                        <div class="item" data-value="1">All Versions</div>
+                        <div class="item" data-value="2">Latest Release Version</div>
+                        <div class="item" data-value="3">Latest Release and Prerelease Version</div>
+                        <div class="item" data-value="4" data-bind="visible: feedImportMode() === 1">Specific Version</div>
+                    </div>
+                </div>
+            </div>
+            <div class="field" data-bind="visible: feedImportMode() === 1 && feedimportoptions().VersionSelector() === 4">
+                <br/>
+                <label>Package Version</label>
+                <input type="text" data-bind="value: feedimportoptions().Version">
+            </div>
+            <div class="field" data-bind="visible: feedimportoptions().VersionSelector() === 1">
+                <br/>
                 <div class="inline field">
                     <div class="ui toggle checkbox importFeedIncludePrereleaseCheckBox">
                         <input type="checkbox">
                         <label style="font-size: .9285em; font-weight: 700;">Include Prerelease Packages</label>
                     </div>
-                </div>
-            </div>
-            <div class="field">
-                <label>Specific Version</label>
-                <input type="text" data-bind="value: feedimportoptions().Version">
-            </div>
-            <div class="ui selection dropdown importFeedVersionSelectorDropDown">
-                <input type="hidden" name="gender">
-                <i class="dropdown icon"></i>
-                <div class="default text">Version Selector</div>
-                <div class="menu">
-                    <div class="item" data-value="1">All Versions</div>
-                    <div class="item" data-value="2">Latest Release Version</div>
-                    <div class="item" data-value="3">Latest Release and Prerelease Version</div>
                 </div>
             </div>
         </form>
@@ -217,7 +246,7 @@
             <span data-bind="text: successUploadingPackage() ? 'Close' : 'Cancel'"></span>
         </div>
         <div class="ui positive right labeled icon button" data-bind="visible: !successUploadingPackage(), css: {disabled: isUploadingPackage() || successUploadingPackage(), loading: isUploadingPackage()}">
-            <span data-bind="text: errorUploadingPackage() ? 'Retry' : 'Upload'"></span>
+            <span data-bind="text: errorUploadingPackage() ? 'Retry' : 'Import'"></span>
             <i class="upload icon"></i>
         </div>
     </div>

@@ -353,7 +353,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             {
                 AllVersions = 1,
                 LatestReleaseVersion = 2,
-                LatestReleaseAndPrereleaseVersion = 3
+                LatestReleaseAndPrereleaseVersion = 3,
+                SpecificVersion = 4
             }
 
             public FeedImportOptions IncludePrereleasePackages()

@@ -20,6 +20,7 @@
         self.feedimportoptions = ko.observable(feedimportoptions());
         self.showSuccessfulFeedImports = ko.observable(false);
         self.showFailedFeedImports = ko.observable(false);
+        self.feedImportMode = ko.observable(null);
 
         self.showPrereleasePackages.subscribe(function(newValue) {
             self.loadPackages(0);
@@ -365,13 +366,16 @@
 
         self.feedimportoptions(feedimportoptions());
         self.feedimportstatus(databindingfeedimportstatus());
+        self.feedImportMode(null);
+        $('.ui.checkbox.specificNuGetPackageModeCheckBox').checkbox('uncheck');
+        $('.ui.checkbox.searchTermNuGetPackageModeCheckBox').checkbox('uncheck');
+        $('.ui.checkbox.allNuGetPackageModeCheckBox').checkbox('uncheck');
 
         if (self.feedimportoptions().IncludePrerelease() === true) {
             $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox('check');
         }
 
-        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('restore defaults');
-        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('set exactly', self.feedimportoptions().VersionSelector());
+        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('set selected', self.feedimportoptions().VersionSelector());
 
         self.successUploadingPackage(false);
         self.errorUploadingPackage(false);
@@ -572,6 +576,27 @@
             },
             onUnchecked: function () {
                 self.feedimportoptions().IncludePrerelease(false);
+            }
+        });
+
+        $('.ui.checkbox.specificNuGetPackageModeCheckBox').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedImportMode(1);
+            }
+        });
+
+        $('.ui.checkbox.searchTermNuGetPackageModeCheckBox').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedImportMode(2);
+            }
+        });
+
+        $('.ui.checkbox.allNuGetPackageModeCheckBox').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedImportMode(3);
             }
         });
 
