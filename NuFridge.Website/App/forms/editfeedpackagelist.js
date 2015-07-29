@@ -371,9 +371,6 @@
         $('.ui.checkbox.searchTermNuGetPackageModeCheckBox').checkbox('uncheck');
         $('.ui.checkbox.allNuGetPackageModeCheckBox').checkbox('uncheck');
 
-        self.showSuccessfulFeedImports(false);
-        self.showFailedFeedImports(false);
-
         if (self.feedimportoptions().IncludePrerelease() === true) {
             $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox('check');
         }
