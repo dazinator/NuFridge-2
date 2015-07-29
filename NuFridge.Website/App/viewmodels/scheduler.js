@@ -46,6 +46,11 @@
           + ":" + zeropad(date.getUTCSeconds()) + "Z";
     };
 
+    ctor.prototype.failedJobExpandClick = function(item, event) {
+        $('.failedJobExpandSection-' + item.Key).toggle();
+        $(event.target).toggleClass('add minus');
+    };
+
     ctor.prototype.deletedJobExpandClick = function (item, event) {
         $('.deletedJobExpandSection-' + item.Key).toggle();
         $(event.target).toggleClass('add minus');

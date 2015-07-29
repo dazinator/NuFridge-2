@@ -126,12 +126,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
         }
 
-        protected void UpdateLatestVersionFlagsForPackageId(int feedId, IPackage package,
-    IInternalPackageRepository packageRepository, out bool isUploadedPackageLatestVersion, out bool isUploadedPackageAbsoluteLatestVersion)
+        protected void UpdateLatestVersionFlagsForPackageId(IPackage package, IInternalPackageRepository packageRepository, out bool isUploadedPackageLatestVersion, out bool isUploadedPackageAbsoluteLatestVersion)
         {
             IInternalPackage latestAbsoluteVersionPackage;
             IInternalPackage latestVersionPackage;
-            GetCurrentLatestVersionPackages(feedId, package.Id, packageRepository, out latestAbsoluteVersionPackage,
+            GetCurrentLatestVersionPackages(packageRepository.FeedId, package.Id, packageRepository, out latestAbsoluteVersionPackage,
                 out latestVersionPackage);
 
             isUploadedPackageAbsoluteLatestVersion = true;

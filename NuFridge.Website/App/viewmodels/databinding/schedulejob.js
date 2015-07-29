@@ -12,11 +12,15 @@
             TimeZoneId: ko.observable()
         }, config);
 
-        var name = data.Job.Method.ClassName;
+        if (data.Job) {
+            var name = data.Job.Method.ClassName;
 
-        name = name.substring(name.lastIndexOf('.') + 1);
+            name = name.substring(name.lastIndexOf('.') + 1);
 
-        data.Name = ko.observable(name);
+            data.Name = ko.observable(name);
+        } else {
+            data.Name = ko.observable("Unknown");
+        }
 
         ko.mapping.fromJS(data, {}, self);
 

@@ -19,6 +19,7 @@
         'databinding-schedulejob': 'viewmodels/databinding/schedulejob',
         'databinding-schedulejobpaging': 'viewmodels/databinding/schedulejobpaging',
         'databinding-feedimportstatus': 'viewmodels/databinding/feedimportstatus',
+        'databinding-feedimportoptions': 'viewmodels/databinding/feedimportoptions',
         'readmore': '../Scripts/readmore',
         'cookie': '../Scripts/jquery.cookie',
         'api': 'system/api',

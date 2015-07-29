@@ -78,13 +78,24 @@
             <table class="ui compact table" data-bind="visible: failedJobs().length > 0">
                 <thead>
                 <tr>
-                    <th>Message</th>
+                    <th>Name</th>
                     <th>Failed At</th>
                 </tr>
                 </thead>
                 <tbody data-bind="foreach: failedJobs, visible: failedJobs().length > 0">
                 <tr>
-                    <td data-bind="text: Value.ExceptionMessage"></td>
+                    <td class="collapsing">
+                        <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.failedJobExpandClick"></i> <span data-bind="text: Name"></span>
+                        <div style="display: none;" data-bind="attr: {class: 'failedJobExpandSection-' + Key}">
+                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>
+                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                    <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
+                                </span>
+                            </div>
+                            <div>Error: <span data-bind="text: Value.ExceptionMessage"></span></div>
+                        </div>
+                    </td>
                     <td data-bind="text: $root.formatDate(Value.FailedAt)"></td>
                 </tr>
                 </tbody>
@@ -111,9 +122,9 @@
                     <td class="collapsing">
                         <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.deletedJobExpandClick"></i> <span data-bind="text: Name"></span>
                         <div style="display: none;" data-bind="attr: {class: 'deletedJobExpandSection-' + Key}">
-                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>Method: <span data-bind="text: Value.Job ? Value.Job.Method.Signature2 : 'Unknown'"></span></div>
                             <div>
-                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                Arguments: <span data-bind="foreach: Value.Job ? Value.Job.Arguments : new Array()">
                                         <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                     </span>
                             </div>

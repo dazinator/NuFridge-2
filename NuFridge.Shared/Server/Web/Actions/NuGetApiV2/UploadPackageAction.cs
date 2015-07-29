@@ -187,7 +187,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 bool isUploadedPackageLatestVersion;
                 bool isUploadedPackageAbsoluteLatestVersion;
-                UpdateLatestVersionFlagsForPackageId(feedId, package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
+                UpdateLatestVersionFlagsForPackageId(package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
 
                 try
                 {

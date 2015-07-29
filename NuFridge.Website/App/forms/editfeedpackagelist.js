@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed', 'readmore'], function (router, api, auth, databindingPackage, xml2Json, databindingFeed, readmore) {
+﻿define(['signalr', 'plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed', 'readmore', 'databinding-feedimportstatus', 'databinding-feedimportoptions', '/signalr/hubs'], function (signalr, router, api, auth, databindingPackage, xml2Json, databindingFeed, readmore, databindingfeedimportstatus, feedimportoptions) {
     var ctor = function () {
         var self = this;
         self.packages = ko.observableArray();
@@ -15,8 +15,9 @@
         self.successUploadingPackage = ko.observable(false);
         self.errorUploadingPackage = ko.observable(false);
         self.urlUploadValue = ko.observable("");
-        self.feedUploadValue = ko.observable("");
         self.showPrereleasePackages = ko.observable(false);
+        self.feedimportstatus = ko.observable(databindingfeedimportstatus());
+        self.feedimportoptions = ko.observable(feedimportoptions());
 
         self.showPrereleasePackages.subscribe(function(newValue) {
             self.loadPackages(0);
@@ -292,8 +293,61 @@
         }, 'json');
     };
 
+    ctor.prototype.startFeedUpload = function () {
+        var self = this;
+
+        self.isUploadingPackage(true);
+
+        $.connection.hub.url = "/signalr";
+        var hub = $.connection.importPackagesHub;
+
+        hub.client.importPackagesUpdate = function (response) {
+            var mapping = {
+                create: function (options) {
+                    return databindingfeedimportstatus(options.data);
+                }
+            };
+
+            ko.mapping.fromJS(response, mapping, self.feedimportstatus);
+
+            if (self.feedimportstatus().IsCompleted() === true) {
+                self.successUploadingPackage(true);
+                self.isUploadingPackage(false);
+                self.loadPackages(0);
+            }
+        };
+
+        $.connection.hub.start().done(function () {
+            hub.server.subscribe(self.feed().Id());
+
+            $.ajax({
+                url: "/api/feeds/" + self.feed().Id() + "/import",
+                type: 'POST',
+                data: ko.toJS(self.feedimportoptions()),
+                headers: new auth().getAuthHttpHeader(),
+                cache: false,
+                success: function (result) {
+
+                },
+                error: function (xmlHttpRequest, textStatus, errorThrown) {
+                    if (xmlHttpRequest.status === 401) {
+                        router.navigate("#signin");
+                    }
+                }
+            });
+        });
+    };
+
     ctor.prototype.feedUploadAction = function () {
         var self = this;
+
+        self.feedimportoptions(feedimportoptions());
+
+        if (self.feedimportoptions().IncludePrerelease() === true) {
+            $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox('check');
+        }
+
+        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('restore defaults');
 
         self.successUploadingPackage(false);
         self.errorUploadingPackage(false);
@@ -485,6 +539,23 @@
         var self = this;
 
         self.loadPackages();
+
+        $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedimportoptions().IncludePrerelease(true);
+            },
+            onUnchecked: function () {
+                self.feedimportoptions().IncludePrerelease(false);
+            }
+        });
+
+        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown({
+            onChange: function(value) {
+                self.feedimportoptions().VersionSelector(value);
+            }
+        });
+        
 
         $(".fileUploadProgress").progress({
             total: 100,

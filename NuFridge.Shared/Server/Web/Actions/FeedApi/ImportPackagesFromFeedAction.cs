@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
 using Nancy;
+using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using FeedImportOptions = NuFridge.Shared.Server.Scheduler.Jobs.ImportPackagesForFeedJob.FeedImportOptions;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
@@ -28,7 +30,16 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int feedId = parameters.id;
 
-            BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Execute(JobCancellationToken.Null, feedId));
+            FeedImportOptions options = module.Bind<FeedImportOptions>();
+
+
+            string errorMessage;
+            if (!options.IsValid(out errorMessage))
+            {
+                return new TextResponse(HttpStatusCode.BadRequest, errorMessage);
+            }
+
+            BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Execute(JobCancellationToken.Null, feedId, options));
 
             return new TextResponse(HttpStatusCode.OK, "The requested feed will be imported.");
         }

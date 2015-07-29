@@ -1,4 +1,4 @@
-﻿define(['plugins/router', 'databinding-feed', 'databinding-package', 'api', 'auth', 'databinding-feedconfig', '/signalr/hubs', 'signalr', 'databinding-feedimportstatus'], function (router, databindingFeed, databindingPackage, api, auth, databindingFeedConfig, signalrhubs, signalr, databindingfeedimportstatus) {
+﻿define(['plugins/router', 'databinding-feed', 'databinding-package', 'api', 'auth', 'databinding-feedconfig'], function (router, databindingFeed, databindingPackage, api, auth, databindingFeedConfig) {
     var ctor = function () {
         var self = this;
 
@@ -8,7 +8,7 @@
 
         self.isSaving = ko.observable(false);
         self.isCancelNavigating = ko.observable(false);
-        self.feedimportstatus = ko.observable(databindingfeedimportstatus());
+
     };
 
     ctor.prototype.ReindexPackages = function() {
@@ -31,41 +31,6 @@
 
     };
 
-    ctor.prototype.signalRTest = function() {
-        var self = this;
-
-        $.connection.hub.url = "/signalr";
-        var hub = $.connection.importPackagesHub;
-
-        hub.client.importPackagesUpdate = function (response) {
-            var mapping = {
-                create: function (options) {
-                    return databindingfeedimportstatus(options.data);
-                }
-            };
-
-            ko.mapping.fromJS(response, mapping, self.feedimportstatus);
-        };
-
-        $.connection.hub.start().done(function() {
-            hub.server.subscribe(self.feed().Id());
-
-            $.ajax({
-                url: "/api/feeds/" + self.feed().Id() + "/import",
-                type: 'POST',
-                headers: new auth().getAuthHttpHeader(),
-                cache: false,
-                success: function (result) {
-
-                },
-                error: function (xmlHttpRequest, textStatus, errorThrown) {
-                    if (xmlHttpRequest.status === 401) {
-                        router.navigate("#signin");
-                    }
-                }
-            });
-        });
-    };
 
     ctor.prototype.activate = function () {
 

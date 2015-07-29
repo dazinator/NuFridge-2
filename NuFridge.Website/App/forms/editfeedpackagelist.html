@@ -25,7 +25,7 @@
                         URL
                     </div>
                     <div class="item">
-                        <i class="cloud icon"></i>
+                        <i class="cube icon"></i>
                         NuGet Feed
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                     <div class="content">
                         <a class="header"><span data-bind="text: (package.Title() ? package.Title() : package.Id())"></span><span class="meta" data-bind="text: ' - ' + package.Version()"></span></a>
                         <div class="meta" data-bind="foreach: package.OwnersArray">
-                            <span class="ui blue label tiny" data-bind="text: $data.trim()"></span>
+                            <span class="ui blue label tiny" data-bind="text: $data.trim(), visible: $data.trim()"></span>
                         </div>
                         <div class="description">
                             <p class="readmore" data-bind="text: package.Description, readmore: {speed: 100, embedCSS: true, collapsedHeight: 60}"></p>
@@ -123,17 +123,52 @@
 </table>
 <div class="ui small modal transition hidden" id="feedUploadModal">
     <div class="ui icon header">
-        <i class="cloud icon"></i>
-        <span>Upload Package(s) from Feed</span>
+        <i class="cube icon"></i>
+        <span>Upload Packages from a NuGet Feed</span>
     </div>
     <div class="content">
-        <form class="ui form">
+        <form class="ui form" data-bind="visible: !isUploadingPackage() && !successUploadingPackage()">
             <div class="field">
-                <label>Package URL</label>
-                <input type="text" data-bind="value: feedUploadValue">
+                <label>Feed URL</label>
+                <input type="text" data-bind="value: feedimportoptions().FeedUrl">
+            </div>
+            <div class="field">
+                <label>Specific Package Id</label>
+                <input type="text" data-bind="value: feedimportoptions().SpecificPackageId">
+            </div>
+            <div class="field">
+                <label>Search Package Id</label>
+                <input type="text" data-bind="value: feedimportoptions().SearchPackageId">
+            </div>
+            <div class="field">
+                <div class="inline field">
+                    <div class="ui toggle checkbox importFeedIncludePrereleaseCheckBox">
+                        <input type="checkbox">
+                        <label style="font-size: .9285em; font-weight: 700;">Include Prerelease Packages</label>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <label>Specific Version</label>
+                <input type="text" data-bind="value: feedimportoptions().Version">
+            </div>
+            <div class="ui selection dropdown importFeedVersionSelectorDropDown">
+                <input type="hidden" name="gender">
+                <i class="dropdown icon"></i>
+                <div class="default text">Version Selector</div>
+                <div class="menu">
+                    <div class="item" data-value="1">All Versions</div>
+                    <div class="item" data-value="2">Latest Release Version</div>
+                    <div class="item" data-value="3">Latest Release and Prerelease Version</div>
+                </div>
             </div>
         </form>
-        <p class="feedUploadMessage"></p>
+
+        <h4 data-bind="visible: isUploadingPackage() || successUploadingPackage(), text: isUploadingPackage() ? 'Import Progress' : 'Import Summary'"></h4>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() > 0, text: 'Importing ' + feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() === 0 && feedimportstatus().IsCompleted() === false">The feed import job has been enqueued.</div>
+        <div data-bind="visible: successUploadingPackage(), text: 'Successfully imported ' + feedimportstatus().CompletedCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
+        <div data-bind="visible: successUploadingPackage() && feedimportstatus().FailedCount() > 0 , text: feedimportstatus().FailedCount() + ' packages failed to import.'"></div>
     </div>
     <div class="actions">
         <div class="ui black deny button" data-bind="css: {disabled: isUploadingPackage()}">

@@ -7,11 +7,15 @@
             Value: ko.observable()
         }, config);
 
-        var name = data.Value.Job.Method.ClassName;
+        if (data.Value.Job) {
+            var name = data.Value.Job.Method.ClassName;
 
-        name = name.substring(name.lastIndexOf('.') + 1);
+            name = name.substring(name.lastIndexOf('.') + 1);
 
-        data.Name = ko.observable(name);
+            data.Name = ko.observable(name);
+        } else {
+            data.Name = ko.observable("Unknown");
+        }
 
         ko.mapping.fromJS(data, {}, self);
 

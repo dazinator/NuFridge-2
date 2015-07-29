@@ -114,7 +114,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                     bool isUploadedPackageLatestVersion;
                     bool isUploadedPackageAbsoluteLatestVersion;
-                    UpdateLatestVersionFlagsForPackageId(feedId, package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
+                    UpdateLatestVersionFlagsForPackageId(package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
 
                     _logger.Info("Indexing package " + package.Id + " v" + package.Version + " for feed id " + feedId);
                     packageRepository.IndexPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
