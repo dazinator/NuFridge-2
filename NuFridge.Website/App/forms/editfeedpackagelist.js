@@ -319,7 +319,7 @@
     ctor.prototype.startFeedUpload = function () {
         var self = this;
 
-        self.isUploadingPackage(true);
+
 
         $.connection.hub.url = "/signalr";
         var hub = $.connection.importPackagesHub;
@@ -350,7 +350,7 @@
                 headers: new auth().getAuthHttpHeader(),
                 cache: false,
                 success: function (result) {
-
+                    self.isUploadingPackage(true);
                 },
                 error: function (xmlHttpRequest, textStatus, errorThrown) {
                     if (xmlHttpRequest.status === 401) {
