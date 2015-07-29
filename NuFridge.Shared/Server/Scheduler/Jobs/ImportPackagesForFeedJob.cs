@@ -56,8 +56,19 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             Stopwatch watch = new Stopwatch();
             watch.Start();
 
+            List< FeedImportStatus.FailedPackageItem> failedPackages = new List<FeedImportStatus.FailedPackageItem>();
+            List<FeedImportStatus.PackageItem> completedPackages = new List<FeedImportStatus.PackageItem>();
+
             foreach (var package in packages)
             {
+                var milliSeconds = watch.ElapsedMilliseconds;
+                if (milliSeconds >= 5000)
+                {
+                    _log.Info($"{importStatus.CompletedCount} of {importStatus.TotalCount} packages have been imported for feed id {localRepository.FeedId}");
+                    hubContext.Clients.Group(ImportPackagesHub.GetGroup(localRepository.FeedId)).importPackagesUpdate(importStatus);
+                    watch.Restart();
+                }
+
                 var existingPackage = localRepository.GetPackage(package.Id, package.Version);
 
                 if (existingPackage != null)
@@ -65,6 +76,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     _log.Warn("A package with the same ID and version already exists. Overwriting packages is not enabled on this feed. Id = " + package.Id + ", Version = " + package.Version);
                     importStatus.FailedCount++;
                     importStatus.RemainingCount--;
+                    failedPackages.Add(new FeedImportStatus.FailedPackageItem {PackageId = package.Id, Version = package.Version.ToString(), Error = "A package with the same ID and version already exists." });
                     continue;
                 }
 
@@ -74,32 +86,28 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 try
                 {
-                    localRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
+                    localRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
+                        isUploadedPackageLatestVersion);
                 }
-                catch (IOException ex)
+                catch (Exception ex)
                 {
-                    _log.ErrorException("There was an IO error importing the " + package.Id + " package v" + package.Version + " to the feed " + localRepository.FeedId + ". " + ex.Message, ex);
+                    _log.ErrorException("There was an error importing the " + package.Id + " package v" + package.Version +" to the feed " + localRepository.FeedId + ". " + ex.Message, ex);
                     importStatus.FailedCount++;
                     importStatus.RemainingCount--;
+                    failedPackages.Add(new FeedImportStatus.FailedPackageItem { PackageId = package.Id, Version = package.Version.ToString(), Error = ex.Message });
                     continue;
                 }
 
                 importStatus.CompletedCount++;
                 importStatus.RemainingCount--;
-
-                var milliSeconds = watch.ElapsedMilliseconds;
-                if (milliSeconds >= 5000)
-                {
-                    _log.Debug("Sending update for feed import (" + localRepository.FeedId + ") to subscribed clients.");
-                    _log.Info($"{importStatus.CompletedCount} of {importStatus.TotalCount} packages have been imported for {localRepository.FeedId}");
-                    hubContext.Clients.Group(ImportPackagesHub.GetGroup(localRepository.FeedId)).importPackagesUpdate(importStatus);
-                    watch.Restart();
-                }
+                completedPackages.Add(new FeedImportStatus.PackageItem { PackageId = package.Id, Version = package.Version.ToString()});
             }
 
             watch.Stop();
 
             importStatus.IsCompleted = true;
+            importStatus.SuccessfulImports = completedPackages;
+            importStatus.FailedImports = failedPackages;
         }
 
         private List<IPackage> FilterByVersionSelector(List<IPackage> packages, FeedImportOptions options)
@@ -111,19 +119,35 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 return filtered;
             }
 
-            Func<IPackage> getLatestReleasePackage = delegate
+            Func<List<IPackage>, IPackage> getLatestReleasePackage = delegate (List<IPackage> groupedPackages)
             {
-                var releasePackages = packages.Where(pk => pk.IsReleaseVersion()).ToList();
+                var releasePackages = groupedPackages.Where(pk => pk.IsReleaseVersion()).ToList();
+                if (!releasePackages.Any())
+                {
+                    return null;
+                }
                 var latestVersionPackage = releasePackages.Aggregate(releasePackages[0], (highest, candiate) => candiate.Version.CompareTo(highest.Version) > 0 ? candiate : highest);
                 return latestVersionPackage;
             };
 
-            Func<IPackage> getLatestPrereleasePackage = delegate
+            Func<List<IPackage>, IPackage> getLatestPrereleasePackage = delegate(List<IPackage> groupedPackages)
             {
-                var releasePackages = packages.Where(pk => !pk.IsReleaseVersion()).ToList();
-                var latestAbsoluteVersionPackage = releasePackages.Aggregate(releasePackages[0], (highest, candiate) => candiate.Version.CompareTo(highest.Version) > 0 ? candiate : highest);
+                var prereleasePackages = groupedPackages.Where(pk => !pk.IsReleaseVersion()).ToList();
+                if (!prereleasePackages.Any())
+                {
+                    return null;
+                }
+                var latestAbsoluteVersionPackage = prereleasePackages.Aggregate(prereleasePackages[0], (highest, candiate) => candiate.Version.CompareTo(highest.Version) > 0 ? candiate : highest);
                 return latestAbsoluteVersionPackage;
             };
+
+
+            Lazy<Dictionary<string, List<IPackage>>> packagesGroupedById =
+                new Lazy<Dictionary<string, List<IPackage>>>(delegate
+                {
+                    return packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());
+                });
+
 
             switch (options.VersionSelector.Value)
             {
@@ -131,46 +155,57 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     filtered = packages;
                     break;
                 case FeedImportOptions.VersionSelectorEnum.LatestReleaseAndPrereleaseVersion:
-                    var latestVersionPackage = getLatestReleasePackage();
-                    var latestAbsoluteVersionPackage = getLatestPrereleasePackage();
 
-                    if (latestVersionPackage != null)
+                    foreach (var packagesGroupedKvp in packagesGroupedById.Value)
                     {
-                        _log.Debug("Package " + latestVersionPackage.Id + " v" + latestVersionPackage.Version +
-                                   " is the latest release version.");
+                        var latestVersionPackage = getLatestReleasePackage(packagesGroupedKvp.Value);
+                        var latestAbsoluteVersionPackage = getLatestPrereleasePackage(packagesGroupedKvp.Value);
 
-                        filtered.Add(latestVersionPackage);
-                    }
-                    else
-                    {
-                        _log.Debug("No release version could be found.");
-                    }
+                        if (latestVersionPackage != null)
+                        {
+                            _log.Debug("Package " + latestVersionPackage.Id + " v" + latestVersionPackage.Version +
+                                       " is the latest release version.");
 
-                    if (latestAbsoluteVersionPackage != null)
-                    {
-                        _log.Debug("Package " + latestAbsoluteVersionPackage.Id + " v" + latestAbsoluteVersionPackage.Version + " is the latest prerelease version.");
+                            filtered.Add(latestVersionPackage);
+                        }
+                        else
+                        {
+                            _log.Debug("No release version could be found.");
+                        }
 
-                        filtered.Add(latestAbsoluteVersionPackage);
-                    }
-                    else
-                    {
-                        _log.Debug("No prerelease version could be found.");
+                        if (latestAbsoluteVersionPackage != null)
+                        {
+                            _log.Debug("Package " + latestAbsoluteVersionPackage.Id + " v" +
+                                       latestAbsoluteVersionPackage.Version + " is the latest prerelease version.");
+
+                            filtered.Add(latestAbsoluteVersionPackage);
+                        }
+                        else
+                        {
+                            _log.Debug("No prerelease version could be found.");
+                        }
                     }
 
                     break;
                 case FeedImportOptions.VersionSelectorEnum.LatestReleaseVersion:
-                    var latestReleaseVersionPackage = getLatestReleasePackage();
 
-                    if (latestReleaseVersionPackage != null)
+                    foreach (var packagesGroupedKvp in packagesGroupedById.Value)
                     {
-                        _log.Debug("Package " + latestReleaseVersionPackage.Id + " v" + latestReleaseVersionPackage.Version + " is the latest release version.");
+                        var latestReleaseVersionPackage = getLatestReleasePackage(packagesGroupedKvp.Value);
 
-                        filtered.Add(latestReleaseVersionPackage);
+                        if (latestReleaseVersionPackage != null)
+                        {
+                            _log.Debug("Package " + latestReleaseVersionPackage.Id + " v" +
+                                       latestReleaseVersionPackage.Version + " is the latest release version.");
+
+                            filtered.Add(latestReleaseVersionPackage);
+                        }
+                        else
+                        {
+                            _log.Debug("No release version could be found.");
+                        }
                     }
-                    else
-                    {
-                        _log.Debug("No release version could be found.");
-                    }
+
                     break;
             }
 
@@ -349,7 +384,12 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 CompletedCount = 0;
                 FailedCount = 0;
                 TotalCount = totalCount;
+                SuccessfulImports = new List<PackageItem>();
+                FailedImports = new List<FailedPackageItem>();
             }
+
+            public List<PackageItem> SuccessfulImports { get; set; }
+            public List<FailedPackageItem> FailedImports { get; set; }
 
             public int FeedId { get; set; }
 
@@ -358,6 +398,17 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             public int CompletedCount { get; set; }
             public int FailedCount { get; set; }
             public int TotalCount { get; set; }
+
+            public class PackageItem
+            {
+                public string PackageId { get; set; }
+                public string Version { get; set; }
+            }
+
+            public class FailedPackageItem : PackageItem
+            {
+                public string Error { get; set; }
+            }
         }
     }
 }

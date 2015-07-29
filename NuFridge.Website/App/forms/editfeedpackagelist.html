@@ -165,10 +165,52 @@
         </form>
 
         <h4 data-bind="visible: isUploadingPackage() || successUploadingPackage(), text: isUploadingPackage() ? 'Import Progress' : 'Import Summary'"></h4>
-        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() > 0, text: 'Importing ' + feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() > 0, text: 'Processing ' + feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
         <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() === 0 && feedimportstatus().IsCompleted() === false">The feed import job has been enqueued.</div>
         <div data-bind="visible: successUploadingPackage(), text: 'Successfully imported ' + feedimportstatus().CompletedCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
         <div data-bind="visible: successUploadingPackage() && feedimportstatus().FailedCount() > 0 , text: feedimportstatus().FailedCount() + ' packages failed to import.'"></div>
+
+        <div data-bind="visible: feedimportstatus().IsCompleted() && feedimportstatus().SuccessfulImports().length > 0">
+
+            <h4 style="margin: calc(2rem - .14285em) 0 1rem;">Imported Packages</h4>
+            <a data-bind="click: toggleSuccessfulFeedImports">Show imported packages</a>
+            <table class="ui very compact table" data-bind="visible: showSuccessfulFeedImports">
+                <thead>
+                <tr>
+                    <th>Package Id</th>
+                    <th>Package Version</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: feedimportstatus().SuccessfulImports">
+                <tr>
+                    <td data-bind="text: PackageId"></td>
+                    <td data-bind="text: Version"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div data-bind="visible: feedimportstatus().IsCompleted() && feedimportstatus().FailedImports().length > 0">
+
+            <h4 style="margin: calc(2rem - .14285em) 0 1rem;">Failed Packages</h4>
+            <a data-bind="click: toggleFailedFeedImports">Show failed packages</a>
+            <table class="ui very compact table" data-bind="visible: showFailedFeedImports">
+                <thead>
+                <tr>
+                    <th>Package Id</th>
+                    <th>Package Version</th>
+                    <th>Error Message</th>
+                </tr>
+                </thead>
+                <tbody data-bind="foreach: feedimportstatus().FailedImports">
+                <tr>
+                    <td data-bind="text: PackageId"></td>
+                    <td data-bind="text: Version"></td>
+                    <td data-bind="text: Error"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="actions">
         <div class="ui black deny button" data-bind="css: {disabled: isUploadingPackage()}">

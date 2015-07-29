@@ -8,7 +8,9 @@
             CompletedCount: ko.observable(0),
             FailedCount: ko.observable(0),
             TotalCount: ko.observable(0),
-            IsCompleted: ko.observable(false)
+            IsCompleted: ko.observable(false),
+            SuccessfulImports: ko.observableArray(),
+            FailedImports: ko.observableArray()
         }, config);
 
         data = $.extend({

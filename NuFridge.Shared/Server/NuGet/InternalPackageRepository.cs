@@ -17,6 +17,8 @@ namespace NuFridge.Shared.Server.NuGet
         private readonly object _fileLock = new object();
         private readonly ILog _log = LogProvider.For<InternalPackageRepository>();
 
+        public override bool SupportsPrereleasePackages => true;
+
         public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
         {
             _packageIndex = packageIndex(feedId);

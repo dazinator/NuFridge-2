@@ -93,7 +93,7 @@
                                     <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                 </span>
                             </div>
-                            <div>Error: <span data-bind="text: Value.ExceptionMessage"></span></div>
+                            <div style="white-space: pre-wrap;">Error Message: <span style="display:inline-block" data-bind="text: Value.ExceptionDetails"></span></div>
                         </div>
                     </td>
                     <td data-bind="text: $root.formatDate(Value.FailedAt)"></td>

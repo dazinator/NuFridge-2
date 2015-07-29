@@ -1,4 +1,4 @@
-﻿define(['signalr', 'plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed', 'readmore', 'databinding-feedimportstatus', 'databinding-feedimportoptions', '/signalr/hubs'], function (signalr, router, api, auth, databindingPackage, xml2Json, databindingFeed, readmore, databindingfeedimportstatus, feedimportoptions) {
+﻿define(['plugins/router', 'api', 'auth', 'databinding-package', 'xml2json', 'databinding-feed', 'readmore', 'databinding-feedimportstatus', 'databinding-feedimportoptions', '/signalr/hubs'], function (router, api, auth, databindingPackage, xml2Json, databindingFeed, readmore, databindingfeedimportstatus, feedimportoptions) {
     var ctor = function () {
         var self = this;
         self.packages = ko.observableArray();
@@ -18,10 +18,32 @@
         self.showPrereleasePackages = ko.observable(false);
         self.feedimportstatus = ko.observable(databindingfeedimportstatus());
         self.feedimportoptions = ko.observable(feedimportoptions());
+        self.showSuccessfulFeedImports = ko.observable(false);
+        self.showFailedFeedImports = ko.observable(false);
 
         self.showPrereleasePackages.subscribe(function(newValue) {
             self.loadPackages(0);
         });
+    };
+
+    ctor.prototype.toggleFailedFeedImports = function(item, event) {
+        var self = this;
+        self.showFailedFeedImports(!self.showFailedFeedImports());
+        if (self.showFailedFeedImports()) {
+            $(event.target).text('Hide failed packages');
+        } else {
+            $(event.target).text('Show failed packages');
+        }
+    };
+
+    ctor.prototype.toggleSuccessfulFeedImports = function (item, event) {
+        var self = this;
+        self.showSuccessfulFeedImports(!self.showSuccessfulFeedImports());
+        if (self.showSuccessfulFeedImports()) {
+            $(event.target).text('Hide imported packages');
+        } else {
+            $(event.target).text('Show imported packages');
+        }
     };
 
     ctor.prototype.getPreviousPageArray = function () {
@@ -342,12 +364,14 @@
         var self = this;
 
         self.feedimportoptions(feedimportoptions());
+        self.feedimportstatus(databindingfeedimportstatus());
 
         if (self.feedimportoptions().IncludePrerelease() === true) {
             $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox('check');
         }
 
         $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('restore defaults');
+        $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('set exactly', self.feedimportoptions().VersionSelector());
 
         self.successUploadingPackage(false);
         self.errorUploadingPackage(false);
@@ -361,7 +385,8 @@
                 return false;
             },
             transition: 'horizontal flip',
-            detachable: false
+            detachable: false,
+            observeChanges: true
         };
 
         $('#feedUploadModal').modal(options).modal('show');
