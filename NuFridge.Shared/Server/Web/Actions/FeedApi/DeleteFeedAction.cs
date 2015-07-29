@@ -54,19 +54,16 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                         .First();
             }
 
-            using (ITransaction transaction = _store.BeginTransaction())
-            {
-                packages =
-                    transaction.Query<IInternalPackage>()
-                    .Where("FeedId = @feedId")
-                    .Parameter("feedId", feedId)
-                    .ToList();
-            }
-
             string packageDirectory = config.Directory;
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
+                packages =
+                    transaction.Query<IInternalPackage>()
+                        .Where("FeedId = @feedId")
+                        .Parameter("feedId", feedId)
+                        .ToList();
+
                 foreach (var package in packages)
                 {
                     transaction.Delete(package);
