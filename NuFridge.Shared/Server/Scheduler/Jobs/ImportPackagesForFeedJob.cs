@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     {
         private readonly IInternalPackageRepositoryFactory _factory;
         private readonly ILog _log = LogProvider.For<ImportPackagesForFeedJob>();
-        private const int TotalPackageImportRetries = 2;
+        private const int TotalPackageImportRetries = 1;
 
         public ImportPackagesForFeedJob(IInternalPackageRepositoryFactory factory, IStore store) : base(store)
         {
@@ -92,7 +92,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                         });
                         completedJobs.Add(jobKvp.Key);
                     }
-                    else if (jobDetails.History.Count(hs => hs.StateName == FailedState.StateName) == TotalPackageImportRetries)
+                    else if (jobDetails.History.Count(hs => hs.StateName == FailedState.StateName) == TotalPackageImportRetries + 1)
                     {
                         StateHistoryDto details = jobDetails.History.Last(hs => hs.StateName == FailedState.StateName);
                         importStatus.FailedCount++;
@@ -161,7 +161,12 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(feedUrl);
 
-            IPackage package = remoteRepository.FindPackage(packageId, version);
+            // ReSharper disable once ReplaceWithSingleCallToFirstOrDefault - The method 'FirstOrDefault' is not supported.
+            IPackage package =
+                remoteRepository.GetPackages()
+                    .Where(pk => pk.Id == packageId)
+                    .ToList()
+                    .FirstOrDefault(pk => pk.Version == version);
 
             if (package == null)
             {
@@ -331,6 +336,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             {
                 _log.Debug("Search packages using " + options.SearchPackageId + " from " + options.FeedUrl);
 
+                if (options.HasVersionSelector && options.VersionSelector.Value == FeedImportOptions.VersionSelectorEnum.LatestReleaseAndPrereleaseVersion)
+                {
+                    options.IncludePrerelease = true;
+                }
+                else if (options.HasVersionSelector && options.VersionSelector.Value == FeedImportOptions.VersionSelectorEnum.LatestReleaseVersion)
+                {
+                    options.IncludePrerelease = false;
+                }
+
                 if (!options.IncludePrerelease)
                 {
                     _log.Debug("Excluding prerelease packages");
@@ -340,6 +354,24 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 if (options.HasVersionSelector)
                 {
+                    if (options.VersionSelector.Value == FeedImportOptions.VersionSelectorEnum.AllVersions || options.VersionSelector.Value == FeedImportOptions.VersionSelectorEnum.LatestReleaseAndPrereleaseVersion)
+                    {
+                        List<IPackage> packagesToAdd = new List<IPackage>();
+                        foreach (var package in packages)
+                        {
+                            var otherVersions = remoteRepository.FindPackagesById(package.Id);
+                            packagesToAdd.AddRange(otherVersions.Where(ov => packages.All(pk => pk.Version != ov.Version)));
+                        }
+                        packages.AddRange(packagesToAdd);
+                    }
+
+                    if (!options.IncludePrerelease)
+                    {
+                        _log.Debug("Excluding prerelease packages");
+
+                        packages = packages.Where(pk => pk.IsReleaseVersion()).ToList();
+                    }
+
                     _log.Debug("Using version strategy '" + options.VersionSelector + "'");
 
                     packages = FilterByVersionSelector(packages, options);

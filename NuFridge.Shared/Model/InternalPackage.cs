@@ -125,7 +125,7 @@ namespace NuFridge.Shared.Model
                  IsLatestVersion = isLatestVersion,
                  Copyright = package.Copyright,
                  IsPrerelease = !package.IsReleaseVersion(),
-                 Listed = true,
+                 Listed = package.IsListed(),
                  RequireLicenseAcceptance = package.RequireLicenseAcceptance,
                  Tags = package.Tags,
                  Language = package.Language,
