@@ -33,6 +33,7 @@ namespace NuFridge.Shared.Server.Hosts
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(new string('-', 79));
                 Console.WriteLine("Error: " + ex.GetErrorSummary());
+                Console.WriteLine("Base Error: " + ex.GetBaseException().GetErrorSummary());
                 Console.WriteLine(new string('-', 79));
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine("See the log files for more information.");

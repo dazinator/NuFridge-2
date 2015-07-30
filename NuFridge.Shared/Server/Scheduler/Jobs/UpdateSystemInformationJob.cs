@@ -5,6 +5,7 @@ using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
+    [Queue("background")]
     public class UpdateSystemInformationJob : JobBase
     {
         private readonly IJobServer _jobServer;
@@ -17,6 +18,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             Store = store;
         }
 
+
+        [DisableConcurrentExecution(10)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _logger.Info("Executing " + JobId + " job");

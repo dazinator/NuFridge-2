@@ -11,6 +11,7 @@ using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
+    [Queue("filesystem")]
     public class RunPackageRetentionPoliciesJob : JobBase
     {
         private IStore Store { get; set; }
@@ -28,6 +29,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             PackageRepositoryFactory = packageRepositoryFactory;
         }
 
+        [DisableConcurrentExecution(10)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _log.Info("Running package retention policies.");

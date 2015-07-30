@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
+using Hangfire.Server;
 using Hangfire.SqlServer;
 using Hangfire.States;
 using Hangfire.Storage;
@@ -76,12 +77,13 @@ namespace NuFridge.Shared.Server.Scheduler
             updateStatusAction("Starting the job scheduler");
 
             _log.Info("Starting the job scheduler");
-
             var options = new SqlServerStorageOptions {PrepareSchemaIfNecessary = true};
-            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options);
+            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background");
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
             GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute {Attempts = 0});
+
+
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 
@@ -105,7 +107,12 @@ namespace NuFridge.Shared.Server.Scheduler
                 connection.RemoveTimedOutServers(TimeSpan.FromMinutes(1));
             }
 
-            BackgroundJobServerOptions = new BackgroundJobServerOptions();
+            BackgroundJobServerOptions = new BackgroundJobServerOptions
+            {
+                Queues = new[] {"background", "filesystem"},
+                ServerName = Environment.MachineName
+            };
+
             _backgroundJobServer = new BackgroundJobServer(BackgroundJobServerOptions);
 
             _log.Info("Successfully started job server");

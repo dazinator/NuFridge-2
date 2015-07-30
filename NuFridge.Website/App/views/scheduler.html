@@ -52,9 +52,9 @@
                     <td class="collapsing">
                         <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.succeededJobExpandClick"></i> <span data-bind="text: Name"></span>
                         <div style="display: none;" data-bind="attr: {class: 'succeededJobExpandSection-' + Key}">
-                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>Method: <span data-bind="text: Value.Job ? Value.Job.Method.Signature2 : 'Unknown'"></span></div>
                             <div>
-                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                Arguments: <span data-bind="foreach: Value.Job ? Value.Job.Arguments : new Array()">
                                         <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                     </span>
                             </div>
@@ -87,9 +87,9 @@
                     <td class="collapsing">
                         <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.failedJobExpandClick"></i> <span data-bind="text: Name"></span>
                         <div style="display: none;" data-bind="attr: {class: 'failedJobExpandSection-' + Key}">
-                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>Method: <span data-bind="text: Value.Job ? Value.Job.Method.Signature2 : 'Unknown'"></span></div>
                             <div>
-                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                Arguments: <span data-bind="foreach: Value.Job ? Value.Job.Arguments : new Array()">
                                     <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                 </span>
                             </div>
@@ -157,9 +157,9 @@
                     <td class="collapsing">
                         <i class="add square icon unselectable" style="cursor: pointer;" data-bind="click: $root.processingJobExpandClick"></i> <span data-bind="text: Name"></span>
                         <div style="display: none;" data-bind="attr: {class: 'processingJobExpandSection-' + Key}">
-                            <div>Method: <span data-bind="text: Value.Job.Method.Signature2"></span></div>
+                            <div>Method: <span data-bind="text: Value.Job ? Value.Job.Method.Signature2 : 'Unknown'"></span></div>
                             <div>
-                                Arguments: <span data-bind="foreach: Value.Job.Arguments">
+                                Arguments: <span data-bind="foreach: Value.Job ? Value.Job.Arguments : new Array()">
                                         <span class="ui blue label" data-bind="text: $data == null ? 'null' : $data"></span>
                                     </span>
                             </div>

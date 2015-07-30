@@ -13,6 +13,7 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
+    [Queue("filesystem")]
     public class ReindexPackagesForFeedJob : PackagesBase
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;

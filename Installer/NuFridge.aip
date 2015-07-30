@@ -475,6 +475,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="InstallerAnalytics.dll" SourcePath="&lt;AI_CUSTACTS&gt;InstallerAnalytics.dll"/>
+    <ROW Name="PowerShellScriptLauncher.dll" SourcePath="&lt;AI_CUSTACTS&gt;PowerShellScriptLauncher.dll"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
     <ROW Name="WinOptionalFeatures.dll" SourcePath="&lt;AI_CUSTACTS&gt;WinOptionalFeatures.dll"/>
@@ -569,6 +570,7 @@
     <ROW Action="AI_ChooseTextStyles" Type="1" Source="aicustact.dll" Target="ChooseTextStyles"/>
     <ROW Action="AI_CleanPrereq" Type="65" Source="Prereq.dll" Target="CleanPrereq" WithoutSeq="true"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="PowerShellScript" Target="AEkAcwA2ADQAQgBpAHQAAgABAFAAYQByAGEAbQBzAAIAAQBTAGMAcgBpAHAAdAACAFsAXABbAF0AUgBlAGYAbABlAGMAdABpAG8AbgAuAEEAcwBzAGUAbQBiAGwAeQBbAFwAXQBdADoAOgBMAG8AYQBkAFcAaQB0AGgAUABhAHIAdABpAGEAbABOAGEAbQBlACgAIAAiAFMAeQBzAHQAZQBtAC4ATQBlAHMAcwBhAGcAaQBuAGcAIgAgACkAIAB8ACAATwB1AHQALQBOAHUAbABsAA0ACgAkAG0AcwBtAHEAIAA9ACAAWwBcAFsAXQBTAHkAcwB0AGUAbQAuAE0AZQBzAHMAYQBnAGkAbgBnAC4ATQBlAHMAcwBhAGcAZQBRAHUAZQB1AGUAWwBcAF0AXQANAAoADQAKAA0ACgANAAoAIAAgACAAIAAkAHEATgBhAG0AZQAgAD0AIAAiAC4AXABwAHIAaQB2AGEAdABlACQAXABuAHUAZgByAGkAZABnAGUAXwBmAGkAbABlAHMAeQBzAHQAZQBtACIAIAANAAoADQAKACAAIAAgACAAaQBmACgAJABtAHMAbQBxADoAOgBFAHgAaQBzAHQAcwAoACQAcQBOAGEAbQBlACkAKQBbAFwAewBdAA0ACgAgACAAIAAgACAAIABXAHIAaQB0AGUALQBIAG8AcwB0ACAAKAAiACQAcQBOAGEAbQBlACAAYQBsAHIAZQBhAGQAeQAgAGUAeABpAHMAdABzACAAYQBuAGQAIAB3AGkAbABsACAAYgBlACAAaQBnAG4AbwByAGUAZAAiACkADQAKACAAIAAgACAAWwBcAH0AXQANAAoACQAJAGUAbABzAGUADQAKAAkACQBbAFwAewBdAA0ACgAJAAkAIABXAHIAaQB0AGUALQBIAG8AcwB0ACAAKAAiACQAcQBOAGEAbQBlACAAZABvAGUAcwAgAG4AbwB0ACAAZQB4AGkAcwB0AHMAIABhAG4AZAAgAHcAaQBsAGwAIABiAGUAIABjAHIAZQBhAHQAZQBkACIAKQANAAoACQAJAAkAJABxACAAPQAgACQAbQBzAG0AcQA6ADoAQwByAGUAYQB0AGUAKAAgACQAcQBOAGEAbQBlACwAIAAkAHQAcgB1AGUAKQANAAoACQAJAAkAJABxAC4AVQBzAGUASgBvAHUAcgBuAGEAbABRAHUAZQB1AGUAIAA9ACAAJABUAFIAVQBFAA0ACgAJAAkACQAkAHEALgBNAGEAeABpAG0AdQBtAEoAbwB1AHIAbgBhAGwAUwBpAHoAZQAgAD0AIAAxADAAMgA0ACAAIwBrAGkAbABvAGIAeQB0AGUAcwANAAoACQAJAAkAJABxAC4AUwBlAHQAUABlAHIAbQBpAHMAcwBpAG8AbgBzACgAIgBFAHYAZQByAHkAbwBuAGUAIgAsACAAWwBcAFsAXQBTAHkAcwB0AGUAbQAuAE0AZQBzAHMAYQBnAGkAbgBnAC4ATQBlAHMAcwBhAGcAZQBRAHUAZQB1AGUAQQBjAGMAZQBzAHMAUgBpAGcAaAB0AHMAWwBcAF0AXQA6ADoARgB1AGwAbABDAG8AbgB0AHIAbwBsACwAIABbAFwAWwBdAFMAeQBzAHQAZQBtAC4ATQBlAHMAcwBhAGcAaQBuAGcALgBBAGMAYwBlAHMAcwBDAG8AbgB0AHIAbwBsAEUAbgB0AHIAeQBUAHkAcABlAFsAXABdAF0AOgA6AFMAZQB0ACkADQAKAAkACQBbAFwAfQBdAA0ACgAgACAAIAAgAA0ACgAgACAAIAAgACQAcQBOAGEAbQBlACAAPQAgACIALgBcAHAAcgBpAHYAYQB0AGUAJABcAG4AdQBmAHIAaQBkAGcAZQBfAGIAYQBjAGsAZwByAG8AdQBuAGQAIgAgAA0ACgANAAoAIAAgACAAIABpAGYAKAAkAG0AcwBtAHEAOgA6AEUAeABpAHMAdABzACgAJABxAE4AYQBtAGUAKQApAFsAXAB7AF0ADQAKACAAIAAgACAAIAAgAFcAcgBpAHQAZQAtAEgAbwBzAHQAIAAoACIAJABxAE4AYQBtAGUAIABhAGwAcgBlAGEAZAB5ACAAZQB4AGkAcwB0AHMAIABhAG4AZAAgAHcAaQBsAGwAIABiAGUAIABpAGcAbgBvAHIAZQBkACIAKQANAAoAIAAgACAAIABbAFwAfQBdAA0ACgAJAAkAZQBsAHMAZQANAAoACQAJAFsAXAB7AF0ADQAKAAkACQAgAFcAcgBpAHQAZQAtAEgAbwBzAHQAIAAoACIAJABxAE4AYQBtAGUAIABkAG8AZQBzACAAbgBvAHQAIABlAHgAaQBzAHQAcwAgAGEAbgBkACAAdwBpAGwAbAAgAGIAZQAgAGMAcgBlAGEAdABlAGQAIgApAA0ACgAJAAkACQAkAHEAIAA9ACAAJABtAHMAbQBxADoAOgBDAHIAZQBhAHQAZQAoACAAJABxAE4AYQBtAGUALAAgACQAdAByAHUAZQApAA0ACgAJAAkACQAkAHEALgBVAHMAZQBKAG8AdQByAG4AYQBsAFEAdQBlAHUAZQAgAD0AIAAkAFQAUgBVAEUADQAKAAkACQAJACQAcQAuAE0AYQB4AGkAbQB1AG0ASgBvAHUAcgBuAGEAbABTAGkAegBlACAAPQAgADEAMAAyADQAIAAjAGsAaQBsAG8AYgB5AHQAZQBzAA0ACgAJAAkACQAkAHEALgBTAGUAdABQAGUAcgBtAGkAcwBzAGkAbwBuAHMAKAAiAEUAdgBlAHIAeQBvAG4AZQAiACwAIABbAFwAWwBdAFMAeQBzAHQAZQBtAC4ATQBlAHMAcwBhAGcAaQBuAGcALgBNAGUAcwBzAGEAZwBlAFEAdQBlAHUAZQBBAGMAYwBlAHMAcwBSAGkAZwBoAHQAcwBbAFwAXQBdADoAOgBGAHUAbABsAEMAbwBuAHQAcgBvAGwALAAgAFsAXABbAF0AUwB5AHMAdABlAG0ALgBNAGUAcwBzAGEAZwBpAG4AZwAuAEEAYwBjAGUAcwBzAEMAbwBuAHQAcgBvAGwARQBuAHQAcgB5AFQAeQBwAGUAWwBcAF0AXQA6ADoAUwBlAHQAKQANAAoACQAJAFsAXAB9AF0ADQAKACAAIAAgACA="/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -610,6 +612,7 @@
     <ROW Action="AI_WinOptFeaturesRollback" Type="11521" Source="WinOptionalFeatures.dll" Target="OnWinOptFeaturesRollback" WithoutSeq="true"/>
     <ROW Action="AI_WinOptFeaturesUninstall" Type="1" Source="WinOptionalFeatures.dll" Target="OnWinOptFeaturesUninstall"/>
     <ROW Action="NuFridge.Service.exe" Type="3090" Source="NuFridge.Service.exe_1" Target="&quot;-configure&quot;"/>
+    <ROW Action="PowerShellScript" Type="3073" Source="PowerShellScriptLauncher.dll" Target="RunPowerShellScript" Options="1" AdditionalSeq="AI_DATA_SETTER_1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -662,6 +665,8 @@
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="748"/>
     <ROW Action="AI_VerifyPrereq" Sequence="1101"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
+    <ROW Action="PowerShellScript" Condition="( NOT Installed ) AND ( (VersionNT &gt; 501) OR (VersionNT = 501 AND ServicePackLevel &gt;= 2) )" Sequence="6402"/>
+    <ROW Action="AI_DATA_SETTER_1" Condition="( NOT Installed ) AND ( (VersionNT &gt; 501) OR (VersionNT = 501 AND ServicePackLevel &gt;= 2) )" Sequence="6401"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_ResolveKnownFolders" Sequence="54"/>
@@ -755,10 +760,10 @@
     <ROW Updater="updater.exe" URL="URL" SearchFreq="CheckFrequency" DownloadsFolder="DownloadsFolder" ID="ID" TargetDir="AppDir" AppName="ApplicationName" AppVersion="ApplicationVersion" CompanyName="CompanyName" DefCommandLine="DefaultCommandLine" Flags="Flags" IconIndex="0" UnistallCASeq="AI_UPDATER_UNINSTALL" Description="[|UpdaterName] [|ProductVersion] © [|Manufacturer], Inc, 2015"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.WinOptionalFeatureBundleComponent">
-    <ROW Name="Windows 7" FeatureList="IIS-ASPNET,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-ISAPIExtensions,IIS-RequestFiltering,IIS-NetFxExtensibility" OSTargets="2" Condition="1" Flags="0"/>
-    <ROW Name="Windows 8" FeatureList="IIS-NetFxExtensibility45,IIS-ASPNET45,NetFx4Extended-ASPNET45,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-ISAPIExtensions,IIS-RequestFiltering,IIS-WebSockets" OSTargets="68" Condition="1" Flags="0"/>
-    <ROW Name="Windows Server 2008" FeatureList="IIS-ASPNET,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-ISAPIExtensions,IIS-RequestFiltering,IIS-NetFxExtensibility" OSTargets="24" Condition="1" Flags="0"/>
-    <ROW Name="Windows Server 2012" FeatureList="IIS-WebServerRole,NetFx4Extended-ASPNET45,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-RequestFiltering,IIS-NetFxExtensibility45,IIS-ASPNET45,IIS-WebSockets,NetFx4,IIS-ISAPIExtensions" OSTargets="160" Condition="1" Flags="0"/>
-    <ROW Name="Windows Vista" FeatureList="IIS-ASPNET,IIS-ISAPIFilter,IIS-DefaultDocument,IIS-ISAPIExtensions,IIS-RequestFiltering,IIS-NetFxExtensibility" OSTargets="1" Condition="1" Flags="0"/>
+    <ROW Name="Windows 7" FeatureList="IIS-ASPNET,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-HttpErrors,IIS-ISAPIExtensions,MSMQ-DCOMProxy,IIS-RequestFiltering,IIS-NetFxExtensibility,MSMQ-ADIntegration,MSMQ-HTTP,IIS-DirectoryBrowsing,IIS-HttpCompressionStatic,IIS-HttpLogging,IIS-HttpRedirect,IIS-HttpTracing,IIS-LoggingLibraries,IIS-ManagementConsole,IIS-Metabase,IIS-RequestMonitor,IIS-StaticContent,MSMQ-Multicast,MSMQ-Triggers" OSTargets="2" Condition="1" Flags="0"/>
+    <ROW Name="Windows 8" FeatureList="IIS-ASPNET45,IIS-NetFxExtensibility45,NetFx4Extended-ASPNET45,IIS-ISAPIFilter,IIS-DefaultDocument,IIS-ISAPIExtensions,MSMQ-DCOMProxy,MSMQ-Server,IIS-RequestFiltering,IIS-WebSockets" OSTargets="68" Condition="1" Flags="0"/>
+    <ROW Name="Windows Server 2008" FeatureList="IIS-ASPNET,IIS-ISAPIFilter,IIS-DefaultDocument,IIS-ISAPIExtensions,MSMQ-Server,IIS-RequestFiltering,IIS-NetFxExtensibility" OSTargets="24" Condition="1" Flags="0"/>
+    <ROW Name="Windows Server 2012" FeatureList="NetFx4Extended-ASPNET45,IIS-WebServerRole,IIS-ISAPIFilter,IIS-DefaultDocument,MSMQ-Server,IIS-RequestFiltering,IIS-ASPNET45,IIS-NetFxExtensibility45,IIS-WebSockets,NetFx4,IIS-ISAPIExtensions" OSTargets="160" Condition="1" Flags="0"/>
+    <ROW Name="Windows Vista" FeatureList="IIS-ASPNET,IIS-DefaultDocument,IIS-ISAPIFilter,IIS-HttpErrors,IIS-ISAPIExtensions,MSMQ-DCOMProxy,IIS-RequestFiltering,IIS-NetFxExtensibility,MSMQ-ADIntegration,MSMQ-HTTP,IIS-DirectoryBrowsing,IIS-HttpCompressionStatic,IIS-HttpLogging,IIS-HttpRedirect,IIS-HttpTracing,IIS-LoggingLibraries,IIS-ManagementConsole,IIS-Metabase,IIS-RequestMonitor,IIS-StaticContent,MSMQ-Multicast,MSMQ-Triggers" OSTargets="1" Condition="1" Flags="0"/>
   </COMPONENT>
 </DOCUMENT>

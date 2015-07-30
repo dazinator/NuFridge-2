@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Hangfire;
+using Hangfire.States;
+using Hangfire.Storage.Monitoring;
 using Microsoft.AspNet.SignalR;
 using Nancy;
 using Nancy.Responses;
@@ -19,6 +23,7 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
+    [Queue("filesystem")]
     public class ImportPackagesForFeedJob : PackagesBase
     {
         private readonly IInternalPackageRepositoryFactory _factory;
@@ -35,7 +40,6 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
             IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
-            IInternalPackageRepository localRepository = _factory.Create(feedId);
 
             List<IPackage> packages = GetPackages(remoteRepository, options);
 
@@ -45,69 +49,140 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             hubContext.Clients.Group(ImportPackagesHub.GetGroup(feedId)).importPackagesUpdate(importStatus);
 
-            ProcessPackages(hubContext, localRepository, packages, ref importStatus);
+            ProcessPackages(hubContext, feedId, options.FeedUrl, packages, importStatus);
+        }
+
+        private void ProcessPackages(IHubContext hubContext, int feedId, string feedUrl, List<IPackage> packages, FeedImportStatus importStatus)
+        {
+            List<FeedImportStatus.FailedPackageItem> failedPackages = new List<FeedImportStatus.FailedPackageItem>();
+            List<FeedImportStatus.PackageItem> completedPackages = new List<FeedImportStatus.PackageItem>();
+
+            ConcurrentDictionary<string, IPackage> jobs = new ConcurrentDictionary<string, IPackage>();
+
+            Parallel.ForEach(packages, package =>
+            {
+                string jobId = BackgroundJob.Enqueue(() => ImportPackage(feedId, feedUrl, package.Id, package.Version.ToString()));
+
+                jobs.TryAdd(jobId, package);
+            });
+
+            bool isImporting = true;
+
+            var monitoringApi = JobStorage.Current.GetMonitoringApi();
+
+            while (isImporting)
+            {
+                hubContext.Clients.Group(ImportPackagesHub.GetGroup(feedId)).importPackagesUpdate(importStatus);
+
+                List<string> completedJobs = new List<string>();
+
+                foreach (var jobKvp in jobs)
+                {
+                    var jobDetails = monitoringApi.JobDetails(jobKvp.Key);
+                    if (jobDetails.History.Any(hs => hs.StateName == SucceededState.StateName))
+                    {
+                        importStatus.CompletedCount++;
+                        importStatus.RemainingCount--;
+                        completedPackages.Add(new FeedImportStatus.PackageItem
+                        {
+                            PackageId = jobKvp.Value.Id,
+                            Version = jobKvp.Value.Version.ToString()
+                        });
+                        completedJobs.Add(jobKvp.Key);
+                    }
+                    else if (jobDetails.History.Any(hs => hs.StateName == FailedState.StateName))
+                    {
+                        StateHistoryDto details = jobDetails.History.First(hs => hs.StateName == FailedState.StateName);
+                        importStatus.FailedCount++;
+                        importStatus.RemainingCount--;
+                        failedPackages.Add(new FeedImportStatus.FailedPackageItem
+                        {
+                            PackageId = jobKvp.Value.Id,
+                            Version = jobKvp.Value.Version.ToString(),
+                            Error = details.Data != null && details.Data.ContainsKey("ExceptionMessage") ? details.Data["ExceptionMessage"] : details.Reason
+                        });
+                        completedJobs.Add(jobKvp.Key);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (completedJobs.Any())
+                {
+                    foreach (var completedJob in completedJobs)
+                    {
+                        IPackage package;
+                        jobs.TryRemove(completedJob, out package);
+                    }
+                }
+
+
+                isImporting = jobs.Any();
+
+                _log.Info($"{importStatus.CompletedCount} of {importStatus.TotalCount} packages have been imported for feed id {feedId}");
+                hubContext.Clients.Group(ImportPackagesHub.GetGroup(feedId)).importPackagesUpdate(importStatus);
+
+                if (isImporting)
+                {
+                    Thread.Sleep(7500);
+                }
+            }
+
+            importStatus.IsCompleted = true;
+            importStatus.SuccessfulImports = completedPackages;
+            importStatus.FailedImports = failedPackages;
 
             _log.Info("Sending final update to subscribed clients for feed import (" + feedId + ").");
             hubContext.Clients.Group(ImportPackagesHub.GetGroup(feedId)).importPackagesUpdate(importStatus);
         }
 
-        private void ProcessPackages(IHubContext hubContext, IInternalPackageRepository localRepository, List<IPackage> packages, ref FeedImportStatus importStatus)
+        public void ImportPackage(int feedId, string feedUrl, string packageId, string strVersion)
         {
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
+            _log.Debug("Beginning import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
 
-            List< FeedImportStatus.FailedPackageItem> failedPackages = new List<FeedImportStatus.FailedPackageItem>();
-            List<FeedImportStatus.PackageItem> completedPackages = new List<FeedImportStatus.PackageItem>();
+            var version = new SemanticVersion(strVersion);
 
-            foreach (var package in packages)
+            IInternalPackageRepository localRepository = _factory.Create(feedId);
+
+            var existingPackage = localRepository.GetPackage(packageId, version);
+
+            if (existingPackage != null)
             {
-                var milliSeconds = watch.ElapsedMilliseconds;
-                if (milliSeconds >= 5000)
-                {
-                    _log.Info($"{importStatus.CompletedCount} of {importStatus.TotalCount} packages have been imported for feed id {localRepository.FeedId}");
-                    hubContext.Clients.Group(ImportPackagesHub.GetGroup(localRepository.FeedId)).importPackagesUpdate(importStatus);
-                    watch.Restart();
-                }
-
-                var existingPackage = localRepository.GetPackage(package.Id, package.Version);
-
-                if (existingPackage != null)
-                {
-                    _log.Warn("A package with the same ID and version already exists. Overwriting packages is not enabled on this feed. Id = " + package.Id + ", Version = " + package.Version);
-                    importStatus.FailedCount++;
-                    importStatus.RemainingCount--;
-                    failedPackages.Add(new FeedImportStatus.FailedPackageItem {PackageId = package.Id, Version = package.Version.ToString(), Error = "A package with the same ID and version already exists." });
-                    continue;
-                }
-
-                bool isUploadedPackageLatestVersion;
-                bool isUploadedPackageAbsoluteLatestVersion;
-                UpdateLatestVersionFlagsForPackageId(package, localRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
-
-                try
-                {
-                    localRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion,
-                        isUploadedPackageLatestVersion);
-                }
-                catch (Exception ex)
-                {
-                    _log.ErrorException("There was an error importing the " + package.Id + " package v" + package.Version +" to the feed " + localRepository.FeedId + ". " + ex.Message, ex);
-                    importStatus.FailedCount++;
-                    importStatus.RemainingCount--;
-                    failedPackages.Add(new FeedImportStatus.FailedPackageItem { PackageId = package.Id, Version = package.Version.ToString(), Error = ex.Message });
-                    continue;
-                }
-
-                importStatus.CompletedCount++;
-                importStatus.RemainingCount--;
-                completedPackages.Add(new FeedImportStatus.PackageItem { PackageId = package.Id, Version = package.Version.ToString()});
+                _log.Warn(
+                    "A package with the same ID and version already exists. Overwriting packages is not enabled on this feed. Id = " +
+                    packageId + ", Version = " + version);
+                throw new ImportPackageException("A package with the same ID and version already exists.");
             }
 
-            watch.Stop();
+            IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(feedUrl);
 
-            importStatus.IsCompleted = true;
-            importStatus.SuccessfulImports = completedPackages;
-            importStatus.FailedImports = failedPackages;
+            IPackage package = remoteRepository.FindPackage(packageId, version);
+
+            if (package == null)
+            {
+                _log.Warn("This package was not found on the remote NuGet feed. Id = " + packageId + ", Version = " + version);
+                throw new ImportPackageException("This package was not found on the remote NuGet feed.");
+            }
+
+            bool isUploadedPackageLatestVersion;
+            bool isUploadedPackageAbsoluteLatestVersion;
+            UpdateLatestVersionFlagsForPackageId(package, localRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
+
+            try
+            {
+                localRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
+            }
+            catch (Exception ex)
+            {
+                _log.ErrorException(
+                    "There was an error importing the " + package.Id + " package v" + package.Version + " to the feed " +
+                    localRepository.FeedId + ". " + ex.Message, ex);
+                throw new ImportPackageException(ex.Message);
+            }
+
+            _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
         }
 
         private List<IPackage> FilterByVersionSelector(List<IPackage> packages, FeedImportOptions options)
@@ -409,6 +484,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             public class FailedPackageItem : PackageItem
             {
                 public string Error { get; set; }
+            }
+        }
+
+        public class ImportPackageException : Exception
+        {
+            public ImportPackageException(string message) : base(message)
+            {
+                
             }
         }
     }
