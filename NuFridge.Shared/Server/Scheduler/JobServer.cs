@@ -81,7 +81,6 @@ namespace NuFridge.Shared.Server.Scheduler
             GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background");
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
-            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute {Attempts = 0});
 
 
 

@@ -28,12 +28,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     {
         private readonly IInternalPackageRepositoryFactory _factory;
         private readonly ILog _log = LogProvider.For<ImportPackagesForFeedJob>();
+        private const int TotalPackageImportRetries = 2;
 
         public ImportPackagesForFeedJob(IInternalPackageRepositoryFactory factory, IStore store) : base(store)
         {
             _factory = factory;
         }
 
+        [AutomaticRetryAttribute(Attempts = 0)]
         public void Execute(IJobCancellationToken cancellationToken, int feedId, FeedImportOptions options)
         {
             _log.Info("Running import packages job for feed id " + feedId);
@@ -90,9 +92,9 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                         });
                         completedJobs.Add(jobKvp.Key);
                     }
-                    else if (jobDetails.History.Any(hs => hs.StateName == FailedState.StateName))
+                    else if (jobDetails.History.Count(hs => hs.StateName == FailedState.StateName) == TotalPackageImportRetries)
                     {
-                        StateHistoryDto details = jobDetails.History.First(hs => hs.StateName == FailedState.StateName);
+                        StateHistoryDto details = jobDetails.History.Last(hs => hs.StateName == FailedState.StateName);
                         importStatus.FailedCount++;
                         importStatus.RemainingCount--;
                         failedPackages.Add(new FeedImportStatus.FailedPackageItem
@@ -103,7 +105,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                         });
                         completedJobs.Add(jobKvp.Key);
                     }
-                    else
+                    else if (jobDetails.History.All(hs => hs.StateName != FailedState.StateName))
                     {
                         break;
                     }
@@ -138,6 +140,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             hubContext.Clients.Group(ImportPackagesHub.GetGroup(feedId)).importPackagesUpdate(importStatus);
         }
 
+        [AutomaticRetryAttribute(Attempts = TotalPackageImportRetries)]
         public void ImportPackage(int feedId, string feedUrl, string packageId, string strVersion)
         {
             _log.Debug("Beginning import of package " + packageId + " v" + strVersion + " to feed id " + feedId);

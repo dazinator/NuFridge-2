@@ -20,6 +20,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
 
         [DisableConcurrentExecution(10)]
+        [AutomaticRetryAttribute(Attempts = 0)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _logger.Info("Executing " + JobId + " job");

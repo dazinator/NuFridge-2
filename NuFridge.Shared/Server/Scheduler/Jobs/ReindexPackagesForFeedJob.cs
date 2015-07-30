@@ -26,6 +26,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _store = store;
         }
 
+        [AutomaticRetryAttribute(Attempts = 0)]
         public void Execute(IJobCancellationToken cancellationToken, int feedId)
         {
             _logger.Info("Executing " + JobId + " job for feed id " + feedId);
