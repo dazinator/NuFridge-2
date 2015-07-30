@@ -73,7 +73,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             using (ITransaction transaction = Store.BeginTransaction())
             {
-                versionsOfPackage = packageRepository.GetVersions(transaction, packageId, true).ToList();
+                versionsOfPackage = packageRepository.GetVersions(transaction, packageId, true).Where(pk => pk.Listed).ToList();
             }
 
             if (versionsOfPackage.Any())
@@ -133,10 +133,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             GetCurrentLatestVersionPackages(packageRepository.FeedId, package.Id, packageRepository, out latestAbsoluteVersionPackage,
                 out latestVersionPackage);
 
-            isUploadedPackageAbsoluteLatestVersion = true;
-            isUploadedPackageLatestVersion = true;
+            isUploadedPackageAbsoluteLatestVersion = package.Listed;
+            isUploadedPackageLatestVersion = package.Listed;
 
-            if (latestAbsoluteVersionPackage != null)
+
+            if (isUploadedPackageAbsoluteLatestVersion && latestAbsoluteVersionPackage != null)
             {
                 if (package.Version.CompareTo(latestAbsoluteVersionPackage.GetSemanticVersion()) <= 0)
                 {
@@ -144,7 +145,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
             }
 
-            if (latestVersionPackage != null)
+            if (isUploadedPackageLatestVersion && latestVersionPackage != null)
             {
                 if (package.Version.CompareTo(latestVersionPackage.GetSemanticVersion()) <= 0)
                 {
