@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Storage;
+using Hangfire.Storage.Monitoring;
 using Nancy;
 using Nancy.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.SchedulerApi
 {
-    class GetFailedJobsAction : IAction
+    class GetEnqueuedJobsAction : IAction
     {
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
@@ -21,8 +22,8 @@ namespace NuFridge.Shared.Server.Web.Actions.SchedulerApi
 
             IMonitoringApi monitoringApi = JobStorage.Current.GetMonitoringApi();
 
-            var jobsCount = monitoringApi.FailedCount();
-            var jobs = monitoringApi.FailedJobs(pageSize * page, pageSize).OrderByDescending(jb => jb.Value.FailedAt);
+            var jobsCount = monitoringApi.EnqueuedCount("filesystem") + monitoringApi.EnqueuedCount("background");
+            List<EnqueuedJobDto> jobs = monitoringApi.EnqueuedJobs("filesystem", pageSize * page, pageSize).Select(s => s.Value).Union(monitoringApi.EnqueuedJobs("background", pageSize * page, pageSize).Select(s => s.Value)).OrderByDescending(jb => jb.EnqueuedAt).ToList();
 
             var totalPages = (int)Math.Ceiling((double)jobsCount / pageSize);
 

@@ -73,6 +73,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<GetSourceFilesAction>().AsSelf();
 
             //Scheduler module
+            builder.RegisterType<GetEnqueuedJobsAction>().AsSelf();
             builder.RegisterType<GetProcessingJobsAction>().AsSelf();
             builder.RegisterType<GetSucceededJobsAction>().AsSelf();
             builder.RegisterType<GetFailedJobsAction>().AsSelf();

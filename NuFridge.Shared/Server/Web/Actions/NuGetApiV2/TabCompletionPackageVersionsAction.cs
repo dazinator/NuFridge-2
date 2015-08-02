@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
@@ -49,15 +50,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             using (var transaction = Store.BeginTransaction())
             {
                 var query = transaction.Query<IInternalPackage>()
-                    .Where("FeedId = @feedId")
-                    .Parameter("feedId", feed.Id);
+                    .Where(feed.Id);
 
                 if (!includePrerelease)
                 {
                     query = query.Where("IsPrerelease = 0");
                 }
 
-                query = query.Where("PackageId = @packageId")
+                query = query.Where("PackageId LIKE @packageId")
                     .Parameter("packageId", packageId);
 
                 packages = query.ToList(0, PackagesToReturn);

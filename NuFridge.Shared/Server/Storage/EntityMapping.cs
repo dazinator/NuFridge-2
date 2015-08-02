@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server.Storage
 
         public Type Type { get; protected set; }
 
-        public ColumnMapping IdColumn { get; private set; }
+        public ColumnMapping IdColumn { get; protected set; }
 
         public List<ColumnMapping> IndexedColumns { get; private set; }
 

@@ -6,6 +6,7 @@ using Nancy.Security;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
@@ -60,8 +61,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             {
                 packages =
                     transaction.Query<IInternalPackage>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feedId)
+                        .Where(feedId)
                         .ToList();
 
                 foreach (var package in packages)
@@ -71,6 +71,10 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
                 transaction.Delete(feed);
                 transaction.Delete(config);
+
+                string command = "sp_DropNuFridgePackageTable @feedId";
+
+                transaction.ExecuteScalar<string>(command, new CommandParameters(new { feedId = feed.Id }));
 
                 transaction.Commit();
             }

@@ -54,8 +54,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             NuGetODataModelBuilderQueryable builder = new NuGetODataModelBuilderQueryable();
             builder.Build();
 
-            var url = module.Request.Url.SiteBase + module.Request.Url.Path;
-            url = ProcessQueryAndRegenerateUrl(queryDictionary, url);
+            var url = module.Request.Url.ToString();
 
             HttpMethod method = new HttpMethod(module.Request.Method);
             var request = new HttpRequestMessage(method, url);
@@ -63,7 +62,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
-            using (var dbContext = new DatabaseContext(Store))
+            using (var dbContext = new DatabaseContext(feed.Id, Store))
             {
                 bool enableStableOrdering;
                 var ds = CreateQuery(dbContext, queryDictionary, feed, out enableStableOrdering);
@@ -129,7 +128,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
-            ds = ds.Where(pk => pk.FeedId == feed.Id);
             ds = ds.Where(pk => pk.Listed);
 
             string searchTerm = queryDictionary.ContainsKey("searchTerm")
@@ -146,7 +144,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             if (!string.IsNullOrWhiteSpace(idSearch))
             {
-                ds = ds.Where(pk => pk.PackageId == idSearch);
+                ds = ds.Where(pk => pk.Id == idSearch);
                 ds = ds.OrderByDescending(pk => pk.VersionMajor)
                     .ThenByDescending(pk => pk.VersionMinor)
                     .ThenByDescending(pk => pk.VersionBuild)
@@ -197,51 +195,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 if (splitTerms.Any())
                 {
-                    ds = ds.Where(pk => splitTerms.Any(sc => pk.PackageId.ToLower().Contains(sc.ToLower())));
+                    ds = ds.Where(pk => splitTerms.Any(sc => pk.Id.ToLower().Contains(sc.ToLower())));
                 }
             }
             return ds;
         }
 
-        private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
-        {
-            var query = string.Empty;
 
-            var updatesToApply = new List<KeyValuePair<string, object>>();
-
-            //Start - this section could be better
-            foreach (KeyValuePair<string, object> qd in queryDictionary)
-            {
-                string updatedValue;
-                if (GetReplacedODataQueryValue(qd, out updatedValue))
-                {
-                    updatesToApply.Add(new KeyValuePair<string, object>(qd.Key, updatedValue));
-                }
-            }
-
-            foreach (var updateToApply in updatesToApply)
-            {
-                queryDictionary[updateToApply.Key] = updateToApply.Value;
-            }
-
-            foreach (KeyValuePair<string, object> qd in queryDictionary)
-            {
-                if (string.IsNullOrWhiteSpace(query))
-                {
-                    query = "?";
-                }
-                query += qd.Key + "=" + qd.Value + "&";
-            }
-
-            if (query.EndsWith("&"))
-            {
-                query = query.Substring(0, query.Length - 1);
-            }
-            //End - this section could be better
-
-            url += query;
-            return url;
-        }
 
         protected virtual void AddAdditionalQueryParams(IDictionary<string, object> queryDictionary)
         {
@@ -273,37 +233,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                         .First();
             }
             return feed;
-        }
-
-        //This method could be removed if it used an interface to mask the fact Id is my PK and not the PackageId
-        private bool GetReplacedODataQueryValue(KeyValuePair<string, object> kvp, out string updatedString)
-        {
-            bool updated = false;
-            updatedString = null;
-            var value = kvp.Value;
-            if (value != null)
-            {
-                var str = value.ToString();
-                var split = str.Split(',');
-                if (split.Any())
-                {
-                    for (int i = 0; i < split.Length; i++)
-                    {
-                        if (split[i].ToLower() == "id")
-                        {
-                            updated = true;
-                            split[i] = "PackageId";
-                        }
-                        else if (split[i].ToLower().Contains("(id)"))
-                        {
-                            updated = true;
-                            split[i] = split[i].Replace("(id)", "(PackageId)").Replace("(Id)", "(PackageId)").Replace("(ID)", "(PackageId)");
-                        }
-                    }
-                }
-                updatedString = string.Join(",", split);
-            }
-            return updated;
         }
     }
 }

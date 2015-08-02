@@ -13,7 +13,7 @@ namespace NuFridge.Shared.Server.NuGet
 
         void RemovePackage(IInternalPackage package);
 
-        void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion);
+        void AddPackage(IPackage package);
 
         IInternalPackage GetPackage(string packageId, SemanticVersion version);
 
@@ -28,6 +28,6 @@ namespace NuFridge.Shared.Server.NuGet
 
 
         void DeletePackage(IInternalPackage packageToDelete);
-        void IndexPackage(IPackage package, bool isUploadedPackageAbsoluteLatestVersion, bool isUploadedPackageLatestVersion);
+        void IndexPackage(IPackage package);
     }
 }

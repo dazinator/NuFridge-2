@@ -96,7 +96,7 @@ namespace NuFridge.Shared.Server.Web
 
             pipelines.OnError.AddItemToEndOfPipeline((z, a) =>
             {
-                _log.ErrorException("Unhandled error on request: " + context.Request.Url + " : " + a.Message, a);
+                _log.ErrorException("Unhandled error on request: " + context.Request.Url + " : " + a.ToString(), a);
                 return context.Response;
             });
 

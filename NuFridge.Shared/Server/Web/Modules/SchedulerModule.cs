@@ -17,6 +17,8 @@ namespace NuFridge.Shared.Server.Web.Modules
     {
         public SchedulerModule(IContainer container)
         {
+            Get["api/scheduler/jobs/enqueued"] = p => container.Resolve<GetEnqueuedJobsAction>().Execute(p, this);
+
             Get["api/scheduler/jobs/processing"] = p => container.Resolve<GetProcessingJobsAction>().Execute(p, this);
 
             Get["api/scheduler/jobs/succeeded"] = p => container.Resolve<GetSucceededJobsAction>().Execute(p, this);

@@ -109,13 +109,18 @@ namespace NuFridge.Shared.Server.Storage
 
         public void Update<TDocument>(TDocument instance) where TDocument : class
         {
+            Update(null, instance);
+        }
+
+        public void Update<TDocument>(string tableName, TDocument instance) where TDocument : class
+        {
             EntityMapping mapping;
             if (!_mappings.TryGet(instance.GetType(), out mapping))
             {
                 mapping = _mappings.Get(typeof (TDocument));
             }
             var columns = mapping.IndexedColumns.Count > 0 ? string.Join(", ", mapping.IndexedColumns.Select(c => "[" + c.ColumnName + "] = @" + c.ColumnName)): "";
-            using (SqlCommand command = CreateCommand(UpdateStatementTemplates.GetOrAdd(mapping.TableName, t => string.Format("UPDATE NuFridge.[{0}] SET {1} WHERE Id = @Id", mapping.TableName, columns)), InstanceToParameters(instance, mapping)))
+            using (SqlCommand command = CreateCommand(UpdateStatementTemplates.GetOrAdd(mapping.TableName, t => string.Format("UPDATE NuFridge.[{0}] SET {1} WHERE Id = @Id", tableName ?? mapping.TableName, columns)), InstanceToParameters(instance, mapping)))
             {
                 try
                 {

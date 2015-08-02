@@ -32,7 +32,7 @@ namespace NuFridge.Shared.Server.Storage
 
 
         void Update<TDocument>(TDocument instance) where TDocument : class;
-
+        void Update<TDocument>(string tableName, TDocument instance) where TDocument : class;
         void Delete<TDocument>(TDocument instance) where TDocument : class;
 
         void Commit();

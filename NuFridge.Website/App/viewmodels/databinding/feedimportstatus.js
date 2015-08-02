@@ -3,19 +3,24 @@
         var self = {};
 
         var data = $.extend({
-            FeedId: ko.observable(0),
-            RemainingCount: ko.observable(0),
-            CompletedCount: ko.observable(0),
-            FailedCount: ko.observable(0),
-            TotalCount: ko.observable(0),
-            IsCompleted: ko.observable(false),
-            SuccessfulImports: ko.observableArray(),
-            FailedImports: ko.observableArray()
+            Counters: ko.observable({
+                TotalCount: ko.observable(0),
+                ImportedCount: ko.observable(0),
+                FailedCount: ko.observable(0)
+            }),
+            Summary: ko.observable({
+                IsCompleted: ko.observable(false),
+                ImportedPackages: ko.observableArray(),
+                FailedPackages: ko.observableArray()
+            })
         }, config);
 
         data = $.extend({
             ProgressCount: function () {
-                return data.CompletedCount() + data.FailedCount();
+                if (data.Counters()) {
+                    return data.Counters().ImportedCount() + data.Counters().FailedCount();
+                }
+                return 0;
             }
         }, data);
 

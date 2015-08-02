@@ -324,7 +324,7 @@
         $.connection.hub.url = "/signalr";
         var hub = $.connection.importPackagesHub;
 
-        hub.client.importPackagesUpdate = function (response) {
+        hub.client.updateImportStatus = function (response) {
             var mapping = {
                 create: function (options) {
                     return databindingfeedimportstatus(options.data);
@@ -333,7 +333,7 @@
 
             ko.mapping.fromJS(response, mapping, self.feedimportstatus);
 
-            if (self.feedimportstatus().IsCompleted() === true) {
+            if (self.feedimportstatus().Summary() && self.feedimportstatus().Summary().IsCompleted() === true) {
                 self.successUploadingPackage(true);
                 self.isUploadingPackage(false);
                 self.loadPackages(0);

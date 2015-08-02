@@ -15,6 +15,11 @@
         this.failedCurrentPage = ko.observable(0);
         this.failedJobs = ko.observableArray();
 
+        this.enqueuedPageCount = ko.observable(1);
+        this.enqueuedTotalCount = ko.observable(0);
+        this.enqueuedCurrentPage = ko.observable(0);
+        this.enqueuedJobs = ko.observableArray();
+
         this.processingPageCount = ko.observable(1);
         this.processingTotalCount = ko.observable(0);
         this.processingCurrentPage = ko.observable(0);
@@ -66,6 +71,11 @@
         $(event.target).toggleClass('add minus');
     };
 
+    ctor.prototype.enqueuedJobExpandClick = function (item, event) {
+        $('.enqueuedJobExpandSection-' + item.Key).toggle();
+        $(event.target).toggleClass('add minus');
+    };
+
     ctor.prototype.formatDate = function (value) {
         return moment(value).format('DD/MM/YYYY HH:mm:ss');
     };
@@ -90,7 +100,7 @@
         }
 
         $.ajax({
-            url: "/api/scheduler/jobs/failed" + "?page=" + pageNumber + "&pageSize=10",
+            url: "/api/scheduler/jobs/failed" + "?page=" + pageNumber + "&pageSize=20",
             cache: false,
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json'
@@ -135,7 +145,7 @@
         }
 
         $.ajax({
-            url: "/api/scheduler/jobs/processing" + "?page=" + pageNumber + "&pageSize=10",
+            url: "/api/scheduler/jobs/processing" + "?page=" + pageNumber + "&pageSize=20",
             cache: false,
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json'
@@ -153,6 +163,51 @@
             self.processingTotalCount(response.TotalCount);
 
             ko.mapping.fromJS(response.Results, mapping, self.processingJobs);
+
+            dfd.resolve();
+        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
+
+            dfd.reject();
+        });
+
+        return dfd.promise();
+    };
+
+    ctor.prototype.loadEnqueuedJobs = function (pageNumber) {
+        var self = this;
+
+        var dfd = jQuery.Deferred();
+
+        if (!pageNumber) {
+            pageNumber = 0;
+        } else {
+            if (pageNumber === self.enqueuedCurrentPage()) {
+                return;
+            }
+        }
+
+        $.ajax({
+            url: "/api/scheduler/jobs/enqueued" + "?page=" + pageNumber + "&pageSize=20",
+            cache: false,
+            headers: new auth().getAuthHttpHeader(),
+            dataType: 'json'
+        }).then(function (response) {
+
+            var mapping = {
+                key: function (data) {
+                    return ko.utils.unwrapObservable(data.Key);
+                },
+                create: function (options) {
+                    return schedulejobpaging(options.data);
+                }
+            };
+
+            self.enqueuedTotalCount(response.TotalCount);
+
+            ko.mapping.fromJS(response.Results, mapping, self.enqueuedJobs);
 
             dfd.resolve();
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
@@ -214,7 +269,7 @@
         }
 
         $.ajax({
-            url: "/api/scheduler/jobs/deleted" + "?page=" + pageNumber + "&pageSize=10",
+            url: "/api/scheduler/jobs/deleted" + "?page=" + pageNumber + "&pageSize=20",
             cache: false,
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json'
@@ -258,7 +313,7 @@
         }
 
         $.ajax({
-            url: "/api/scheduler/jobs/succeeded" + "?page=" + pageNumber + "&pageSize=10",
+            url: "/api/scheduler/jobs/succeeded" + "?page=" + pageNumber + "&pageSize=20",
             cache: false,
             headers: new auth().getAuthHttpHeader(),
             dataType: 'json'
@@ -307,8 +362,9 @@
             var d3 = self.loadProcessingJobs();
             var d4 = self.loadScheduledJobs();
             var d5 = self.loadDeletedJobs();
+            var d6 = self.loadEnqueuedJobs();
 
-            $.when(d1, d2, d3, d4, d5).then(function() {
+            $.when(d1, d2, d3, d4, d5, d6).then(function() {
                 self.ajaxUpdatedAt(iso8601(new Date()));
                 dfd.resolve();
             }, function(e) {
@@ -329,7 +385,7 @@
         self.loadData().then(function() {
             self.ajaxInterval = setInterval(function () {
                 self.loadData();
-            }, 180000);
+            }, 30000);
         });
     };
 

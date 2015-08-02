@@ -9,15 +9,20 @@ namespace NuFridge.Shared.Model.Mappings
 {
     public class InternalPackageMap : EntityMapping<IInternalPackage>
     {
+        public static string GetPackageTable(int feedId)
+        {
+            return $"Package_{feedId}";
+        }
+
         public InternalPackageMap()
         {
             TableName = "Package";
 
             Column(m => m.Description);
             Column(m => m.Hash);
-            Column(m => m.PackageId);
+            IdColumn = new ColumnMapping("Id", DbType.Int32, new PropertyReaderWriterDecorator(new DelegateReaderWriter<IInternalPackage, int>(target => target.PrimaryId, (package, i) => package.PrimaryId = i)));
+            VirtualColumn("PackageId", DbType.String, package => package.Id, (package, s) => package.Id = s, 4000);
             Column(m => m.Published);
-            Column(m => m.FeedId);
             Column(m => m.ReleaseNotes);
             Column(m => m.DownloadCount);
             Column(m => m.Summary);

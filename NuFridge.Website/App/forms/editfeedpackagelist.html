@@ -194,12 +194,12 @@
         </form>
 
         <h4 data-bind="visible: isUploadingPackage() || successUploadingPackage(), text: isUploadingPackage() ? 'Import Progress' : 'Import Summary'"></h4>
-        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() > 0, text: 'Processing ' + feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
-        <div data-bind="visible: isUploadingPackage() && feedimportstatus().TotalCount() === 0 && feedimportstatus().IsCompleted() === false">The feed import job has been enqueued.</div>
-        <div data-bind="visible: successUploadingPackage(), text: 'Successfully imported ' + feedimportstatus().CompletedCount() + ' of ' + feedimportstatus().TotalCount() + ' packages.'"></div>
-        <div data-bind="visible: successUploadingPackage() && feedimportstatus().FailedCount() > 0 , text: feedimportstatus().FailedCount() + ' packages failed to import.'"></div>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().Counters().TotalCount() > 0, text: feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().Counters().TotalCount() + ' packages have been processed.'"></div>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().Counters().TotalCount() === 0 && feedimportstatus().Summary().IsCompleted() === false">The package import will begin shortly.</div>
+        <div data-bind="visible: successUploadingPackage(), text: 'Successfully imported ' + feedimportstatus().Counters().ImportedCount() + ' of ' + feedimportstatus().Counters().TotalCount() + ' packages.'"></div>
+        <div data-bind="visible: successUploadingPackage() && feedimportstatus().Counters().FailedCount() > 0 , text: feedimportstatus().Counters().FailedCount() + ' packages failed to import.'"></div>
 
-        <div data-bind="visible: feedimportstatus().IsCompleted() && feedimportstatus().SuccessfulImports().length > 0">
+        <div data-bind="visible: feedimportstatus().Summary().IsCompleted() && feedimportstatus().Summary().ImportedPackages().length > 0">
 
             <h4 style="margin: calc(2rem - .14285em) 0 1rem;">Imported Packages</h4>
             <a data-bind="click: toggleSuccessfulFeedImports">Show imported packages</a>
@@ -210,7 +210,7 @@
                     <th>Package Version</th>
                 </tr>
                 </thead>
-                <tbody data-bind="foreach: feedimportstatus().SuccessfulImports">
+                <tbody data-bind="foreach: feedimportstatus().Summary().ImportedPackages()">
                 <tr>
                     <td data-bind="text: PackageId"></td>
                     <td data-bind="text: Version"></td>
@@ -219,7 +219,7 @@
             </table>
         </div>
 
-        <div data-bind="visible: feedimportstatus().IsCompleted() && feedimportstatus().FailedImports().length > 0">
+        <div data-bind="visible: feedimportstatus().Summary().IsCompleted()  && feedimportstatus().Summary().FailedPackages().length > 0">
 
             <h4 style="margin: calc(2rem - .14285em) 0 1rem;">Failed Packages</h4>
             <a data-bind="click: toggleFailedFeedImports">Show failed packages</a>
@@ -231,7 +231,7 @@
                     <th>Error Message</th>
                 </tr>
                 </thead>
-                <tbody data-bind="foreach: feedimportstatus().FailedImports">
+                <tbody data-bind="foreach: feedimportstatus().Summary().FailedPackages()">
                 <tr>
                     <td data-bind="text: PackageId"></td>
                     <td data-bind="text: Version"></td>

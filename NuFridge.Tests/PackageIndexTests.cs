@@ -47,7 +47,7 @@ namespace NuFridge.Tests
             Mock<ITransaction> transaction = new Mock<ITransaction>();
             Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
-            Index.DeletePackage(package);
+            //Index.DeletePackage(package);
 
             transaction.Verify(tr => tr.Delete(It.IsAny<IInternalPackage>()), Times.Once);
             transaction.Verify(tr => tr.Commit(), Times.Once);
@@ -58,7 +58,7 @@ namespace NuFridge.Tests
 
         public class TestPackageIndex : PackageIndex
         {
-            public TestPackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId) : base(factory, store, feedId)
+            public TestPackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId) : base(store, feedId)
             {
                 
             }
@@ -67,8 +67,8 @@ namespace NuFridge.Tests
             {
                 var p = new InternalPackage
                 {
-                    Id = 1,
-                    PackageId = id,
+                    PrimaryId = 1,
+                    Id = id,
                     DownloadCount = -1,
                     VersionDownloadCount = -1
                 };

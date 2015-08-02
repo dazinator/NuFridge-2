@@ -71,6 +71,18 @@ namespace NuFridge.Shared.Server.Web.Modules
             //OData search count
             Get["feeds/{feed}/api/odata/Search()/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
 
+            //OData search count
+            Get["feeds/{feed}/api/v2/Search/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
+
+            //OData search count
+            Get["feeds/{feed}/api/odata/Search/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
+
+            //OData package listing
+            Get["feeds/{feed}/api/v2/Packages"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
+
+            //OData package listing
+            Get["feeds/{feed}/api/odata/Packages"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
+
             //OData package listing
             Get["feeds/{feed}/api/v2/Packages()"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
 
@@ -89,11 +101,23 @@ namespace NuFridge.Shared.Server.Web.Modules
             //OData search count
             Get["feeds/{feed}/api/odata/Packages()/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
 
+            //OData search count
+            Get["feeds/{feed}/api/v2/Packages/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
+
+            //OData search count
+            Get["feeds/{feed}/api/odata/Packages/$count"] = p => container.Resolve<GetODataPackagesCountAction>().Execute(p, this);
+
             //OData find packages by id
             Get["feeds/{feed}/api/v2/FindPackagesById()"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
 
             //OData find packages by id
             Get["feeds/{feed}/api/odata/FindPackagesById()"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
+
+            //OData find packages by id
+            Get["feeds/{feed}/api/v2/FindPackagesById"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
+
+            //OData find packages by id
+            Get["feeds/{feed}/api/odata/FindPackagesById"] = p => container.Resolve<GetODataPackagesAction>().Execute(p, this);
 
             //Package manager console tab completion - package ids
             Get["feeds/{feed}/api/v2/package-ids"] = p => container.Resolve<TabCompletionPackageIdsAction>().Execute(p, this);
@@ -106,12 +130,24 @@ namespace NuFridge.Shared.Server.Web.Modules
 
             //OData get updates
             Get["feeds/{feed}/api/odata/GetUpdates()"] = p => container.Resolve<GetUpdatesAction>().Execute(p, this);
-           
+
+            //OData get updates
+            Get["feeds/{feed}/api/v2/GetUpdates"] = p => container.Resolve<GetUpdatesAction>().Execute(p, this);
+
+            //OData get updates
+            Get["feeds/{feed}/api/odata/GetUpdates"] = p => container.Resolve<GetUpdatesAction>().Execute(p, this);
+
             //OData get updates count
             Get["feeds/{feed}/api/v2/GetUpdates()/$count"] = p => container.Resolve<GetUpdatesCountAction>().Execute(p, this);
 
             //OData get updates count
             Get["feeds/{feed}/api/odata/GetUpdates()/$count"] = p => container.Resolve<GetUpdatesCountAction>().Execute(p, this);
+
+            //OData get updates count
+            Get["feeds/{feed}/api/v2/GetUpdates/$count"] = p => container.Resolve<GetUpdatesCountAction>().Execute(p, this);
+
+            //OData get updates count
+            Get["feeds/{feed}/api/odata/GetUpdates/$count"] = p => container.Resolve<GetUpdatesCountAction>().Execute(p, this);
         }
     }
 }

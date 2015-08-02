@@ -96,13 +96,7 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
             }
         }
 
-        public bool Listed
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public bool Listed { get; set; }
 
         public DateTimeOffset? Published
         {

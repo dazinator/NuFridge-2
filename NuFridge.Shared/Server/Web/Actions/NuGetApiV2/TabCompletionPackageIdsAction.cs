@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
@@ -55,8 +56,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             using (var transaction = Store.BeginTransaction())
             {
                 var query = transaction.Query<IInternalPackage>()
-                    .Where("FeedId = @feedId")
-                    .Parameter("feedId", feed.Id);
+                    .Where(feed.Id);
 
                 string latestVersionQuery = "IsLatestVersion = 1";
 
@@ -78,7 +78,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 packages = query.ToList(0, PackagesToReturn);
             }
 
-            return module.Response.AsJson(packages.Select(pk => pk.PackageId));
+            return module.Response.AsJson(packages.Select(pk => pk.Id));
         }
     }
 }

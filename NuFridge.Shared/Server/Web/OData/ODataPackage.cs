@@ -31,7 +31,7 @@ namespace NuFridge.Shared.Server.Web.OData
             ProjectUrl = package.ProjectUrl;
             Dependencies = package.Dependencies;
 
-            Id = package.PackageId;
+            Id = package.Id;
             Title = package.Title;
             DisplayTitle = package.Title;
             RequireLicenseAcceptance = package.RequireLicenseAcceptance;

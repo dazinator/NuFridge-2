@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Statistics.Design;
@@ -24,7 +25,7 @@ namespace NuFridge.Shared.Server.Statistics
 
             foreach (var feed in feeds)
             {
-                var packages = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
+                var packages = Transaction.Query<IInternalPackage>().Where(feed.Id).ToList();
 
                 if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {

@@ -68,7 +68,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 result = module.Response.FromStream(stream, "application/zip");
 
                 result.Headers.Add("Content-Length", stream.Length.ToString());
-                result.Headers.Add("Content-Disposition", "attachment; filename=" + package.PackageId + "." + package.Version + ".nupkg");
+                result.Headers.Add("Content-Disposition", "attachment; filename=" + package.Id + "." + package.Version + ".nupkg");
                 using (var md5 = MD5.Create())
                 {
                     result.Headers.Add("Content-MD5", BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower());

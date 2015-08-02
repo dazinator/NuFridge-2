@@ -7,9 +7,8 @@ namespace NuFridge.Shared.Model.Interfaces
 {
     public interface IInternalPackage
     {
-        int Id { get; set; }
-        string PackageId { get; set; }
-        int FeedId { get; set; }
+        int PrimaryId { get; set; }
+        string Id { get; set; }
         string Version { get; set; }
 
         string Description { get; set; }

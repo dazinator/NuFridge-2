@@ -12,13 +12,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IStore _store;
-        private readonly SymbolSource _symbolSource;
 
-        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, SymbolSource symbolSource) : base(store)
+
+        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store) : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _store = store;
-            _symbolSource = symbolSource;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -28,7 +27,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string feedName = parameters.feed;
 
             IFeed feed;
-            IFeedConfiguration config;
+
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
@@ -42,23 +41,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            using (var transaction = _store.BeginTransaction())
-            {
-                config =
-                    transaction.Query<IFeedConfiguration>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feed.Id)
-                        .First();
-            }
-
             if (!IsValidNuGetApiKey(module, feed))
             {
                 var response = module.Response.AsText("Invalid API key.");
                 response.StatusCode = HttpStatusCode.Forbidden;
                 return response;
             }
-
-
 
             var packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
@@ -72,42 +60,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            string deletedPackageId = package.PackageId;
-            string deletedPackageVersion = package.Version;
-            bool isDeletedPackageLatestVersion = package.IsLatestVersion;
-            bool isDeletedPackageAbsoluteLatestVersion = package.IsAbsoluteLatestVersion;
-            
             packageRepository.RemovePackage(package);
-            _symbolSource.RemoveSymbolPackage(config.SymbolsDirectory, deletedPackageId, deletedPackageVersion);
-
-            if (isDeletedPackageAbsoluteLatestVersion || isDeletedPackageLatestVersion)
-            {
-                IInternalPackage latestAbsoluteVersionPackage;
-                IInternalPackage latestVersionPackage;
-
-                GetNextLatestVersionPackages(feed.Id, deletedPackageId, packageRepository, out latestAbsoluteVersionPackage, out latestVersionPackage);
-
-                if (latestAbsoluteVersionPackage != null && !latestAbsoluteVersionPackage.IsAbsoluteLatestVersion)
-                {
-                    latestAbsoluteVersionPackage.IsAbsoluteLatestVersion = true;
-                    using (ITransaction transaction = _store.BeginTransaction())
-                    {
-                        transaction.Update(latestAbsoluteVersionPackage);
-                        transaction.Commit();
-                    }
-                }
-
-                if (latestVersionPackage != null && !latestVersionPackage.IsLatestVersion)
-                {
-                    latestVersionPackage.IsLatestVersion = true;
-                    using (ITransaction transaction = _store.BeginTransaction())
-                    {
-                        transaction.Update(latestVersionPackage);
-                        transaction.Commit();
-                    }
-                }
-            }
-
 
             return new Response { StatusCode = HttpStatusCode.Created };
         }

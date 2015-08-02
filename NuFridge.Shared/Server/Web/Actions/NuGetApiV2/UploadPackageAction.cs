@@ -148,7 +148,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         {
             try
             {
-                IPackage package = FastZipPackage.Open(temporaryFilePath, new CryptoHashProvider());
+                IFastZipPackage package = FastZipPackage.Open(temporaryFilePath, new CryptoHashProvider());
+
+                package.Listed = true;
 
                 if (string.IsNullOrWhiteSpace(package.Id) || package.Version == null)
                 {
@@ -185,13 +187,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return response;
                 }
 
-                bool isUploadedPackageLatestVersion;
-                bool isUploadedPackageAbsoluteLatestVersion;
-                UpdateLatestVersionFlagsForPackageId(package, packageRepository, out isUploadedPackageLatestVersion, out isUploadedPackageAbsoluteLatestVersion);
+
 
                 try
                 {
-                    packageRepository.AddPackage(package, isUploadedPackageAbsoluteLatestVersion, isUploadedPackageLatestVersion);
+                    packageRepository.AddPackage(package);
                 }
                 catch (IOException ex)
                 {

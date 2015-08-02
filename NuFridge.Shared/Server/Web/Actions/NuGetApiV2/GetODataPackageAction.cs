@@ -46,11 +46,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            using (var dbContext = new DatabaseContext(Store))
+            using (var dbContext = new DatabaseContext(feed.Id, Store))
             {
                 IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
 
-                ds = ds.Where(pk => pk.FeedId == feed.Id);
                 ds = ds.Where(pk => pk.Listed);
 
                 string packageId = parameters.PackageId;
@@ -58,7 +57,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 if (!string.IsNullOrWhiteSpace(packageId) && !string.IsNullOrWhiteSpace(packageVersion))
                 {
-                    ds = ds.Where(pk => pk.PackageId == packageId && pk.Version == packageVersion);
+                    ds = ds.Where(pk => pk.Id == packageId && pk.Version == packageVersion);
                 }
 
                 var package = ds.FirstOrDefault();

@@ -40,18 +40,18 @@ namespace NuFridge.Tests
             Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.PrimaryId, 1);
+
+            mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0"));
             mock.SetupProperty(fc => fc.Version, "1.0.0");
 
             Mock<IInternalPackage> mock2 = new Mock<IInternalPackage>();
 
             mock2.SetupProperty(fc => fc.Title, "Test Package");
-            mock2.SetupProperty(fc => fc.Id, 1);
-            mock2.SetupProperty(fc => fc.FeedId, 1);
-            mock2.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock2.SetupProperty(fc => fc.PrimaryId, 1);
+
+            mock2.SetupProperty(fc => fc.Id, "TestPackage");
             mock2.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.1"));
             mock2.SetupProperty(fc => fc.Version, "1.0.1");
 
@@ -84,27 +84,27 @@ namespace NuFridge.Tests
             Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.PrimaryId, 1);
+      
+            mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0-alpha"));
             mock.SetupProperty(fc => fc.Version, "1.0.0-alpha");
 
             Mock<IInternalPackage> mock2 = new Mock<IInternalPackage>();
 
             mock2.SetupProperty(fc => fc.Title, "Test Package");
-            mock2.SetupProperty(fc => fc.Id, 1);
-            mock2.SetupProperty(fc => fc.FeedId, 1);
-            mock2.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock2.SetupProperty(fc => fc.PrimaryId, 1);
+
+            mock2.SetupProperty(fc => fc.Id, "TestPackage");
             mock2.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.1-alpha"));
             mock2.SetupProperty(fc => fc.Version, "1.0.1-alpha");
 
             Mock<IInternalPackage> mock3 = new Mock<IInternalPackage>();
 
             mock3.SetupProperty(fc => fc.Title, "Test Package");
-            mock3.SetupProperty(fc => fc.Id, 1);
-            mock3.SetupProperty(fc => fc.FeedId, 1);
-            mock3.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock3.SetupProperty(fc => fc.PrimaryId, 1);
+
+            mock3.SetupProperty(fc => fc.Id, "TestPackage");
             mock3.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.2-alpha"));
             mock3.SetupProperty(fc => fc.Version, "1.0.2-alpha");
 
@@ -126,18 +126,18 @@ namespace NuFridge.Tests
             Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.PrimaryId, 1);
+          
+            mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0"));
             mock.SetupProperty(fc => fc.Version, "1.0.0");
 
             Mock<IInternalPackage> mock2 = new Mock<IInternalPackage>();
 
             mock2.SetupProperty(fc => fc.Title, "Test Package");
-            mock2.SetupProperty(fc => fc.Id, 1);
-            mock2.SetupProperty(fc => fc.FeedId, 1);
-            mock2.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock2.SetupProperty(fc => fc.PrimaryId, 1);
+ 
+            mock2.SetupProperty(fc => fc.Id, "TestPackage");
             mock2.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.1"));
             mock2.SetupProperty(fc => fc.Version, "1.0.1");
 
@@ -158,9 +158,9 @@ namespace NuFridge.Tests
             Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.PrimaryId, 1);
+       
+            mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0"));
             mock.SetupProperty(fc => fc.Version, "1.0.0");
 
@@ -179,9 +179,9 @@ namespace NuFridge.Tests
             Mock<IInternalPackage> mock = new Mock<IInternalPackage>();
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
-            mock.SetupProperty(fc => fc.PackageId, "TestPackage");
+            mock.SetupProperty(fc => fc.PrimaryId, 1);
+            
+            mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.SetupProperty(fc => fc.IsPrerelease, true);
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0-alpha"));
             mock.SetupProperty(fc => fc.Version, "1.0.0-alpha");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hangfire;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
@@ -116,10 +117,10 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             using (var transaction = Store.BeginTransaction())
             {
-                packages = transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
+                packages = transaction.Query<IInternalPackage>().Where(feed.Id).ToList();
             }
 
-            Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.PackageId).ToDictionary(x => x.Key, x => x.ToList());
+            Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());
 
             int releasePackagesDeleted = 0;
             int prereleasePackagesDeleted = 0;
@@ -162,7 +163,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             if (toDeleteCount > 0)
             {
-                _log.Info(string.Format("Deleting {0} release versions of the '{1}' package.", toDeleteCount, packages.First().PackageId));
+                _log.Info(string.Format("Deleting {0} release versions of the '{1}' package.", toDeleteCount, packages.First().Id));
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
                 var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
@@ -184,7 +185,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.PackageId, packageToDelete.Version), ex);
+                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.Id, packageToDelete.Version), ex);
                     }
                 }
             }
@@ -214,7 +215,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             if (toDeleteCount > 0)
             {
-                _log.Info(string.Format("Deleting {0} prerelease versions of the '{1}' package.", toDeleteCount, packages.First().PackageId));
+                _log.Info(string.Format("Deleting {0} prerelease versions of the '{1}' package.", toDeleteCount, packages.First().Id));
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
                 var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
@@ -237,7 +238,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.PackageId, packageToDelete.Version), ex);
+                        _log.ErrorException(string.Format("There was an error trying to remove the '{0}' package with version '{1}' for the retention policy.", packageToDelete.Id, packageToDelete.Version), ex);
                     }
                 }
             }

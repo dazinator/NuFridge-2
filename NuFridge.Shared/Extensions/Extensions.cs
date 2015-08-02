@@ -4,6 +4,9 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Nancy;
 using Nancy.Cookies;
+using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Model.Mappings;
+using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Extensions
 {
@@ -18,6 +21,13 @@ namespace NuFridge.Shared.Extensions
         {
             return Uri.UnescapeDataString(input.Replace("+", "%20"));
         }
+
+        public static IQueryBuilder<IInternalPackage> Where(this IQueryBuilder<IInternalPackage> queryBuilder, int feedId)
+        {
+            queryBuilder.Table(InternalPackageMap.GetPackageTable(feedId));
+
+            return queryBuilder;
+        } 
 
         public static TResponse WithCookies<TResponse>(this TResponse response, Response source) where TResponse : Response
         {

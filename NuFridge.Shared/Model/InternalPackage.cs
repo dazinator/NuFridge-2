@@ -16,20 +16,26 @@ using NuGet;
 namespace NuFridge.Shared.Model
 {
     [Table("Package", Schema = "NuFridge")]
-    [DebuggerDisplay("{PackageId}: {Version} ({Title})")]
-    public class InternalPackage : IInternalPackage, IEntity
+    [DebuggerDisplay("{Id}: {Version} ({Title})")]
+    public class InternalPackage : IInternalPackage
     {
         public InternalPackage()
         {
             IsAbsoluteLatestVersion = true;
         }
 
+        /// <summary>
+        /// This is the primary key id
+        /// </summary>
         [Key]
-        public int Id { get; set; }
+        [Column("Id")]
+        public int PrimaryId { get; set; }
 
-        public int FeedId { get; set; }
-
-        public string PackageId { get; set; }
+        /// <summary>
+        /// This is the package id
+        /// </summary>
+        [Column("PackageId")]
+        public string Id { get; set; }
 
 
         private SemanticVersion SemanticVersion { get; set; }
@@ -109,20 +115,19 @@ namespace NuFridge.Shared.Model
             return (SupportedFrameworks ?? "").Split(new [] {"|"}, StringSplitOptions.RemoveEmptyEntries).Select(VersionUtility.ParseFrameworkName).Distinct();
         }
 
-        public static IInternalPackage Create(int feedId, IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
+        public static IInternalPackage Create(int feedId, IPackage package)
         {
             var newPackage = new InternalPackage
              {
-                 PackageId = package.Id,
-                 FeedId = feedId,
+                 Id = package.Id,
                  Description = package.Description,
                  LastUpdated = DateTime.UtcNow,
                  ReleaseNotes = package.ReleaseNotes,
                  Summary = package.Summary,
                  Title = package.Title,
                  DownloadCount = package.DownloadCount,
-                 IsAbsoluteLatestVersion = isAbsoluteLatestVersion,
-                 IsLatestVersion = isLatestVersion,
+                 IsAbsoluteLatestVersion = false,
+                 IsLatestVersion = false,
                  Copyright = package.Copyright,
                  IsPrerelease = !package.IsReleaseVersion(),
                  Listed = package.IsListed(),
@@ -199,7 +204,7 @@ namespace NuFridge.Shared.Model
 
         public string Name
         {
-            get { return PackageId; }
+            get { return Id; }
         }
 
         public bool RequireLicenseAcceptance { get; set; }
@@ -240,7 +245,7 @@ namespace NuFridge.Shared.Model
         {
             DownloadCount++;
         }
-        [NotMapped]
+
         public string ReportAbuseUrl { get; set; }
     }
 }

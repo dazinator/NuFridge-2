@@ -36,19 +36,12 @@
             Overview<a class="anchor" id="statisticsAnchor"></a>
         </h2>
         <div class="ui card" style="width: 100%; padding: 15px 0px 15px 0px; min-width: 500px;">
-            <div class="ui three statistics" data-bind="with: dashboard">
+            <div class="ui two statistics" data-bind="with: dashboard">
                 <div class="statistic">
                     <div class="value">
                         <i class="cubes icon"></i> <span data-bind="text: feedCount"></span>
                     </div>
                     <div class="label" data-bind="text: feedCount() == 1 ? 'Feed' : 'Feeds'">
-                    </div>
-                </div>
-                <div class="statistic">
-                    <div class="value">
-                        <i class="archive icon"></i> <span data-bind="text: packageCount"></span>
-                    </div>
-                    <div class="label" data-bind="text: packageCount() == 1 ? 'Package' : 'Packages'">
                     </div>
                 </div>
                 <div class="statistic">

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +19,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
             _log.Info("Initializing the database");
 
-            using (var dbContext = new DatabaseContext(store))
-            {
-                dbContext.Database.Initialize(false);
-            }
+            Database.SetInitializer<DatabaseContext>(null);
         }
     }
 }

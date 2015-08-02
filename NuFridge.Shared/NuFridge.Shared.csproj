@@ -280,6 +280,7 @@
     <Compile Include="Server\Modules\FullModule.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\NuGet\PackageDependencySetConverter.cs" />
+    <Compile Include="Server\NuGet\PackageImportProgressTracker.cs" />
     <Compile Include="Server\NuGet\Symbols\ReadStream.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolSource.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolSourceMapper.cs" />
@@ -287,6 +288,7 @@
     <Compile Include="Server\Scheduler\AutofacContainerPerJobFilterAttribute.cs" />
     <Compile Include="Server\Scheduler\AutofacPerLifetimeScopeJobActivator.cs" />
     <Compile Include="Server\Scheduler\HangfirePerLifetimeScopeConfigurer.cs" />
+    <Compile Include="Server\Scheduler\JobContext.cs" />
     <Compile Include="Server\Scheduler\JobServer.cs" />
     <Compile Include="Server\Scheduler\Jobs\ImportPackagesForFeedJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\JobBase.cs" />
@@ -348,6 +350,7 @@
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageVersionsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageIdsAction.cs" />
     <Compile Include="Server\Web\Actions\NuGetApiV2\UploadPackageAction.cs" />
+    <Compile Include="Server\Web\Actions\SchedulerApi\GetEnqueuedJobsAction.cs" />
     <Compile Include="Server\Web\Actions\SymbolsApi\GetSourceFilesAction.cs" />
     <Compile Include="Server\Web\Actions\SymbolsApi\GetSymbolFileAction.cs" />
     <Compile Include="Server\Web\Actions\SymbolsApi\UploadSymbolPackageAction.cs" />
@@ -523,9 +526,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0001-StoredProcs.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0002-FeedConfigRetentionPolicy.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -563,6 +563,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Server\Web\Actions\NuGetApiV1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0011-PackageTables.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -26,7 +26,6 @@ namespace NuFridge.Shared.Server.Web.Nancy
     public class CustomNancyHost : IDisposable
     {
         private readonly IList<Uri> _baseUriList;
-        private HttpListener _listener;
         private readonly HostConfiguration _configuration;
         private readonly INancyBootstrapper _bootstrapper;
         private readonly ILog _log = LogProvider.For<CustomNancyHost>();

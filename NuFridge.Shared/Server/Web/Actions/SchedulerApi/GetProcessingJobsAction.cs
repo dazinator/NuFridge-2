@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.SchedulerApi
             IMonitoringApi monitoringApi = JobStorage.Current.GetMonitoringApi();
 
             var jobsCount = monitoringApi.ProcessingCount();
-            var jobs = monitoringApi.ProcessingJobs(pageSize * page, pageSize);
+            var jobs = monitoringApi.ProcessingJobs(pageSize * page, pageSize).OrderByDescending(jb => jb.Value.StartedAt);
 
             var totalPages = (int)Math.Ceiling((double)jobsCount / pageSize);
 

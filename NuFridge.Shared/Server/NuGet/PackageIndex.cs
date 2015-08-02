@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Linq2Rest;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Model.Mappings;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
@@ -14,12 +16,10 @@ namespace NuFridge.Shared.Server.NuGet
     public class PackageIndex
     {
         private readonly int _feedId;
-        private readonly IInternalPackageRepositoryFactory _factory;
         private readonly IStore _store;
 
-        public PackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId)
+        public PackageIndex(IStore store, int feedId)
         {
-            _factory = factory;
             _store = store;
             _feedId = feedId;
 
@@ -29,44 +29,31 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public void AddPackage(IPackage package, bool isAbsoluteLatestVersion, bool isLatestVersion)
+        public void AddPackage(ITransaction transaction, IInternalPackage package)
         {
-            IInternalPackage localPackage;
-            using (var transaction = _store.BeginTransaction())
-            {
-                localPackage = InternalPackage.Create(_feedId, package, isAbsoluteLatestVersion, isLatestVersion);
-                transaction.Insert(localPackage);
-                transaction.Commit();
-            }
-
-            _factory.AddFrameworkNames(localPackage.SupportedFrameworks);
+            transaction.Insert(InternalPackageMap.GetPackageTable(_feedId), package);
         }
 
-        public void UnlistPackage(IInternalPackage package)
+        public void UnlistPackage(ITransaction transaction, IInternalPackage package)
         {
-            IInternalPackage internalPackage = GetPackage(package.PackageId, package.GetSemanticVersion());
+            IInternalPackage internalPackage = GetPackage(package.Id, package.GetSemanticVersion());
             if (internalPackage == null)
                 return;
 
+            internalPackage.IsAbsoluteLatestVersion = false;
+            internalPackage.IsLatestVersion = false;
             internalPackage.Listed = false;
 
-            using (var transaction = _store.BeginTransaction())
-            {
-                transaction.Update(internalPackage);
-                transaction.Commit();
-            }
+            transaction.Update(InternalPackageMap.GetPackageTable(_feedId), internalPackage);
         }
 
-        public void DeletePackage(IInternalPackage package)
+        public void DeletePackage(ITransaction transaction, IInternalPackage package)
         {
-            IInternalPackage internalPackage = GetPackage(package.PackageId, package.GetSemanticVersion());
+            IInternalPackage internalPackage = GetPackage(package.Id, package.GetSemanticVersion());
             if (internalPackage == null)
                 return;
-            using (var transaction = _store.BeginTransaction())
-            {
-                transaction.Delete(internalPackage);
-                transaction.Commit();
-            }
+
+                transaction.Delete(internalPackage); 
         }
 
         public IInternalPackage GetPackage(string packageId, SemanticVersion version)
@@ -74,15 +61,14 @@ namespace NuFridge.Shared.Server.NuGet
             return LoadPackage(packageId.ToLowerInvariant(), version.ToString().ToLowerInvariant());
         }
 
-        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId,
+        public List<IInternalPackage> GetVersions(ITransaction transaction, string packageId,
             bool allowPreRelease)
         {
             var query = transaction.Query<IInternalPackage>();
 
-            query.Where("FeedId = @feedId");
-            query.Parameter("feedId", _feedId);
+            query.Where(_feedId);
 
-            query.Where("PackageId = @packageId");
+            query.Where("PackageId LIKE @packageId");
             query.Parameter("packageId", packageId);
 
             if (!allowPreRelease)
@@ -90,7 +76,7 @@ namespace NuFridge.Shared.Server.NuGet
                 query.Where("[IsPrerelease] = 0");
             }
 
-            var packages = query.Stream();
+            var packages = query.ToList();
 
             return packages;
         }
@@ -105,19 +91,11 @@ namespace NuFridge.Shared.Server.NuGet
             {
                 return
                     transaction.Query<IInternalPackage>()
-                        .Where("PackageId = @packageId AND Version = @packageVersion AND FeedId = @feedId")
+                        .Where(_feedId)
+                        .Where("PackageId LIKE @packageId AND Version = @packageVersion")
                         .Parameter("packageId", id)
                         .Parameter("packageVersion", version)
-                        .Parameter("feedId", _feedId)
                         .First();
-            }
-        }
-
-        public int GetCount()
-        {
-            using (var transaction = _store.BeginTransaction())
-            {
-                return transaction.Query<IInternalPackage>().Count();
             }
         }
 
@@ -125,7 +103,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             using (var transaction = _store.BeginTransaction())
             {
-                IEnumerable<IInternalPackage> packages = GetVersions(transaction, package.PackageId, true).ToList();
+                IEnumerable<IInternalPackage> packages = GetVersions(transaction, package.Id, true).ToList();
 
                 var newestPackage = packages.Single(pk => pk.Id == package.Id);
 
@@ -135,7 +113,7 @@ namespace NuFridge.Shared.Server.NuGet
                 {
                     versionOfPackage.DownloadCount = packages.Sum(pk => pk.VersionDownloadCount);
 
-                    transaction.Update(versionOfPackage);
+                    transaction.Update(InternalPackageMap.GetPackageTable(_feedId), versionOfPackage);
                 }
 
                 transaction.Commit();

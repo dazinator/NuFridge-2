@@ -81,7 +81,7 @@ namespace NuFridge.Shared.Server.Scheduler
             GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background");
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
-
+            GlobalConfiguration.Configuration.UseFilter(new JobContext());
 
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
@@ -100,10 +100,55 @@ namespace NuFridge.Shared.Server.Scheduler
                 }
             }
 
-            using (var connection = JobStorage.Current.GetConnection())
+            
+            var queuedJobs =
+                monitorApi.EnqueuedJobs("filesystem", 0, int.MaxValue)
+                    .Union(monitorApi.EnqueuedJobs("background", 0, int.MaxValue)).ToList();
+
+            if (queuedJobs.Any())
             {
-                _log.Debug("Removing timed out servers which have not been active for one minute.");
-                connection.RemoveTimedOutServers(TimeSpan.FromMinutes(1));
+
+                _log.Warn("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
+
+                updateStatusAction("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
+
+                foreach (var queuedJob in queuedJobs)
+                {
+                    BackgroundJob.Delete(queuedJob.Key);
+                }
+            }
+
+
+            var fetchedJobs =
+                monitorApi.FetchedJobs("filesystem", 0, int.MaxValue)
+                    .Union(monitorApi.FetchedJobs("background", 0, Int32.MaxValue))
+                    .ToList();
+
+
+            if (fetchedJobs.Any())
+            {
+                _log.Warn("Deleting " + fetchedJobs.Count() + " jobs which are currently feteched.");
+
+                updateStatusAction("Deleting " + fetchedJobs.Count() + " jobs which are currently fetched.");
+
+                foreach (var fetchedJob in fetchedJobs)
+                {
+                    BackgroundJob.Delete(fetchedJob.Key);
+                }
+            }
+
+            var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue).ToList();
+
+            if (scheduledJobs.Any())
+            {
+                _log.Warn("Deleting " + scheduledJobs.Count() + " jobs which are currently scheduled.");
+
+                updateStatusAction("Deleting " + scheduledJobs.Count() + " jobs which are currently scheduled.");
+
+                foreach (var scheduledJob in scheduledJobs)
+                {
+                    BackgroundJob.Delete(scheduledJob.Key);
+                }
             }
 
             BackgroundJobServerOptions = new BackgroundJobServerOptions
