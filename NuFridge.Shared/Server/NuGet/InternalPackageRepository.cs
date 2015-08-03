@@ -18,12 +18,11 @@ namespace NuFridge.Shared.Server.NuGet
 {
     public class InternalPackageRepository : LocalPackageRepository, IInternalPackageRepository
     {
-        public int FeedId { get; private set; }
+        public int FeedId { get; }
 
         private readonly PackageIndex _packageIndex;
         private readonly SymbolSource _symbolSource;
         private readonly IStore _store;
-        private readonly object _fileLock = new object();
         private readonly ILog _log = LogProvider.For<InternalPackageRepository>();
         private readonly IFrameworkNamesRepository _frameworkNamesRepository;
 
@@ -38,12 +37,16 @@ namespace NuFridge.Shared.Server.NuGet
             FeedId = feedId;
         }
 
+        public string GetPackageFilePath(IInternalPackage package)
+        {
+            var filePath = GetPackageFilePath(package.Id, package.GetSemanticVersion());
+
+            return Path.Combine(FileSystem.Root, filePath);
+        }
+
         public Stream GetRawContents(IInternalPackage package)
         {
-            lock (_fileLock)
-            {
-                return FileSystem.OpenFile(GetPackageFilePath(package.Id, package.GetSemanticVersion()));
-            }
+            return FileSystem.OpenFile(GetPackageFilePath(package.Id, package.GetSemanticVersion()));
         }
 
         public IInternalPackage GetPackage(string packageId, SemanticVersion version)
@@ -60,8 +63,6 @@ namespace NuFridge.Shared.Server.NuGet
         {
             return _packageIndex.GetVersions(transaction, packageId, allowPreRelease);
         }
-
-
 
         public Stream GetPackageRaw(string packageId, SemanticVersion version)
         {

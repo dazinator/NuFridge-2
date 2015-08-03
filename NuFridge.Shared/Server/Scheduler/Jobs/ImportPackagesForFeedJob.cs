@@ -14,9 +14,12 @@ using Nancy;
 using Nancy.Responses;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
+using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Server.Web;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using NuFridge.Shared.Server.Web.SignalR;
 using NuGet;
@@ -63,23 +66,23 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             PackageImportProgressTracker.Instance.AddJob(hubContext, jobId, feedId, packages.Count());
 
-            ProcessPackages(feedId, options.FeedUrl, packages, jobId);
+            ProcessPackages(feedId, options.FeedUrl, packages, jobId, options.CheckLocalCache);
         }
 
-        private void ProcessPackages(int feedId, string feedUrl, List<IPackage> packages, string jobId)
+        private void ProcessPackages(int feedId, string feedUrl, List<IPackage> packages, string jobId, bool useLocalPackages)
         {
             _log.Debug("Enqueuing packages for import for feed id " + feedId);
 
             Parallel.ForEach(packages, package =>
             {
-                BackgroundJob.Enqueue(() => ImportPackage(jobId, feedId, feedUrl, package.Id, package.Version.ToString()));
+                BackgroundJob.Enqueue(() => ImportPackage(jobId, feedId, feedUrl, package.Id, package.Version.ToString(), useLocalPackages));
             });
 
             PackageImportProgressTracker.Instance.WaitUntilComplete(JobContext.JobId);
         }
 
         [AutomaticRetry(Attempts = PackageImportProgressTracker.RetryCount)]
-        public void ImportPackage(string parentJobId, int feedId, string feedUrl, string packageId, string strVersion)
+        public void ImportPackage(string parentJobId, int feedId, string feedUrl, string packageId, string strVersion, bool useLocalPackages)
         {
             SemanticVersion version = new SemanticVersion(strVersion);
 
@@ -101,21 +104,25 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(feedUrl);
 
-                // ReSharper disable once ReplaceWithSingleCallToFirstOrDefault - The method 'FirstOrDefault' is not supported.
-                IPackage package =
+                DataServicePackage remotePackage =
                     remoteRepository.GetPackages()
                         .Where(pk => pk.Id == packageId)
                         .ToList()
-                        .FirstOrDefault(pk => pk.Version == version);
+                        .FirstOrDefault(pk => pk.Version == version) as DataServicePackage;
 
-                if (package == null)
+                if (remotePackage == null)
                 {
                     _log.Warn("This package was not found on the remote NuGet feed. Id = " + packageId + ", Version = " + version);
                     throw new ImportPackageException("This package was not found on the remote NuGet feed.");
                 }
 
+                if (useLocalPackages)
+                {
+                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, strVersion, remotePackage,localRepository, version))
+                        return;
+                }
 
-                localRepository.AddPackage(package);
+                localRepository.AddPackage(remotePackage);
 
                 _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
 
@@ -138,6 +145,49 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString(), exception));
                 throw new ImportPackageException(ex.Message);
             }
+        }
+
+        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, string strVersion, DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
+        {
+            using (var transaction = Store.BeginTransaction())
+            {
+                var cachePackageRecords =
+                    transaction.Query<IInternalPackage>()
+                        .Where("PackageId = @packageId AND Version = @version")
+                        .Parameter("packageId", packageId).Parameter("version", strVersion)
+                        .ToList(0, 10);
+
+                foreach (var cachePackageRecord in cachePackageRecords)
+                {
+                    if (!string.IsNullOrWhiteSpace(cachePackageRecord?.Hash))
+                    {
+                        if (cachePackageRecord.Hash == remotePackage.PackageHash)
+                        {
+                            IInternalPackageRepository cachedRepo = cachePackageRecord.FeedId ==
+                                                                    localRepository.FeedId
+                                ? localRepository
+                                : _factory.Create(cachePackageRecord.FeedId);
+
+                            var cachePackagePath = cachedRepo.GetPackageFilePath(cachePackageRecord);
+
+                            if (File.Exists(cachePackagePath))
+                            {
+                                var cachePackage = FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
+
+                                cachePackage.Listed = true;
+
+                                localRepository.AddPackage(cachePackage);
+
+                                _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId + " using cached package from feed id " + cachePackageRecord.FeedId);
+
+                                PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,new PackageImportProgressAuditItem(packageId, version.ToString()));
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private List<IPackage> FilterByVersionSelector(List<IPackage> packages, FeedImportOptions options)
@@ -381,6 +431,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             public bool HasSpecificVersion => !string.IsNullOrWhiteSpace(Version);
             public bool HasVersionSelector => VersionSelector.HasValue;
+
+            public bool CheckLocalCache { get; set; }
 
             public bool IsValid(out string message)
             {

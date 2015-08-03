@@ -388,6 +388,10 @@
             $('.ui.checkbox.importFeedIncludePrereleaseCheckBox').checkbox('check');
         }
 
+        if (self.feedimportoptions().CheckLocalCache() === true) {
+            $('.ui.checkbox.importFeedLocalCacheCheckBox').checkbox('check');
+        }
+
         $('.ui.dropdown.importFeedVersionSelectorDropDown').dropdown('set selected', self.feedimportoptions().VersionSelector());
 
         self.successUploadingPackage(false);
@@ -589,6 +593,16 @@
             },
             onUnchecked: function () {
                 self.feedimportoptions().IncludePrerelease(false);
+            }
+        });
+
+        $(".ui.checkbox.importFeedLocalCacheCheckBox").checkbox({
+            fireOnInit: false,
+            onChecked: function() {
+                self.feedimportoptions().CheckLocalCache(true);
+            },
+            onUnchecked: function() {
+                self.feedimportoptions().CheckLocalCache(false);
             }
         });
 

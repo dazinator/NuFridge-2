@@ -8,7 +8,8 @@
             SearchPackageId: ko.observable(""),
             IncludePrerelease: ko.observable(true),
             Version: ko.observable(""),
-            VersionSelector: ko.observable(1)
+            VersionSelector: ko.observable(1),
+            CheckLocalCache: ko.observable(true)
         }, config);
 
 

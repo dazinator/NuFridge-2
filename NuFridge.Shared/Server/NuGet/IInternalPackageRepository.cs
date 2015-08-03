@@ -29,5 +29,6 @@ namespace NuFridge.Shared.Server.NuGet
 
         void DeletePackage(IInternalPackage packageToDelete);
         void IndexPackage(IPackage package);
+        string GetPackageFilePath(IInternalPackage package);
     }
 }

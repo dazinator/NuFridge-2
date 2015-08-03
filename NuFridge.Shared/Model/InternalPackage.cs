@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
+using System.Text;
 using System.Xml.Serialization;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
@@ -199,7 +200,9 @@ namespace NuFridge.Shared.Model
 
             using (Stream stream = package.GetStream())
             {
-                newPackage.Hash = HashCalculator.Hash(stream);
+                byte[] hash = new CryptoHashProvider().CalculateHash(stream);
+
+                newPackage.Hash = Convert.ToBase64String(hash);
 
                 stream.Seek(0, SeekOrigin.Begin);
                 newPackage.Created = FastZipPackageBase.GetPackageCreatedDateTime(stream);
