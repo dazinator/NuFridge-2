@@ -23,13 +23,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataPackagesAction : IAction
     {
-        protected readonly IInternalPackageRepositoryFactory PackageRepositoryFactory;
+        private readonly IFrameworkNamesRepository _frameworkNamesRepository;
         protected readonly IStore Store;
         private readonly IWebPortalConfiguration _portalConfig;
 
-        public GetODataPackagesAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig)
+        public GetODataPackagesAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration portalConfig)
         {
-            PackageRepositoryFactory = packageRepositoryFactory;
+            _frameworkNamesRepository = frameworkNamesRepository;
             Store = store;
             _portalConfig = portalConfig;
         }
@@ -77,14 +77,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         {
             long? total = request.ODataProperties().TotalCount;
 
-            var packageRepository = PackageRepositoryFactory.Create(feed.Id);
-
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
             var baseAddress = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/v2/";
 
-            var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
-                ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectFields);
+            var stream = ODataPackages.CreatePackagesStream(baseAddress, baseAddress, ds, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectFields);
 
             StreamReader reader = new StreamReader(stream);
             string text = reader.ReadToEnd();
@@ -174,7 +171,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 if (targetFrameworkValue != null)
                 {
 
-                    string[] searchFrameworks = PackageRepositoryFactory.GetFrameworkNames()
+                    string[] searchFrameworks = _frameworkNamesRepository.Get()
                         .Union(new[] { targetFrameworkValue })
                         .Where(candidate => VersionUtility.IsCompatible(targetFrameworkValue, new[] { candidate }))
                         .Select(VersionUtility.GetShortFrameworkName)

@@ -9,9 +9,9 @@ namespace NuFridge.Shared.Server.Application
 {
     public class ApplicationInstanceStore : IApplicationInstanceStore
     {
-        private const RegistryHive Hive = RegistryHive.LocalMachine;
-        private const RegistryView View = RegistryView.Registry32;
-        private const string KeyName = "Software\\NuFridge\\NuFridge";
+        public const RegistryHive Hive = RegistryHive.LocalMachine;
+        public const RegistryView View = RegistryView.Registry32;
+        public const string KeyName = "Software\\NuFridge\\NuFridge";
 
         private ApplicationInstanceRecord Get()
         {
@@ -30,68 +30,22 @@ namespace NuFridge.Shared.Server.Application
                         {
                             var value = registryKey2.GetValue(str);
                             instanceRecord.InstallDirectory = value.ToString();
-                            continue;
-                        }
-                        if (str == ApplicationInstanceRecord.NuGetFrameworkNamesKey)
-                        {
-                            var value = registryKey2.GetValue(str);
-                            instanceRecord.NuGetFrameworkNames = value.ToString();
-                            continue;
+                            break;
                         }
                     }
                 }
             }
 
 #if DEBUG
-            if (string.IsNullOrWhiteSpace(instanceRecord.InstallDirectory))
-            {
-                instanceRecord.InstallDirectory = Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName;
-            }
+            instanceRecord.InstallDirectory = Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName;
 #endif
-
-            if (string.IsNullOrWhiteSpace(instanceRecord.NuGetFrameworkNames))
-            {
-                instanceRecord.NuGetFrameworkNames = String.Empty;
-            }
 
             if (!instanceRecord.IsValid())
             {
                 throw new Exception("Registry install directory is missing.");
             }
 
-
-
             return instanceRecord;
-        }
-
-        public void Save(ApplicationInstanceRecord record)
-        {
-            using (RegistryKey registryKey1 = RegistryKey.OpenBaseKey(Hive, View))
-            {
-                RegistryKey registryKey2 = registryKey1.OpenSubKey(KeyName, true);
-
-                if (registryKey2 == null)
-                {
-                    try
-                    {
-                        registryKey2 = registryKey1.CreateSubKey(KeyName, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
-                    }
-                    catch (Exception ex)
-                    {
-                       throw new Exception("Failed to create a subkey in the registry when updating the known NuGet framework names.", ex);
-                    }
-                }
-
-                try
-                {
-                    registryKey2.SetValue(ApplicationInstanceRecord.NuGetFrameworkNamesKey, record.NuGetFrameworkNames);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Failed to update a subkey in the registry when updating the known NuGet framework names.", ex);
-                }
-
-            }
         }
 
         public ApplicationInstanceRecord GetInstance()

@@ -37,10 +37,5 @@ namespace NuFridge.Shared.Server.Application
                 return;
             action();
         }
-
-        public void Save()
-        {
-            _instanceStore.Save(Current);
-        }
     }
 }

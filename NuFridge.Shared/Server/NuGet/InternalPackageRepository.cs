@@ -25,17 +25,17 @@ namespace NuFridge.Shared.Server.NuGet
         private readonly IStore _store;
         private readonly object _fileLock = new object();
         private readonly ILog _log = LogProvider.For<InternalPackageRepository>();
-        private readonly IInternalPackageRepositoryFactory _factory;
+        private readonly IFrameworkNamesRepository _frameworkNamesRepository;
 
         public override bool SupportsPrereleasePackages => true;
 
-        public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, SymbolSource symbolSource, IStore store, IInternalPackageRepositoryFactory factory, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
+        public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, SymbolSource symbolSource, IStore store, IFrameworkNamesRepository frameworkNamesRepository, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
         {
             _symbolSource = symbolSource;
             _store = store;
             _packageIndex = packageIndex(feedId);
+            _frameworkNamesRepository = frameworkNamesRepository;
             FeedId = feedId;
-            _factory = factory;
         }
 
         public Stream GetRawContents(IInternalPackage package)
@@ -199,7 +199,7 @@ namespace NuFridge.Shared.Server.NuGet
             SetNextLatestVersionPackages(package.Id);
 
 
-            _factory.AddFrameworkNames(localPackage.SupportedFrameworks);
+            _frameworkNamesRepository.Add(localPackage.SupportedFrameworks);
         }
 
         public new void AddPackage(IPackage package)
@@ -235,7 +235,7 @@ namespace NuFridge.Shared.Server.NuGet
             SetNextLatestVersionPackages(package.Id);
 
 
-            _factory.AddFrameworkNames(localPackage.SupportedFrameworks);
+            _frameworkNamesRepository.Add(localPackage.SupportedFrameworks);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.IO;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Model;
@@ -12,6 +13,8 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
+            Database.SetInitializer<DatabaseContext>(null);
+
             updateStatusAction("Checking if the administrator user exists");
 
             _log.Info("Checking if the administrator user exists.");

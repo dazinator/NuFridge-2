@@ -15,28 +15,6 @@ namespace NuFridge.Shared.Server.Configuration
         public string ListenPrefixes { get; set; }
         public string WindowsDebuggingToolsPath { get; set; }
 
-
-        public string NuGetFrameworkNames
-        {
-            get { return _instance.Current.NuGetFrameworkNames; }
-            set { _instance.Current.NuGetFrameworkNames = value; }
-        }
-
-        private bool TryParseEnum<T>(string str, out T value) where T : struct
-        {
-            var names = Enum.GetNames(typeof(T));
-            value = (Enum.GetValues(typeof(T)) as T[])[0];
-            foreach (var name in names)
-            {
-                if (String.Equals(name, str, StringComparison.OrdinalIgnoreCase))
-                {
-                    value = (T)Enum.Parse(typeof(T), name);
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public HomeConfiguration(IApplicationInstanceSelector instance)
         {
             _instance = instance;
@@ -50,11 +28,6 @@ namespace NuFridge.Shared.Server.Configuration
             ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
             WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
-        }
-
-        public void Save()
-        {
-            _instance.Save();
         }
     }
 }

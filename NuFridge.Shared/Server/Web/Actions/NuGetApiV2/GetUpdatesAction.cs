@@ -97,8 +97,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var baseAddress = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/v2/";
 
-            var stream = ODataPackages.CreatePackagesStream(baseAddress, packageRepository, baseAddress,
-                ds, feed.Id, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectValue);
+            var stream = ODataPackages.CreatePackagesStream(baseAddress, baseAddress, ds, total.HasValue ? int.Parse(total.Value.ToString()) : 0, selectValue);
 
             StreamReader reader = new StreamReader(stream);
             string text = reader.ReadToEnd();
