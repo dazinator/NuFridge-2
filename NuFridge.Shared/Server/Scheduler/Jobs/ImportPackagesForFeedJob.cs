@@ -163,10 +163,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     {
                         if (cachePackageRecord.Hash == remotePackage.PackageHash)
                         {
-                            IInternalPackageRepository cachedRepo = cachePackageRecord.FeedId ==
-                                                                    localRepository.FeedId
-                                ? localRepository
-                                : _factory.Create(cachePackageRecord.FeedId);
+                            IInternalPackageRepository cachedRepo = _factory.Create(cachePackageRecord.FeedId);
 
                             var cachePackagePath = cachedRepo.GetPackageFilePath(cachePackageRecord);
 
