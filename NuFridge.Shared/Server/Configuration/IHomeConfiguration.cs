@@ -10,6 +10,7 @@
         string ListenPrefixes { get; }
         string NuGetFrameworkNames { get; set; }
         string WindowsDebuggingToolsPath { get;}
+        HomeConfiguration.SqlAuthentication SqlAuthenticationMode { get; }
         void Save();
     }
 }

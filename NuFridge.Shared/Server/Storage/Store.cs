@@ -59,17 +59,28 @@ namespace NuFridge.Shared.Server.Storage
                 throw new Exception("No SQL Server settings were found in the config file.");
             }
 
-            return new SqlConnectionStringBuilder(connectionString)
+            var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString)
             {
                 MultipleActiveResultSets = true,
                 Enlist = false,
                 Pooling = true,
                 ApplicationName = "NuFridge",
                 DataSource = _config.SqlDataSource,
-                InitialCatalog = _config.SqlInitialCatalog,
-                UserID = _config.SqlUsername,
-                Password = _config.SqlPassword
-            }.ToString();
+                InitialCatalog = _config.SqlInitialCatalog
+            };
+
+            if (_config.SqlAuthenticationMode == HomeConfiguration.SqlAuthentication.UserIdPasswordAuthentication)
+            {
+                connectionStringBuilder.UserID = _config.SqlUsername;
+                connectionStringBuilder.Password = _config.SqlPassword;
+                connectionStringBuilder.IntegratedSecurity = false;
+            }
+            else
+            {
+                connectionStringBuilder.IntegratedSecurity = true;
+            }
+
+            return connectionStringBuilder.ToString();
         }
     }
 }
