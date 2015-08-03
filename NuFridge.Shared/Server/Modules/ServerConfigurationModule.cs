@@ -10,7 +10,6 @@ namespace NuFridge.Shared.Server.Modules
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<ServerStorageConfiguration>().As<IServerStorageConfiguration>();
             builder.RegisterType<WebPortalConfiguration>().As<IWebPortalConfiguration>().SingleInstance();
         }
     }

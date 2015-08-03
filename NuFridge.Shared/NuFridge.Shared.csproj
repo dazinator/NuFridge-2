@@ -455,11 +455,9 @@
     <Compile Include="Server\Storage\IStoreInitializer.cs" />
     <Compile Include="Server\Storage\Initializers\AdminUserInitializer.cs" />
     <Compile Include="Server\Storage\IInitializeStore.cs" />
-    <Compile Include="Server\Storage\IServerStorageConfiguration.cs" />
     <Compile Include="Server\ServerEngine.cs" />
     <Compile Include="Server\ServerState.cs" />
     <Compile Include="Server\Storage\IStoreFactory.cs" />
-    <Compile Include="Server\Storage\ServerStorageConfiguration.cs" />
     <Compile Include="Server\FileSystem\ILocalFileSystem.cs" />
     <Compile Include="Server\FileSystem\PhysicalFileSystem.cs" />
     <Compile Include="Server\Security\PasswordHasher.cs" />

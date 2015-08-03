@@ -27,12 +27,12 @@ namespace NuFridge.Shared.Server.Storage
             }
         }
 
-        public Store(IContainer container, IHomeConfiguration config, string connectionString, RelationalMappings mappings)
+        public Store(IContainer container, IHomeConfiguration config, RelationalMappings mappings)
         {
             _container = container;
             _config = config;
             _mappings = mappings;
-            _connectionString = SetConnectionStringOptions(connectionString);
+            _connectionString = SetConnectionStringOptions();
             _jsonSettings.ContractResolver = new RelationalJsonContractResolver(mappings);
             _jsonSettings.Converters.Add(new StringEnumConverter());
             _jsonSettings.Converters.Add(new VersionConverter());
@@ -52,33 +52,20 @@ namespace NuFridge.Shared.Server.Storage
             return new Transaction(_container, _connectionString, isolationLevel, _jsonSettings, _mappings);
         }
 
-        private string SetConnectionStringOptions(string connectionString)
+        private string SetConnectionStringOptions()
         {
-            if (string.IsNullOrWhiteSpace(_config.SqlDataSource))
+            if (string.IsNullOrWhiteSpace(_config.ConnectionString))
             {
-                throw new Exception("No SQL Server settings were found in the config file.");
+                throw new Exception("No SQL Server connection string was set in the configuration file.");
             }
 
-            var connectionStringBuilder = new SqlConnectionStringBuilder(connectionString)
+            var connectionStringBuilder = new SqlConnectionStringBuilder(_config.ConnectionString)
             {
                 MultipleActiveResultSets = true,
                 Enlist = false,
                 Pooling = true,
-                ApplicationName = "NuFridge",
-                DataSource = _config.SqlDataSource,
-                InitialCatalog = _config.SqlInitialCatalog
+                ApplicationName = "NuFridge"
             };
-
-            if (_config.SqlAuthenticationMode == HomeConfiguration.SqlAuthentication.UserIdPasswordAuthentication)
-            {
-                connectionStringBuilder.UserID = _config.SqlUsername;
-                connectionStringBuilder.Password = _config.SqlPassword;
-                connectionStringBuilder.IntegratedSecurity = false;
-            }
-            else
-            {
-                connectionStringBuilder.IntegratedSecurity = true;
-            }
 
             return connectionStringBuilder.ToString();
         }

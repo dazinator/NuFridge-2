@@ -8,25 +8,17 @@ namespace NuFridge.Shared.Server.Storage
 {
     public class StoreFactory : IStoreFactory
     {
-        private readonly string _connectionString;
-        private readonly Lazy<Store> _relationalStore;
+        private readonly Lazy<Store> _store;
         private readonly IHomeConfiguration _config;
         private readonly IContainer _container;
 
-        public Store Store
-        {
-            get
-            {
-                return _relationalStore.Value;
-            }
-        }
+        public Store Store => _store.Value;
 
-        public StoreFactory(IContainer container, IHomeConfiguration config, string connectionString)
+        public StoreFactory(IContainer container, IHomeConfiguration config)
         {
             _container = container;
             _config = config;
-            _connectionString = connectionString;
-            _relationalStore = new Lazy<Store>(InitializeRelationalStore);
+            _store = new Lazy<Store>(InitializeRelationalStore);
         }
 
         public static RelationalMappings CreateMappings()
@@ -50,7 +42,7 @@ namespace NuFridge.Shared.Server.Storage
 
         private Store InitializeRelationalStore()
         {
-            return new Store(_container, _config, _connectionString, CreateMappings());
+            return new Store(_container, _config, CreateMappings());
         }
     }
 }

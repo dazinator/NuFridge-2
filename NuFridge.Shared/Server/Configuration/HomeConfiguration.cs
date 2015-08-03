@@ -11,20 +11,10 @@ namespace NuFridge.Shared.Server.Configuration
         private readonly IApplicationInstanceSelector _instance;
 
         public string InstallDirectory { get; set; }
-        public string SqlDataSource { get; set; }
-        public string SqlInitialCatalog { get; set; }
-        public string SqlUsername { get; set; }
-        public string SqlPassword { get; set; }
+        public string ConnectionString { get; set; }
         public string ListenPrefixes { get; set; }
         public string WindowsDebuggingToolsPath { get; set; }
-        public SqlAuthentication SqlAuthenticationMode { get; set; }
 
-
-        public enum SqlAuthentication
-        {
-            WindowsAuthentication = 1,
-            UserIdPasswordAuthentication = 2
-        }
 
         public string NuGetFrameworkNames
         {
@@ -57,31 +47,9 @@ namespace NuFridge.Shared.Server.Configuration
             }
 
             InstallDirectory = instance.Current.InstallDirectory;
-            SqlDataSource = ConfigurationManager.AppSettings["SqlServer"];
-            SqlInitialCatalog = ConfigurationManager.AppSettings["SqlDatabase"];
-            SqlUsername = ConfigurationManager.AppSettings["SqlUserId"];
-            SqlPassword = ConfigurationManager.AppSettings["SqlPassword"];
+            ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
             WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
-
-            SqlAuthentication value;
-            if (TryParseEnum(ConfigurationManager.AppSettings["SqlAuthenticationMode"], out value))
-            {
-                SqlAuthenticationMode = value;
-
-                if (value == SqlAuthentication.UserIdPasswordAuthentication)
-                {
-                    if (string.IsNullOrWhiteSpace(SqlUsername) || string.IsNullOrWhiteSpace(SqlPassword))
-                    {
-                        throw new InvalidOperationException("Please provide a SQL username and SQL password when using UserIdPasswordAuthentication in the configuration file.");
-                    }
-                }
-            }
-            else
-            {
-                throw new InvalidEnumArgumentException("The SqlAuthenticationMode in the configuration file must either be WindowsAuthentication or UserIdPasswordAuthentication.");
-            }
-
         }
 
         public void Save()
