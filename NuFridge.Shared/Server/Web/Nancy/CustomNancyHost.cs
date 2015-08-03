@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Threading;
+using Autofac.Integration.SignalR;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
@@ -18,6 +19,7 @@ using Nancy.Helpers;
 using Nancy.Hosting.Self;
 using Nancy.IO;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.Web.SignalR;
 using Owin;
 
 namespace NuFridge.Shared.Server.Web.Nancy
@@ -83,7 +85,7 @@ namespace NuFridge.Shared.Server.Web.Nancy
 
             _webApp = WebApp.Start(urls.First(), delegate (IAppBuilder builder)
             {
-                builder.MapSignalR("/signalr", new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = true });
+                builder.MapSignalR("/signalr", new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = true, Resolver = GlobalHost.DependencyResolver });
                 builder.UseNancy(options => options.Bootstrapper = _bootstrapper);
                 builder.UseCors(CorsOptions.AllowAll);
             });

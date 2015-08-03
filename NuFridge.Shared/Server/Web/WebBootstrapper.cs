@@ -13,6 +13,7 @@ using Nancy.Responses;
 using Nancy.Serialization.JsonNet;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
+using NuFridge.Shared.Server.Web.Nancy;
 using NuFridge.Shared.Server.Web.RouteResolvers;
 
 namespace NuFridge.Shared.Server.Web
@@ -78,7 +79,7 @@ namespace NuFridge.Shared.Server.Web
         protected override void ConfigureRequestContainer(ILifetimeScope requestScope, NancyContext context)
         {
             ContainerBuilder containerBuilder = new ContainerBuilder();
-
+            containerBuilder.Register<ICurrentRequest>((c, o) => new CurrentRequest(context));
             containerBuilder.Update(requestScope.ComponentRegistry);
         }
 

@@ -1,9 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.Entity;
+using System.Data.Entity.Core.EntityClient;
+using System.Data.Entity.Core.Mapping;
+using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Core.Objects;
+using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Http.OData;
@@ -49,12 +59,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             IDictionary<string, object> queryDictionary = module.Request.Query;
             string selectValue = GetAndRemoveSelectParamFromQuery(queryDictionary) ?? String.Empty;
 
+
+
             AddAdditionalQueryParams(queryDictionary);
 
             NuGetODataModelBuilderQueryable builder = new NuGetODataModelBuilderQueryable();
             builder.Build();
 
-            var url = module.Request.Url.ToString();
+            var url = module.Request.Url.SiteBase + module.Request.Url.Path;
+            url = ProcessQueryAndRegenerateUrl(queryDictionary, url);
 
             HttpMethod method = new HttpMethod(module.Request.Method);
             var request = new HttpRequestMessage(method, url);
@@ -62,7 +75,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
-            using (var dbContext = new DatabaseContext(feed.Id, Store))
+            using (var dbContext = new ReadOnlyDatabaseContext(Store))
             {
                 bool enableStableOrdering;
                 var ds = CreateQuery(dbContext, queryDictionary, feed, out enableStableOrdering);
@@ -71,6 +84,29 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 return ProcessResponse(module, request, feed, ds, selectValue);
             }
+        }
+
+        private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
+        {
+            var query = string.Empty;
+
+            foreach (KeyValuePair<string, object> qd in queryDictionary)
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    query = "?";
+                }
+                query += qd.Key + "=" + qd.Value + "&";
+            }
+
+            if (query.EndsWith("&"))
+            {
+                query = query.Substring(0, query.Length - 1);
+            }
+
+            url += query;
+
+            return url;
         }
 
         protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectFields)
@@ -119,11 +155,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return value.Substring(trimStart, trimEnd);
         }
 
-        protected virtual IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
+
+
+        protected virtual IQueryable<IInternalPackage> CreateQuery(ReadOnlyDatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
         {
             enableStableOrdering = true;
 
-            IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+            //var query = dbContext.Database.SqlQuery<InternalPackage>("NuFridge.GetAllPackages @feedId", new SqlParameter("feedId", feed.Id));
+
+            IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
 
             ds = ds.Where(pk => pk.Listed);
 

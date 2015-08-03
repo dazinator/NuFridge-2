@@ -13,7 +13,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            Database.SetInitializer<DatabaseContext>(null);
+            Database.SetInitializer<ReadOnlyDatabaseContext>(null);
 
             updateStatusAction("Checking if the administrator user exists");
 

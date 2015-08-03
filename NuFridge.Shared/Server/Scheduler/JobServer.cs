@@ -196,7 +196,7 @@ namespace NuFridge.Shared.Server.Scheduler
                 {
                     nextExecuting = cronSchedule.GetNextOccurrence(lastExecution.Value);
 
-                    var minutesUntilNextRun = nextExecuting.Subtract(DateTime.UtcNow).TotalMinutes;
+                    var minutesUntilNextRun = Math.Round(nextExecuting.Subtract(DateTime.UtcNow).TotalMinutes, MidpointRounding.ToEven);
 
                     if (minutesUntilNextRun > 1)
                     {

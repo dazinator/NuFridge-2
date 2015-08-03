@@ -79,10 +79,6 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
                 try
                 {
-
-                    string command = "sp_CreateNuFridgePackageTable @feedId, @tableName OUTPUT;";
-
-                    transaction.ExecuteScalar<string>(command, new CommandParameters(new {tableName = string.Empty, feedId = feed.Id}));
                     transaction.Commit();
                 }
                 catch (Exception)

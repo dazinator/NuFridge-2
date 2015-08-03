@@ -22,13 +22,6 @@ namespace NuFridge.Shared.Extensions
             return Uri.UnescapeDataString(input.Replace("+", "%20"));
         }
 
-        public static IQueryBuilder<IInternalPackage> Where(this IQueryBuilder<IInternalPackage> queryBuilder, int feedId)
-        {
-            queryBuilder.Table(InternalPackageMap.GetPackageTable(feedId));
-
-            return queryBuilder;
-        } 
-
         public static TResponse WithCookies<TResponse>(this TResponse response, Response source) where TResponse : Response
         {
             if (source != null && source.Cookies != null)

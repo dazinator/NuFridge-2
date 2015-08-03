@@ -110,8 +110,19 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             }
             catch (Exception ex)
             {
-                _log.ErrorException("There was an error importing the " + packageId + " package v" + strVersion + " to the feed " + feedId + ". " + ex.Message, ex);
-                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message));
+                var message = "There was an error importing the " + packageId + " package v" + strVersion +
+                              " to the feed " + feedId + ".";
+
+                string exception = "Exception: " + ex.Message;
+
+                if (ex.InnerException != null)
+                {
+                    exception += "\r\nInner Exception: " + ex.InnerException.Message;
+                }
+
+                _log.ErrorException(message + "\r\n" + exception, ex);
+
+                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString(), exception));
                 throw new ImportPackageException(ex.Message);
             }
         }

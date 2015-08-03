@@ -60,9 +60,16 @@ namespace NuFridge.Shared.Server.Storage
                 _writer = writer;
             }
 
-            public TCast Read(object target)
+            public bool Read(object target, out TCast value)
             {
-                return _caller((TInput)target);
+                if (_caller == null)
+                {
+                    value = default(TCast);
+                    return false;
+                }
+
+                value = _caller((TInput)target);
+                return true;
             }
 
             public void Write(object target, TCast value)
@@ -81,9 +88,10 @@ namespace NuFridge.Shared.Server.Storage
                 _field = field;
             }
 
-            public TCast Read(object target)
+            public bool Read(object target, out TCast value)
             {
-                return (TCast)_field.GetValue(target);
+                value = (TCast)_field.GetValue(target);
+                return true;
             }
 
             public void Write(object target, TCast value)

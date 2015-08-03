@@ -117,7 +117,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             using (var transaction = Store.BeginTransaction())
             {
-                packages = transaction.Query<IInternalPackage>().Where(feed.Id).ToList();
+                packages = transaction.Query<IInternalPackage>().View("AllVersionsPackageView").Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
             }
 
             Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());

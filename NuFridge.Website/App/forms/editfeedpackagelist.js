@@ -52,8 +52,8 @@
 
 
         var size = self.currentPage();
-        if (size > 10) {
-            size = 10;
+        if (size > 5) {
+            size = 5;
         }
         else if (size < 0) {
             size = 0;
@@ -74,8 +74,8 @@
 
         var size = self.pageCount() - (self.currentPage() + 1);
 
-        if (size > 10) {
-            size = 10;
+        if (size > 5) {
+            size = 5;
         }
         else if (size < 0) {
             size = 0;
@@ -339,7 +339,7 @@
                 self.loadPackages(0);
             }
         };
-
+        $.connection.hub.qs = "Authorization=Token " + new auth().getAuthToken();
         $.connection.hub.start().done(function () {
             hub.server.subscribe(self.feed().Id());
 

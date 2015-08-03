@@ -9,6 +9,7 @@ namespace NuFridge.Shared.Server.Storage
         private DbType? _dbType;
         private int _maxLength;
 
+        public bool Writable { get; set; }
         public bool IsNullable { get; set; }
 
         public string ColumnName { get; private set; }
@@ -58,10 +59,12 @@ namespace NuFridge.Shared.Server.Storage
             _dbType = dbType;
             ColumnName = columnName;
             ReaderWriter = readerWriter;
+            Writable = true;
         }
 
         public ColumnMapping(PropertyInfo property)
         {
+            Writable = true;
             Property = property;
             ColumnName = Property.Name;
             ReaderWriter = PropertyReaderFactory.Create<object>(property.DeclaringType, property.Name);

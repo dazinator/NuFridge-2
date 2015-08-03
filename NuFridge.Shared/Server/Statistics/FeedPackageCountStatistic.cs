@@ -10,10 +10,12 @@ namespace NuFridge.Shared.Server.Statistics
 {
     public class FeedPackageCountStatistic : StatisticBase<List<FeedPackageCountStatisticItem>>
     {
-        public FeedPackageCountStatistic(ITransaction transaction)
+        private readonly IStore _store;
+
+        public FeedPackageCountStatistic(ITransaction transaction, IStore store)
             : base(transaction)
         {
-
+            _store = store;
         }
 
         protected override List<FeedPackageCountStatisticItem> Update()
@@ -23,14 +25,17 @@ namespace NuFridge.Shared.Server.Statistics
             var feeds = Transaction.Query<IFeed>().ToList();
 
             ColorGenerator generator = new ColorGenerator();
-           
-            foreach (var feed in feeds)
-            {
-                var packageCount = Transaction.Query<IInternalPackage>().Where(feed.Id).Where("IsLatestVersion = 1 OR IsAbsoluteLatestVersion = 1").Count();
 
-                if (packageCount > 0)
+            using (var dbContext = new ReadOnlyDatabaseContext(_store))
+            {
+                foreach (var feed in feeds)
                 {
-                    list.Add(new FeedPackageCountStatisticItem(feed.Name, packageCount, generator.NextColour()));
+                    var packageCount = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).Count(pk => pk.IsLatestVersion || pk.IsAbsoluteLatestVersion);
+
+                    if (packageCount > 0)
+                    {
+                        list.Add(new FeedPackageCountStatisticItem(feed.Name, packageCount, generator.NextColour()));
+                    }
                 }
             }
 

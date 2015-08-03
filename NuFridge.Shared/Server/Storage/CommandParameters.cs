@@ -31,8 +31,11 @@ namespace NuFridge.Shared.Server.Storage
             Type type = args.GetType();
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
-                object obj = PropertyReaderFactory.Create<object>(type, propertyInfo.Name).Read(args);
-                this[propertyInfo.Name] = obj;
+                object obj;
+                if (PropertyReaderFactory.Create<object>(type, propertyInfo.Name).Read(args, out obj))
+                {
+                    this[propertyInfo.Name] = obj;
+                }
             }
         }
 

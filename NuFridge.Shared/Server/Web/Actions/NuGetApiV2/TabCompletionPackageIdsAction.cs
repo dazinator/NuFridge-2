@@ -56,7 +56,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             using (var transaction = Store.BeginTransaction())
             {
                 var query = transaction.Query<IInternalPackage>()
-                    .Where(feed.Id);
+                    .Where("FeedId = @feedId").Parameter("feedId", feed.Id);
 
                 string latestVersionQuery = "IsLatestVersion = 1";
 

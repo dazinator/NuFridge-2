@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Security;
 using System.Threading.Tasks;
 using Autofac;
+using Autofac.Integration.SignalR;
+using Microsoft.AspNet.SignalR;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -62,12 +64,12 @@ namespace NuFridge.Service
             fileTarget.MaxArchiveFiles = 10;
             fileTarget.ArchiveFileName = "${basedir}\\Logs\\archive-{#}-log.zip";
             fileTarget.FileName = "${basedir}\\Logs\\log.txt";
-            fileTarget.Layout = "${longdate} ${level} ${logger}: ${message}";
+            fileTarget.Layout = "${longdate} ${level} ${logger}: ${message} ${exception:format=ToString}";
 
             config.AddTarget("file", fileTarget);
 
             var consoleTarget = new ColoredConsoleTarget();
-            consoleTarget.Layout = "${time}: ${message}";
+            consoleTarget.Layout = "${time}: ${message} ${exception:format=ToString}";
             config.AddTarget("console", consoleTarget);
 
             var rule1 = new LoggingRule("*", LogLevel.Trace, consoleTarget);
@@ -182,6 +184,7 @@ namespace NuFridge.Service
             containerBuilder.RegisterModule(new SchedulerModule());
             containerBuilder.Register((c => _container)).As<IContainer>().SingleInstance();
             containerBuilder.Update(_container);
+            GlobalHost.DependencyResolver = new AutofacDependencyResolver(_container);
         }
 
 

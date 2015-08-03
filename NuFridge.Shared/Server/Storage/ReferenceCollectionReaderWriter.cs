@@ -10,11 +10,22 @@ namespace NuFridge.Shared.Server.Storage
         {
         }
 
-        public override object Read(object target)
+        public override bool Read(object target, out object value)
         {
-            ReferenceCollection referenceCollection = base.Read(target) as ReferenceCollection;
+            object objReferenceCollection;
+
+            if (!base.Read(target, out objReferenceCollection))
+            {
+                value = "";
+                return false;
+            }
+
+            ReferenceCollection referenceCollection = objReferenceCollection as ReferenceCollection;
             if (referenceCollection == null || referenceCollection.Count == 0)
-                return "";
+            {
+                value = "";
+                return false;
+            }
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("|");
             foreach (string str in referenceCollection)
@@ -22,13 +33,22 @@ namespace NuFridge.Shared.Server.Storage
                 stringBuilder.Append(str);
                 stringBuilder.Append("|");
             }
-            return stringBuilder.ToString();
+
+            value = stringBuilder.ToString();
+            return true;
         }
 
         public override void Write(object target, object value)
         {
+            object objReferenceCollection;
+
+            if (!base.Read(target, out objReferenceCollection))
+            {
+                objReferenceCollection = null;
+            }
+
             string[] strArray = (value ?? string.Empty).ToString().Split('|');
-            ReferenceCollection referenceCollection = base.Read(target) as ReferenceCollection;
+            ReferenceCollection referenceCollection = objReferenceCollection as ReferenceCollection;
             if (referenceCollection == null)
                 base.Write(target, referenceCollection = new ReferenceCollection());
             referenceCollection.ReplaceAll(strArray.Where(v => !string.IsNullOrWhiteSpace(v)));

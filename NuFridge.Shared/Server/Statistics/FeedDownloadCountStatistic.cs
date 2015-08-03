@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Statistics
 
             foreach (var feed in feeds)
             {
-                var packages = Transaction.Query<IInternalPackage>().Where(feed.Id).ToList();
+                var packages = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
 
                 if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {

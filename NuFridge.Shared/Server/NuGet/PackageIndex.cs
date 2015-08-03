@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using Linq2Rest;
@@ -9,6 +10,7 @@ using NuFridge.Shared.Model;
 using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Model.Mappings;
 using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Server.Web.Nancy;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -17,11 +19,13 @@ namespace NuFridge.Shared.Server.NuGet
     {
         private readonly int _feedId;
         private readonly IStore _store;
+       // private readonly ICurrentRequest _currentRequest;
 
         public PackageIndex(IStore store, int feedId)
         {
             _store = store;
             _feedId = feedId;
+           // _currentRequest = currentRequest;
 
             if (feedId <= 0)
             {
@@ -29,9 +33,15 @@ namespace NuFridge.Shared.Server.NuGet
             }
         }
 
-        public void AddPackage(ITransaction transaction, IInternalPackage package)
+        public void AddPackage(IInternalPackage package)
         {
-            transaction.Insert(InternalPackageMap.GetPackageTable(_feedId), package);
+     //       var username = _currentRequest.Context.CurrentUser.UserName;
+
+            using (var dbContext = new WritableDatabaseContext(_store))
+            {
+                dbContext.Packages.Add((InternalPackage) package);
+                dbContext.SaveChanges("admin");
+            }
         }
 
         public void UnlistPackage(ITransaction transaction, IInternalPackage package)
@@ -40,11 +50,9 @@ namespace NuFridge.Shared.Server.NuGet
             if (internalPackage == null)
                 return;
 
-            internalPackage.IsAbsoluteLatestVersion = false;
-            internalPackage.IsLatestVersion = false;
             internalPackage.Listed = false;
 
-            transaction.Update(InternalPackageMap.GetPackageTable(_feedId), internalPackage);
+            transaction.Update(internalPackage);
         }
 
         public void DeletePackage(ITransaction transaction, IInternalPackage package)
@@ -66,10 +74,8 @@ namespace NuFridge.Shared.Server.NuGet
         {
             var query = transaction.Query<IInternalPackage>();
 
-            query.Where(_feedId);
-
-            query.Where("PackageId LIKE @packageId");
-            query.Parameter("packageId", packageId);
+            query.Where("PackageId LIKE @packageId AND FeedId = @feedId");
+            query.Parameter("packageId", packageId).Parameter("feedId", _feedId);
 
             if (!allowPreRelease)
             {
@@ -91,10 +97,10 @@ namespace NuFridge.Shared.Server.NuGet
             {
                 return
                     transaction.Query<IInternalPackage>()
-                        .Where(_feedId)
-                        .Where("PackageId LIKE @packageId AND Version = @packageVersion")
+                        .Where("PackageId LIKE @packageId AND Version = @packageVersion AND FeedId = @feedId")
                         .Parameter("packageId", id)
                         .Parameter("packageVersion", version)
+                        .Parameter("feedId", _feedId)
                         .First();
             }
         }
@@ -113,7 +119,7 @@ namespace NuFridge.Shared.Server.NuGet
                 {
                     versionOfPackage.DownloadCount = packages.Sum(pk => pk.VersionDownloadCount);
 
-                    transaction.Update(InternalPackageMap.GetPackageTable(_feedId), versionOfPackage);
+                    transaction.Update(versionOfPackage);
                 }
 
                 transaction.Commit();

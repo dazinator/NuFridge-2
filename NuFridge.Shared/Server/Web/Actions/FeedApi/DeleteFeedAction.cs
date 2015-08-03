@@ -61,7 +61,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             {
                 packages =
                     transaction.Query<IInternalPackage>()
-                        .Where(feedId)
+                        .Where("FeedId = @feedId").Parameter("feedId", feedId)
                         .ToList();
 
                 foreach (var package in packages)

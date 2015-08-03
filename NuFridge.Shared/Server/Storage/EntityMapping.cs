@@ -61,13 +61,14 @@ namespace NuFridge.Shared.Server.Storage
             return columnMapping;
         }
 
-        protected ColumnMapping VirtualColumn<TProperty>(string name, DbType databaseType, Func<TDocument, TProperty> reader, Action<TDocument, TProperty> writer = null, int? maxLength = null, bool nullable = false)
+        protected ColumnMapping VirtualColumn<TProperty>(string name, DbType databaseType, Func<TDocument, TProperty> reader, Action<TDocument, TProperty> writer = null, int? maxLength = null, bool nullable = false, bool writable = true)
         {
             ColumnMapping columnMapping = new ColumnMapping(name, databaseType, new DelegateReaderWriter<TDocument, TProperty>(reader, writer));
             IndexedColumns.Add(columnMapping);
             if (maxLength.HasValue)
                 columnMapping.MaxLength = maxLength.Value;
             columnMapping.IsNullable = nullable;
+            columnMapping.Writable = writable;
             return columnMapping;
         }
 

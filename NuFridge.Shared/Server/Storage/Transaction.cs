@@ -82,7 +82,7 @@ namespace NuFridge.Shared.Server.Storage
             }
 
             string orAdd = InsertStatementTemplates.GetOrAdd(mapping.TableName, t => string.Format("INSERT INTO NuFridge.[{0}] ({1}) values ({2})", tableName ?? mapping.TableName, 
-                string.Join(", ", mapping.IndexedColumns.Select(c => c.ColumnName)), string.Join(", ", mapping.IndexedColumns.Select(c => "@" + c.ColumnName))));
+                string.Join(", ", mapping.IndexedColumns.Where(c => c.Writable).Select(c => c.ColumnName)), string.Join(", ", mapping.IndexedColumns.Where(c => c.Writable).Select(c => "@" + c.ColumnName))));
 
             CommandParameters args = InstanceToParameters(instance, mapping);
 
@@ -119,7 +119,7 @@ namespace NuFridge.Shared.Server.Storage
             {
                 mapping = _mappings.Get(typeof (TDocument));
             }
-            var columns = mapping.IndexedColumns.Count > 0 ? string.Join(", ", mapping.IndexedColumns.Select(c => "[" + c.ColumnName + "] = @" + c.ColumnName)): "";
+            var columns = mapping.IndexedColumns.Count > 0 ? string.Join(", ", mapping.IndexedColumns.Where(c => c.Writable).Select(c => "[" + c.ColumnName + "] = @" + c.ColumnName)): "";
             using (SqlCommand command = CreateCommand(UpdateStatementTemplates.GetOrAdd(mapping.TableName, t => string.Format("UPDATE NuFridge.[{0}] SET {1} WHERE Id = @Id", tableName ?? mapping.TableName, columns)), InstanceToParameters(instance, mapping)))
             {
                 try
@@ -144,7 +144,11 @@ namespace NuFridge.Shared.Server.Storage
             }
             string statement = string.Format("DELETE from NuFridge.[{0}] WHERE Id = @Id", mapping.TableName);
             CommandParameters commandParameters = new CommandParameters();
-            commandParameters.Add("Id", mapping.IdColumn.ReaderWriter.Read(instance));
+
+            object value;
+            mapping.IdColumn.ReaderWriter.Read(instance, out value);
+
+            commandParameters.Add("Id", value);
             CommandParameters args = commandParameters;
             using (SqlCommand command = CreateCommand(statement, args))
             {
@@ -264,17 +268,26 @@ namespace NuFridge.Shared.Server.Storage
         private CommandParameters InstanceToParameters(object instance, EntityMapping mapping)
         {
             CommandParameters commandParameters = new CommandParameters();
-            commandParameters["Id"] = mapping.IdColumn.ReaderWriter.Read(instance);
+
+            object objId;
+            mapping.IdColumn.ReaderWriter.Read(instance, out objId);
+            commandParameters["Id"] = objId;
             foreach (ColumnMapping columnMapping in mapping.IndexedColumns)
             {
-                object obj = columnMapping.ReaderWriter.Read(instance);
-                if (obj != null && obj != DBNull.Value && (obj is string && columnMapping.MaxLength > 0))
+                object obj;
+                if (columnMapping.ReaderWriter.Read(instance, out obj))
                 {
-                    int length = ((string)obj).Length;
-                    if (length > columnMapping.MaxLength)
-                        throw new StringTooLongException(string.Format("An attempt was made to store {0} characters in the {1}.{2} column, which only allows {3} characters.", length, mapping.TableName, columnMapping.ColumnName, columnMapping.MaxLength));
+                    if (obj != null && obj != DBNull.Value && (obj is string && columnMapping.MaxLength > 0))
+                    {
+                        int length = ((string) obj).Length;
+                        if (length > columnMapping.MaxLength)
+                            throw new StringTooLongException(
+                                string.Format(
+                                    "An attempt was made to store {0} characters in the {1}.{2} column, which only allows {3} characters.",
+                                    length, mapping.TableName, columnMapping.ColumnName, columnMapping.MaxLength));
+                    }
+                    commandParameters[columnMapping.ColumnName] = obj;
                 }
-                commandParameters[columnMapping.ColumnName] = obj;
             }
             return commandParameters;
         }

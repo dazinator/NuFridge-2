@@ -9,9 +9,15 @@
             _original = original;
         }
 
-        public virtual object Read(object target)
+        public virtual bool Read(object target, out object value)
         {
-            return _original.Read(target);
+            if (_original == null)
+            {
+                value = null;
+                return false;
+            }
+
+            return _original.Read(target, out value);
         }
 
         public virtual void Write(object target, object value)

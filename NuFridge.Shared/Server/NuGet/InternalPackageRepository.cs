@@ -90,9 +90,6 @@ namespace NuFridge.Shared.Server.NuGet
                 transaction.Commit();
             }
 
-            //Set the latest version columns for the package id versions
-            SetNextLatestVersionPackages(internalPackage.Id);
-
             var filePath = GetPackageFilePath(internalPackage.Id, internalPackage.GetSemanticVersion());
 
             filePath = Path.Combine(FileSystem.Root, filePath);
@@ -118,86 +115,13 @@ namespace NuFridge.Shared.Server.NuGet
                 //Commit the transaction
                 transaction.Commit();
             }
-
-            SetNextLatestVersionPackages(internalPackage.Id);
-        }
-
-        public void SetNextLatestVersionPackages(string packageId)
-        {
-            using (var context = new DatabaseContext(FeedId, _store))
-            {
-                InternalPackage latestAbsoluteVersionPackage;
-                InternalPackage latestVersionPackage;
-
-                var versionsOfPackage = GetNextLatestVersionPackages(context, packageId, out latestAbsoluteVersionPackage, out latestVersionPackage);
-
-                foreach (var internalPackage in versionsOfPackage)
-                {
-                    if (internalPackage.IsAbsoluteLatestVersion || internalPackage.IsLatestVersion)
-                    {
-                        internalPackage.IsLatestVersion = false;
-                        internalPackage.IsAbsoluteLatestVersion = false;
-                    }
-                }
-
-                if (latestAbsoluteVersionPackage != null)
-                {
-                    latestAbsoluteVersionPackage.IsAbsoluteLatestVersion = true;
-                }
-
-
-                if (latestVersionPackage != null)
-                {
-                    latestVersionPackage.IsLatestVersion = true;
-                }
-
-                context.SaveChanges();
-            }
-        }
-
-
-        private List<InternalPackage> GetNextLatestVersionPackages(DatabaseContext context, string packageId, out InternalPackage latestAbsoluteVersionPackage, out InternalPackage latestVersionPackage)
-        {
-            latestAbsoluteVersionPackage = null;
-            latestVersionPackage = null;
-
-            List<InternalPackage> allPackages = context.Packages.Where(pk => pk.Id.ToLower() == packageId.ToLower() && pk.Listed).ToList();
-
-            var releasePackages = allPackages.Where(vp => !vp.IsPrerelease).ToList();
-
-            if (releasePackages.Any())
-            {
-                releasePackages.Sort(
-                    (package, internalPackage) =>
-                        internalPackage.GetSemanticVersion().CompareTo(package.GetSemanticVersion()));
-
-                latestVersionPackage = releasePackages.First();
-            }
-
-            if (allPackages.Any())
-            {
-                allPackages.Sort(
-                    (package, internalPackage) =>
-                        internalPackage.GetSemanticVersion().CompareTo(package.GetSemanticVersion()));
-
-                latestAbsoluteVersionPackage = allPackages.First();
-            }
-
-            return allPackages;
         }
 
         public void IndexPackage(IPackage package)
         {
             var localPackage = InternalPackage.Create(FeedId, package);
 
-            using (var transaction = _store.BeginTransaction())
-            {
-                _packageIndex.AddPackage(transaction, localPackage);
-                transaction.Commit();
-            }
-
-            SetNextLatestVersionPackages(package.Id);
-
+            _packageIndex.AddPackage(localPackage);
 
             _frameworkNamesRepository.Add(localPackage.SupportedFrameworks);
         }
@@ -226,14 +150,7 @@ namespace NuFridge.Shared.Server.NuGet
 
             var localPackage = InternalPackage.Create(FeedId, package);
 
-            using (var transaction = _store.BeginTransaction())
-            {
-                _packageIndex.AddPackage(transaction, localPackage);
-                transaction.Commit();
-            }
-
-            SetNextLatestVersionPackages(package.Id);
-
+             _packageIndex.AddPackage(localPackage);
 
             _frameworkNamesRepository.Add(localPackage.SupportedFrameworks);
         }

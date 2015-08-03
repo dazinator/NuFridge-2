@@ -113,7 +113,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             using (var transaction = _store.BeginTransaction())
             {
-                var packages = transaction.Query<IInternalPackage>().Where(feedId).Stream();
+                var packages = transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feedId).Stream();
 
                 foreach (var internalPackage in packages)
                 {
@@ -125,15 +125,17 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                             continue;
                         }
 
-                        _logger.Info("Deleting " + internalPackage.Id + " ," + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
+                        _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
 
                         transaction.Delete(internalPackage);
+                        packagesDeleted++;
                     }
                     else
                     {
-                        _logger.Info("Deleting " + internalPackage.Id + " ," + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
+                        _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
 
                         transaction.Delete(internalPackage);
+                        packagesDeleted++;
                     }
                 }
 

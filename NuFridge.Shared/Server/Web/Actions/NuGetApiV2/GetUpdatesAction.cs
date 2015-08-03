@@ -52,7 +52,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             NuGetODataModelBuilderQueryable builder = new NuGetODataModelBuilderQueryable();
             builder.Build();
 
-            var url = module.Request.Url.ToString();
+            var url = module.Request.Url.SiteBase + module.Request.Url.Path;
+            url = ProcessQueryAndRegenerateUrl(queryDictionary, url);
 
             HttpMethod method = new HttpMethod(module.Request.Method);
             var request = new HttpRequestMessage(method, url);
@@ -60,7 +61,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
-            using (var dbContext = new DatabaseContext(feed.Id, _store))
+            using (var dbContext = new ReadOnlyDatabaseContext(_store))
             {
                 var ds = CreateQuery(dbContext, queryDictionary, feed);
 
@@ -68,6 +69,29 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 return ProcessResponse(module, request, feed, ds, selectValue);
             }
+        }
+
+        private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
+        {
+            var query = string.Empty;
+
+            foreach (KeyValuePair<string, object> qd in queryDictionary)
+            {
+                if (string.IsNullOrWhiteSpace(query))
+                {
+                    query = "?";
+                }
+                query += qd.Key + "=" + qd.Value + "&";
+            }
+
+            if (query.EndsWith("&"))
+            {
+                query = query.Substring(0, query.Length - 1);
+            }
+
+            url += query;
+
+            return url;
         }
 
         protected virtual void AddAdditionalQueryParams(IDictionary<string, object> queryDictionary)
@@ -90,8 +114,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectValue)
         {
             long? total = request.ODataProperties().TotalCount;
-
-            var packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
@@ -149,10 +171,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return value.Substring(trimStart, trimEnd);
         }
 
-        protected IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext,
+        protected IQueryable<IInternalPackage> CreateQuery(ReadOnlyDatabaseContext dbContext,
             IDictionary<string, object> queryDictionary, IFeed feed)
         {
-            IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+            IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
 
             ds = ds.Where(pk => pk.Listed);
 

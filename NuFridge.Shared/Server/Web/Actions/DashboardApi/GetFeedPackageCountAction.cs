@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
 
             using (ITransaction transaction = _store.BeginTransaction())
             {
-                var model = new FeedPackageCountStatistic(transaction).GetModel();
+                var model = new FeedPackageCountStatistic(transaction, _store).GetModel();
 
                 return model;
             }

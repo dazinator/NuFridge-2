@@ -46,9 +46,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            using (var dbContext = new DatabaseContext(feed.Id, Store))
+            using (var dbContext = new ReadOnlyDatabaseContext(Store))
             {
-                IQueryable<IInternalPackage> ds = dbContext.Packages.AsNoTracking().AsQueryable();
+                IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
 
                 ds = ds.Where(pk => pk.Listed);
 

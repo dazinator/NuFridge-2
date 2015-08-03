@@ -10,7 +10,7 @@ namespace NuFridge.Shared.Model.Interfaces
         int PrimaryId { get; set; }
         string Id { get; set; }
         string Version { get; set; }
-
+        int FeedId { get; set; }
         string Description { get; set; }
 
         string ReleaseNotes { get; set; }

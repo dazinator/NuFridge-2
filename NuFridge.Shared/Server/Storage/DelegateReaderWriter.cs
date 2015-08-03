@@ -18,9 +18,16 @@ namespace NuFridge.Shared.Server.Storage
             _writer = writer;
         }
 
-        public object Read(object target)
+        public bool Read(object target, out object value)
         {
-            return _reader((TTarget)target);
+            if (_reader == null)
+            {
+                value = null;
+                return false;
+            }
+
+            value = _reader((TTarget)target);
+            return true;
         }
 
         public void Write(object target, object value)

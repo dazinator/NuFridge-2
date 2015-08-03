@@ -61,8 +61,6 @@ namespace NuFridge.Shared.Server.NuGet
                     if (nufridgeReadOnlyRegistryKey == null)
                         return;
 
-                    string frameworkNames = null;
-
                     foreach (string name in nufridgeReadOnlyRegistryKey.GetValueNames())
                     {
                         if (name == LegacyRegistryKeyName)

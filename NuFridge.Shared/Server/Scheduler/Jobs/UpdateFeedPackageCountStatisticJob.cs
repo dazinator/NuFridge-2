@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             using (ITransaction transaction = Store.BeginTransaction())
             {
-                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(transaction);
+                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(transaction, Store);
 
                 stat.UpdateModel(cancellationToken);
             }

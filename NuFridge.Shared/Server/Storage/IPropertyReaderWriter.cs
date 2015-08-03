@@ -2,7 +2,7 @@
 {
     public interface IPropertyReaderWriter<TCast>
     {
-        TCast Read(object target);
+        bool Read(object target, out TCast value);
 
         void Write(object target, TCast value);
     }

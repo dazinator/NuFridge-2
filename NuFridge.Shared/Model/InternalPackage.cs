@@ -17,13 +17,9 @@ namespace NuFridge.Shared.Model
 {
     [Table("Package", Schema = "NuFridge")]
     [DebuggerDisplay("{Id}: {Version} ({Title})")]
+    [TrackChanges]
     public class InternalPackage : IInternalPackage
     {
-        public InternalPackage()
-        {
-            IsAbsoluteLatestVersion = true;
-        }
-
         /// <summary>
         /// This is the primary key id
         /// </summary>
@@ -37,6 +33,8 @@ namespace NuFridge.Shared.Model
         [Column("PackageId")]
         public string Id { get; set; }
 
+        public int FeedId { get; set; }
+        
 
         private SemanticVersion SemanticVersion { get; set; }
         private string _version { get; set; }
@@ -61,29 +59,47 @@ namespace NuFridge.Shared.Model
             return SemanticVersion;
         }
 
+        [SkipTracking]
         public int VersionMajor { get; set; }
+
+        [SkipTracking]
         public int VersionMinor { get; set; }
+
+        [SkipTracking]
         public int VersionBuild { get; set; }
+
+        [SkipTracking]
         public int VersionRevision { get; set; }
+
+        [SkipTracking]
         public string VersionSpecial { get; set; }
 
+        [SkipTracking]
         public string Description { get; set; }
 
+        [SkipTracking]
         public string ReleaseNotes { get; set; }
 
+        [SkipTracking]
         public string Copyright { get; set; }
 
+        [SkipTracking]
         public DateTime Published { get; set; }
 
+        [SkipTracking]
         public string Dependencies { get; set; }
 
+        [SkipTracking]
         public string Hash { get; set; }
 
+        [SkipTracking]
         public string Title { get; set; }
 
+        [SkipTracking]
         public string Summary { get; set; }
 
         [NotMapped]
+        [SkipTracking]
         public long Size { get; set; }
 
         public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies { get; set; }
@@ -108,6 +124,7 @@ namespace NuFridge.Shared.Model
             return Hash;
         }
 
+        [SkipTracking]
         public string SupportedFrameworks { get; set; }
 
         public IEnumerable<FrameworkName> GetSupportedFrameworks()
@@ -120,14 +137,13 @@ namespace NuFridge.Shared.Model
             var newPackage = new InternalPackage
              {
                  Id = package.Id,
+                 FeedId = feedId,
                  Description = package.Description,
                  LastUpdated = DateTime.UtcNow,
                  ReleaseNotes = package.ReleaseNotes,
                  Summary = package.Summary,
                  Title = package.Title,
                  DownloadCount = package.DownloadCount,
-                 IsAbsoluteLatestVersion = false,
-                 IsLatestVersion = false,
                  Copyright = package.Copyright,
                  IsPrerelease = !package.IsReleaseVersion(),
                  Listed = package.IsListed(),
@@ -207,37 +223,63 @@ namespace NuFridge.Shared.Model
             get { return Id; }
         }
 
+        [SkipTracking]
         public bool RequireLicenseAcceptance { get; set; }
 
+        [SkipTracking]
         public string Language { get; set; }
+
+        [SkipTracking]
         public string Tags { get; set; }
+
         [NotMapped]
+        [SkipTracking]
         public string PackageHashAlgorithm { get; set; }
+
         [NotMapped]
+        [SkipTracking]
         public long PackageSize { get; set; }
 
+        [SkipTracking]
         public DateTime LastUpdated { get; set; }
 
-
+        [SkipTracking]
         public DateTime Created { get; set; }
+
+        [SkipTracking]
         public bool IsAbsoluteLatestVersion { get; set; }
+
+        [SkipTracking]
         public bool IsLatestVersion { get; set; }
+
+        [SkipTracking]
         public bool IsPrerelease { get; set; }
+
+        [SkipTracking]
         public bool Listed { get; set; }
 
+        [SkipTracking]
         public int DownloadCount { get; set; }
 
-
+        [SkipTracking]
         public int VersionDownloadCount { get; set; }
 
-
+        [SkipTracking]
         public bool DevelopmentDependency { get; set; }
 
-
+        [SkipTracking]
         public string Authors { get; set; }
+
+        [SkipTracking]
         public string Owners { get; set; }
+
+        [SkipTracking]
         public string IconUrl { get; set; }
+
+        [SkipTracking]
         public string LicenseUrl { get; set; }
+
+        [SkipTracking]
         public string ProjectUrl { get; set; }
 
 
@@ -246,6 +288,7 @@ namespace NuFridge.Shared.Model
             DownloadCount++;
         }
 
+        [SkipTracking]
         public string ReportAbuseUrl { get; set; }
     }
 }
