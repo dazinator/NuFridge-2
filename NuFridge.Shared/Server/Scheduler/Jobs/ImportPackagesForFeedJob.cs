@@ -44,7 +44,17 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             string jobId = JobContext.JobId;
 
-            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
+            using (var transaction = Store.BeginTransaction())
+            {
+                if (transaction.Query<IFeed>().Count() <= 1)
+                {
+                    _log.Debug("Disabled local cache for package import for feed id " + feedId);
+
+                    options.CheckLocalCache = false;
+                }
+            }
+
+                IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
 
             List<IPackage> packages;
 
