@@ -85,7 +85,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                     transaction.ExecuteScalar<string>(command, new CommandParameters(new {tableName = string.Empty, feedId = feed.Id}));
                     transaction.Commit();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     transaction.Dispose();
 

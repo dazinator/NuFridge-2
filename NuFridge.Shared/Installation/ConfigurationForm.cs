@@ -106,10 +106,16 @@ namespace NuFridge.Shared.Installation
             ExeConfigurationFileMap map = new ExeConfigurationFileMap { ExeConfigFilename = path };
             Configuration config = ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
 
-            config.AppSettings.Settings["SqlServer"].Value = txtSqlServer.Text;
-            config.AppSettings.Settings["SqlDatabase"].Value = txtDatabase.Text;
-            config.AppSettings.Settings["SqlUserId"].Value = txtUserId.Text;
-            config.AppSettings.Settings["SqlPassword"].Value = txtPassword.Text;
+            var connectionStringBuilder = new SqlConnectionStringBuilder
+            {
+                InitialCatalog = txtDatabase.Text,
+                DataSource = txtSqlServer.Text,
+                UserID = txtUserId.Text,
+                Password = txtPassword.Text
+            };
+
+            config.ConnectionStrings.ConnectionStrings["ConnectionString"].ConnectionString = connectionStringBuilder.ToString();
+
             config.AppSettings.Settings["WebsiteUrl"].Value = txtSiteUrl.Text;
 
             if (config.AppSettings.Settings.AllKeys.Contains("WindowsDebuggingToolsPath"))
