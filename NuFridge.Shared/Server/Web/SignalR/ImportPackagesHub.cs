@@ -11,15 +11,15 @@ namespace NuFridge.Shared.Server.Web.SignalR
     {
         public const string GroupPrefix = "ImportPackagesHub:";
 
-        public async Task Subscribe(int feedId)
+        public async Task Subscribe(string jobId)
         {
-            await Groups.Add(Context.ConnectionId, GetGroup(feedId));
+            await Groups.Add(Context.ConnectionId, GetGroup(jobId));
         }
 
 
-        public static string GetGroup(int feedId)
+        public static string GetGroup(string jobId)
         {
-            return GroupPrefix + feedId;
+            return GroupPrefix + jobId;
         }
     }
 }

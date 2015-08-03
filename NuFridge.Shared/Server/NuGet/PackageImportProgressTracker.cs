@@ -79,14 +79,14 @@ namespace NuFridge.Shared.Server.NuGet
 
             _log.Info("Finished package import for feed id " + progress.FeedId + ". Sending final update to connected clients.");
 
-            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.FeedId)).updateImportStatus( new { progress.Summary } );
+            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId)).updateImportStatus( new { progress.Summary } );
         }
 
         private void SendInProgressUpdate(PackageImportProgress progress)
         {
             _log.Info($"{progress.Counters.ImportedCount} of {progress.Counters.TotalCount} packages have been imported for feed id {progress.FeedId}");
 
-            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.FeedId)).updateImportStatus(  new { progress.Counters } );
+            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId)).updateImportStatus(  new { progress.Counters } );
         }
 
         public void WaitUntilComplete(string jobId)
@@ -137,7 +137,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             _log.Info("Tracking package import job for feed id " + feedId);
 
-            PackageImportProgress progress = new PackageImportProgress {FeedId = feedId, HubContext = hubContext};
+            PackageImportProgress progress = new PackageImportProgress {FeedId = feedId, HubContext = hubContext, JobId = jobId};
             progress.Counters.TotalCount = total;
 
             _dictionary.TryAdd(jobId, progress);
@@ -157,12 +157,18 @@ namespace NuFridge.Shared.Server.NuGet
                 return _instance.Value;
             }
         }
+
+        public void ReportStartFailure(IHubContext hubContext, string jobId, string message)
+        {
+            hubContext.Clients.Group(ImportPackagesHub.GetGroup(jobId)).startFailure(message);
+        }
     }
 
     public class PackageImportProgress
     {
         public IHubContext HubContext { get; set; }
         public int FeedId { get; set; }
+        public string JobId { get; set; }
 
         public PackageImportProgressSummary Summary = new PackageImportProgressSummary();
         public PackageImportProgressCounters Counters = new PackageImportProgressCounters();

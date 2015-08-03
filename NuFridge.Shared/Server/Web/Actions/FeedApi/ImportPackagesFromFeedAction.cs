@@ -39,9 +39,9 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 return new TextResponse(HttpStatusCode.BadRequest, errorMessage);
             }
 
-            BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Execute(JobCancellationToken.Null, feedId, options));
+            string jobId = BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Execute(JobCancellationToken.Null, feedId, options));
 
-            return new TextResponse(HttpStatusCode.OK, "The requested feed will be imported.");
+            return new TextResponse(HttpStatusCode.OK, jobId);
         }
     }
 }

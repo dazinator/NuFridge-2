@@ -14,6 +14,7 @@
         self.packageUploadPercentage = 0;
         self.successUploadingPackage = ko.observable(false);
         self.errorUploadingPackage = ko.observable(false);
+        self.errorUploadingMessage = ko.observable("");
         self.urlUploadValue = ko.observable("");
         self.showPrereleasePackages = ko.observable(false);
         self.feedimportstatus = ko.observable(databindingfeedimportstatus());
@@ -319,7 +320,7 @@
     ctor.prototype.startFeedUpload = function () {
         var self = this;
 
-
+        self.errorUploadingMessage("");
 
         $.connection.hub.url = "/signalr";
         var hub = $.connection.importPackagesHub;
@@ -339,9 +340,16 @@
                 self.loadPackages(0);
             }
         };
-        $.connection.hub.qs = "Authorization=Token " + new auth().getAuthToken();
+
+        hub.client.startFailure = function(response) {
+            self.successUploadingPackage(false);
+            self.isUploadingPackage(false);
+            self.errorUploadingPackage(true);
+            self.errorUploadingMessage(response);
+        };
+
         $.connection.hub.start().done(function () {
-            hub.server.subscribe(self.feed().Id());
+      
 
             $.ajax({
                 url: "/api/feeds/" + self.feed().Id() + "/import",
@@ -351,11 +359,16 @@
                 cache: false,
                 success: function (result) {
                     self.isUploadingPackage(true);
+                    self.errorUploadingPackage(false);
+                    self.successUploadingPackage(false);
+                    hub.server.subscribe(result);
                 },
                 error: function (xmlHttpRequest, textStatus, errorThrown) {
                     if (xmlHttpRequest.status === 401) {
                         router.navigate("#signin");
                     }
+                    self.errorUploadingPackage(true);
+                    self.errorUploadingMessage(xmlHttpRequest.responseText);
                 }
             });
         });

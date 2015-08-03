@@ -39,14 +39,27 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         {
             _log.Info("Running import packages job for feed id " + feedId);
 
-            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
-            IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
+            string jobId = JobContext.JobId;
 
-            List<IPackage> packages = GetPackages(remoteRepository, options);
+            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
+
+            List<IPackage> packages;
+
+            try
+            {
+                var remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
+                packages = GetPackages(remoteRepository, options);
+            }
+            catch (Exception ex)
+            {
+                _log.ErrorException("There was an error getting the list of packages to import.", ex);
+                PackageImportProgressTracker.Instance.ReportStartFailure(hubContext, jobId, "The package import failed to start. " + ex.Message);
+                throw;
+            }
 
             _log.Info("Found " + packages.Count + " for import for feed id " + feedId + " from " + options.FeedUrl);
 
-            string jobId = JobContext.JobId;
+
 
             PackageImportProgressTracker.Instance.AddJob(hubContext, jobId, feedId, packages.Count());
 
@@ -381,6 +394,18 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     message = "No versioning strategy was provided.";
                     return false;
+                }
+
+                if (HasVersionSelector)
+                {
+                    if (VersionSelector.Value == VersionSelectorEnum.SpecificVersion)
+                    {
+                        if (string.IsNullOrWhiteSpace(Version))
+                        {
+                            message = "No specific version provided.";
+                            return false;
+                        }
+                    }
                 }
 
                 message = "";
