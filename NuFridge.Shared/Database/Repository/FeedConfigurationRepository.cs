@@ -24,10 +24,17 @@ namespace NuFridge.Shared.Database.Repository
                 feedConfiguration.Id = connection.Insert<int>(feedConfiguration);
             }
         }
+
+        public FeedConfiguration FindByFeedId(int feedId)
+        {
+            return Query($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId").SingleOrDefault();
+        }
     }
 
     public interface IFeedConfigurationRepository
     {
         void Insert(FeedConfiguration feedConfiguration);
+        void Delete(FeedConfiguration feedConfiguration);
+        FeedConfiguration FindByFeedId(int feedId);
     }
 }

@@ -30,5 +30,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         void Insert(Feed feed);
         IEnumerable<Feed> GetAll();
+        Feed Find(int feedId);
+        void Delete(Feed feed);
     }
 }

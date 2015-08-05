@@ -18,6 +18,11 @@ namespace NuFridge.Shared.Database.Services
             _feedRepository = feedRepository;
         }
 
+        public void Delete(Feed feed)
+        {
+            _feedRepository.Delete(feed);
+        }
+
         public bool Exists(string feedName)
         {
             IEnumerable<Feed> feeds = _feedRepository.GetAll();
@@ -37,11 +42,24 @@ namespace NuFridge.Shared.Database.Services
 
              _feedRepository.Insert(feed);
         }
+
+        public bool Exists(int feedId)
+        {
+            return _feedRepository.Find(feedId) != null;
+        }
+
+        public Feed Find(int feedId)
+        {
+            return _feedRepository.Find(feedId);
+        }
     }
 
     public interface IFeedService
     {
+        void Delete(Feed feed);
         bool Exists(string feedName);
         void Insert(Feed feed);
+        bool Exists(int feedId);
+        Feed Find(int feedId);
     }
 }

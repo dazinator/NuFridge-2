@@ -22,10 +22,22 @@ namespace NuFridge.Shared.Database.Services
         {
            _feedConfigurationRepository.Insert(feedConfiguration);
         }
+
+        public void Delete(FeedConfiguration feedConfiguration)
+        {
+            _feedConfigurationRepository.Delete(feedConfiguration);
+        }
+
+        public FeedConfiguration FindByFeedId(int feedId)
+        {
+            return _feedConfigurationRepository.FindByFeedId(feedId);
+        }
     }
 
     public interface IFeedConfigurationService
     {
         void Insert(FeedConfiguration feedConfiguration);
+        void Delete(FeedConfiguration feedConfiguration);
+        FeedConfiguration FindByFeedId(int feedId);
     }
 }

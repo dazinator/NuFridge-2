@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
@@ -51,11 +52,63 @@ namespace NuFridge.Shared.Server.NuGet
         {
             return _feedService.Exists(feedName);
         }
+
+        public bool Exists(int feedId)
+        {
+            return _feedService.Exists(feedId);
+        }
+
+        public void Delete(int feedId)
+        {
+            Feed feed = _feedService.Find(feedId);
+            _feedService.Delete(feed);
+
+            FeedConfiguration config = _feedConfigurationService.FindByFeedId(feedId);
+            _feedConfigurationService.Delete(config);
+
+            List<InternalPackage> packages;
+
+            using (var dbContext = new DatabaseContext())
+            {
+                config = dbContext.FeedConfigurations.FirstOrDefault(fc => fc.FeedId == feedId);
+            }
+
+            string packageDirectory = config.Directory;
+
+            using (var dbContext = new DatabaseContext())
+            {
+                packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feedId).Where(pk => pk.FeedId == feedId).ToList();
+
+                foreach (var package in packages)
+                {
+                    dbContext.Packages.Remove(package);
+                }
+
+
+                dbContext.FeedConfigurations.Remove(config);
+
+                dbContext.SaveChanges();
+            }
+
+            if (Directory.Exists(packageDirectory))
+            {
+                try
+                {
+                    Directory.Delete(packageDirectory, true);
+                }
+                catch (Exception ex)
+                {
+                    _log.ErrorException(ex.Message, ex);
+                }
+            }
+        }
     }
 
     public interface IFeedManager
     {
         void Create(Feed feed);
         bool Exists(string feedName);
+        bool Exists(int feedId);
+        void Delete(int feedId);
     }
 }

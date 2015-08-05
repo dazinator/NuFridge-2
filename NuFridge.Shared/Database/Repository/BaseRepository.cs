@@ -22,6 +22,22 @@ namespace NuFridge.Shared.Database.Repository
             _connectionString = new SqlConnectionStringBuilder(DatabaseContext.ConnectionString.Value) { AsynchronousProcessing = true }.ToString();
         }
 
+        public void Delete(T entity)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Delete(entity);
+            }
+        }
+
+        public IEnumerable<T> Query(string sql, dynamic param = null)
+        {
+            using (var connection = GetConnection())
+            {
+                return SqlMapper.Query<T>(connection, sql, param);
+            }
+        }
+
         public T Find(int id)
         {
             using (var connection = GetConnection())

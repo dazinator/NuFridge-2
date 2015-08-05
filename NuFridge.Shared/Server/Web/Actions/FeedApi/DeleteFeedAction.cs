@@ -6,18 +6,19 @@ using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
     public class DeleteFeedAction : IAction
     {
-        private readonly IStore _store;
+        private readonly IFeedManager _feedManager;
         private readonly ILog _log = LogProvider.For<DeleteFeedAction>();
 
-        public DeleteFeedAction(IStore store)
+        public DeleteFeedAction(IFeedManager feedManager)
         {
-            _store = store;
+            _feedManager = feedManager;
         }
 
 
@@ -25,8 +26,14 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
         {
             module.RequiresAuthentication();
 
-
             int feedId = int.Parse(parameters.id);
+
+            if (!_feedManager.Exists(feedId))
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            _feedManager.Delete(feedId);
 
             Feed feed;
             FeedConfiguration config;
