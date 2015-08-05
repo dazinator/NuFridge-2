@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuGet;
@@ -27,55 +25,48 @@ namespace NuFridge.Shared.Server.Storage.Initializers
         {
             updateStatusAction("Migrating existing packages");
 
-            List<IFeed> feeds;
+            List<Feed> feeds;
 
-            using (var transaction = store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feeds = transaction.Query<IFeed>().ToList();
+                feeds = dbContext.Feeds.AsNoTracking().ToList();
             }
 
             foreach (var feed in feeds)
             {
-                _log.Debug("Updating packages in the " + feed.Name + " feed without a valid hash");
 
                 var feedRepository = _packageRepositoryFactory.Create(feed.Id);
 
-                using (var transaction = store.BeginTransaction())
+                using (var dbContext = new DatabaseContext())
                 {
-                    var packages =
-                        transaction.Query<IInternalPackage>()
-                            .Where("FeedId = @feedId AND Hash = ''")
-                            .Parameter("feedId", feed.Id)
-                            .ToList();
+                    var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).Where(pk => pk.FeedId == feed.Id && pk.Hash == "").ToList();
 
-                    object sync = new object();
-
-                    Parallel.ForEach(packages, internalPackage =>
+                    if (packages.Any())
                     {
-                        var filePath = feedRepository.GetPackageFilePath(internalPackage);
-                        if (File.Exists(filePath))
+                        _log.Debug("Updating packages in the " + feed.Name + " feed without a valid hash");
+
+                        Parallel.ForEach(packages, internalPackage =>
                         {
-                            var localPackage = FastZipPackage.Open(filePath, new CryptoHashProvider());
-
-                            using (Stream stream = localPackage.GetStream())
+                            var filePath = feedRepository.GetPackageFilePath(internalPackage);
+                            if (File.Exists(filePath))
                             {
-                                byte[] hash = new CryptoHashProvider().CalculateHash(stream);
+                                var localPackage = FastZipPackage.Open(filePath, new CryptoHashProvider());
 
-                                internalPackage.Hash = Convert.ToBase64String(hash);
+                                using (Stream stream = localPackage.GetStream())
+                                {
+                                    byte[] hash = new CryptoHashProvider().CalculateHash(stream);
 
-                                stream.Seek(0, SeekOrigin.Begin);
+                                    internalPackage.Hash = Convert.ToBase64String(hash);
 
-                                internalPackage.Size = stream.Length;
+                                    stream.Seek(0, SeekOrigin.Begin);
+
+                                    internalPackage.Size = stream.Length;
+                                }
                             }
+                        });
+                    }
 
-                            lock (sync)
-                            {
-                                transaction.Update(internalPackage);
-                            }
-                        }
-                    });
-
-                    transaction.Commit();
+                    dbContext.SaveChanges();
                 }
             }
         }

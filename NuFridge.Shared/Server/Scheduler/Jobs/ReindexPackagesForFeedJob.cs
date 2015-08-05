@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using Hangfire;
 using Hangfire.Logging;
-using Nancy;
-using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Storage;
@@ -29,19 +27,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _store = store;
         }
 
-        [AutomaticRetryAttribute(Attempts = 0)]
+        [AutomaticRetry(Attempts = 0)]
         public void Execute(IJobCancellationToken cancellationToken, int feedId)
         {
             _logger.Info("Executing " + JobId + " job for feed id " + feedId);
 
             IFeedConfiguration config;
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                config =
-                    transaction.Query<IFeedConfiguration>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feedId)
-                        .First();
+                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feedId);
             }
 
             if (config == null)
@@ -111,9 +105,9 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 }
             }
 
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var packages = transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feedId).Stream();
+                var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feedId).Where(pk => pk.FeedId == feedId);
 
                 foreach (var internalPackage in packages)
                 {
@@ -127,19 +121,19 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                         _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
 
-                        transaction.Delete(internalPackage);
+                        dbContext.Packages.Remove(internalPackage);
                         packagesDeleted++;
                     }
                     else
                     {
                         _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
 
-                        transaction.Delete(internalPackage);
+                        dbContext.Packages.Remove(internalPackage);
                         packagesDeleted++;
                     }
                 }
 
-                transaction.Commit();
+                dbContext.SaveChanges();
             }
 
             _logger.Info("Finished package reindex for feed id " + feedId);

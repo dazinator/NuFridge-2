@@ -1,15 +1,13 @@
 ﻿using System.IO;
-using NuFridge.Shared.Model.Interfaces;
+using Dapper;
+using NuFridge.Shared.Database.Model.Interfaces;
 
-namespace NuFridge.Shared.Model
+namespace NuFridge.Shared.Database.Model
 {
-    public class FeedConfiguration : IEntity, IFeedConfiguration
+    [Table("FeedConfiguration", Schema = "NuFridge")]
+    public class FeedConfiguration : IFeedConfiguration
     {
-        public FeedConfiguration()
-        {
-
-        }
-
+        [Key]
         public int Id { get; set; }
 
         public int FeedId { get; set; }
@@ -18,13 +16,11 @@ namespace NuFridge.Shared.Model
         public bool RetentionPolicyEnabled { get; set; }
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
-        public bool RpDeletePackages { get; set; }
+        public bool RetentionPolicyDeletePackages { get; set; }
 
-        public string Name => Id.ToString();
-
-
+        [Editable(false)]
         public string PackagesDirectory => Path.Combine(Directory, "Packages");
-
+        [Editable(false)]
         public string SymbolsDirectory => Path.Combine(Directory, "Symbols");
     }
 }

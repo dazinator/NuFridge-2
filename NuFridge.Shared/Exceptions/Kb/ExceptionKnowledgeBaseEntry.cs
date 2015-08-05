@@ -5,7 +5,7 @@ namespace NuFridge.Shared.Exceptions.Kb
 {
     public class ExceptionKnowledgeBaseEntry
     {
-        public string Summary { get; private set; }
+        public string Summary { get; }
 
         public string HelpText { get; private set; }
 

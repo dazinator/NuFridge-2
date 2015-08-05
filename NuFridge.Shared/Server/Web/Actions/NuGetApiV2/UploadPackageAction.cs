@@ -4,9 +4,8 @@ using System.Linq;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet;
@@ -36,9 +35,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         {
             IFeed feed;
 
-            using (ITransaction transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Load<IFeed>(feedId);
+                feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Id == feedId);
             }
 
             if (feed == null)
@@ -84,9 +83,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             IFeed feed;
 
-            using (ITransaction transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                feed =
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
 
 

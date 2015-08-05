@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.ServiceProcess;
 using NuFridge.Shared.Commands.Interfaces;
-using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Server.Hosts

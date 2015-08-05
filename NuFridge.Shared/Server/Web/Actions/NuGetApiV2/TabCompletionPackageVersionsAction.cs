@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
-using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
@@ -23,9 +21,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string feedName = parameters.feed;
             IFeed feed;
 
-            using (var transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                feed =
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             if (feed == null)
@@ -34,8 +34,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
-
-            List<IInternalPackage> packages;
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
 
@@ -47,23 +45,20 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 includePrerelease = Boolean.Parse(queryDictionary["includePrerelease"].ToString());
             }
 
-            using (var transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var query = transaction.Query<IInternalPackage>()
-                    .Where("FeedId = @feedId").Parameter("feedId", feed.Id);
+                var query = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
 
                 if (!includePrerelease)
                 {
-                    query = query.Where("IsPrerelease = 0");
+                    query = query.Where(pk => !pk.IsPrerelease);
                 }
 
-                query = query.Where("PackageId LIKE @packageId")
-                    .Parameter("packageId", packageId);
 
-                packages = query.ToList(0, PackagesToReturn);
+                query = query.Where(pk => pk.Id.Contains(packageId));
+
+                return module.Response.AsJson(query.Take(PackagesToReturn));
             }
-
-            return module.Response.AsJson(packages.Select(pk => pk.Version));
         }
     }
 }

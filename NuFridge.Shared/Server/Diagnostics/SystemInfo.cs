@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
-using Hangfire;
 using NuFridge.Shared.Server.Diagnostics.Win;
-using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.Scheduler;
 
 namespace NuFridge.Shared.Server.Diagnostics

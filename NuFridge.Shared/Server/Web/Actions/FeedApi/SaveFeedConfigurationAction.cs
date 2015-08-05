@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
@@ -26,7 +26,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
         {
             module.RequiresAuthentication();
 
-            IFeedConfiguration feedConfig;
+            FeedConfiguration feedConfig;
 
             try
             {
@@ -44,9 +44,12 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                     return new TextResponse(HttpStatusCode.BadRequest, "A feed directory must be provided.");
                 }
 
-                ITransaction transaction = _store.BeginTransaction();
+                FeedConfiguration existingFeedConfig;
 
-                var existingFeedConfig = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                using (var dbContext = new DatabaseContext())
+                {
+                    existingFeedConfig = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(f => f.FeedId == feedId);
+                }
 
                 if (existingFeedConfig == null)
                 {
@@ -55,16 +58,26 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
                 if (feedConfig.Directory != existingFeedConfig.Directory)
                 {
-                    var directoryUsedByOtherConfigs = transaction.Query<IFeedConfiguration>()
-                        .Where("Directory = @directory")
-                        .Parameter("directory", feedConfig.Directory).ToList();
+                    IQueryable<FeedConfiguration> directoryUsedByOtherConfigs;
+
+                    using (var dbContext = new DatabaseContext())
+                    {
+                        directoryUsedByOtherConfigs =
+                              dbContext.FeedConfigurations.AsNoTracking()
+                                  .Where(
+                                      fc =>
+                                          fc.Directory.Equals(feedConfig.Directory,
+                                              StringComparison.InvariantCultureIgnoreCase));
+                    }
 
                     if (directoryUsedByOtherConfigs.Any(dr => dr.Id != feedConfig.Id))
                     {
-                        return new TextResponse(HttpStatusCode.BadRequest, "The feed directory is already being used for another feed.");
+                        return new TextResponse(HttpStatusCode.BadRequest,
+                            "The feed directory is already being used for another feed.");
                     }
 
-                    _log.Info("Changing the directory from " + existingFeedConfig.Directory + " to " + feedConfig.Directory + " for feed " + feedId);
+                    _log.Info("Changing the directory from " + existingFeedConfig.Directory + " to " +
+                              feedConfig.Directory + " for feed " + feedId);
 
                     if (Directory.Exists(existingFeedConfig.Directory))
                     {
@@ -80,19 +93,32 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                         }
                         catch (Exception ex)
                         {
-                            _log.ErrorException("There was an error moving the " + existingFeedConfig.Directory + " folder to " + feedConfig.Directory + " for feed id " + feedId + ". The directory has not been updated for the feed but packages may have been moved. Error: " + ex.Message, ex);
-                            return new TextResponse("There was an error moving the " + existingFeedConfig.Directory + " folder to " + feedConfig.Directory + " for feed id " + feedId + ". The directory has not been updated for the feed but packages may have been moved. Error: " + ex.Message);
+                            _log.ErrorException(
+                                "There was an error moving the " + existingFeedConfig.Directory + " folder to " +
+                                feedConfig.Directory + " for feed id " + feedId +
+                                ". The directory has not been updated for the feed but packages may have been moved. Error: " +
+                                ex.Message, ex);
+                            return
+                                new TextResponse("There was an error moving the " + existingFeedConfig.Directory +
+                                                 " folder to " + feedConfig.Directory + " for feed id " + feedId +
+                                                 ". The directory has not been updated for the feed but packages may have been moved. Error: " +
+                                                 ex.Message);
                         }
                     }
                     else
                     {
-                        _log.Info("No existing feed directory exists for " + feedId + ", so no packages will be moved.");
+                        _log.Info("No existing feed directory exists for " + feedId +
+                                  ", so no packages will be moved.");
                     }
                 }
 
-                transaction.Update(feedConfig);
-                transaction.Commit();
-                transaction.Dispose();
+                using (var dbContext = new DatabaseContext())
+                {
+                    dbContext.FeedConfigurations.Attach(feedConfig);
+                    dbContext.Entry(feedConfig).State = EntityState.Modified;
+                    dbContext.SaveChanges();
+                }
+
             }
             catch (Exception ex)
             {

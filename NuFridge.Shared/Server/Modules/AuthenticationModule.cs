@@ -1,7 +1,6 @@
 ﻿using System;
 using Autofac;
 using Nancy.Authentication.Token;
-using Nancy.Authentication.Token.Storage;
 
 namespace NuFridge.Shared.Server.Modules
 {

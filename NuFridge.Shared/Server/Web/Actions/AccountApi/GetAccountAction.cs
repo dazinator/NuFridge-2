@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Nancy;
 using Nancy.Security;
-using NuFridge.Shared.Model;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.AccountApi
@@ -19,7 +15,7 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
             _store = store;
         }
 
-        public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string username = parameters.username;
 
@@ -38,14 +34,14 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
                 return GetUser(module.Context.CurrentUser.UserName);
             }
 
-            return new Response() {StatusCode = HttpStatusCode.Unauthorized};
+            return new Response {StatusCode = HttpStatusCode.Unauthorized};
         }
 
         private User GetUser(string username)
         {
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var user = transaction.Query<User>().Where("username = @username").Parameter("username", username).First();
+                var user = dbContext.Users.FirstOrDefault(usr => usr.Username == username);
 
                 user.PasswordHashed = null;
 

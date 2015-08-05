@@ -6,13 +6,7 @@ namespace NuFridge.Shared.Server.Modules
 {
   public class ConfigurationModule : Module
   {
-
-    public ConfigurationModule()
-    {
-
-    }
-
-    protected override void Load(ContainerBuilder builder)
+      protected override void Load(ContainerBuilder builder)
     {
       base.Load(builder);
       builder.RegisterType<ApplicationInstanceStore>().As<IApplicationInstanceStore>();

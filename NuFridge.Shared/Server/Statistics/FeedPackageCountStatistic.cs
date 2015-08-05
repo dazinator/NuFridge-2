@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Statistics.Design;
 using NuFridge.Shared.Server.Storage;
 
@@ -12,8 +10,7 @@ namespace NuFridge.Shared.Server.Statistics
     {
         private readonly IStore _store;
 
-        public FeedPackageCountStatistic(ITransaction transaction, IStore store)
-            : base(transaction)
+        public FeedPackageCountStatistic(IStore store)
         {
             _store = store;
         }
@@ -22,30 +19,34 @@ namespace NuFridge.Shared.Server.Statistics
         {
             var list = new List<FeedPackageCountStatisticItem>();
 
-            var feeds = Transaction.Query<IFeed>().ToList();
-
-            ColorGenerator generator = new ColorGenerator();
-
-            using (var dbContext = new ReadOnlyDatabaseContext(_store))
+            using (var dbContext = new DatabaseContext())
             {
+                var feeds = dbContext.Feeds.AsNoTracking();
+
+                ColorGenerator generator = new ColorGenerator();
+
+
                 foreach (var feed in feeds)
                 {
-                    var packageCount = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).Count(pk => pk.IsLatestVersion || pk.IsAbsoluteLatestVersion);
+                    var packageCount =
+                        EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id)
+                            .Count(pk => pk.IsLatestVersion || pk.IsAbsoluteLatestVersion);
 
                     if (packageCount > 0)
                     {
                         list.Add(new FeedPackageCountStatisticItem(feed.Name, packageCount, generator.NextColour()));
                     }
                 }
-            }
 
-            var orderedList = list.OrderByDescending(it => it.PackageCount).ToList();
-            if (orderedList.Count() > 10)
-            {
-                orderedList = orderedList.Take(10).ToList();
-            }
 
-            return orderedList;
+                var orderedList = list.OrderByDescending(it => it.PackageCount).ToList();
+                if (orderedList.Count() > 10)
+                {
+                    orderedList = orderedList.Take(10).ToList();
+                }
+
+                return orderedList;
+            }
         }
 
         protected override string StatName

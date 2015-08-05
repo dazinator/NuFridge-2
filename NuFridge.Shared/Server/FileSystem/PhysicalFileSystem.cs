@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
-using NuFridge.Shared.Extensions;
 
 namespace NuFridge.Shared.Server.FileSystem
 {

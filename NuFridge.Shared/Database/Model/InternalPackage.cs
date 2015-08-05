@@ -6,19 +6,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
-using System.Text;
-using System.Xml.Serialization;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
-using NuFridge.Shared.Server.Security;
 using NuGet;
 
-namespace NuFridge.Shared.Model
+namespace NuFridge.Shared.Database.Model
 {
-    [Table("Package", Schema = "NuFridge")]
     [DebuggerDisplay("{Id}: {Version} ({Title})")]
-    [TrackChanges]
+ //   [TrackChanges]
     public class InternalPackage : IInternalPackage
     {
         /// <summary>
@@ -133,7 +129,7 @@ namespace NuFridge.Shared.Model
             return (SupportedFrameworks ?? "").Split(new [] {"|"}, StringSplitOptions.RemoveEmptyEntries).Select(VersionUtility.ParseFrameworkName).Distinct();
         }
 
-        public static IInternalPackage Create(int feedId, IPackage package)
+        public static IInternalPackage Create(int feedId, IPackage package, Func<IInternalPackage, string> getPackageFilePath)
         {
             var newPackage = new InternalPackage
              {
@@ -153,7 +149,7 @@ namespace NuFridge.Shared.Model
                  Language = package.Language,
                  FrameworkAssemblies = package.FrameworkAssemblies,
                  DependencySets = package.DependencySets,
-                 DevelopmentDependency = package.DevelopmentDependency,
+                 DevelopmentDependency = package.DevelopmentDependency
              };
 
             newPackage.SupportedFrameworks = string.Join("|", package.GetSupportedFrameworks().Select(VersionUtility.GetShortFrameworkName));
@@ -198,32 +194,43 @@ namespace NuFridge.Shared.Model
                 newPackage.Authors = string.Join(",", package.Authors);
             }
 
-            using (Stream stream = package.GetStream())
+            if (package is DataServicePackage)
             {
-                byte[] hash = new CryptoHashProvider().CalculateHash(stream);
+                string filePath = getPackageFilePath(newPackage);
 
-                newPackage.Hash = Convert.ToBase64String(hash);
+                using (Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    byte[] hash = new CryptoHashProvider().CalculateHash(stream);
 
-                stream.Seek(0, SeekOrigin.Begin);
-                newPackage.Created = FastZipPackageBase.GetPackageCreatedDateTime(stream);
+                    newPackage.Hash = Convert.ToBase64String(hash);
 
-                newPackage.Size = stream.Length;
+                    stream.Seek(0, SeekOrigin.Begin);
+                    newPackage.Created = FastZipPackageBase.GetPackageCreatedDateTime(stream);
+
+                    newPackage.Size = stream.Length;
+                }
+            }
+            else
+            {
+                var zipPackage = package as FastZipPackage;
+                if (zipPackage != null)
+                {
+                    var zip = zipPackage;
+                    newPackage.Hash = Convert.ToBase64String(zip.Hash);
+                    newPackage.Size = zip.Size;
+                }
             }
 
             return newPackage;
         }
+
+
 
         [NotMapped]
         public IEnumerable<PackageDependencySet> DependencySets
         {
             get { return PackageDependencySetConverter.Parse((Dependencies ?? string.Empty).Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries)); }
             set { Dependencies = string.Join("|", value.SelectMany(PackageDependencySetConverter.Flatten)); }
-        }
-
-
-        public string Name
-        {
-            get { return Id; }
         }
 
         [SkipTracking]
@@ -249,10 +256,10 @@ namespace NuFridge.Shared.Model
         [SkipTracking]
         public DateTime Created { get; set; }
 
-        [SkipTracking]
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
         public bool IsAbsoluteLatestVersion { get; set; }
 
-        [SkipTracking]
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
         public bool IsLatestVersion { get; set; }
 
         [SkipTracking]

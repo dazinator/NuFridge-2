@@ -21,12 +21,11 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
         {
             module.RequiresAuthentication();
 
-            using (ITransaction transaction = _store.BeginTransaction())
-            {
-                var model = new SystemInformationStatistic(transaction, _jobServer).GetModel();
+         
+                var model = new SystemInformationStatistic(_jobServer).GetModel();
 
                 return model;
-            }
+            
         }
     }
 }

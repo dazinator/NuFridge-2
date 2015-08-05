@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using Nancy;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -30,10 +31,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             int feedId;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
                 var feed =
-                    transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
 
                 if (feed == null)
                 {

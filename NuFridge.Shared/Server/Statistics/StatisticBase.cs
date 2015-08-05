@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using Hangfire;
 using Newtonsoft.Json;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Database.Model;
 
 namespace NuFridge.Shared.Server.Statistics
 {
     public abstract class StatisticBase<TModel>
     {
-        protected ITransaction Transaction { get; set; }
         protected abstract string StatName { get; }
 
-        protected StatisticBase(ITransaction transaction)
+        protected Statistic GetRecord()
         {
-            Transaction = transaction;
-        }
+            Statistic record;
 
-        protected IStatistic GetRecord()
-        {
-            var record = Transaction.Query<IStatistic>().Where("Name = @name").Parameter("name", StatName).First();
+            using (var dbContext = new DatabaseContext())
+            {
+                record = dbContext.Statistics.AsNoTracking().FirstOrDefault(rc => rc.Name == StatName);
+            }
 
             bool statExists = record != null;
 
@@ -58,26 +54,32 @@ namespace NuFridge.Shared.Server.Statistics
             return model;
         }
 
+        [MethodImpl(MethodImplOptions.NoOptimization)]
         public void UpdateModel(IJobCancellationToken cancellationToken)
         {
             var model = Update();
 
-            IStatistic record = GetRecord();
+            Statistic record = GetRecord();
 
             record.Json = SerializeModel(model);
 
-            if (record.Id <= 0)
+            using (var dbContext = new DatabaseContext())
             {
-                Transaction.Insert<IStatistic>(record);
-            }
-            else
-            {
-                Transaction.Update<IStatistic>(record);
-            }
 
-            cancellationToken.ThrowIfCancellationRequested();
+                if (record.Id > 0)
+                {
+                    dbContext.Statistics.Attach(record);
+                    dbContext.Entry(record).Property(a => a.Json).IsModified = true;
+                }
+                else
+                {
+                    dbContext.Statistics.Add(record);
+                }
 
-            Transaction.Commit();
+                cancellationToken.ThrowIfCancellationRequested();
+
+                dbContext.SaveChanges();
+            }
         }
     }
 }

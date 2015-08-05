@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Linq;
 using Autofac;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
-
 
 namespace NuFridge.Shared.Server.Modules
 {
@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
             builder.RegisterType<Statistic>().As<IStatistic>();
             builder.RegisterType<Framework>().As<IFramework>();
-            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IStore>(), feedId))).InstancePerDependency();
+            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(feedId))).InstancePerDependency();
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => CreatePathResolver(c, feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => CreateFileSystem(c, feedId))).InstancePerDependency();
 
@@ -49,11 +49,9 @@ namespace NuFridge.Shared.Server.Modules
         //TODO move this elsewhere or rethink on how to do this better
         private IFileSystem CreateFileSystem(IComponentContext c, int feedId)
         {
-            var store = c.Resolve<IStore>();
-
-            using (var transaction = store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                var config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feedId);
 
                 return new PhysicalFileSystem(config.PackagesDirectory);
             }
@@ -62,11 +60,9 @@ namespace NuFridge.Shared.Server.Modules
         //TODO move this elsewhere or rethink on how to do this better
         private IPackagePathResolver CreatePathResolver(IComponentContext c, int feedId)
         {
-            var store = c.Resolve<IStore>();
-
-            using (var transaction = store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var config = transaction.Query<IFeedConfiguration>().Where("FeedId = @feedId").Parameter("feedId", feedId).First();
+                var config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feedId);
 
                 return new DefaultPackagePathResolver(config.PackagesDirectory);
             }

@@ -20,17 +20,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
 
         [DisableConcurrentExecution(10)]
-        [AutomaticRetryAttribute(Attempts = 0)]
+        [AutomaticRetry(Attempts = 0)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _logger.Info("Executing " + JobId + " job");
 
-            using (ITransaction transaction = Store.BeginTransaction())
-            {
-                SystemInformationStatistic stat = new SystemInformationStatistic(transaction, _jobServer);
+                SystemInformationStatistic stat = new SystemInformationStatistic(_jobServer);
 
                 stat.UpdateModel(cancellationToken);
-            }
+            
         }
 
         public override string JobId => typeof(UpdateSystemInformationJob).Name;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Nancy;
 using Nancy.Security;
-using NuFridge.Shared.Model;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
@@ -25,10 +25,11 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             int pageSize = int.Parse(module.Request.Query["pageSize"]);
             int totalResults;
 
-            List<IFeed> feeds;
-            using (ITransaction transaction = _store.BeginTransaction())
+            List<Feed> feeds;
+            using (var dbContext = new DatabaseContext())
             {
-                feeds = transaction.Query<IFeed>().OrderBy("Name").ToList(pageSize * page, pageSize, out totalResults);
+                feeds = dbContext.Feeds.AsNoTracking().OrderBy(f => f.Name).Skip(pageSize*page).Take(pageSize).ToList();
+                totalResults = dbContext.Feeds.AsNoTracking().Count();
             }
 
             feeds.Where(fd => !string.IsNullOrWhiteSpace(fd.ApiKeyHashed)).ToList().ForEach(fd => fd.HasApiKey = true);

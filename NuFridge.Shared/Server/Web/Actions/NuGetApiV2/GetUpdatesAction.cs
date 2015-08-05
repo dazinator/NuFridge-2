@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Query;
 using Nancy;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
-using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
 using NuGet;
@@ -21,15 +19,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetUpdatesAction : IAction
     {
-        private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
         private readonly IWebPortalConfiguration _portalConfig;
 
-        public GetUpdatesAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig)
+        public GetUpdatesAction(IWebPortalConfiguration portalConfig)
 
         {
-            _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
             _portalConfig = portalConfig;
         }
 
@@ -61,7 +55,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
 
-            using (var dbContext = new ReadOnlyDatabaseContext(_store))
+            using (var dbContext = new DatabaseContext())
             {
                 var ds = CreateQuery(dbContext, queryDictionary, feed);
 
@@ -153,13 +147,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private IFeed GetFeedModel(string feedName)
         {
             IFeed feed;
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
                 feed =
-                    transaction.Query<IFeed>()
-                        .Where("Name = @feedName")
-                        .Parameter("feedName", feedName)
-                        .First();
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
             return feed;
         }
@@ -171,7 +163,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return value.Substring(trimStart, trimEnd);
         }
 
-        protected IQueryable<IInternalPackage> CreateQuery(ReadOnlyDatabaseContext dbContext,
+        protected IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext,
             IDictionary<string, object> queryDictionary, IFeed feed)
         {
             IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);

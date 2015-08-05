@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Installation
 {
@@ -34,7 +27,7 @@ namespace NuFridge.Shared.Installation
 
         [DllImport("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
-        [DllImportAttribute("user32.dll")]
+        [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
 
         private void pbClose_Click(object sender, EventArgs e)
@@ -42,8 +35,8 @@ namespace NuFridge.Shared.Installation
 
             if (MessageBox.Show("Are you sure you wish to cancel the installation of NuFridge?", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                this.DialogResult = DialogResult.Abort;
-                this.Close();
+                DialogResult = DialogResult.Abort;
+                Close();
             }
         }
 

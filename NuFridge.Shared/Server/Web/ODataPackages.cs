@@ -1,18 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.Edm.Library;
 using Microsoft.Data.OData;
 using Microsoft.Data.OData.Atom;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Web.OData;
-using NuGet;
 
 namespace NuFridge.Shared.Server.Web
 {
@@ -20,7 +13,7 @@ namespace NuFridge.Shared.Server.Web
     {
         public static Stream CreatePackagesStream(string baseUrl, string baseAddress, IEnumerable<IInternalPackage> packages,int total, string strSelectFields)
         {
-            var writerSettings = new ODataMessageWriterSettings()
+            var writerSettings = new ODataMessageWriterSettings
             {
                 Indent = true,
                 CheckCharacters = false,
@@ -34,7 +27,7 @@ namespace NuFridge.Shared.Server.Web
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
 
             var feedWriter = writer.CreateODataFeedWriter();
-            feedWriter.WriteStart(new ODataFeed() { Id = "Packages", Count = total});
+            feedWriter.WriteStart(new ODataFeed { Id = "Packages", Count = total});
 
 
             var pks = packages.Select(pk => new ODataPackage(pk));
@@ -61,15 +54,15 @@ namespace NuFridge.Shared.Server.Web
 
             var entryId = "Packages(Id='" + package.Id + "',Version='" + package.Version + "')";
 
-            var oDataEntry = new ODataEntry()
+            var oDataEntry = new ODataEntry
             {
                 EditLink = new Uri(baseAddress + entryId, UriKind.Absolute),
                 Id = baseAddress + entryId,
                 TypeName = "Package",
-                MediaResource = new ODataStreamReferenceValue()
+                MediaResource = new ODataStreamReferenceValue
                 {
                     ContentType = "application/zip",
-                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version),
+                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version)
                 },
                 Properties = GetProperties(package, properties)
             };
@@ -93,7 +86,7 @@ namespace NuFridge.Shared.Server.Web
             var properties =
                 obj.GetType()
                     .GetProperties()
-                    .Select(property => new ODataProperty() {Name = property.Name, Value = property.GetValue(obj)})
+                    .Select(property => new ODataProperty {Name = property.Name, Value = property.GetValue(obj)})
                     .ToArray();
 
             if (propertiesToInclude.Any())

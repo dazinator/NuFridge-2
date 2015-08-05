@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Nancy;
-using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 
 namespace NuFridge.Shared.Server.Web.Modules
 {

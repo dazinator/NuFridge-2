@@ -1,6 +1,7 @@
-﻿using Nancy;
+﻿using System.Linq;
+using Nancy;
 using Nancy.Security;
-using NuFridge.Shared.Model;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Storage;
 
@@ -21,11 +22,11 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
         {
                 module.RequiresAuthentication();
 
-                using (ITransaction transaction = _store.BeginTransaction())
-                {
+            using (var dbContext = new DatabaseContext())
+            {
                     int feedId = int.Parse(parameters.id);
 
-                    var feed = transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
+                var feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Id == feedId);
                     if (feed != null)
                     {
                         //Temporary until the API Key table is used

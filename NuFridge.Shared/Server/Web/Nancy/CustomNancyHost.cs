@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
-using System.Threading;
-using Autofac.Integration.SignalR;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
-using Nancy;
 using Nancy.Bootstrapper;
-using Nancy.Cookies;
-using Nancy.Extensions;
-using Nancy.Helpers;
 using Nancy.Hosting.Self;
-using Nancy.IO;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Web.SignalR;
 using Owin;
 
 namespace NuFridge.Shared.Server.Web.Nancy

@@ -1,7 +1,9 @@
-﻿using Nancy;
+﻿using System;
+using System.Linq;
+using Nancy;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
 
@@ -28,12 +30,11 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
 
             IFeed feed;
             IFeedConfiguration config;
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Query<IFeed>()
-                    .Where("Name = @name")
-                    .Parameter("name", feedName)
-                    .First();
+                feed =
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
 
             if (feed == null)
@@ -44,13 +45,9 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
                 return errorResponse;
             }
 
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                config =
-                    transaction.Query<IFeedConfiguration>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feed.Id)
-                        .First();
+                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feed.Id);
             }
 
             var fileStream = _symbolSource.OpenPackageSourceFile(config, id, version, path);

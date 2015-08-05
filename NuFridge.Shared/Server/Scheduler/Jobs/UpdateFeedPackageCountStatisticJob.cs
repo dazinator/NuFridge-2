@@ -8,7 +8,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     [Queue("background")]
     public class UpdateFeedPackageCountStatisticJob : JobBase
     {
-        private IStore Store { get; set; }
+        private IStore Store { get; }
         private readonly ILog _logger = LogProvider.For<UpdateFeedPackageCountStatisticJob>();
 
         public UpdateFeedPackageCountStatisticJob(IStore store) 
@@ -17,17 +17,16 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         }
 
         [DisableConcurrentExecution(10)]
-        [AutomaticRetryAttribute(Attempts = 0)]
+        [AutomaticRetry(Attempts = 0)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _logger.Info("Executing " + JobId + " job");
 
-            using (ITransaction transaction = Store.BeginTransaction())
-            {
-                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(transaction, Store);
+
+                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(Store);
 
                 stat.UpdateModel(cancellationToken);
-            }
+            
         }
 
         public override string JobId => typeof(UpdateFeedPackageCountStatisticJob).Name;

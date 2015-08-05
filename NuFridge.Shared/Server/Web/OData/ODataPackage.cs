@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Services.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuGet;
+using NuFridge.Shared.Database.Model.Interfaces;
 
 namespace NuFridge.Shared.Server.Web.OData
 {
-    [EntityPropertyMapping("Id", SyndicationItemProperty.Title, SyndicationTextContentKind.Plaintext, keepInContent: false)]
-    [EntityPropertyMapping("Authors", SyndicationItemProperty.AuthorName, SyndicationTextContentKind.Plaintext, keepInContent: false)]
-    [EntityPropertyMapping("LastUpdated", SyndicationItemProperty.Updated, SyndicationTextContentKind.Plaintext, keepInContent: false)]
-    [EntityPropertyMapping("Summary", SyndicationItemProperty.Summary, SyndicationTextContentKind.Plaintext, keepInContent: false)]
+    [EntityPropertyMapping("Id", SyndicationItemProperty.Title, SyndicationTextContentKind.Plaintext, false)]
+    [EntityPropertyMapping("Authors", SyndicationItemProperty.AuthorName, SyndicationTextContentKind.Plaintext, false)]
+    [EntityPropertyMapping("LastUpdated", SyndicationItemProperty.Updated, SyndicationTextContentKind.Plaintext, false)]
+    [EntityPropertyMapping("Summary", SyndicationItemProperty.Summary, SyndicationTextContentKind.Plaintext, false)]
     public class ODataPackage : IEquatable<ODataPackage>
     {
         public ODataPackage()
@@ -55,9 +49,9 @@ namespace NuFridge.Shared.Server.Web.OData
             DevelopmentDependency = package.DevelopmentDependency;
         }
 
-        public string Id { get; set; }
+        public string Id { get; }
 
-        public string Version { get; set; }
+        public string Version { get; }
 
         public string Title { get; set; }
 

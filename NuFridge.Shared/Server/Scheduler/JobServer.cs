@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Autofac;
 using Hangfire;
-using Hangfire.Server;
 using Hangfire.SqlServer;
 using Hangfire.States;
 using Hangfire.Storage;
+using NCrontab;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler.Jobs;
 using NuFridge.Shared.Server.Storage;
@@ -188,7 +186,7 @@ namespace NuFridge.Shared.Server.Scheduler
                     job = connection.GetRecurringJobs().First(jb => jb.Id == jobBase.JobId);
                 }
 
-                var cronSchedule = NCrontab.CrontabSchedule.Parse(jobBase.Cron);
+                var cronSchedule = CrontabSchedule.Parse(jobBase.Cron);
                 var nextExecuting = DateTime.MinValue;
 
                 var lastExecution = job.LastExecution;

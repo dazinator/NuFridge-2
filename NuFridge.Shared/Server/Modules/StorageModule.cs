@@ -1,5 +1,9 @@
 ﻿using Autofac;
+using NuFridge.Shared.Database;
+using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
+using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Storage.Initializers;
 
@@ -17,6 +21,17 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<MigrationInitializer>().AsSelf();
             builder.RegisterType<PackageHashInitalizer>().AsSelf();
 
+            builder.RegisterType<UserService>().As<IUserService>();
+            builder.RegisterType<UserRepository>().As<IUserRepository>();
+
+            builder.RegisterType<FeedService>().As<IFeedService>();
+            builder.RegisterType<FeedRepository>().As<IFeedRepository>();
+
+            builder.RegisterType<FeedManager>().As<IFeedManager>();
+
+            builder.RegisterType<FeedConfigurationService>().As<IFeedConfigurationService>();
+            builder.RegisterType<FeedConfigurationRepository>().As<IFeedConfigurationRepository>();
+
             builder.Register((c => new StoreInitializer(c.Resolve<IStore>(), new IInitializeStore[]
             {
                 c.Resolve<MigrationInitializer>(),
@@ -25,7 +40,6 @@ namespace NuFridge.Shared.Server.Modules
             }))).As<IStoreInitializer>();
 
             builder.Register((c => c.Resolve<IStoreFactory>().Store)).As<IStore>().SingleInstance();
-            builder.Register((c => c.Resolve<IStore>().BeginTransaction())).As<ITransaction>().InstancePerLifetimeScope();
         }
     }
 }

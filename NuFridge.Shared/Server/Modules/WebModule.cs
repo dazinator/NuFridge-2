@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using NuFridge.Shared.Server.Web;
-using NuFridge.Shared.Server.Web.Actions;
 using NuFridge.Shared.Server.Web.Actions.AccountApi;
 using NuFridge.Shared.Server.Web.Actions.DashboardApi;
 using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;

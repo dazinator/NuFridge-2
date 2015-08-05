@@ -80,6 +80,16 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
 
         public IEnumerable<IPackageFile> Files { get; set; }
 
+        public void ExtractContents(IFileSystem fileSystem, string extractPath)
+        {
+            foreach (PhysicalPackageFile physicalPackageFile in GetFiles().Cast<PhysicalPackageFile>())
+            {
+                string path = Path.Combine(extractPath, physicalPackageFile.TargetPath);
+                using (Stream stream = physicalPackageFile.GetStream())
+                    fileSystem.AddFile(path, stream);
+            }
+        }
+
         public bool IsAbsoluteLatestVersion
         {
             get

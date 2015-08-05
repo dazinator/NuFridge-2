@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Runtime.Versioning;
 using NuGet;
 
-namespace NuFridge.Shared.Model.Interfaces
+namespace NuFridge.Shared.Database.Model.Interfaces
 {
     public interface IInternalPackage
     {
+        bool IsLatestVersion { get; }
+        bool IsAbsoluteLatestVersion { get; }
+
         int PrimaryId { get; set; }
         string Id { get; set; }
         string Version { get; set; }
@@ -41,8 +44,6 @@ namespace NuFridge.Shared.Model.Interfaces
         long Size { get; set; }
         DateTime LastUpdated { get; set; }
         DateTime Created { get; set; }
-        bool IsAbsoluteLatestVersion { get; set; }
-        bool IsLatestVersion { get; set; }
         bool IsPrerelease { get; set; }
         bool Listed { get; set; }
         string Dependencies { get; set; }

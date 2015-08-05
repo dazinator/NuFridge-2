@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nancy;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 using SimpleCrypto;

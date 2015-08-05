@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nancy;
-using NuFridge.Shared.Model;
+﻿using Nancy;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {

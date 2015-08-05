@@ -1,4 +1,5 @@
 ﻿using System;
+using NuFridge.Shared.Database.Model;
 
 namespace NuFridge.Shared.Server.Storage
 {
@@ -15,6 +16,8 @@ namespace NuFridge.Shared.Server.Storage
 
         public void Initialize(Action<string> updateStatusAction)
         {
+            System.Data.Entity.Database.SetInitializer<DatabaseContext>(null);
+
             foreach (IInitializeStore initializeRelationalStore in _initializers)
                 initializeRelationalStore.Initialize(_store, updateStatusAction);
         }

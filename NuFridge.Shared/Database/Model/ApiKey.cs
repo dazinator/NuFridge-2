@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Security;
 
-namespace NuFridge.Shared.Model
+namespace NuFridge.Shared.Database.Model
 {
-    public class ApiKey : IEntity
+    public class ApiKey
     {
         private static readonly RandomNumberGenerator RandomSource = RandomNumberGenerator.Create();
 
@@ -51,12 +50,6 @@ namespace NuFridge.Shared.Model
             lock (RandomSource)
                 RandomSource.GetBytes(numArray);
             return "NuFridge-" + new string(Convert.ToBase64String(numArray).Where(char.IsLetterOrDigit).ToArray()).ToUpperInvariant();
-        }
-
-
-        public string Name
-        {
-            get { return Id.ToString(); }
         }
     }
 }

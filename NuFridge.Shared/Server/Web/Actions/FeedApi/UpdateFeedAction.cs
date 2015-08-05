@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data.Entity;
+using System.Linq;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Storage;
 using SimpleCrypto;
 
@@ -24,7 +26,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
         {
             module.RequiresAuthentication();
 
-            IFeed feed;
+            Feed feed;
 
             try
             {
@@ -37,32 +39,33 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                     return HttpStatusCode.BadRequest;
                 }
 
-                ITransaction transaction = _store.BeginTransaction();
-
-                var existingFeedExists =
-                    transaction.Query<IFeed>().Where("Id = @feedId").Parameter("feedId", feedId).First();
-
-                if (existingFeedExists == null)
+                using (var dbContext = new DatabaseContext())
                 {
-                    return HttpStatusCode.NotFound;
-                }
 
-                if (!string.IsNullOrWhiteSpace(feed.ApiKey))
-                {
-                    ICryptoService cryptoService = new PBKDF2();
+                    var existingFeed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Id == feedId);
 
-                    feed.ApiKeySalt = cryptoService.GenerateSalt();
-                    feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
-                }
-                else if(feed.HasApiKey)
-                {
-                    feed.ApiKeyHashed = existingFeedExists.ApiKeyHashed; //Temporary until API Key table is used
-                    feed.ApiKeySalt = existingFeedExists.ApiKeySalt; //Temporary until API Key table is used
-                }
+                    if (existingFeed == null)
+                    {
+                        return HttpStatusCode.NotFound;
+                    }
 
-                transaction.Update(feed);
-                transaction.Commit();
-                transaction.Dispose();
+                    if (!string.IsNullOrWhiteSpace(feed.ApiKey))
+                    {
+                        ICryptoService cryptoService = new PBKDF2();
+
+                        feed.ApiKeySalt = cryptoService.GenerateSalt();
+                        feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
+                    }
+                    else if (feed.HasApiKey)
+                    {
+                        feed.ApiKeyHashed = existingFeed.ApiKeyHashed; //Temporary until API Key table is used
+                        feed.ApiKeySalt = existingFeed.ApiKeySalt; //Temporary until API Key table is used
+                    }
+
+                    dbContext.Feeds.Attach(feed);
+                    dbContext.Entry(feed).State = EntityState.Modified;
+                    dbContext.SaveChanges();
+                }
             }
             catch (Exception ex)
             {

@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
@@ -39,25 +37,25 @@ namespace NuFridge.Tests
             Mock<IStore> store = new Mock<IStore>();
             builder.RegisterInstance(store.Object);
 
-            Mock<ITransaction> transaction = new Mock<ITransaction>();
-            store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
+            //Mock<ITransaction> transaction = new Mock<ITransaction>();
+            //store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
-            Mock<IQueryBuilder<IFeedConfiguration>> queryMock = new Mock<IQueryBuilder<IFeedConfiguration>>();
-            transaction.Setup(tr => tr.Query<IFeedConfiguration>()).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
+            //Mock<IQueryBuilder<IFeedConfiguration>> queryMock = new Mock<IQueryBuilder<IFeedConfiguration>>();
+            //transaction.Setup(tr => tr.Query<IFeedConfiguration>()).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
 
-            Mock<IFeedConfiguration> mock = new Mock<IFeedConfiguration>();
+            //Mock<IFeedConfiguration> mock = new Mock<IFeedConfiguration>();
 
-            mock.SetupProperty(fc => fc.Directory, "TestDirectory");
-            mock.SetupProperty(fc => fc.Id, 1);
-            mock.SetupProperty(fc => fc.FeedId, 1);
+            //mock.SetupProperty(fc => fc.Directory, "TestDirectory");
+            //mock.SetupProperty(fc => fc.Id, 1);
+            //mock.SetupProperty(fc => fc.FeedId, 1);
 
-            queryMock.Setup(qu => qu.ToList()).Returns(new List<IFeedConfiguration> {mock.Object});
-            queryMock.Setup(qu => qu.First()).Returns(mock.Object);
-            queryMock.Setup(qu => qu.Count()).Returns(1);
+            //queryMock.Setup(qu => qu.ToList()).Returns(new List<IFeedConfiguration> {mock.Object});
+            //queryMock.Setup(qu => qu.First()).Returns(mock.Object);
+            //queryMock.Setup(qu => qu.Count()).Returns(1);
         }
 
         [SetUp]

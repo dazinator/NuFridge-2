@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Microsoft.Data.OData;
 
 namespace NuFridge.Shared.Server.Web
 {
-    public class MemoryResponseMessage : Microsoft.Data.OData.IODataResponseMessage
+    public class MemoryResponseMessage : IODataResponseMessage
     {
         readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 

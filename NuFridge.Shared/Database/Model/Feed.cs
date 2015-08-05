@@ -1,19 +1,32 @@
-﻿using System.Net;
-using Newtonsoft.Json;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Server.Storage;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Dapper;
 
-namespace NuFridge.Shared.Model
+namespace NuFridge.Shared.Database.Model
 {
-    public class Feed : IFeed, IEntity
+    [Dapper.Table("Feed", Schema = "NuFridge")]
+    public class Feed : IFeed
     {
+        [Key]
         public int Id { get;  set; }
         public string Name { get; set; }
+
+        [NotMapped]
+        [Editable(false)]
         public string FeedUri { get; set; }
+
+        [NotMapped]
+        [Editable(false)]
         public string ApiKey { get; set; }
+
         public string ApiKeyHashed { get; set; }
         public string ApiKeySalt { get; set; }
+
+        [NotMapped]
+        [Editable(false)]
         public bool HasApiKey { get; set; }
+
+        [NotMapped]
+        [Editable(false)]
         public string RootUrl { get; set; }
     }
 

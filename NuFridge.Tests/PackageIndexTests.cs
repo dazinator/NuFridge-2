@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Moq;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -21,7 +21,7 @@ namespace NuFridge.Tests
         {
             Store = new Mock<IStore>();
             Factory = new Mock<IInternalPackageRepositoryFactory>();
-            Index = new TestPackageIndex(Factory.Object, Store.Object, 1);
+            Index = new TestPackageIndex(1);
         }
 
         //[Test]
@@ -44,21 +44,21 @@ namespace NuFridge.Tests
         {
             var package = TestPackageIndex.GetTestPackage("Test", "1.0.0");
 
-            Mock<ITransaction> transaction = new Mock<ITransaction>();
-            Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
+            //Mock<ITransaction> transaction = new Mock<ITransaction>();
+            //Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
-            //Index.DeletePackage(package);
+            ////Index.DeletePackage(package);
 
-            transaction.Verify(tr => tr.Delete(It.IsAny<IInternalPackage>()), Times.Once);
-            transaction.Verify(tr => tr.Commit(), Times.Once);
-            transaction.Verify(tr => tr.Dispose(), Times.Once);
+            //transaction.Verify(tr => tr.Delete(It.IsAny<IInternalPackage>()), Times.Once);
+            //transaction.Verify(tr => tr.Commit(), Times.Once);
+            //transaction.Verify(tr => tr.Dispose(), Times.Once);
         }
 
 
 
         public class TestPackageIndex : PackageIndex
         {
-            public TestPackageIndex(IInternalPackageRepositoryFactory factory, IStore store, int feedId) : base(store, feedId)
+            public TestPackageIndex(int feedId) : base(feedId)
             {
                 
             }

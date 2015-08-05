@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NuFridge.Shared.Installation;
 using NuFridge.Shared.Server.Application;
-using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Commands
 {

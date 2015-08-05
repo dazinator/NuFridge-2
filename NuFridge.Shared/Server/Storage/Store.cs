@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Data;
 using System.Data.SqlClient;
-using System.Reflection;
 using System.Runtime.Serialization.Formatters;
 using Autofac;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Server.Storage
@@ -42,16 +39,6 @@ namespace NuFridge.Shared.Server.Storage
             _jsonSettings.TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple;
         }
 
-        public ITransaction BeginTransaction()
-        {
-            return BeginTransaction(IsolationLevel.ReadCommitted);
-        }
-
-        public ITransaction BeginTransaction(IsolationLevel isolationLevel)
-        {
-            return new Transaction(_container, _connectionString, isolationLevel, _jsonSettings, _mappings);
-        }
-
         private string SetConnectionStringOptions()
         {
             if (string.IsNullOrWhiteSpace(_config.ConnectionString))
@@ -62,7 +49,7 @@ namespace NuFridge.Shared.Server.Storage
             var connectionStringBuilder = new SqlConnectionStringBuilder(_config.ConnectionString)
             {
                 MultipleActiveResultSets = true,
-                Enlist = false,
+                Enlist = true,
                 Pooling = true,
                 ApplicationName = "NuFridge"
             };

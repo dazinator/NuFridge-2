@@ -46,7 +46,7 @@ namespace NuFridge.Shared.Server.Storage
             }
         }
 
-        public PropertyInfo Property { get; private set; }
+        public PropertyInfo Property { get; }
 
         public IPropertyReaderWriter<object> ReaderWriter { get; set; }
 

@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using Nancy;
 using Nancy.Responses;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
-using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using HttpStatusCode = Nancy.HttpStatusCode;
 
@@ -25,7 +20,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             _fileSystem = fileSystem;
         }
 
-        public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             int feed = parameters.id;
 

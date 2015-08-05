@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
-using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Statistics.Design;
 using NuFridge.Shared.Server.Storage;
 
@@ -10,36 +9,35 @@ namespace NuFridge.Shared.Server.Statistics
 {
     public class FeedDownloadCountStatistic : StatisticBase<List<FeedDownloadCountStatisticItem>>
     {
-        public FeedDownloadCountStatistic(ITransaction transaction) : base(transaction)
-        {
-
-        }
-
         protected override List<FeedDownloadCountStatisticItem> Update()
         {
             var list = new List<FeedDownloadCountStatisticItem>();
 
-            var feeds = Transaction.Query<IFeed>().ToList();
-
-            ColorGenerator generator = new ColorGenerator();
-
-            foreach (var feed in feeds)
+            using (var dbContext = new DatabaseContext())
             {
-                var packages = Transaction.Query<IInternalPackage>().Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
+                var feeds = dbContext.Feeds.AsNoTracking();
 
-                if (packages.Any(pk => pk.VersionDownloadCount > 0))
+                ColorGenerator generator = new ColorGenerator();
+
+                foreach (var feed in feeds)
                 {
-                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
+                    var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).AsNoTracking().Where(pk => pk.FeedId == feed.Id);
+
+                    if (packages.Any(pk => pk.VersionDownloadCount > 0))
+                    {
+                        list.Add(new FeedDownloadCountStatisticItem(feed.Name,
+                            packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
+                    }
                 }
-            }
 
-            var orderedList = list.OrderByDescending(it => it.DownloadCount).ToList();
-            if (orderedList.Count() > 10)
-            {
-                orderedList = orderedList.Take(10).ToList();
-            }
+                var orderedList = list.OrderByDescending(it => it.DownloadCount).ToList();
+                if (orderedList.Count() > 10)
+                {
+                    orderedList = orderedList.Take(10).ToList();
+                }
 
-            return orderedList;
+                return orderedList;
+            }
         }
 
         protected override string StatName

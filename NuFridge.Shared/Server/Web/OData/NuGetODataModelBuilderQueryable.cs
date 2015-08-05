@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http.OData.Builder;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 
 namespace NuFridge.Shared.Server.Web.OData
 {
@@ -31,7 +26,7 @@ namespace NuFridge.Shared.Server.Web.OData
         {
             var builder = new ODataConventionModelBuilder();
 
-            var entity = builder.EntitySet<IInternalPackage>("Packages");
+            var entity = builder.EntitySet<InternalPackage>("Packages");
             entity.EntityType.HasKey(pkg => pkg.Id);
             entity.EntityType.HasKey(pkg => pkg.Version);
 
@@ -39,11 +34,11 @@ namespace NuFridge.Shared.Server.Web.OData
             searchAction.Parameter<string>("searchTerm");
             searchAction.Parameter<string>("targetFramework");
             searchAction.Parameter<bool>("includePrerelease");
-            searchAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            searchAction.ReturnsCollectionFromEntitySet<InternalPackage>("Packages");
 
             var findPackagesAction = builder.Action("FindPackagesById");
             findPackagesAction.Parameter<string>("id");
-            findPackagesAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            findPackagesAction.ReturnsCollectionFromEntitySet<InternalPackage>("Packages");
 
             var getUpdatesAction = builder.Action("GetUpdates");
             getUpdatesAction.Parameter<string>("packageIds");
@@ -51,10 +46,10 @@ namespace NuFridge.Shared.Server.Web.OData
             getUpdatesAction.Parameter<bool>("includeAllVersions");
             getUpdatesAction.Parameter<string>("targetFrameworks");
             getUpdatesAction.Parameter<string>("versionConstraints");
-            getUpdatesAction.ReturnsCollectionFromEntitySet<IInternalPackage>("Packages");
+            getUpdatesAction.ReturnsCollectionFromEntitySet<InternalPackage>("Packages");
 
             _model = builder.GetEdmModel();
-            _model.SetHasDefaultStream(_model.FindDeclaredType(typeof(IInternalPackage).FullName) as IEdmEntityType, true);
+            _model.SetHasDefaultStream(_model.FindDeclaredType(typeof(InternalPackage).FullName) as IEdmEntityType, true);
         }
     }
 }

@@ -3,9 +3,9 @@ using System.Linq;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
@@ -55,9 +55,11 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
             IFeed feed;
             IFeedConfiguration config;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                feed =
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
 
 
@@ -69,13 +71,9 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
                 return response;
             }
 
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                config =
-                    transaction.Query<IFeedConfiguration>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feed.Id)
-                        .First();
+                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feed.Id);
             }
 
 

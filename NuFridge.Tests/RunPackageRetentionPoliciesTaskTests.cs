@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Scheduler.Jobs;
@@ -213,22 +213,22 @@ namespace NuFridge.Tests
             feedConfig.Setup(fc => fc.RetentionPolicyEnabled).Returns(retentionPolicyEnabled);
             InMemoryFeedConfigurations.Add(feedConfig.Object);
 
-            Mock<ITransaction> transaction = new Mock<ITransaction>();
-            Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
+            //Mock<ITransaction> transaction = new Mock<ITransaction>();
+            //Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
 
-            transaction.Setup(tr => tr.Query<IFeed>().ToList()).Returns(InMemoryFeeds.ToList());
-            transaction.Setup(tr => tr.Query<IFeedConfiguration>().ToList()).Returns(InMemoryFeedConfigurations.ToList());
+            //transaction.Setup(tr => tr.Query<IFeed>().ToList()).Returns(InMemoryFeeds.ToList());
+            //transaction.Setup(tr => tr.Query<IFeedConfiguration>().ToList()).Returns(InMemoryFeedConfigurations.ToList());
 
-            Mock<IQueryBuilder<IInternalPackage>> queryMock = new Mock<IQueryBuilder<IInternalPackage>>();
-            transaction.Setup(tr => tr.Query<IInternalPackage>()).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
+            //Mock<IQueryBuilder<IInternalPackage>> queryMock = new Mock<IQueryBuilder<IInternalPackage>>();
+            //transaction.Setup(tr => tr.Query<IInternalPackage>()).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
+            //queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
 
-            queryMock.Setup(qu => qu.ToList()).Returns(packageMocks.Select(pm => pm.Object).ToList());
-            queryMock.Setup(qu => qu.First()).Returns(packageMocks.FirstOrDefault() != null ? packageMocks.First().Object : null);
-            queryMock.Setup(qu => qu.Count()).Returns(packageMocks.Count());
+            //queryMock.Setup(qu => qu.ToList()).Returns(packageMocks.Select(pm => pm.Object).ToList());
+            //queryMock.Setup(qu => qu.First()).Returns(packageMocks.FirstOrDefault() != null ? packageMocks.First().Object : null);
+            //queryMock.Setup(qu => qu.Count()).Returns(packageMocks.Count());
         }
 
         public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesJob

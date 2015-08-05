@@ -1,28 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.Entity.Core.EntityClient;
-using System.Data.Entity.Core.Mapping;
-using System.Data.Entity.Core.Metadata.Edm;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
-using System.Reflection;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Query;
 using Nancy;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -73,9 +60,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             var request = new HttpRequestMessage(method, url);
             ListExtensions.AddRange(request.Properties, queryDictionary);
 
-            var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
+            var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
 
-            using (var dbContext = new ReadOnlyDatabaseContext(Store))
+            using (var dbContext = new DatabaseContext())
             {
                 bool enableStableOrdering;
                 var ds = CreateQuery(dbContext, queryDictionary, feed, out enableStableOrdering);
@@ -109,7 +96,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return url;
         }
 
-        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectFields)
+        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<InternalPackage> ds, string selectFields)
         {
             long? total = request.ODataProperties().TotalCount;
 
@@ -133,7 +120,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             };
         }
 
-        private static IQueryable<IInternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<IInternalPackage> ds, bool enableStableOrdering)
+        private static IQueryable<InternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<InternalPackage> ds, bool enableStableOrdering)
         {
             ODataQueryOptions options = new ODataQueryOptions(context, request);
 
@@ -144,7 +131,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             };
 
 
-            ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
+            ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
             return ds;
         }
 
@@ -157,13 +144,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
 
 
-        protected virtual IQueryable<IInternalPackage> CreateQuery(ReadOnlyDatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
+        protected virtual IQueryable<InternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
         {
             enableStableOrdering = true;
 
             //var query = dbContext.Database.SqlQuery<InternalPackage>("NuFridge.GetAllPackages @feedId", new SqlParameter("feedId", feed.Id));
 
-            IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+            IQueryable<InternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
 
             ds = ds.Where(pk => pk.Listed);
 
@@ -261,13 +248,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private IFeed GetFeedModel(string feedName)
         {
             IFeed feed;
-            using (ITransaction transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
                 feed =
-                    transaction.Query<IFeed>()
-                        .Where("Name = @feedName")
-                        .Parameter("feedName", feedName)
-                        .First();
+                    dbContext.Feeds.AsNoTracking()
+                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
             }
             return feed;
         }

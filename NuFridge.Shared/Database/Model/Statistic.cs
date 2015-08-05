@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NuFridge.Shared.Model.Interfaces;
-
-namespace NuFridge.Shared.Model
+﻿namespace NuFridge.Shared.Database.Model
 {
-    public class Statistic : IEntity, IStatistic
+    public class Statistic : IStatistic
     {
         public int Id { get; set; }
 

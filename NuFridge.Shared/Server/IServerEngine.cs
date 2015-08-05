@@ -1,6 +1,4 @@
-﻿using Hangfire;
-
-namespace NuFridge.Shared.Server
+﻿namespace NuFridge.Shared.Server
 {
     public interface IServerEngine
     {

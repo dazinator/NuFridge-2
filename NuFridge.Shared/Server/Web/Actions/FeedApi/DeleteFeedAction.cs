@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Nancy;
 using Nancy.Security;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
@@ -29,16 +28,13 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int feedId = int.Parse(parameters.id);
 
-            IFeed feed;
-            IFeedConfiguration config;
-            List<IInternalPackage> packages;
+            Feed feed;
+            FeedConfiguration config;
+            List<InternalPackage> packages;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feed = transaction.Query<IFeed>()
-                    .Where("Id = @feedId")
-                    .Parameter("feedId", feedId)
-                    .First();
+                feed = dbContext.Feeds.FirstOrDefault(fd => fd.Id == feedId);
             }
 
             if (feed == null)
@@ -46,37 +42,26 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
                 return HttpStatusCode.NotFound;
             }
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                config =
-                    transaction.Query<IFeedConfiguration>()
-                        .Where("FeedId = @feedId")
-                        .Parameter("feedId", feedId)
-                        .First();
+                config = dbContext.FeedConfigurations.FirstOrDefault(fc => fc.FeedId == feedId);
             }
 
             string packageDirectory = config.Directory;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                packages =
-                    transaction.Query<IInternalPackage>()
-                        .Where("FeedId = @feedId").Parameter("feedId", feedId)
-                        .ToList();
+                packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feedId).Where(pk => pk.FeedId == feedId).ToList();
 
                 foreach (var package in packages)
                 {
-                    transaction.Delete(package);
+                    dbContext.Packages.Remove(package);
                 }
 
-                transaction.Delete(feed);
-                transaction.Delete(config);
+                dbContext.Feeds.Remove(feed);
+                dbContext.FeedConfigurations.Remove(config);
 
-                string command = "sp_DropNuFridgePackageTable @feedId";
-
-                transaction.ExecuteScalar<string>(command, new CommandParameters(new { feedId = feed.Id }));
-
-                transaction.Commit();
+                dbContext.SaveChanges();
             }
 
             if (Directory.Exists(packageDirectory))

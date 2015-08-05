@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Security.Cryptography;
-using System.Text;
-using NuFridge.Shared.Model.Interfaces;
+using Dapper;
 using NuFridge.Shared.Server.Security;
 
-namespace NuFridge.Shared.Model
+namespace NuFridge.Shared.Database.Model
 {
-    public class User : IEntity
+    [Table("User", Schema = "NuFridge")]
+    public class User : IUser
     {
+        [Key]
         public int Id { get; protected set; }
 
         public string Username { get; set; }
@@ -43,10 +43,20 @@ namespace NuFridge.Shared.Model
             PasswordHashed = PasswordHasher.HashPassword(plainTextPassword);
             return true;
         }
+    }
 
-        public string Name
-        {
-            get { return DisplayName ?? Username; }
-        }
+    public interface IUser
+    {
+        int Id { get; }
+
+        string Username { get; set; }
+        string DisplayName { get; set; }
+        string EmailAddress { get; set; }
+
+        string PasswordHashed { get; set; }
+        bool IsActive { get; set; }
+        DateTime LastUpdated { get; set; }
+
+        void SetPassword(string plainTextPassword);
     }
 }

@@ -28,11 +28,11 @@ namespace NuFridge.Shared.Server.FileSystem
             }
         }
 
-        public int RetryAttempts { get; private set; }
+        public int RetryAttempts { get; set; }
 
-        public int SleepBetweenAttemptsMilliseconds { get; private set; }
+        public int SleepBetweenAttemptsMilliseconds { get; }
 
-        public bool ThrowOnFailure { get; private set; }
+        public bool ThrowOnFailure { get; set; }
 
         private DeletionOptions()
         {

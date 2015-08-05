@@ -18,9 +18,9 @@ namespace NuFridge.Shared.Server.Storage
 
         public ColumnMapping IdColumn { get; protected set; }
 
-        public List<ColumnMapping> IndexedColumns { get; private set; }
+        public List<ColumnMapping> IndexedColumns { get; }
 
-        public List<UniqueRule> UniqueConstraints { get; private set; }
+        public List<UniqueRule> UniqueConstraints { get; }
 
         protected EntityMapping()
         {

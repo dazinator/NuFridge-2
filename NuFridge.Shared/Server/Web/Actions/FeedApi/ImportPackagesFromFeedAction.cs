@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hangfire;
+﻿using Hangfire;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
-using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Scheduler.Jobs;
-using FeedImportOptions = NuFridge.Shared.Server.Scheduler.Jobs.ImportPackagesForFeedJob.FeedImportOptions;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
@@ -30,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int feedId = parameters.id;
 
-            FeedImportOptions options = module.Bind<FeedImportOptions>();
+            ImportPackagesForFeedJob.FeedImportOptions options = module.Bind<ImportPackagesForFeedJob.FeedImportOptions>();
 
 
             string errorMessage;

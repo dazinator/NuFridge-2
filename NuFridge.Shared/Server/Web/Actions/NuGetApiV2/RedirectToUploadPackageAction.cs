@@ -1,11 +1,9 @@
 ﻿using System.IO;
+using System.Linq;
 using Nancy;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Configuration;
-using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
-using NuGet;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
@@ -20,13 +18,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             _portalConfig = portalConfig;
         }
 
-        public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string feedName = parameters.feed;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var feed = transaction.Query<IFeed>().Where("Name = @feedName").Parameter("feedName", feedName).First();
+                var feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Name.Equals(feedName));
                 if (feed == null)
                 {
                     var errorResponse = module.Response.AsText("Feed does not exist.");

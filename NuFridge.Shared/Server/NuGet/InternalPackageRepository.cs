@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
-using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms.VisualStyles;
-using Hangfire;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -59,10 +53,6 @@ namespace NuFridge.Shared.Server.NuGet
             _packageIndex.IncrementDownloadCount(package);
         }
 
-        public IEnumerable<IInternalPackage> GetVersions(ITransaction transaction, string packageId, bool allowPreRelease)
-        {
-            return _packageIndex.GetVersions(transaction, packageId, allowPreRelease);
-        }
 
         public Stream GetPackageRaw(string packageId, SemanticVersion version)
         {
@@ -76,19 +66,13 @@ namespace NuFridge.Shared.Server.NuGet
         {
             IFeedConfiguration config;
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
                 //Get the config file needed for later
-                config = transaction.Query<IFeedConfiguration>()
-                    .Where("FeedId = @feedId")
-                    .Parameter("feedId", FeedId)
-                    .First();
+                config = dbContext.FeedConfigurations.FirstOrDefault(fc => fc.FeedId == FeedId);
 
                 //Delete the package
-                _packageIndex.DeletePackage(transaction, internalPackage);
-
-                //Commit the transaction
-                transaction.Commit();
+                _packageIndex.DeletePackage(internalPackage);
             }
 
             var filePath = GetPackageFilePath(internalPackage.Id, internalPackage.GetSemanticVersion());
@@ -108,19 +92,12 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void RemovePackage(IInternalPackage internalPackage)
         {
-            using (ITransaction transaction = _store.BeginTransaction())
-            {
-                //Unlist the package
-                _packageIndex.UnlistPackage(transaction, internalPackage);
-
-                //Commit the transaction
-                transaction.Commit();
-            }
+                _packageIndex.UnlistPackage(internalPackage);
         }
 
         public void IndexPackage(IPackage package)
         {
-            var localPackage = InternalPackage.Create(FeedId, package);
+            var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
             _packageIndex.AddPackage(localPackage);
 
@@ -149,7 +126,7 @@ namespace NuFridge.Shared.Server.NuGet
                 throw;
             }
 
-            var localPackage = InternalPackage.Create(FeedId, package);
+            var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
              _packageIndex.AddPackage(localPackage);
 

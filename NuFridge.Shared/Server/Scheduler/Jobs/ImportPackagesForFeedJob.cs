@@ -1,25 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Hangfire;
-using Hangfire.States;
-using Hangfire.Storage.Monitoring;
 using Microsoft.AspNet.SignalR;
-using Nancy;
-using Nancy.Responses;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Storage;
-using NuFridge.Shared.Server.Web;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using NuFridge.Shared.Server.Web.SignalR;
 using NuGet;
@@ -37,16 +28,16 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _factory = factory;
         }
 
-        [AutomaticRetryAttribute(Attempts = 0)]
+        [AutomaticRetry(Attempts = 0)]
         public void Execute(IJobCancellationToken cancellationToken, int feedId, FeedImportOptions options)
         {
             _log.Info("Running import packages job for feed id " + feedId);
 
             string jobId = JobContext.JobId;
 
-            using (var transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                if (transaction.Query<IFeed>().Count() <= 1)
+                if (dbContext.Feeds.Count() <= 1)
                 {
                     _log.Debug("Disabled local cache for package import for feed id " + feedId);
 
@@ -95,6 +86,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         public void ImportPackage(string parentJobId, int feedId, string feedUrl, string packageId, string strVersion, bool useLocalPackages)
         {
             SemanticVersion version = new SemanticVersion(strVersion);
+            strVersion = version.ToString();
 
             try
             {
@@ -150,7 +142,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     exception += "\r\nInner Exception: " + ex.InnerException.Message;
                 }
 
-                _log.ErrorException(message + "\r\n" + exception, ex);
+                _log.ErrorException(message, ex);
 
                 PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString(), exception));
                 throw new ImportPackageException(ex.Message);
@@ -159,15 +151,23 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
         private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, string strVersion, DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
         {
-            using (var transaction = Store.BeginTransaction())
-            {
-                var cachePackageRecords =
-                    transaction.Query<IInternalPackage>()
-                        .Where("PackageId = @packageId AND Version = @version")
-                        .Parameter("packageId", packageId).Parameter("version", strVersion)
-                        .ToList(0, 10);
+            return false;
 
-                foreach (var cachePackageRecord in cachePackageRecords)
+            List<InternalPackage> cachePackageRecords;
+
+
+            using (var dbContext = new DatabaseContext())
+            {
+                using (dbContext.Database.BeginTransaction(IsolationLevel.ReadUncommitted))
+                {
+                    cachePackageRecords =
+                        dbContext.Packages.Where(pk => pk.Id.Equals(packageId) && pk.Version == strVersion)
+                            .Take(5)
+                            .ToList();
+                }
+            }
+
+            foreach (var cachePackageRecord in cachePackageRecords)
                 {
                     if (!string.IsNullOrWhiteSpace(cachePackageRecord?.Hash))
                     {
@@ -193,7 +193,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                         }
                     }
                 }
-            }
+            
             return false;
         }
 
@@ -311,7 +311,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     _log.Debug("Find specific package " + options.SpecificPackageId + " v" + options.Version + " from " + options.FeedUrl);
 
-                    packages = new List<IPackage>()
+                    packages = new List<IPackage>
                     {
                         remoteRepository.FindPackage(options.SpecificPackageId, new SemanticVersion(options.Version))
                     };

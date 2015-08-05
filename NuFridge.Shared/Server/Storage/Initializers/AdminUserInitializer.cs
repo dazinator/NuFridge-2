@@ -1,44 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
-using System.IO;
+using System.Data.SqlClient;
+using System.Linq;
+using Dapper;
+using NuFridge.Shared.Database;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Server.Storage.Initializers
 {
     public class AdminUserInitializer : IInitializeStore
     {
+        private readonly IUserService _userService;
         private readonly ILog _log = LogProvider.For<AdminUserInitializer>();
+
+        public AdminUserInitializer(IUserService userService)
+        {
+            _userService = userService;
+        }
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            Database.SetInitializer<ReadOnlyDatabaseContext>(null);
 
             updateStatusAction("Checking if the administrator user exists");
 
             _log.Info("Checking if the administrator user exists.");
 
-            using (ITransaction transaction = store.BeginTransaction())
-            {
-                var count = transaction.Query<User>().Count();
-
-                if (count == 0)
-                {
-                    _log.Info("Creating the administrator user.");
-
-                    User user = new User("administrator");
-                    user.IsActive = true;
-                    user.EmailAddress = "admin@nufridge.com";
-                    user.LastUpdated = DateTime.Now;
-                    user.SetPassword("password");
-                    user.DisplayName = "Administrator";
-                    
-                    transaction.Insert(user);
-
-                    transaction.Commit();
-                }
-            }
+            _userService.CreateAdministratorUserIfNotExist();
         }
     }
 }

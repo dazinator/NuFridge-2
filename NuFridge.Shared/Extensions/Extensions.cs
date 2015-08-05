@@ -4,9 +4,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Nancy;
 using Nancy.Cookies;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Model.Mappings;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Extensions
 {

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet.Symbols
@@ -11,7 +10,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
     {
         public string FindSourceFile(string referencedSource, ISet<string> sourceFiles)
         {
-            var parts = referencedSource.Split(new[] { '/', '\\' });
+            var parts = referencedSource.Split('/', '\\');
             var c = 0;
             var i = parts[0].Length + 1;
 

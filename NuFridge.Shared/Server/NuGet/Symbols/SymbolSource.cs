@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
-using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet.Symbols
@@ -85,7 +81,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
             var folderPath = GetUnzippedPackagePath(symbolsDirectory, packageId, packageVersion);
             if (Directory.Exists(folderPath))
             {
-                Directory.Delete(folderPath, recursive: true);
+                Directory.Delete(folderPath, true);
             }
         }
 
@@ -107,7 +103,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
                     parts = new[]
                     {
                         packageId,
-                        packageVersion.ToString(),
+                        packageVersion,
                         "src",
                         relativePath
                     };

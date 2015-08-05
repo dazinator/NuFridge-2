@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using Nancy;
 using Nancy.Security;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
@@ -19,14 +15,14 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
             _store = store;
         }
 
-        public dynamic Execute(dynamic parameters, global::Nancy.INancyModule module)
+        public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                var feedsCount = transaction.Query<IFeed>().Count();
-                var usersCount = transaction.Query<User>().Count();
+                var feedsCount = dbContext.Feeds.AsNoTracking().Count();
+                var usersCount = dbContext.Users.AsNoTracking().Count();
 
                 return new
                 {

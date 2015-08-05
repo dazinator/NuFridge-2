@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using NuFridge.Shared.Server.Configuration;
-using NuFridge.Shared.Server.Diagnostics;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Modules
 {

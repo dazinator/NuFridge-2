@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NuFridge.Shared.Server.Application
+﻿namespace NuFridge.Shared.Server.Application
 {
     public interface IApplicationInstanceStore
     {

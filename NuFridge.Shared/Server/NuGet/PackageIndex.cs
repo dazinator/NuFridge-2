@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Data.SqlClient;
 using System.Linq;
-using Linq2Rest;
-using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
-using NuFridge.Shared.Model.Mappings;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Storage;
-using NuFridge.Shared.Server.Web.Nancy;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -18,12 +11,10 @@ namespace NuFridge.Shared.Server.NuGet
     public class PackageIndex
     {
         private readonly int _feedId;
-        private readonly IStore _store;
        // private readonly ICurrentRequest _currentRequest;
 
-        public PackageIndex(IStore store, int feedId)
+        public PackageIndex(int feedId)
         {
-            _store = store;
             _feedId = feedId;
            // _currentRequest = currentRequest;
 
@@ -37,31 +28,42 @@ namespace NuFridge.Shared.Server.NuGet
         {
      //       var username = _currentRequest.Context.CurrentUser.UserName;
 
-            using (var dbContext = new WritableDatabaseContext(_store))
+            using (var dbContext = new DatabaseContext())
             {
                 dbContext.Packages.Add((InternalPackage) package);
-                dbContext.SaveChanges("admin");
+                dbContext.SaveChanges();
             }
         }
 
-        public void UnlistPackage(ITransaction transaction, IInternalPackage package)
+        public void UnlistPackage(IInternalPackage package)
         {
-            IInternalPackage internalPackage = GetPackage(package.Id, package.GetSemanticVersion());
+            InternalPackage internalPackage = (InternalPackage)GetPackage(package.Id, package.GetSemanticVersion());
             if (internalPackage == null)
                 return;
 
             internalPackage.Listed = false;
 
-            transaction.Update(internalPackage);
+            using (var dbContext = new DatabaseContext())
+            {
+                dbContext.Packages.Attach(internalPackage);
+                dbContext.Entry(internalPackage).Property(a => a.Listed).IsModified = true;
+
+                dbContext.SaveChanges();
+            }
         }
 
-        public void DeletePackage(ITransaction transaction, IInternalPackage package)
+        public void DeletePackage(IInternalPackage package)
         {
-            IInternalPackage internalPackage = GetPackage(package.Id, package.GetSemanticVersion());
+            InternalPackage internalPackage = (InternalPackage)GetPackage(package.Id, package.GetSemanticVersion());
             if (internalPackage == null)
                 return;
 
-                transaction.Delete(internalPackage); 
+            using (var dbContext = new DatabaseContext())
+            {
+                dbContext.Packages.Attach(internalPackage);
+                dbContext.Packages.Remove(internalPackage);
+                dbContext.SaveChanges();
+            }
         }
 
         public IInternalPackage GetPackage(string packageId, SemanticVersion version)
@@ -69,60 +71,39 @@ namespace NuFridge.Shared.Server.NuGet
             return LoadPackage(packageId.ToLowerInvariant(), version.ToString().ToLowerInvariant());
         }
 
-        public List<IInternalPackage> GetVersions(ITransaction transaction, string packageId,
-            bool allowPreRelease)
-        {
-            var query = transaction.Query<IInternalPackage>();
-
-            query.Where("PackageId LIKE @packageId AND FeedId = @feedId");
-            query.Parameter("packageId", packageId).Parameter("feedId", _feedId);
-
-            if (!allowPreRelease)
-            {
-                query.Where("[IsPrerelease] = 0");
-            }
-
-            var packages = query.ToList();
-
-            return packages;
-        }
-
-  
-
-
-
         protected virtual IInternalPackage LoadPackage(string id, string version)
         {
-            using (var transaction = _store.BeginTransaction())
+
+            IInternalPackage package;
+            using (var dbContext = new DatabaseContext())
             {
-                return
-                    transaction.Query<IInternalPackage>()
-                        .Where("PackageId LIKE @packageId AND Version = @packageVersion AND FeedId = @feedId")
-                        .Parameter("packageId", id)
-                        .Parameter("packageVersion", version)
-                        .Parameter("feedId", _feedId)
-                        .First();
+
+                package = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + _feedId )
+                    .FirstOrDefault(pk => pk.FeedId == _feedId && pk.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase) && pk.Version == version);
             }
+            return package;
         }
 
         public void IncrementDownloadCount(IInternalPackage package)
         {
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                IEnumerable<IInternalPackage> packages = GetVersions(transaction, package.Id, true).ToList();
+                IEnumerable<IInternalPackage> packages =
+                    EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + _feedId).Where(
+                        pk =>
+                            pk.Id.Equals(package.Id, StringComparison.InvariantCultureIgnoreCase) &&
+                            pk.FeedId == _feedId);
 
-                var newestPackage = packages.Single(pk => pk.Id == package.Id);
+                var newestPackage = packages.Single(pk => pk.PrimaryId == package.PrimaryId);
 
                 newestPackage.VersionDownloadCount++;
 
                 foreach (var versionOfPackage in packages)
                 {
                     versionOfPackage.DownloadCount = packages.Sum(pk => pk.VersionDownloadCount);
-
-                    transaction.Update(versionOfPackage);
                 }
 
-                transaction.Commit();
+                dbContext.SaveChanges();
             }
         }
     }

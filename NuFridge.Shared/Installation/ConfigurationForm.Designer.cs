@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace NuFridge.Shared.Installation
 {
@@ -7,7 +8,7 @@ namespace NuFridge.Shared.Installation
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -408,32 +409,32 @@ namespace NuFridge.Shared.Installation
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel topPanel;
-        private System.Windows.Forms.PictureBox pbClose;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pbContinue;
-        private System.Windows.Forms.TextBox txtSqlServer;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtDatabase;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtUserId;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox txtSiteUrl;
-        private System.Windows.Forms.Label lblLoadingMessage;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox txtDebuggingTools;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private Label label1;
+        private Panel topPanel;
+        private PictureBox pbClose;
+        private PictureBox pictureBox1;
+        private PictureBox pbContinue;
+        private TextBox txtSqlServer;
+        private Label label2;
+        private Label label3;
+        private TextBox txtDatabase;
+        private Label label4;
+        private TextBox txtUserId;
+        private Label label5;
+        private TextBox txtPassword;
+        private Label label6;
+        private Label label7;
+        private Label label8;
+        private TextBox txtSiteUrl;
+        private Label lblLoadingMessage;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private Label label12;
+        private Label label13;
+        private Label label14;
+        private Label label15;
+        private TextBox txtDebuggingTools;
+        private LinkLabel linkLabel1;
     }
 }

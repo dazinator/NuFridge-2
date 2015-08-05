@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Hangfire;
-using NuFridge.Shared.Extensions;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
@@ -16,7 +15,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     public class RunPackageRetentionPoliciesJob : JobBase
     {
         private IStore Store { get; set; }
-        private IInternalPackageRepositoryFactory PackageRepositoryFactory { get; set; }
+        private IInternalPackageRepositoryFactory PackageRepositoryFactory { get; }
         private readonly ILog _log = LogProvider.For<RunPackageRetentionPoliciesJob>();
 
         public override string JobId => typeof(RunPackageRetentionPoliciesJob).Name;
@@ -31,18 +30,18 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         }
 
         [DisableConcurrentExecution(10)]
-        [AutomaticRetryAttribute(Attempts = 0)]
+        [AutomaticRetry(Attempts = 0)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
             _log.Info("Running package retention policies.");
 
-            List<IFeed> feeds;
-            List<IFeedConfiguration> configs;
+            List<Feed> feeds;
+            List<FeedConfiguration> configs;
 
-            using (var transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                feeds = transaction.Query<IFeed>().ToList();
-                configs = transaction.Query<IFeedConfiguration>().ToList();
+                feeds = dbContext.Feeds.AsNoTracking().ToList();
+                configs = dbContext.FeedConfigurations.AsNoTracking().ToList();
             }
 
             var feedDictionary = new Dictionary<IFeed, IFeedConfiguration>();
@@ -115,9 +114,9 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             List<IInternalPackage> packages;
 
-            using (var transaction = Store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                packages = transaction.Query<IInternalPackage>().View("AllVersionsPackageView").Where("FeedId = @feedId").Parameter("feedId", feed.Id).ToList();
+                packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).Cast<IInternalPackage>().ToList();
             }
 
             Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());
@@ -174,7 +173,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     try
                     {
-                        if (config.RpDeletePackages)
+                        if (config.RetentionPolicyDeletePackages)
                         {
                             packageRepo.DeletePackage(packageToDelete);
                         }
@@ -226,7 +225,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     try
                     {
-                        if (config.RpDeletePackages)
+                        if (config.RetentionPolicyDeletePackages)
                         {
                             packageRepo.DeletePackage(packageToDelete);
                         }

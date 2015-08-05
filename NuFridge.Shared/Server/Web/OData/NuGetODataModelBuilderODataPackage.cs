@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http.OData.Builder;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
-using NuFridge.Shared.Model;
-using NuFridge.Shared.Model.Interfaces;
 
 namespace NuFridge.Shared.Server.Web.OData
 {

@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Autofac;
-using Hangfire;
-using Hangfire.Dashboard;
-using Hangfire.Storage;
-using Hangfire.Storage.Monitoring;
-using Microsoft.Owin;
+﻿using Autofac;
 using Nancy;
-using Nancy.Security;
 using NuFridge.Shared.Server.Web.Actions.SchedulerApi;
 
 namespace NuFridge.Shared.Server.Web.Modules

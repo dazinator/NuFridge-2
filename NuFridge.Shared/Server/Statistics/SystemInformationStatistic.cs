@@ -1,9 +1,5 @@
-﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NuFridge.Shared.Server.Diagnostics;
+﻿using NuFridge.Shared.Server.Diagnostics;
 using NuFridge.Shared.Server.Scheduler;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Statistics
 {
@@ -11,8 +7,7 @@ namespace NuFridge.Shared.Server.Statistics
     {
         private readonly IJobServer _jobServer;
 
-        public SystemInformationStatistic(ITransaction transaction, IJobServer jobServer)
-            : base(transaction)
+        public SystemInformationStatistic(IJobServer jobServer)
         {
             _jobServer = jobServer;
         }

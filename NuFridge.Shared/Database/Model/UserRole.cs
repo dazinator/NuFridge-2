@@ -1,8 +1,6 @@
-﻿using NuFridge.Shared.Model.Interfaces;
-
-namespace NuFridge.Shared.Model
+﻿namespace NuFridge.Shared.Database.Model
 {
-    public class UserRole : IEntity
+    public class UserRole
     {
         public int Id { get; protected set; }
 

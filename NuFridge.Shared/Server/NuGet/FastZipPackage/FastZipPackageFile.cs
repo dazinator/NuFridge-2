@@ -14,7 +14,7 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
         private string _effectivePath;
         private bool _targetFrameworkParsed;
 
-        public string Path { get; private set; }
+        public string Path { get; }
 
         public string EffectivePath
         {
@@ -98,7 +98,7 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
 
         internal FastZipPackageFile(IFastZipPackage fastZipPackage, string path)
         {
-            this._fastZipPackage = fastZipPackage;
+            _fastZipPackage = fastZipPackage;
             Path = Normalize(path);
         }
 

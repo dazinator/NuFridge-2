@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Model;
 using NuFridge.Shared.Server.Application;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -32,11 +32,11 @@ namespace NuFridge.Shared.Server.NuGet
         {
             _log.Info("Loading framework names from the database into memory.");
 
-            List<IFramework> frameworks;
+            List<Framework> frameworks;
 
-            using (var transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
-                frameworks = transaction.Query<IFramework>().ToList();
+                frameworks = dbContext.Frameworks.ToList();
             }
 
             lock (_sync)
@@ -111,20 +111,24 @@ namespace NuFridge.Shared.Server.NuGet
 
             lock (_sync)
             {
-                foreach (var s in split)
+                using (var dbContext = new DatabaseContext())
                 {
-                    if (!_foundFrameworkNames.Contains(s))
+                    foreach (var s in split)
                     {
-                        _foundFrameworkNames.Add(s);
 
-                        IFramework framework = new Framework {Name = VersionUtility.GetShortFrameworkName(s)};
-
-                        using (var transaction = _store.BeginTransaction())
+                        if (!_foundFrameworkNames.Contains(s))
                         {
-                            transaction.Insert(framework);
-                            transaction.Commit();
+                            _foundFrameworkNames.Add(s);
+
+                            Framework framework = new Framework { Name = VersionUtility.GetShortFrameworkName(s) };
+
+
+                            dbContext.Frameworks.Add(framework);
+
                         }
+
                     }
+                    dbContext.SaveChanges();
                 }
             }
         }

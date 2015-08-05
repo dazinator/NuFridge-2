@@ -1,6 +1,7 @@
-﻿using Nancy;
+﻿using System.Linq;
+using Nancy;
 using Nancy.Security;
-using NuFridge.Shared.Model;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.Responses;
 
@@ -20,14 +21,11 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
             module.RequiresAuthentication();
 
             FeedSearchResponse response = new FeedSearchResponse();
-
-            using (ITransaction transaction = _store.BeginTransaction())
+            using (var dbContext = new DatabaseContext())
             {
                 string name = module.Request.Query.name;
 
-                int totalResults;
-                var feeds = transaction.Query<IFeed>().Where("Name like @feedName").Parameter("feedName", "%" + name + "%").OrderBy("Name").ToList(0, 10, out totalResults);
-
+                var feeds = dbContext.Feeds.AsNoTracking().Where(fc => fc.Name.Contains(name)).OrderBy(fc => fc.Name).Take(10);
                 var category = new FeedSearchResponse.Category("Default");
                 response.Results.Add(category);
 
