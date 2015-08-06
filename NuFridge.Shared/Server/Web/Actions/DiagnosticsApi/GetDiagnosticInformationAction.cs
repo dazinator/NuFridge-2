@@ -8,12 +8,10 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
 {
     public class GetDiagnosticInformationAction : IAction
     {
-        private readonly IStore _store;
         private readonly IJobServer _jobServer;
 
-        public GetDiagnosticInformationAction(IStore store, IJobServer jobServer)
+        public GetDiagnosticInformationAction(IJobServer jobServer)
         {
-            _store = store;
             _jobServer = jobServer;
         }
 
@@ -21,11 +19,8 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
         {
             module.RequiresAuthentication();
 
-         
-                var model = new SystemInformationStatistic(_jobServer).GetModel();
-
-                return model;
-            
+            var model = new SystemInformationStatistic(_jobServer).GetModel();
+            return model;
         }
     }
 }

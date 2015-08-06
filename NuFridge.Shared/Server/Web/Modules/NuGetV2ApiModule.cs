@@ -45,16 +45,16 @@ namespace NuFridge.Shared.Server.Web.Modules
             Put["feeds/{feed}"] = p => container.Resolve<RedirectToUploadPackageAction>().Execute(p, this);
 
             //Upload package
-            Post["feeds/{feed}/api/packages/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().Execute(p, this);
+            Post["feeds/{feed}/api/packages/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().UploadFromFile(p, this);
 
             //Upload package
-            Put["feeds/{feed}/api/packages/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().Execute(p, this);
+            Put["feeds/{feed}/api/packages/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().UploadFromFile(p, this);
 
             //Upload package
-            Post["feeds/{feed}/api/v2/package/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().Execute(p, this);
+            Post["feeds/{feed}/api/v2/package/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().UploadFromFile(p, this);
 
             //Upload package
-            Put["feeds/{feed}/api/v2/package/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().Execute(p, this);
+            Put["feeds/{feed}/api/v2/package/{id?}/{version?}"] = p => container.Resolve<UploadPackageAction>().UploadFromFile(p, this);
 
             //Delete package
             Delete["feeds/{feed}/api/v2/package/{id?}/{version?}"] = p => container.Resolve<DeletePackageAction>().Execute(p, this);

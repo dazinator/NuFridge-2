@@ -7,11 +7,9 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
 {
     public class GetFeedDownloadCountAction : IAction
     {
-        private readonly IStore _store;
-
-        public GetFeedDownloadCountAction(IStore store)
+        public GetFeedDownloadCountAction()
         {
-            _store = store;
+
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)

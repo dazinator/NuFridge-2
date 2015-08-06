@@ -14,7 +14,7 @@ namespace NuFridge.Shared.Server.Modules
         {
             base.Load(builder);
 
-            builder.Register((c => new StoreFactory(c.Resolve<IContainer>(), c.Resolve<IHomeConfiguration>()))).As<IStoreFactory>().SingleInstance();
+            builder.Register((c => new StoreFactory(c.Resolve<IHomeConfiguration>()))).As<IStoreFactory>().SingleInstance();
             builder.RegisterType<DatabaseMigrator>().As<IDatabaseMigrator>().SingleInstance();
             builder.RegisterType<AdminUserInitializer>().AsSelf();
             builder.RegisterType<MigrationInitializer>().AsSelf();
