@@ -11,11 +11,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class TabCompletionPackageVersionsAction : PackagesBase, IAction
     {
         private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
         private const int PackagesToReturn = 30;
 
-        public TabCompletionPackageVersionsAction(IStore store, IFeedService feedService) : base(store)
+        public TabCompletionPackageVersionsAction(IStore store, IFeedService feedService, IPackageService packageService) : base(store)
         {
             _feedService = feedService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -40,20 +42,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 includePrerelease = Boolean.Parse(queryDictionary["includePrerelease"].ToString());
             }
 
-            using (var dbContext = new DatabaseContext())
-            {
-                var query = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+            var packages = _packageService.GetVersionsOfPackage(feed.Id, includePrerelease, packageId);
 
-                if (!includePrerelease)
-                {
-                    query = query.Where(pk => !pk.IsPrerelease);
-                }
-
-
-                query = query.Where(pk => pk.Id.Contains(packageId));
-
-                return module.Response.AsJson(query.Take(PackagesToReturn));
-            }
+            return module.Response.AsJson(packages.Take(PackagesToReturn));
         }
     }
 }
