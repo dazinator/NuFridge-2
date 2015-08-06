@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
-using Nancy;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
-using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.NuGet
 {
@@ -17,13 +15,17 @@ namespace NuFridge.Shared.Server.NuGet
     {
         private readonly IFeedService _feedService;
         private readonly IFeedConfigurationService _feedConfigurationService;
-        private readonly IHomeConfiguration _homeConfiguration;
+        private readonly IPackageService _packageService;
 
-        public FeedManager(IFeedService feedService, IFeedConfigurationService feedConfigurationService, IHomeConfiguration homeConfiguration)
+        private readonly IHomeConfiguration _homeConfiguration;
+        private readonly ILog _log = LogProvider.For<FeedManager>();
+
+        public FeedManager(IFeedService feedService, IFeedConfigurationService feedConfigurationService, IHomeConfiguration homeConfiguration, IPackageService packageService)
         {
             _feedService = feedService;
             _feedConfigurationService = feedConfigurationService;
             _homeConfiguration = homeConfiguration;
+            _packageService = packageService;
         }
 
         public void Create(Feed feed)
@@ -60,34 +62,25 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void Delete(int feedId)
         {
-            Feed feed = _feedService.Find(feedId);
-            _feedService.Delete(feed);
+            string packageDirectory;
 
-            FeedConfiguration config = _feedConfigurationService.FindByFeedId(feedId);
-            _feedConfigurationService.Delete(config);
-
-            List<InternalPackage> packages;
-
-            using (var dbContext = new DatabaseContext())
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.RequiresNew))
             {
-                config = dbContext.FeedConfigurations.FirstOrDefault(fc => fc.FeedId == feedId);
-            }
+                Feed feed = _feedService.Find(feedId, false);
+                _feedService.Delete(feed);
 
-            string packageDirectory = config.Directory;
+                FeedConfiguration config = _feedConfigurationService.FindByFeedId(feedId);
+                packageDirectory = config.Directory;
+                _feedConfigurationService.Delete(config);
 
-            using (var dbContext = new DatabaseContext())
-            {
-                packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feedId).Where(pk => pk.FeedId == feedId).ToList();
+                IEnumerable<IInternalPackage> packages = _packageService.GetPackagesForFeed(feedId).ToList();
 
-                foreach (var package in packages)
+                if (packages.Any())
                 {
-                    dbContext.Packages.Remove(package);
+                    _packageService.Delete(packages.Select(pk => pk.PrimaryId));
                 }
 
-
-                dbContext.FeedConfigurations.Remove(config);
-
-                dbContext.SaveChanges();
+                transactionScope.Complete();
             }
 
             if (Directory.Exists(packageDirectory))

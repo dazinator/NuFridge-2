@@ -75,17 +75,17 @@
                 <tr>
                     <th colspan="1">
                         <div class="ui right floated pagination menu">
-                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 0, 'waves-effect': $root.currentPage() != 0 }, click: $root.previousPage">
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == 1, 'waves-effect': $root.currentPage() != 1 }, click: $root.previousPage">
                                 <i class="left chevron icon"></i>
                             </a>
                             <!-- ko foreach: $root.getPreviousPageArray() -->
-                            <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data - 1); }"></a>
+                            <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data); }"></a>
                             <!-- /ko -->
-                            <span class="item active" data-bind="text: $root.currentPage() + 1"></span>
+                            <span class="item active" data-bind="text: $root.currentPage()"></span>
                             <!-- ko foreach: $root.getNextPageArray() -->
-                            <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data - 1); }"></a>
+                            <a class="item" data-bind="text: $data, click: function() {$root.goToPage($data); }"></a>
                             <!-- /ko -->
-                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount() - 1), 'waves-effect': $root.currentPage() != (pageCount() - 1) }, click: $root.nextPage">
+                            <a class="icon item" data-bind="css: { disabled: $root.currentPage() == (pageCount()), 'waves-effect': $root.currentPage() != (pageCount()) }, click: $root.nextPage">
                                 <i class="right chevron icon"></i>
                             </a>
                         </div>
@@ -97,12 +97,4 @@
 
     </div>
 
-            </div>
-
-
-
-
-
-
-
-
+</div>

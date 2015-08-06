@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Configuration;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 
@@ -30,6 +27,16 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
+        protected void Delete(IEnumerable<int> ids, string idColumnName)
+        {
+            string listOfIdsJoined = "(" + String.Join(",", ids.ToArray()) + ")";
+
+            using (var connection = GetConnection())
+            {
+                connection.Execute(string.Format("DELETE FROM [NuFridge].[{0}] WHERE {1} IN {2}", _tableName, idColumnName, listOfIdsJoined));
+            }
+        }
+
         public IEnumerable<T> Query(string sql, dynamic param = null)
         {
             using (var connection = GetConnection())
@@ -43,6 +50,14 @@ namespace NuFridge.Shared.Database.Repository
             using (var connection = GetConnection())
             {
                 return connection.Get<T>(id);
+            }
+        }
+
+        public IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage)
+        {
+            using (var connection = GetConnection())
+            {
+                return connection.GetListPaged<T>(pageNumber, rowsPerPage, null, null);
             }
         }
 

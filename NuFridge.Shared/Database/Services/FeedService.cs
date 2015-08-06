@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Server.Configuration;
 using SimpleCrypto;
 
 namespace NuFridge.Shared.Database.Services
@@ -12,10 +11,12 @@ namespace NuFridge.Shared.Database.Services
     public class FeedService : IFeedService
     {
         private readonly IFeedRepository _feedRepository;
+        private readonly IHomeConfiguration _homeConfiguration;
 
-        public FeedService(IFeedRepository feedRepository)
+        public FeedService(IFeedRepository feedRepository, IHomeConfiguration homeConfiguration)
         {
             _feedRepository = feedRepository;
+            _homeConfiguration = homeConfiguration;
         }
 
         public void Delete(Feed feed)
@@ -48,9 +49,54 @@ namespace NuFridge.Shared.Database.Services
             return _feedRepository.Find(feedId) != null;
         }
 
-        public Feed Find(int feedId)
+        public IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey)
         {
-            return _feedRepository.Find(feedId);
+            var feeds = _feedRepository.GetAllPaged(pageNumber, rowsPerPage).ToList();
+
+            foreach (var feed in feeds)
+            {
+                ConfigureFeedEntity(feed, includeApiKey);
+            }
+
+            return feeds;
+        }
+
+        private void ConfigureFeedEntity(Feed feed, bool includeApiKey)
+        {
+            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
+            {
+                feed.HasApiKey = true;
+            }
+
+            if (!includeApiKey)
+            {
+                feed.ApiKeyHashed = null; //We don't want to expose this to the front end
+                feed.ApiKeySalt = null; //We don't want to expose this to the front end
+            }
+
+            feed.RootUrl = $"{_homeConfiguration.ListenPrefixes}{(_homeConfiguration.ListenPrefixes.EndsWith("/") ? "" : "/")}feeds/{feed.Name}";
+        }
+
+        public Feed Find(int feedId, bool includeApiKey)
+        {
+            var feed = _feedRepository.Find(feedId);
+
+            if (feed != null)
+            {
+                ConfigureFeedEntity(feed, includeApiKey);
+            }
+
+            return feed;
+        }
+
+        public IEnumerable<Feed> Search(string name)
+        {
+            return _feedRepository.Search(name);
+        }
+
+        public int GetCount()
+        {
+            return _feedRepository.GetCount();
         }
     }
 
@@ -60,6 +106,9 @@ namespace NuFridge.Shared.Database.Services
         bool Exists(string feedName);
         void Insert(Feed feed);
         bool Exists(int feedId);
-        Feed Find(int feedId);
+        IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey);
+        Feed Find(int feedId, bool includeApiKey);
+        IEnumerable<Feed> Search(string name);
+        int GetCount();
     }
 }

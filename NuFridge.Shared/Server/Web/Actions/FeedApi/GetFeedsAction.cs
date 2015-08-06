@@ -4,17 +4,17 @@ using System.Linq;
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Database.Services;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
     public class GetFeedsAction : IAction
     {
-        private readonly IStore _store;
+        private readonly IFeedService _feedService;
 
-        public GetFeedsAction(IStore store)
+        public GetFeedsAction(IFeedService feedService)
         {
-            _store = store;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -23,18 +23,9 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int page = int.Parse(module.Request.Query["page"]);
             int pageSize = int.Parse(module.Request.Query["pageSize"]);
-            int totalResults;
 
-            List<Feed> feeds;
-            using (var dbContext = new DatabaseContext())
-            {
-                feeds = dbContext.Feeds.AsNoTracking().OrderBy(f => f.Name).Skip(pageSize*page).Take(pageSize).ToList();
-                totalResults = dbContext.Feeds.AsNoTracking().Count();
-            }
-
-            feeds.Where(fd => !string.IsNullOrWhiteSpace(fd.ApiKeyHashed)).ToList().ForEach(fd => fd.HasApiKey = true);
-            feeds.ForEach(fd => fd.ApiKeyHashed = null); //Temporary until API Key table is used
-            feeds.ForEach(fd => fd.ApiKeySalt = null); //Temporary until API Key table is used
+            int totalResults = _feedService.GetCount();
+            List<Feed> feeds = _feedService.GetAllPaged(page, pageSize, false).ToList();
 
             var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
 

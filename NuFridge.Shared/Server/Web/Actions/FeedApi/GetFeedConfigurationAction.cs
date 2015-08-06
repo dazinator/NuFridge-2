@@ -2,29 +2,27 @@
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
     public class GetFeedConfigurationAction : IAction
     {
-        private readonly IStore _store;
+        private readonly IFeedConfigurationService _feedConfigurationService;
 
-        public GetFeedConfigurationAction(IStore store)
+        public GetFeedConfigurationAction(IFeedConfigurationService feedConfigurationService)
         {
-            _store = store;
+            _feedConfigurationService = feedConfigurationService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            using (var dbContext = new DatabaseContext())
-            {
-                int feedId = int.Parse(parameters.id);
+            int feedId = int.Parse(parameters.id);
 
-                return dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feedId);
-            }
+            return _feedConfigurationService.FindByFeedId(feedId);
         }
     }
 }

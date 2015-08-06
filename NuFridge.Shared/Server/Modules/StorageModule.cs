@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
@@ -26,6 +25,9 @@ namespace NuFridge.Shared.Server.Modules
 
             builder.RegisterType<FeedService>().As<IFeedService>();
             builder.RegisterType<FeedRepository>().As<IFeedRepository>();
+
+            builder.RegisterType<PackageService>().As<IPackageService>();
+            builder.RegisterType<PackageRepository>().As<IPackageRepository>();
 
             builder.RegisterType<FeedManager>().As<IFeedManager>();
 

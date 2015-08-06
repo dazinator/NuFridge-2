@@ -1,16 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Storage;
-using SimpleCrypto;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {

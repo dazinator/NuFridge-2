@@ -3,7 +3,7 @@
         this.displayName = 'Feeds';
         this.feeds = ko.observableArray();
         this.pageCount = ko.observable(1);
-        this.currentPage = ko.observable(0);
+        this.currentPage = ko.observable(1);
         this.feedsLoaded = ko.observable(false);
         this.isAddFeedNavigating = ko.observable(false);
     };
@@ -12,7 +12,7 @@
         var self = this;
 
         
-        var size = self.currentPage();
+        var size = self.currentPage() - 1;
         if (size > 10) {
             size = 10;
         }
@@ -21,7 +21,7 @@
         }
 
         var arr = new Array(size);
-        var itemCurrent = self.currentPage();
+        var itemCurrent = self.currentPage() - 1;
         var arrayLength = arr.length;
         if (arrayLength > 0) {
             for (var i = arrayLength; i > 0; --i)
@@ -33,7 +33,7 @@
     ctor.prototype.getNextPageArray = function () {
         var self = this;
 
-        var size = self.pageCount() - (self.currentPage() + 1);
+        var size = self.pageCount() - (self.currentPage());
 
         if (size > 10) {
             size = 10;
@@ -43,7 +43,7 @@
         }
 
         var arr = new Array(size);
-        var itemCurrent = self.currentPage() + 2;
+        var itemCurrent = self.currentPage() + 1;
         var arrayLength = arr.length;
         for (var i = 0; i < arrayLength; i++) {
             arr[i] = (itemCurrent++);
@@ -81,7 +81,7 @@
         var self = this;
 
         if (!pageNumber) {
-            pageNumber = 0;
+            pageNumber = 1;
         } else {
             if (pageNumber === self.currentPage()) {
                 return;

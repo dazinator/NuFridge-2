@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 
@@ -24,6 +20,11 @@ namespace NuFridge.Shared.Database.Repository
                 feed.Id = connection.Insert<int>(feed);
             }
         }
+
+        public IEnumerable<Feed> Search(string name)
+        {
+            return Query($"SELECT * FROM [NuFridge].[{TableName}] WHERE Name LIKE '%' + @name + '%'", new {name});
+        }
     }
 
     public interface IFeedRepository
@@ -32,5 +33,8 @@ namespace NuFridge.Shared.Database.Repository
         IEnumerable<Feed> GetAll();
         Feed Find(int feedId);
         void Delete(Feed feed);
+        IEnumerable<Feed> Search(string name);
+        IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage);
+        int GetCount();
     }
 }

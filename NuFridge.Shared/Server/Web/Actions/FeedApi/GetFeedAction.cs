@@ -2,6 +2,7 @@
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Storage;
 
@@ -9,43 +10,20 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 {
     public class GetFeedAction : IAction
     {
-        private readonly IStore _store;
-        private readonly IHomeConfiguration _config;
+        private readonly IFeedService _feedService;
 
-        public GetFeedAction(IStore store, IHomeConfiguration config)
+        public GetFeedAction(IFeedService feedService)
         {
-            _store = store;
-            _config = config;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-                module.RequiresAuthentication();
+            module.RequiresAuthentication();
 
-            using (var dbContext = new DatabaseContext())
-            {
-                    int feedId = int.Parse(parameters.id);
+            int feedId = int.Parse(parameters.id);
 
-                var feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Id == feedId);
-                    if (feed != null)
-                    {
-                        //Temporary until the API Key table is used
-                        if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
-                        {
-                            feed.HasApiKey = true;
-                        }
-                        feed.ApiKeyHashed = null; //We don't want to expose this to the front end
-                        feed.ApiKeySalt = null; //We don't want to expose this to the front end
-
-                        bool endsWithSlash = _config.ListenPrefixes.EndsWith("/");
-
-                        var baseAddress = string.Format("{0}{1}feeds/{2}", _config.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
-
-                        feed.RootUrl = baseAddress;
-                    }
-
-                    return feed;
-                }
+            return _feedService.Find(feedId, false);
         }
     }
 }
