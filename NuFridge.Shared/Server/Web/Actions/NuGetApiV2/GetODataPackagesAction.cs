@@ -21,14 +21,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataPackagesAction : IAction
     {
-        private readonly IFrameworkNamesRepository _frameworkNamesRepository;
+        private readonly IFrameworkNamesManager _frameworkNamesManager;
         protected readonly IStore Store;
         private readonly IWebPortalConfiguration _portalConfig;
         private readonly IFeedService _feedService;
 
-        public GetODataPackagesAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService)
+        public GetODataPackagesAction(IFrameworkNamesManager frameworkNamesManager, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService)
         {
-            _frameworkNamesRepository = frameworkNamesRepository;
+            _frameworkNamesManager = frameworkNamesManager;
             Store = store;
             _portalConfig = portalConfig;
             _feedService = feedService;
@@ -199,7 +199,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 if (targetFrameworkValue != null)
                 {
 
-                    string[] searchFrameworks = _frameworkNamesRepository.Get()
+                    string[] searchFrameworks = _frameworkNamesManager.Get()
                         .Union(new[] { targetFrameworkValue })
                         .Where(candidate => VersionUtility.IsCompatible(targetFrameworkValue, new[] { candidate }))
                         .Select(VersionUtility.GetShortFrameworkName)

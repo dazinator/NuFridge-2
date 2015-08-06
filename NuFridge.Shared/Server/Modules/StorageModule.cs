@@ -29,6 +29,9 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<PackageService>().As<IPackageService>();
             builder.RegisterType<PackageRepository>().As<IPackageRepository>();
 
+            builder.RegisterType<FrameworkService>().As<IFrameworkService>();
+            builder.RegisterType<FrameworkRepository>().As<IFrameworkRepository>();
+
             builder.RegisterType<FeedManager>().As<IFeedManager>();
 
             builder.RegisterType<FeedConfigurationService>().As<IFeedConfigurationService>();

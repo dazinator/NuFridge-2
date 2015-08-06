@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Versioning;
 using Microsoft.Win32;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Application;
 using NuFridge.Shared.Server.Storage;
@@ -11,20 +12,17 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
 {
-    public class FrameworkNamesRepository : IFrameworkNamesRepository
+    public class FrameworkNamesManager : IFrameworkNamesManager
     {
-        private readonly ILog _log = LogProvider.For<FrameworkNamesRepository>();
+        private readonly IFrameworkService _frameworkService;
+        private readonly ILog _log = LogProvider.For<FrameworkNamesManager>();
         private readonly ISet<FrameworkName> _foundFrameworkNames = new HashSet<FrameworkName>();
         private readonly object _sync = new object();
         private const string LegacyRegistryKeyName = "NuGetFrameworkNames";
 
-
-        private readonly IStore _store;
-
-        public FrameworkNamesRepository(IStore store)
+        public FrameworkNamesManager(IFrameworkService frameworkService)
         {
-            _store = store;
-
+            _frameworkService = frameworkService;
             LoadRecordsFromDatabase();
         }
 
@@ -32,12 +30,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             _log.Info("Loading framework names from the database into memory.");
 
-            List<Framework> frameworks;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                frameworks = dbContext.Frameworks.ToList();
-            }
+            IEnumerable<Framework> frameworks = _frameworkService.GetAll();
 
             lock (_sync)
             {
@@ -105,30 +98,25 @@ namespace NuFridge.Shared.Server.NuGet
             }
 
             var split =
-                frameworkNames.Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries)
+                frameworkNames.Split(new[] {"|"}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(VersionUtility.ParseFrameworkName)
                     .Where(it => it != VersionUtility.UnsupportedFrameworkName);
 
             lock (_sync)
             {
-                using (var dbContext = new DatabaseContext())
+
+                foreach (var s in split)
                 {
-                    foreach (var s in split)
+
+                    if (!_foundFrameworkNames.Contains(s))
                     {
+                        _foundFrameworkNames.Add(s);
 
-                        if (!_foundFrameworkNames.Contains(s))
-                        {
-                            _foundFrameworkNames.Add(s);
+                        Framework framework = new Framework {Name = VersionUtility.GetShortFrameworkName(s)};
 
-                            Framework framework = new Framework { Name = VersionUtility.GetShortFrameworkName(s) };
-
-
-                            dbContext.Frameworks.Add(framework);
-
-                        }
-
+                        _frameworkService.Insert(framework);
                     }
-                    dbContext.SaveChanges();
+
                 }
             }
         }
@@ -139,7 +127,7 @@ namespace NuFridge.Shared.Server.NuGet
         }
     }
 
-    public interface IFrameworkNamesRepository
+    public interface IFrameworkNamesManager
     {
         void Add(string frameworkNames);
         ISet<FrameworkName> Get();

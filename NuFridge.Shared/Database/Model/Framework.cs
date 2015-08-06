@@ -1,5 +1,6 @@
 ﻿namespace NuFridge.Shared.Database.Model
 {
+    [Dapper.Table("Framework", Schema = "NuFridge")]
     public class Framework : IFramework
     {
         public int Id { get; set; }

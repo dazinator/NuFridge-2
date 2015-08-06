@@ -30,7 +30,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => new NuGetPackagePathResolver(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => new NuGetFileSystem(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();
 
-            builder.RegisterType<FrameworkNamesRepository>().As<IFrameworkNamesRepository>().SingleInstance();
+            builder.RegisterType<FrameworkNamesManager>().As<IFrameworkNamesManager>().SingleInstance();
 
             builder.RegisterType<SymbolSource>().AsSelf();
             builder.Register(c => new SymbolTools(c.Resolve<IHomeConfiguration>().WindowsDebuggingToolsPath)).AsSelf();
@@ -45,7 +45,7 @@ namespace NuFridge.Shared.Server.Modules
                                 new InternalPackageRepository(
                                     c.Resolve<Func<int, PackageIndex>>(),
                                     c.Resolve<Func<int, IPackagePathResolver>>(),
-                                    c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(), c.Resolve<IStore>(), c.Resolve<IFrameworkNamesRepository>(), i)))).InstancePerDependency();
+                                    c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(), c.Resolve<IFrameworkNamesManager>(), i)))).InstancePerDependency();
         }
     }
 }

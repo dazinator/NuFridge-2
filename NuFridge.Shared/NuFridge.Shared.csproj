@@ -281,10 +281,12 @@
     <Compile Include="Database\Repository\BaseRepository.cs" />
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
     <Compile Include="Database\Repository\FeedRepository.cs" />
+    <Compile Include="Database\Repository\FrameworkRepository.cs" />
     <Compile Include="Database\Repository\PackageRepository.cs" />
     <Compile Include="Database\Repository\UserRepository.cs" />
     <Compile Include="Database\Services\FeedConfigurationService.cs" />
     <Compile Include="Database\Services\FeedService.cs" />
+    <Compile Include="Database\Services\FrameworkService.cs" />
     <Compile Include="Database\Services\PackageService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
@@ -308,7 +310,7 @@
     </Compile>
     <Compile Include="Server\Modules\FullModule.cs" />
     <Compile Include="Server\NuGet\FeedManager.cs" />
-    <Compile Include="Server\NuGet\FrameworkNamesRepository.cs" />
+    <Compile Include="Server\NuGet\FrameworkNamesManager.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\NuGet\NuGetFileSystem.cs" />
     <Compile Include="Server\NuGet\NuGetPackagePathResolver.cs" />
