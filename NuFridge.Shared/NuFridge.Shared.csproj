@@ -310,6 +310,8 @@
     <Compile Include="Server\NuGet\FeedManager.cs" />
     <Compile Include="Server\NuGet\FrameworkNamesRepository.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
+    <Compile Include="Server\NuGet\NuGetFileSystem.cs" />
+    <Compile Include="Server\NuGet\NuGetPackagePathResolver.cs" />
     <Compile Include="Server\NuGet\PackageDependencySetConverter.cs" />
     <Compile Include="Server\NuGet\PackageImportProgressTracker.cs" />
     <Compile Include="Server\NuGet\Symbols\ReadStream.cs" />
