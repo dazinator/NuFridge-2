@@ -2,17 +2,18 @@
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.AccountApi
 {
     public class GetAccountAction : IAction
     {
-        private readonly IStore _store;
+        private readonly IUserService _userService;
 
-        public GetAccountAction(IStore store)
+        public GetAccountAction(IUserService userService)
         {
-            _store = store;
+            _userService = userService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -39,14 +40,11 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
 
         private User GetUser(string username)
         {
-            using (var dbContext = new DatabaseContext())
-            {
-                var user = dbContext.Users.FirstOrDefault(usr => usr.Username == username);
+            var user = _userService.Find(username);
 
-                user.PasswordHashed = null;
+            user.PasswordHashed = null;
 
-                return user;
-            }
+            return user;
         }
     }
 }

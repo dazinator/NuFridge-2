@@ -25,11 +25,9 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         {
             _logger.Info("Executing " + JobId + " job");
 
+            FeedPackageCountStatistic stat = new FeedPackageCountStatistic(_feedService, _packageService);
 
-                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(_feedService, _packageService);
-
-                stat.UpdateModel(cancellationToken);
-            
+            stat.UpdateModel(cancellationToken);
         }
 
         public override string JobId => typeof(UpdateFeedPackageCountStatisticJob).Name;

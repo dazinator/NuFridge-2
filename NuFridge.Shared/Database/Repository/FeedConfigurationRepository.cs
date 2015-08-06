@@ -25,6 +25,14 @@ namespace NuFridge.Shared.Database.Repository
         {
             return Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
         }
+
+        public void Update(FeedConfiguration feedConfig)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Update(feedConfig);
+            }
+        }
     }
 
     public interface IFeedConfigurationRepository
@@ -32,5 +40,6 @@ namespace NuFridge.Shared.Database.Repository
         void Insert(FeedConfiguration feedConfiguration);
         void Delete(FeedConfiguration feedConfiguration);
         FeedConfiguration FindByFeedId(int feedId);
+        void Update(FeedConfiguration feedConfig);
     }
 }

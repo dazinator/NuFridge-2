@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Linq;
+using Dapper;
 using NuFridge.Shared.Database.Model;
 
 namespace NuFridge.Shared.Database.Repository
@@ -19,11 +20,21 @@ namespace NuFridge.Shared.Database.Repository
                 connection.Insert<int>(user);
             }
         }
+
+        public User Find(string username)
+        {
+            using (var connection = GetConnection())
+            {
+                return connection.Query<User>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Username = @username", new {  username }).FirstOrDefault();
+            }
+        }
     }
 
     public interface IUserRepository
     {
         int GetCount();
         void Insert(User user);
+        User Find(string username);
+        User Find(int userId);
     }
 }

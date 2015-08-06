@@ -35,6 +35,16 @@ namespace NuFridge.Shared.Database.Services
             }
         }
 
+        public User Find(string username)
+        {
+            return _userRepository.Find(username);
+        }
+
+        public User Find(int userId)
+        {
+            return _userRepository.Find(userId);
+        }
+
         public void Insert(User user)
         {
             _userRepository.Insert(user);
@@ -44,5 +54,8 @@ namespace NuFridge.Shared.Database.Services
     public interface IUserService
     {
         void CreateAdministratorUserIfNotExist();
+        User Find(string username);
+        User Find(int userId);
+        int GetCount();
     }
 }

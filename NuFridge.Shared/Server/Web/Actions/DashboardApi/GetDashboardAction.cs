@@ -10,27 +10,26 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
     public class GetDashboardAction : IAction
     {
         private readonly IFeedService _feedService;
+        private readonly IUserService _userService;
 
-        public GetDashboardAction(IFeedService feedService)
+        public GetDashboardAction(IFeedService feedService, IUserService userService)
         {
             _feedService = feedService;
+            _userService = userService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            using (var dbContext = new DatabaseContext())
-            {
-                var feedsCount = _feedService.GetCount();
-                var usersCount = dbContext.Users.AsNoTracking().Count();
+            var feedsCount = _feedService.GetCount();
+            var usersCount = _userService.GetCount();
 
-                return new
-                {
-                    feedCount = feedsCount,
-                    userCount = usersCount
-                };
-            }
+            return new
+            {
+                feedCount = feedsCount,
+                userCount = usersCount
+            };
         }
     }
 }
