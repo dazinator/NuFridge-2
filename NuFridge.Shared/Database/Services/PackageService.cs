@@ -14,9 +14,14 @@ namespace NuFridge.Shared.Database.Services
             _packageRepository = packageRepository;
         }
 
-        public IEnumerable<InternalPackage> GetPackagesForFeed(int feedId)
+        public IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId)
         {
-            return _packageRepository.GetPackagesForFeed(feedId);
+            return _packageRepository.GetAllPackagesForFeed(feedId);
+        }
+
+        public void Delete(InternalPackage package)
+        {
+            _packageRepository.Delete(package);
         }
 
         public int GetCount(int feedId)
@@ -39,6 +44,21 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetVersionsOfPackage(feedId, includePrerelease, packageId);
         }
 
+        public void Insert(InternalPackage package)
+        {
+            _packageRepository.Insert(package);
+        }
+
+        public void Update(InternalPackage package)
+        {
+            _packageRepository.Update(package);
+        }
+
+        public InternalPackage GetPackage(int feedId, string packageId, string version)
+        {
+            return _packageRepository.GetPackage(feedId, packageId, version);
+        }
+
         public void Delete(IEnumerable<int> ids)
         {
             _packageRepository.Delete(ids);
@@ -47,11 +67,15 @@ namespace NuFridge.Shared.Database.Services
 
     public interface IPackageService
     {
-        IEnumerable<InternalPackage> GetPackagesForFeed(int feedId);
+        IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
+        void Delete(InternalPackage package);
         int GetCount(int feedId);
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int feedId, bool includePrerelease, string packageId);
+        void Insert(InternalPackage package);
+        void Update(InternalPackage package);
+        InternalPackage GetPackage(int feedId, string packageId, string version);
     }
 }

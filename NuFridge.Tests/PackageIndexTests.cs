@@ -58,7 +58,7 @@ namespace NuFridge.Tests
 
         public class TestPackageIndex : PackageIndex
         {
-            public TestPackageIndex(int feedId) : base(feedId)
+            public TestPackageIndex(int feedId) : base(null, feedId)
             {
                 
             }
@@ -78,10 +78,10 @@ namespace NuFridge.Tests
                 return p;
             }
 
-            protected override IInternalPackage LoadPackage(string id, string version)
-            {
-                return GetTestPackage(id, version) as InternalPackage;
-            }
+            //protected override IInternalPackage LoadPackage(string id, string version)
+            //{
+            //    return GetTestPackage(id, version) as InternalPackage;
+            //}
         }
     }
 }

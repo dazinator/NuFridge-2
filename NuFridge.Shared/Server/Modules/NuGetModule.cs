@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
             builder.RegisterType<Statistic>().As<IStatistic>();
             builder.RegisterType<Framework>().As<IFramework>();
-            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(feedId))).InstancePerDependency();
+            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IPackageService>(), feedId))).InstancePerDependency();
 
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => new NuGetPackagePathResolver(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => new NuGetFileSystem(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();
@@ -45,7 +45,7 @@ namespace NuFridge.Shared.Server.Modules
                                 new InternalPackageRepository(
                                     c.Resolve<Func<int, PackageIndex>>(),
                                     c.Resolve<Func<int, IPackagePathResolver>>(),
-                                    c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(), c.Resolve<IFrameworkNamesManager>(), i)))).InstancePerDependency();
+                                    c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(), c.Resolve<IFrameworkNamesManager>(), c.Resolve<IFeedConfigurationService>(), i)))).InstancePerDependency();
         }
     }
 }

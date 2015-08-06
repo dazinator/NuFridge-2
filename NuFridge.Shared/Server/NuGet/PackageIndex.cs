@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
@@ -10,13 +11,13 @@ namespace NuFridge.Shared.Server.NuGet
 {
     public class PackageIndex
     {
+        private readonly IPackageService _packageService;
         private readonly int _feedId;
-       // private readonly ICurrentRequest _currentRequest;
 
-        public PackageIndex(int feedId)
+        public PackageIndex(IPackageService packageService, int feedId)
         {
+            _packageService = packageService;
             _feedId = feedId;
-           // _currentRequest = currentRequest;
 
             if (feedId <= 0)
             {
@@ -26,62 +27,24 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void AddPackage(IInternalPackage package)
         {
-     //       var username = _currentRequest.Context.CurrentUser.UserName;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                dbContext.Packages.Add((InternalPackage) package);
-                dbContext.SaveChanges();
-            }
+            _packageService.Insert((InternalPackage)package);
         }
 
         public void UnlistPackage(IInternalPackage package)
         {
-            InternalPackage internalPackage = (InternalPackage)GetPackage(package.Id, package.GetSemanticVersion());
-            if (internalPackage == null)
-                return;
+            package.Listed = false;
 
-            internalPackage.Listed = false;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                dbContext.Packages.Attach(internalPackage);
-                dbContext.Entry(internalPackage).Property(a => a.Listed).IsModified = true;
-
-                dbContext.SaveChanges();
-            }
+            _packageService.Update((InternalPackage)package);
         }
 
         public void DeletePackage(IInternalPackage package)
         {
-            InternalPackage internalPackage = (InternalPackage)GetPackage(package.Id, package.GetSemanticVersion());
-            if (internalPackage == null)
-                return;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                dbContext.Packages.Attach(internalPackage);
-                dbContext.Packages.Remove(internalPackage);
-                dbContext.SaveChanges();
-            }
+            _packageService.Delete((InternalPackage)package);
         }
 
         public IInternalPackage GetPackage(string packageId, SemanticVersion version)
         {
-            return LoadPackage(packageId.ToLowerInvariant(), version.ToString().ToLowerInvariant());
-        }
-
-        protected virtual IInternalPackage LoadPackage(string id, string version)
-        {
-
-            IInternalPackage package;
-            using (var dbContext = new DatabaseContext())
-            {
-
-                package = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + _feedId )
-                    .FirstOrDefault(pk => pk.FeedId == _feedId && pk.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase) && pk.Version == version);
-            }
-            return package;
+            return _packageService.GetPackage(_feedId, packageId, version.ToString());
         }
 
         public void IncrementDownloadCount(IInternalPackage package)

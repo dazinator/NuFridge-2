@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
@@ -18,14 +19,16 @@ namespace NuFridge.Shared.Server.NuGet
         private readonly SymbolSource _symbolSource;
         private readonly ILog _log = LogProvider.For<InternalPackageRepository>();
         private readonly IFrameworkNamesManager _frameworkNamesManager;
+        private readonly IFeedConfigurationService _feedConfigurationService;
 
         public override bool SupportsPrereleasePackages => true;
 
-        public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, SymbolSource symbolSource, IFrameworkNamesManager frameworkNamesManager, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
+        public InternalPackageRepository(Func<int, PackageIndex> packageIndex, Func<int, IPackagePathResolver> packageResolver, Func<int, IFileSystem> fileSystem, SymbolSource symbolSource, IFrameworkNamesManager frameworkNamesManager, IFeedConfigurationService feedConfigurationService, int feedId) : base(packageResolver(feedId), fileSystem(feedId))
         {
             _symbolSource = symbolSource;
             _packageIndex = packageIndex(feedId);
             _frameworkNamesManager = frameworkNamesManager;
+            _feedConfigurationService = feedConfigurationService;
             FeedId = feedId;
         }
 
@@ -62,16 +65,10 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void DeletePackage(IInternalPackage internalPackage)
         {
-            IFeedConfiguration config;
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(FeedId);
 
-            using (var dbContext = new DatabaseContext())
-            {
-                //Get the config file needed for later
-                config = dbContext.FeedConfigurations.FirstOrDefault(fc => fc.FeedId == FeedId);
-
-                //Delete the package
-                _packageIndex.DeletePackage(internalPackage);
-            }
+            //Delete the package
+            _packageIndex.DeletePackage(internalPackage);
 
             var filePath = GetPackageFilePath(internalPackage.Id, internalPackage.GetSemanticVersion());
 
@@ -84,13 +81,12 @@ namespace NuFridge.Shared.Server.NuGet
                 base.RemovePackage(package);
             }
 
-            //Remove the symbols once we know the transaction completed successfully
             _symbolSource.RemoveSymbolPackage(config.SymbolsDirectory, internalPackage.Id, internalPackage.Version);
         }
 
         public void RemovePackage(IInternalPackage internalPackage)
         {
-                _packageIndex.UnlistPackage(internalPackage);
+            _packageIndex.UnlistPackage(internalPackage);
         }
 
         public void IndexPackage(IPackage package)
@@ -126,7 +122,7 @@ namespace NuFridge.Shared.Server.NuGet
 
             var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
-             _packageIndex.AddPackage(localPackage);
+            _packageIndex.AddPackage(localPackage);
 
             _frameworkNamesManager.Add(localPackage.SupportedFrameworks);
         }

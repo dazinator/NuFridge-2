@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Statistics
 
             foreach (var feed in feeds)
             {
-                IEnumerable<IInternalPackage> packages = _packageService.GetPackagesForFeed(feed.Id).ToList();
+                IEnumerable<IInternalPackage> packages = _packageService.GetAllPackagesForFeed(feed.Id).ToList();
 
                 if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {

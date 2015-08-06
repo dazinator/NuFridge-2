@@ -9,17 +9,19 @@ namespace NuFridge.Shared.Database.Repository
     public class PackageRepository : BaseRepository<InternalPackage>, IPackageRepository
     {
         private const string TableName = "Package";
+
         private const string GetAllPackagesStoredProcCommand = "NuFridge.GetAllPackages @feedId";
         private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId @includePrerelease @partialId";
         private const string GetUniquePackageCountStoredProcCommand = "NuFridge.GetUniquePackageCount @feedId";
         private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId @includePrerelease @packageId";
+        private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId @packageId @version";
 
         public PackageRepository() : base(TableName)
         {
             
         }
 
-        public IEnumerable<InternalPackage> GetPackagesForFeed(int feedId)
+        public IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId)
         {
             return Query<InternalPackage>(GetAllPackagesStoredProcCommand, new {feedId});
         }
@@ -51,15 +53,40 @@ namespace NuFridge.Shared.Database.Repository
         {
             return Query<InternalPackage>(GetVersionsOfPackageStoredProcCommand, new { feedId, includePrerelease, packageId });
         }
+
+        public void Insert(InternalPackage package)
+        {
+            using (var connection = GetConnection())
+            {
+                package.PrimaryId = connection.Insert<int>(package);
+            }
+        }
+
+        public void Update(InternalPackage package)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Update(package);
+            }
+        }
+
+        public InternalPackage GetPackage(int feedId, string packageId, string version)
+        {
+            return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).SingleOrDefault();
+        }
     }
 
     public interface IPackageRepository
     {
-        IEnumerable<InternalPackage> GetPackagesForFeed(int feedId);
+        IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int feedId, bool includePrerelease, string packageId);
+        void Insert(InternalPackage package);
+        void Update(InternalPackage package);
+        void Delete(InternalPackage package);
+        InternalPackage GetPackage(int feedId, string packageId, string version);
     }
 }

@@ -73,7 +73,7 @@ namespace NuFridge.Shared.Server.NuGet
                 packageDirectory = config.Directory;
                 _feedConfigurationService.Delete(config);
 
-                IEnumerable<IInternalPackage> packages = _packageService.GetPackagesForFeed(feedId).ToList();
+                IEnumerable<IInternalPackage> packages = _packageService.GetAllPackagesForFeed(feedId).ToList();
 
                 if (packages.Any())
                 {

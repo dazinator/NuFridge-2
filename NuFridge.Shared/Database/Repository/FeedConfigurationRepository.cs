@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 
@@ -41,5 +42,6 @@ namespace NuFridge.Shared.Database.Repository
         void Delete(FeedConfiguration feedConfiguration);
         FeedConfiguration FindByFeedId(int feedId);
         void Update(FeedConfiguration feedConfig);
+        IEnumerable<FeedConfiguration> GetAll();
     }
 }

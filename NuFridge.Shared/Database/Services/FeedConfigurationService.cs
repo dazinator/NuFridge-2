@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nancy;
@@ -36,6 +37,8 @@ namespace NuFridge.Shared.Database.Services
             return _feedConfigurationRepository.FindByFeedId(feedId);
         }
 
+        
+
         public void Update(FeedConfiguration feedConfig)
         {
             if (string.IsNullOrWhiteSpace(feedConfig.Directory))
@@ -57,17 +60,10 @@ namespace NuFridge.Shared.Database.Services
 
             if (feedConfig.Directory != existingFeedConfig.Directory)
             {
-                IQueryable<FeedConfiguration> directoryUsedByOtherConfigs;
-
-                using (var dbContext = new DatabaseContext())
-                {
-                    directoryUsedByOtherConfigs =
-                          dbContext.FeedConfigurations.AsNoTracking()
-                              .Where(
-                                  fc =>
-                                      fc.Directory.Equals(feedConfig.Directory,
-                                          StringComparison.InvariantCultureIgnoreCase));
-                }
+                List<FeedConfiguration> directoryUsedByOtherConfigs =
+                    _feedConfigurationRepository.GetAll()
+                        .Where(fc => fc.Directory.Equals(feedConfig.Directory, StringComparison.InvariantCultureIgnoreCase))
+                        .ToList();
 
                 if (directoryUsedByOtherConfigs.Any(dr => dr.Id != feedConfig.Id))
                 {
@@ -80,7 +76,6 @@ namespace NuFridge.Shared.Database.Services
                 {
                     if (!Directory.Exists(feedConfig.Directory))
                     {
-                        _log.Debug("Creating the " + feedConfig.Directory + " folder for feed id " + feedConfig.FeedId);
                         Directory.CreateDirectory(feedConfig.Directory);
                     }
 
