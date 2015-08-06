@@ -14,7 +14,8 @@ using NuGet;
 namespace NuFridge.Shared.Database.Model
 {
     [DebuggerDisplay("{Id}: {Version} ({Title})")]
- //   [TrackChanges]
+    [Dapper.Table("Package", Schema = "NuFridge")]
+    //   [TrackChanges]
     public class InternalPackage : IInternalPackage
     {
         /// <summary>

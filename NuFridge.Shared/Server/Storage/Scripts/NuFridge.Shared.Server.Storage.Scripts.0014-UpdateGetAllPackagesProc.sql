@@ -12,5 +12,5 @@ WHERE @feedId IS NULL OR pk.FeedId = @feedId
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
-SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1 ORDER BY rn ASC
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1
 ) = rn THEN 1 ELSE 0 END, * FROM cte as ctee

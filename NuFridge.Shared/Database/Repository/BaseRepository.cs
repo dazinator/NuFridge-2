@@ -37,11 +37,11 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<T> Query(string sql, dynamic param = null)
+        public IEnumerable<TRecord> Query<TRecord>(string sql, dynamic param = null)
         {
             using (var connection = GetConnection())
             {
-                return SqlMapper.Query<T>(connection, sql, param);
+                return SqlMapper.Query<TRecord>(connection, sql, param);
             }
         }
 

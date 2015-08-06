@@ -18,6 +18,16 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetPackagesForFeed(feedId);
         }
 
+        public int GetCount(int feedId)
+        {
+            return _packageRepository.GetCount(feedId);
+        }
+
+        public int GetUniquePackageIdCount(int feedId)
+        {
+            return _packageRepository.GetUniquePackageIdCount(feedId);
+        }
+
         public void Delete(IEnumerable<int> ids)
         {
             _packageRepository.Delete(ids);
@@ -28,5 +38,7 @@ namespace NuFridge.Shared.Database.Services
     {
         IEnumerable<IInternalPackage> GetPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
+        int GetCount(int feedId);
+        int GetUniquePackageIdCount(int feedId);
     }
 }

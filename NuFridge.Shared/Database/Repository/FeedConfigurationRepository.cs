@@ -23,7 +23,7 @@ namespace NuFridge.Shared.Database.Repository
 
         public FeedConfiguration FindByFeedId(int feedId)
         {
-            return Query($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
+            return Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
         }
     }
 

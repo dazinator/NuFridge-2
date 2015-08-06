@@ -1,4 +1,5 @@
 ﻿using Hangfire;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Statistics;
 using NuFridge.Shared.Server.Storage;
@@ -8,12 +9,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     [Queue("background")]
     public class UpdateFeedPackageCountStatisticJob : JobBase
     {
-        private IStore Store { get; }
+        private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
         private readonly ILog _logger = LogProvider.For<UpdateFeedPackageCountStatisticJob>();
 
-        public UpdateFeedPackageCountStatisticJob(IStore store) 
+        public UpdateFeedPackageCountStatisticJob(IFeedService feedService, IPackageService packageService)
         {
-            Store = store;
+            _feedService = feedService;
+            _packageService = packageService;
         }
 
         [DisableConcurrentExecution(10)]
@@ -23,7 +26,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _logger.Info("Executing " + JobId + " job");
 
 
-                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(Store);
+                FeedPackageCountStatistic stat = new FeedPackageCountStatistic(_feedService, _packageService);
 
                 stat.UpdateModel(cancellationToken);
             

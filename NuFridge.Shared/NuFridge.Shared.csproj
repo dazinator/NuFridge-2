@@ -589,6 +589,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0014-UpdateGetAllPackagesProc.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0015-UniquePackagesCountProc.sql" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -41,12 +41,17 @@ namespace NuFridge.Shared.Database.Services
                 feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
             }
 
-             _feedRepository.Insert(feed);
+            _feedRepository.Insert(feed);
         }
 
         public bool Exists(int feedId)
         {
             return _feedRepository.Find(feedId) != null;
+        }
+
+        public IEnumerable<Feed> GetAll()
+        {
+            return _feedRepository.GetAll();
         }
 
         public IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey)
@@ -139,6 +144,7 @@ namespace NuFridge.Shared.Database.Services
         bool Exists(string feedName);
         void Insert(Feed feed);
         bool Exists(int feedId);
+        IEnumerable<Feed> GetAll();
         IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey);
         Feed Find(int feedId, bool includeApiKey);
         Feed Find(string feedName, bool includeApiKey);

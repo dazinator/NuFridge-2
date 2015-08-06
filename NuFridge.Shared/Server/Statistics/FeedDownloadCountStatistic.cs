@@ -1,48 +1,51 @@
 ﻿using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Statistics.Design;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Statistics
 {
     public class FeedDownloadCountStatistic : StatisticBase<List<FeedDownloadCountStatisticItem>>
     {
+        private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
+
+        public FeedDownloadCountStatistic(IFeedService feedService, IPackageService packageService)
+        {
+            _feedService = feedService;
+            _packageService = packageService;
+        }
+
         protected override List<FeedDownloadCountStatisticItem> Update()
         {
             var list = new List<FeedDownloadCountStatisticItem>();
 
-            using (var dbContext = new DatabaseContext())
+
+            var feeds = _feedService.GetAll();
+
+            ColorGenerator generator = new ColorGenerator();
+
+            foreach (var feed in feeds)
             {
-                var feeds = dbContext.Feeds.AsNoTracking();
+                IEnumerable<IInternalPackage> packages = _packageService.GetPackagesForFeed(feed.Id).ToList();
 
-                ColorGenerator generator = new ColorGenerator();
-
-                foreach (var feed in feeds)
+                if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {
-                    var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).AsNoTracking().Where(pk => pk.FeedId == feed.Id);
-
-                    if (packages.Any(pk => pk.VersionDownloadCount > 0))
-                    {
-                        list.Add(new FeedDownloadCountStatisticItem(feed.Name,
-                            packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
-                    }
+                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
                 }
-
-                var orderedList = list.OrderByDescending(it => it.DownloadCount).ToList();
-                if (orderedList.Count() > 10)
-                {
-                    orderedList = orderedList.Take(10).ToList();
-                }
-
-                return orderedList;
             }
+
+            var orderedList = list.OrderByDescending(it => it.DownloadCount).ToList();
+            if (orderedList.Count() > 10)
+            {
+                orderedList = orderedList.Take(10).ToList();
+            }
+
+            return orderedList;
+
         }
 
-        protected override string StatName
-        {
-            get { return "FeedDownloadCount"; }
-        }
+        protected override string StatName => "FeedDownloadCount";
     }
 }

@@ -40,7 +40,7 @@ namespace NuFridge.Shared.Database.Repository
 
         public IEnumerable<Feed> Search(string name)
         {
-            return Query($"SELECT * FROM [NuFridge].[{TableName}] WHERE Name LIKE '%' + @name + '%'", new {name});
+            return Query<Feed>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Name LIKE '%' + @name + '%'", new {name});
         }
     }
 
