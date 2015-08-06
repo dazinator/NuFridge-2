@@ -17,7 +17,8 @@ GO
 
 CREATE PROCEDURE [NuFridge].[GetLatestPackages]
 	@feedId int,
-	@includePrerelease bit
+	@includePrerelease bit,
+	@partialId NVARCHAR(4000)
 AS
 
 with cte as
@@ -26,9 +27,8 @@ with cte as
    pk.*, 
       ROW_NUMBER() OVER (PARTITION BY FeedId, PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId
+WHERE pk.FeedId = @feedId AND (@partialId IS NULL OR PackageId LIKE '%' + @partialId + '%')
 )
 
 SELECT rn, * FROM CTE as orig
 WHERE (@includePrerelease = 1 AND orig.rn = 1 AND orig.Listed = 1) OR (@includePrerelease = 0 AND orig.rn = (SELECT TOP(1) rn FROM cte as ctee where ctee.IsPrerelease = 0 AND ctee.PackageId = orig.PackageId AND ctee.Listed = 1))
-GO

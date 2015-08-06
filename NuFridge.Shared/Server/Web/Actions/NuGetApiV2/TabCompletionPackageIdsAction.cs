@@ -11,12 +11,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class TabCompletionPackageIdsAction : PackagesBase, IAction
     {
         private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
         private const int PackagesToReturn = 30;
 
-        public TabCompletionPackageIdsAction(IStore store, IFeedService feedService)
+        public TabCompletionPackageIdsAction(IStore store, IFeedService feedService, IPackageService packageService)
             : base(store)
         {
             _feedService = feedService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -46,28 +48,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 includePrerelease = Boolean.Parse(queryDictionary["includePrerelease"].ToString());
             }
 
-            using (var dbContext = new DatabaseContext())
-            {
-                var query = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+            var packages = _packageService.GetLatestPackagesForFeed(feed.Id, includePrerelease, partialId);
 
-                if (includePrerelease)
-                {
-                    query = query.Where(pk => pk.IsLatestVersion || pk.IsAbsoluteLatestVersion);
-                }
-                else
-                {
-                    query = query.Where(pk => pk.IsLatestVersion);
-                }
-
-                query = query.Where(pk => pk.Listed);
-
-                if (!string.IsNullOrWhiteSpace(partialId))
-                {
-                    query = query.Where(pk => pk.Id.Contains(partialId));
-                }
-
-                return module.Response.AsJson(query.Select(pk => pk.Id).Distinct().Take(PackagesToReturn));
-            }
+            return module.Response.AsJson(packages.Select(pk => pk.Id).Distinct().Take(PackagesToReturn));
         }
     }
 }

@@ -10,7 +10,8 @@ namespace NuFridge.Shared.Database.Repository
     {
         private const string TableName = "Package";
         private const string GetAllPackagesStoredProcCommand = "NuFridge.GetAllPackages @feedId";
-        private const string GetUniquePackageCount = "NuFridge.GetUniquePackageCount @feedId";
+        private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId";
+        private const string GetUniquePackageCountStoredProcCommand = "NuFridge.GetUniquePackageCount @feedId";
 
         public PackageRepository() : base(TableName)
         {
@@ -37,7 +38,12 @@ namespace NuFridge.Shared.Database.Repository
 
         public int GetUniquePackageIdCount(int feedId)
         {
-            return Query<int>(GetUniquePackageCount, new { feedId }).Single();
+            return Query<int>(GetUniquePackageCountStoredProcCommand, new { feedId }).Single();
+        }
+
+        public IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
+        {
+            return Query<InternalPackage>(GetLatestPackagesStoredProcCommand, new { feedId, includePrerelease, partialId });
         }
     }
 
@@ -47,5 +53,6 @@ namespace NuFridge.Shared.Database.Repository
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
         int GetUniquePackageIdCount(int feedId);
+        IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Repository;
 
@@ -13,7 +14,7 @@ namespace NuFridge.Shared.Database.Services
             _packageRepository = packageRepository;
         }
 
-        public IEnumerable<IInternalPackage> GetPackagesForFeed(int feedId)
+        public IEnumerable<InternalPackage> GetPackagesForFeed(int feedId)
         {
             return _packageRepository.GetPackagesForFeed(feedId);
         }
@@ -28,6 +29,11 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetUniquePackageIdCount(feedId);
         }
 
+        public IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
+        {
+            return _packageRepository.GetLatestPackagesForFeed(feedId, includePrerelease, partialId);
+        }
+
         public void Delete(IEnumerable<int> ids)
         {
             _packageRepository.Delete(ids);
@@ -36,9 +42,10 @@ namespace NuFridge.Shared.Database.Services
 
     public interface IPackageService
     {
-        IEnumerable<IInternalPackage> GetPackagesForFeed(int feedId);
+        IEnumerable<InternalPackage> GetPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
         int GetUniquePackageIdCount(int feedId);
+        IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
     }
 }
