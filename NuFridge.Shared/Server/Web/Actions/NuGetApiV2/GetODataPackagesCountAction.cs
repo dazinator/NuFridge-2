@@ -5,6 +5,7 @@ using System.Web.Http.OData.Extensions;
 using Nancy;
 using Nancy.Responses;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -14,8 +15,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class GetODataPackagesCountAction : GetODataPackagesAction
     {
 
-        public GetODataPackagesCountAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration webConfig)
-            : base(frameworkNamesRepository, store, webConfig)
+        public GetODataPackagesCountAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration webConfig, IFeedService feedService)
+            : base(frameworkNamesRepository, store, webConfig, feedService)
         {
 
         }

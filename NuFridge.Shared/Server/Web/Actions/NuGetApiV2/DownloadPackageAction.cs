@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -15,12 +16,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class DownloadPackageAction : IAction
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
+        private readonly IFeedService _feedService;
 
-        public DownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store)
+        public DownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IFeedService feedService)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -29,32 +30,23 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string version = parameters.version;
             string feedName = parameters.feed;
 
-            int feedId;
+            Feed feed = _feedService.Find(id, true);
 
-            using (var dbContext = new DatabaseContext())
+            if (feed == null)
             {
-                var feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-
-                if (feed == null)
-                {
-                    var response = module.Response.AsText("Feed does not exist.");
-                    response.StatusCode = HttpStatusCode.BadRequest;
-                    return response;
-                }
-
-                feedId = feed.Id;
+                var response = module.Response.AsText($"Feed does not exist called {feedName}.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
             }
 
-            var packageRepository = _packageRepositoryFactory.Create(feedId);
+            var packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
             IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
 
             if (package == null)
             {
-                var response = module.Response.AsText(string.Format("Package {0} version {1} not found.", id, version));
+                var response = module.Response.AsText($"Package {id} version {version} not found in {feedName}.");
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
             }

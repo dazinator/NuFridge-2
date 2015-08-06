@@ -5,6 +5,7 @@ using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
@@ -15,36 +16,39 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
-    public class UploadPackageAction : PackagesBase, IAction
+    public class UploadPackageAction : PackagesBase
     {
+        private readonly IFeedService _feedService;
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
         private readonly ILog _log = LogProvider.For<UploadPackageAction>();
         private readonly IWebPortalConfiguration _portalConfiguration;
 
 
-        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store, IWebPortalConfiguration portalConfiguration)
+        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store, IWebPortalConfiguration portalConfiguration, IFeedService feedService)
             : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _fileSystem = fileSystem;
             _portalConfiguration = portalConfiguration;
+            _feedService = feedService;
         }
 
-        public dynamic Execute(int feedId, string filePath, INancyModule module)
+        private dynamic ProcessRequest(string feedName, string filePath, INancyModule module)
         {
-            IFeed feed;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Id == feedId);
-            }
+            Feed feed = _feedService.Find(feedName, true);
 
             if (feed == null)
             {
-                _log.Warn("Feed does not exist with id " + feedId);
+                _log.Warn("Feed does not exist called " + feedName);
                 var errorResponse = module.Response.AsText("Feed does not exist.");
                 errorResponse.StatusCode = HttpStatusCode.BadRequest;
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
                 return errorResponse;
             }
 
@@ -52,10 +56,27 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             {
                 if (module.Request.Headers["Authorization"].FirstOrDefault() != null)
                 {
-                    module.RequiresAuthentication();
+                    try
+                    {
+                        module.RequiresAuthentication();
+                    }
+                    catch (Exception)
+                    {
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+
+                        throw;
+                    }
                 }
                 else
                 {
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+
                     _log.Warn("Invalid API used to push package for feed " + feed.Name);
                     var errorResponse = module.Response.AsText("Invalid API key.");
                     errorResponse.StatusCode = HttpStatusCode.Forbidden;
@@ -63,12 +84,19 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
             }
 
-            var response = ProcessPackage(filePath, module, feed.Name, feedId);
+            var response = IndexPackage(filePath, module, feed);
 
             return response;
         }
 
-        public dynamic Execute(dynamic parameters, INancyModule module)
+        public dynamic UploadFromUrl(int feedId, string filePath, INancyModule module)
+        {
+            var feed = _feedService.Find(feedId, false);
+
+            return ProcessRequest(feed.Name, filePath, module);
+        }
+
+        public dynamic UploadFromFile(dynamic parameters, INancyModule module)
         {
             var file = module.Request.Files.FirstOrDefault();
             string feedName = parameters.feed;
@@ -79,42 +107,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 var errorResponse = module.Response.AsText("Must provide package with valid id and version.");
                 errorResponse.StatusCode = HttpStatusCode.BadRequest;
                 return errorResponse;
-            }
-
-            IFeed feed;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
-
-
-            if (feed == null)
-            {
-                _log.Warn("Feed does not exist called " + feedName);
-                var errorResponse = module.Response.AsText("Feed does not exist.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
-                return errorResponse;
-            }
-
-            if (RequiresApiKeyCheck(feed))
-            {
-                if (!IsValidNuGetApiKey(module, feed))
-                {
-                    if (module.Request.Headers["Authorization"].FirstOrDefault() != null)
-                    {
-                        module.RequiresAuthentication();
-                    }
-                    else
-                    {
-                        _log.Warn("Invalid API used to push package for feed " + feed.Name);
-                        var errorResponse = module.Response.AsText("Invalid API key.");
-                        errorResponse.StatusCode = HttpStatusCode.Forbidden;
-                        return errorResponse;
-                    }
-                }
             }
 
             string temporaryFilePath;
@@ -140,12 +132,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
             }
 
-            var response = ProcessPackage(temporaryFilePath, module, feedName, feed.Id);
-
-            return response;
+            return ProcessRequest(feedName, temporaryFilePath, module);
         }
 
-        private Response ProcessPackage(string temporaryFilePath, INancyModule module, string feedName, int feedId)
+        private Response IndexPackage(string temporaryFilePath, INancyModule module, Feed feed)
         {
             try
             {
@@ -168,7 +158,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     var response = new Response();
 
                     bool endsWithSlash = _portalConfiguration.ListenPrefixes.EndsWith("/");
-                    var location = string.Format("{0}{1}feeds/{2}/api/symbols", _portalConfiguration.ListenPrefixes, endsWithSlash ? "" : "/", feedName);
+                    var location = $"{_portalConfiguration.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/symbols";
                 
                     response.Headers.Add("Location", location);
                     response.StatusCode = HttpStatusCode.TemporaryRedirect;
@@ -176,7 +166,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return response;
                 }
 
-                IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feedId);
+                IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
                 var existingPackage = packageRepository.GetPackage(package.Id, package.Version);
 

@@ -9,6 +9,7 @@ using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Query;
 using Nancy;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
@@ -23,30 +24,30 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private readonly IFrameworkNamesRepository _frameworkNamesRepository;
         protected readonly IStore Store;
         private readonly IWebPortalConfiguration _portalConfig;
+        private readonly IFeedService _feedService;
 
-        public GetODataPackagesAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration portalConfig)
+        public GetODataPackagesAction(IFrameworkNamesRepository frameworkNamesRepository, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService)
         {
             _frameworkNamesRepository = frameworkNamesRepository;
             Store = store;
             _portalConfig = portalConfig;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string feedName = parameters.feed;
-            var feed = GetFeedModel(feedName);
+            var feed = _feedService.Find(feedName, false);
 
             if (feed == null)
             {
-                var response = module.Response.AsText("Feed does not exist.");
+                var response = module.Response.AsText($"Feed does not exist called {feedName}.");
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;
             string selectValue = GetAndRemoveSelectParamFromQuery(queryDictionary) ?? String.Empty;
-
-
 
             AddAdditionalQueryParams(queryDictionary);
 
@@ -243,18 +244,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
 
             return null;
-        }
-
-        private IFeed GetFeedModel(string feedName)
-        {
-            IFeed feed;
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
-            return feed;
         }
     }
 }

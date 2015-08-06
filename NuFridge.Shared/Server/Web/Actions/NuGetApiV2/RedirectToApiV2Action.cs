@@ -21,7 +21,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var location = string.Format("{0}{1}feeds/{2}/api/v2", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feedName);
+            var location = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feedName}/api/v2";
 
             response.Headers.Add("Location", location);
 

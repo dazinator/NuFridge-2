@@ -61,7 +61,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             try
             {
-                return _packageAction.Execute(feed, tempPath, module);
+                return _packageAction.UploadFromUrl(feed, tempPath, module);
             }
             catch (Exception ex)
             {

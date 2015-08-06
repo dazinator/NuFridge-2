@@ -2,6 +2,7 @@
 using System.Linq;
 using Nancy;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Storage;
 
@@ -9,36 +10,33 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class RedirectToUploadPackageAction : IAction
     {
-        private readonly IStore _store;
         private readonly IWebPortalConfiguration _portalConfig;
+        private readonly IFeedService _feedService;
 
-        public RedirectToUploadPackageAction(IStore store, IWebPortalConfiguration portalConfig)
+        public RedirectToUploadPackageAction(IWebPortalConfiguration portalConfig, IFeedService feedService)
         {
-            _store = store;
             _portalConfig = portalConfig;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string feedName = parameters.feed;
 
-            using (var dbContext = new DatabaseContext())
-            {
-                var feed = dbContext.Feeds.AsNoTracking().FirstOrDefault(f => f.Name.Equals(feedName));
-                if (feed == null)
-                {
-                    var errorResponse = module.Response.AsText("Feed does not exist.");
-                    errorResponse.StatusCode = HttpStatusCode.BadRequest;
-                    return errorResponse;
-                }
-            }
+            Feed feed = _feedService.Find(feedName, false);
 
+            if (feed == null)
+            {
+                var errorResponse = module.Response.AsText($"Feed does not exist called {feedName}.");
+                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                return errorResponse;
+            }
 
             var response = new Response();
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var location = string.Format("{0}{1}feeds/{2}/api/v2/package", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feedName);
+            var location = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feedName}/api/v2/package";
 
             response.Headers.Add("Location", location);
 

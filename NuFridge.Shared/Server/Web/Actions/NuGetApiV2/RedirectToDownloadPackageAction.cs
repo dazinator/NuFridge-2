@@ -4,6 +4,7 @@ using System.Linq;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -14,14 +15,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class RedirectToDownloadPackageAction : IAction
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
         private readonly IWebPortalConfiguration _portalConfig;
+        private readonly IFeedService _feedService;
 
-        public RedirectToDownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig)
+        public RedirectToDownloadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory,IWebPortalConfiguration portalConfig, IFeedService feedService)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
             _portalConfig = portalConfig;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -30,30 +31,23 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string version = parameters.version;
             string feedName = parameters.feed;
 
-            int feedId;
+            Feed feed = _feedService.Find(feedName, false);
 
-            using (var dbContext = new DatabaseContext())
+            if (feed == null)
             {
-                var feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-                if (feed == null)
-                {
-                    var errorResponse = module.Response.AsText("Feed does not exist.");
-                    errorResponse.StatusCode = HttpStatusCode.BadRequest;
-                    return errorResponse;
-                }
-                feedId = feed.Id;
+                var errorResponse = module.Response.AsText($"Feed does not exist called {feedName}.");
+                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                return errorResponse;
             }
 
-            var packageRepository = _packageRepositoryFactory.Create(feedId);
+            var packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
             IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
 
             if (package == null)
             {
-                var errorResponse = module.Response.AsText(string.Format("Package {0} version {1} not found.", id, version));
+                var errorResponse = module.Response.AsText($"Package {id} version {version} not found.");
                 errorResponse.StatusCode = HttpStatusCode.NotFound;
                 return errorResponse;
             }
@@ -62,7 +56,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var location = string.Format("{0}{1}feeds/{2}/packages/{3}/{4}", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feedName, package.Id, package.Version);
+            var location =
+                $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feedName}/packages/{package.Id}/{package.Version}";
 
             response.Headers.Add("Location", location);
 

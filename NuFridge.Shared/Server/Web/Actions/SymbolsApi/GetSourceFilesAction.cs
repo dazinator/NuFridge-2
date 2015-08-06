@@ -3,6 +3,7 @@ using System.Linq;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuFridge.Shared.Server.Storage;
@@ -11,14 +12,16 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
 {
     class GetSourceFilesAction : IAction
     {
-        private readonly IStore _store;
         private readonly SymbolSource _symbolSource;
+        private readonly IFeedService _feedService;
+        private readonly IFeedConfigurationService _feedConfigurationService;
         private readonly ILog _log = LogProvider.For<GetSourceFilesAction>();
 
-        public GetSourceFilesAction(IStore store, SymbolSource symbolSource)
+        public GetSourceFilesAction(SymbolSource symbolSource, IFeedService feedService, IFeedConfigurationService feedConfigurationService)
         {
-            _store = store;
             _symbolSource = symbolSource;
+            _feedService = feedService;
+            _feedConfigurationService = feedConfigurationService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -28,26 +31,25 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
             string version = parameters.version;
             string path = parameters.path;
 
-            IFeed feed;
-            IFeedConfiguration config;
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
+            IFeed feed = _feedService.Find(feedName, false);
+            
 
             if (feed == null)
             {
-                _log.Warn("Feed does not exist called " + feedName);
+                _log.Warn($"Feed does not exist called {feedName}");
                 var errorResponse = module.Response.AsText("Feed does not exist.");
                 errorResponse.StatusCode = HttpStatusCode.BadRequest;
                 return errorResponse;
             }
 
-            using (var dbContext = new DatabaseContext())
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(feed.Id);
+
+            if (config == null)
             {
-                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feed.Id);
+                _log.Warn($"Feed config does not exist called {feedName}");
+                var errorResponse = module.Response.AsText("Feed config does not exist.");
+                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                return errorResponse;
             }
 
             var fileStream = _symbolSource.OpenPackageSourceFile(config, id, version, path);

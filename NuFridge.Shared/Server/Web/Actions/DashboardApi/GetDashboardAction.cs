@@ -2,17 +2,18 @@
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
 {
     public class GetDashboardAction : IAction
     {
-        private readonly IStore _store;
+        private readonly IFeedService _feedService;
 
-        public GetDashboardAction(IStore store)
+        public GetDashboardAction(IFeedService feedService)
         {
-            _store = store;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -21,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
 
             using (var dbContext = new DatabaseContext())
             {
-                var feedsCount = dbContext.Feeds.AsNoTracking().Count();
+                var feedsCount = _feedService.GetCount();
                 var usersCount = dbContext.Users.AsNoTracking().Count();
 
                 return new

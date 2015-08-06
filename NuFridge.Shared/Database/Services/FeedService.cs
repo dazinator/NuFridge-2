@@ -77,6 +77,19 @@ namespace NuFridge.Shared.Database.Services
             feed.RootUrl = $"{_homeConfiguration.ListenPrefixes}{(_homeConfiguration.ListenPrefixes.EndsWith("/") ? "" : "/")}feeds/{feed.Name}";
         }
 
+
+        public Feed Find(string feedName, bool includeApiKey)
+        {
+            var feed = _feedRepository.Find(feedName);
+
+            if (feed != null)
+            {
+                ConfigureFeedEntity(feed, includeApiKey);
+            }
+
+            return feed;
+        }
+
         public Feed Find(int feedId, bool includeApiKey)
         {
             var feed = _feedRepository.Find(feedId);
@@ -98,6 +111,26 @@ namespace NuFridge.Shared.Database.Services
         {
             return _feedRepository.GetCount();
         }
+
+        public void Update(Feed feed)
+        {
+            var existingFeed = Find(feed.Id, true);
+
+            if (!string.IsNullOrWhiteSpace(feed.ApiKey))
+            {
+                ICryptoService cryptoService = new PBKDF2();
+
+                feed.ApiKeySalt = cryptoService.GenerateSalt();
+                feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
+            }
+            else if (feed.HasApiKey)
+            {
+                feed.ApiKeyHashed = existingFeed.ApiKeyHashed; //Temporary until API Key table is used
+                feed.ApiKeySalt = existingFeed.ApiKeySalt; //Temporary until API Key table is used
+            }
+
+            _feedRepository.Update(feed);
+        }
     }
 
     public interface IFeedService
@@ -108,7 +141,9 @@ namespace NuFridge.Shared.Database.Services
         bool Exists(int feedId);
         IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey);
         Feed Find(int feedId, bool includeApiKey);
+        Feed Find(string feedName, bool includeApiKey);
         IEnumerable<Feed> Search(string name);
         int GetCount();
+        void Update(Feed feed);
     }
 }

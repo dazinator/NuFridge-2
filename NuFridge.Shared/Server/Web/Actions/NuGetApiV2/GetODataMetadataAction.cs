@@ -2,14 +2,34 @@
 using System.Text;
 using Microsoft.Data.OData;
 using Nancy;
+using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Web.OData;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetODataMetadataAction : IAction
     {
+        private readonly IFeedService _feedService;
+
+        public GetODataMetadataAction(IFeedService feedService)
+        {
+            _feedService = feedService;
+        }
+
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
+            string feedName = parameters.feed;
+
+            Feed feed = _feedService.Find(feedName, true);
+
+            if (feed == null)
+            {
+                var response = module.Response.AsText($"Feed does not exist called {feedName}.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
+
             NuGetODataModelBuilderODataPackage builder = new NuGetODataModelBuilderODataPackage();
             builder.Build();
 

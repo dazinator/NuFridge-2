@@ -10,6 +10,7 @@ using System.Web.Http.OData.Query;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
@@ -20,17 +21,19 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class GetUpdatesAction : IAction
     {
         private readonly IWebPortalConfiguration _portalConfig;
+        private readonly IFeedService _feedService;
 
-        public GetUpdatesAction(IWebPortalConfiguration portalConfig)
+        public GetUpdatesAction(IWebPortalConfiguration portalConfig, IFeedService feedService)
 
         {
             _portalConfig = portalConfig;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             string feedName = parameters.feed;
-            var feed = GetFeedModel(feedName);
+            var feed = _feedService.Find(feedName, false);
 
             if (feed == null)
             {
@@ -141,19 +144,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             ds = options.ApplyTo(ds, settings) as IQueryable<IInternalPackage>;
             return ds;
-        }
-
-
-        private IFeed GetFeedModel(string feedName)
-        {
-            IFeed feed;
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
-            return feed;
         }
 
         private string RemoveQuotesFromQueryValue(string value)

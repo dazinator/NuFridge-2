@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.Responses;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
@@ -15,8 +16,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class GetUpdatesCountAction : GetUpdatesAction
     {
 
-        public GetUpdatesCountAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration webConfig)
-            : base(webConfig)
+        public GetUpdatesCountAction(IWebPortalConfiguration webConfig, IFeedService feedService)
+            : base(webConfig, feedService)
         {
 
         }

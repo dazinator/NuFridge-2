@@ -42,11 +42,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             var response = new Response
             {
-                ContentType = string.Format("{0}; boundary=batchresponse_{1}", mimeType, batchResponseGuid),
+                ContentType = $"{mimeType}; boundary=batchresponse_{batchResponseGuid}",
                 StatusCode = HttpStatusCode.Accepted
             };
 
-            _responseBuilder.Append(string.Format("--batchresponse_{0}\r\n", batchResponseGuid));
+            _responseBuilder.Append($"--batchresponse_{batchResponseGuid}\r\n");
             _responseBuilder.Append("Content-Type: application/http\r\n");
             _responseBuilder.Append("Content-Transfer-Encoding: binary\r\n\r\n");
 
@@ -63,7 +63,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
             }
 
-            _responseBuilder.Append(string.Format("\r\n--batchresponse_{0}--", batchResponseGuid));
+            _responseBuilder.Append($"\r\n--batchresponse_{batchResponseGuid}--");
 
             var responseText = _responseBuilder.ToString();
             var byteData = Encoding.UTF8.GetBytes(responseText);
@@ -81,7 +81,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private void OnSuccess(NancyContext obj)
         {
             _responseBuilder.Append("HTTP/1.1 200 OK\r\n");
-            _responseBuilder.Append(string.Format("Content-Type: {0}\r\n\r\n", obj.Response.ContentType));
+            _responseBuilder.Append($"Content-Type: {obj.Response.ContentType}\r\n\r\n");
 
             using (var stream = new MemoryStream())
             {

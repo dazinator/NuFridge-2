@@ -3,6 +3,7 @@ using System.Linq;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
@@ -12,13 +13,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class DeletePackageAction : PackagesBase, IAction
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
+        private readonly IFeedService _feedService;
 
 
-        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store) : base(store)
+        public DeletePackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IFeedService feedService) : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -27,15 +28,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string version = parameters.version;
             string feedName = parameters.feed;
 
-            IFeed feed;
-
-
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
+            IFeed feed = _feedService.Find(feedName, true);
 
             if (feed == null)
             {
@@ -55,17 +48,16 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             IInternalPackage package = packageRepository.GetPackage(id, new SemanticVersion(version));
 
-
             if (package == null)
             {
-                var response = module.Response.AsText(string.Format("Package {0} version {1} not found.", id, version));
+                var response = module.Response.AsText($"Package {id} version {version} not found for feed {feedName}.");
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
             }
 
             packageRepository.RemovePackage(package);
 
-            return new Response { StatusCode = HttpStatusCode.Created };
+            return new Response { StatusCode = HttpStatusCode.OK };
         }
     }
 }

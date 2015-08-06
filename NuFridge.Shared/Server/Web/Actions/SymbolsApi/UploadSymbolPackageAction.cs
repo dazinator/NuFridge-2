@@ -5,6 +5,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
@@ -18,19 +19,21 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
 {
     public class UploadSymbolPackageAction : PackagesBase, IAction
     {
-        private readonly IStore _store;
         private readonly ILocalFileSystem _fileSystem;
         private readonly SymbolSource _symbolSource;
         private readonly IWebPortalConfiguration _portalConfiguration;
+        private readonly IFeedService _feedService;
+        private readonly IFeedConfigurationService _feedConfigurationService;
         private readonly ILog _log = LogProvider.For<UploadSymbolPackageAction>();
 
-        public UploadSymbolPackageAction(IStore store, ILocalFileSystem fileSystem, SymbolSource symbolSource, IWebPortalConfiguration portalConfiguration)
+        public UploadSymbolPackageAction(IStore store, ILocalFileSystem fileSystem, SymbolSource symbolSource, IWebPortalConfiguration portalConfiguration, IFeedService feedService, IFeedConfigurationService feedConfigurationService)
             : base(store)
         {
-            _store = store;
             _fileSystem = fileSystem;
             _symbolSource = symbolSource;
             _portalConfiguration = portalConfiguration;
+            _feedService = feedService;
+            _feedConfigurationService = feedConfigurationService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -52,30 +55,26 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
                 return new TextResponse(HttpStatusCode.MethodNotAllowed, "NuFridge has not been configured to process symbol packages.");
             }
 
-            IFeed feed;
-            IFeedConfiguration config;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                feed =
-                    dbContext.Feeds.AsNoTracking()
-                        .FirstOrDefault(f => f.Name.Equals(feedName, StringComparison.InvariantCultureIgnoreCase));
-            }
-
+            IFeed feed = _feedService.Find(feedName, true);
 
             if (feed == null)
             {
-                _log.Warn("Feed does not exist called " + feedName);
+                _log.Warn($"Feed does not exist called {feedName}");
                 var response = module.Response.AsText("Feed does not exist.");
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return response;
             }
 
-            using (var dbContext = new DatabaseContext())
-            {
-                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feed.Id);
-            }
 
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(feed.Id);
+
+            if (config == null)
+            {
+                _log.Warn($"Feed config does not exist called {feedName}");
+                var response = module.Response.AsText("Feed config does not exist.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                return response;
+            }
 
             if (RequiresApiKeyCheck(feed))
             {

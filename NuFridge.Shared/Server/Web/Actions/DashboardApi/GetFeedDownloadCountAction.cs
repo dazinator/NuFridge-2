@@ -18,12 +18,10 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
         {
             module.RequiresAuthentication();
 
-            
-            
-                var model = new FeedDownloadCountStatistic().GetModel();
+            var model = new FeedDownloadCountStatistic().GetModel();
 
-                return model;
-            
+            return model;
+
         }
     }
 }
