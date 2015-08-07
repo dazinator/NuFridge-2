@@ -49,7 +49,7 @@ namespace NuFridge.Shared.Database.Repository
             return Query<InternalPackage>(GetLatestPackagesStoredProcCommand, new { feedId, includePrerelease, partialId });
         }
 
-        public IEnumerable<InternalPackage> GetVersionsOfPackage(int feedId, bool includePrerelease, string packageId)
+        public IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId)
         {
             return Query<InternalPackage>(GetVersionsOfPackageStoredProcCommand, new { feedId, includePrerelease, packageId });
         }
@@ -70,9 +70,9 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public InternalPackage GetPackage(int feedId, string packageId, string version)
+        public InternalPackage GetPackage(int? feedId, string packageId, string version)
         {
-            return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).SingleOrDefault();
+            return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).FirstOrDefault();
         }
 
         public IEnumerable<InternalPackage> GetAllPackagesWithoutAHash()
@@ -88,11 +88,11 @@ namespace NuFridge.Shared.Database.Repository
         int GetCount(int feedId);
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
-        IEnumerable<InternalPackage> GetVersionsOfPackage(int feedId, bool includePrerelease, string packageId);
+        IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
         void Insert(InternalPackage package);
         void Update(InternalPackage package);
         void Delete(InternalPackage package);
-        InternalPackage GetPackage(int feedId, string packageId, string version);
+        InternalPackage GetPackage(int? feedId, string packageId, string version);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHash();
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNet.SignalR;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
@@ -21,11 +22,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     public class ImportPackagesForFeedJob : PackagesBase
     {
         private readonly IInternalPackageRepositoryFactory _factory;
+        private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
         private readonly ILog _log = LogProvider.For<ImportPackagesForFeedJob>();
 
-        public ImportPackagesForFeedJob(IInternalPackageRepositoryFactory factory, IStore store) : base(store)
+        public ImportPackagesForFeedJob(IInternalPackageRepositoryFactory factory, IStore store, IFeedService feedService, IPackageService packageService) : base(store)
         {
             _factory = factory;
+            _feedService = feedService;
+            _packageService = packageService;
         }
 
         [AutomaticRetry(Attempts = 0)]
@@ -35,17 +40,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
             string jobId = JobContext.JobId;
 
-            using (var dbContext = new DatabaseContext())
+            if (_feedService.GetCount() <= 1)
             {
-                if (dbContext.Feeds.Count() <= 1)
-                {
-                    _log.Debug("Disabled local cache for package import for feed id " + feedId);
+                _log.Debug("Disabled local cache for package import for feed id " + feedId);
 
-                    options.CheckLocalCache = false;
-                }
+                options.CheckLocalCache = false;
             }
 
-                IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
+            IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
 
             List<IPackage> packages;
 
@@ -149,51 +151,38 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             }
         }
 
-        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, string strVersion, DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
+        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, string strVersion,
+            DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
         {
-            return false;
+            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, packageId, strVersion);
 
-            List<InternalPackage> cachePackageRecords;
-
-
-            using (var dbContext = new DatabaseContext())
+            if (!string.IsNullOrWhiteSpace(localVersionOfPackage?.Hash))
             {
-                using (dbContext.Database.BeginTransaction(IsolationLevel.ReadUncommitted))
+                if (localVersionOfPackage.Hash == remotePackage.PackageHash)
                 {
-                    cachePackageRecords =
-                        dbContext.Packages.Where(pk => pk.Id.Equals(packageId) && pk.Version == strVersion)
-                            .Take(5)
-                            .ToList();
+                    IInternalPackageRepository cachedRepo = _factory.Create(localVersionOfPackage.FeedId);
+
+                    var cachePackagePath = cachedRepo.GetPackageFilePath(localVersionOfPackage);
+
+                    if (File.Exists(cachePackagePath))
+                    {
+                        var cachePackage = FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
+
+                        cachePackage.Listed = true;
+
+                        localRepository.AddPackage(cachePackage);
+
+                        _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " +
+                                  feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
+
+                        PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,
+                            new PackageImportProgressAuditItem(packageId, version.ToString()));
+                        return true;
+                    }
                 }
             }
 
-            foreach (var cachePackageRecord in cachePackageRecords)
-                {
-                    if (!string.IsNullOrWhiteSpace(cachePackageRecord?.Hash))
-                    {
-                        if (cachePackageRecord.Hash == remotePackage.PackageHash)
-                        {
-                            IInternalPackageRepository cachedRepo = _factory.Create(cachePackageRecord.FeedId);
 
-                            var cachePackagePath = cachedRepo.GetPackageFilePath(cachePackageRecord);
-
-                            if (File.Exists(cachePackagePath))
-                            {
-                                var cachePackage = FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
-
-                                cachePackage.Listed = true;
-
-                                localRepository.AddPackage(cachePackage);
-
-                                _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId + " using cached package from feed id " + cachePackageRecord.FeedId);
-
-                                PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,new PackageImportProgressAuditItem(packageId, version.ToString()));
-                                return true;
-                            }
-                        }
-                    }
-                }
-            
             return false;
         }
 

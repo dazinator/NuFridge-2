@@ -234,7 +234,7 @@ namespace NuFridge.Tests
         public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesJob
         {
             public TestableRunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
-                : base(store, packageRepositoryFactory)
+                : base(store, null, null, null, null)
             {
 
             }

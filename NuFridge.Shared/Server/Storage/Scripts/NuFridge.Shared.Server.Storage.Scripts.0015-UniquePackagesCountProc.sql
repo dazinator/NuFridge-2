@@ -51,7 +51,7 @@ with cte as
    pk.*, 
       ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId AND pk.Id = @packageId AND (@includePrerelease = 1 OR pk.IsPrerelease = 0)
+WHERE (@feedId IS NULL OR pk.FeedId = @feedId) AND pk.Id = @packageId AND (@includePrerelease = 1 OR pk.IsPrerelease = 0)
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
@@ -74,7 +74,7 @@ with cte as
    pk.*, 
       ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId AND pk.Id = @packageId
+WHERE (@feedId IS NULL OR pk.FeedId = @feedId) AND pk.Id = @packageId
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (

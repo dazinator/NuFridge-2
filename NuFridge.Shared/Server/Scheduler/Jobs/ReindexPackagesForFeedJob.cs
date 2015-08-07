@@ -6,6 +6,7 @@ using Hangfire;
 using Hangfire.Logging;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.Storage;
@@ -18,13 +19,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     public class ReindexPackagesForFeedJob : PackagesBase
     {
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
-        private readonly IStore _store;
+        private readonly IFeedConfigurationService _feedConfigurationService;
+        private readonly IPackageService _packageService;
         private readonly ILog _logger = LogProvider.For<ReindexPackagesForFeedJob>();
 
-        public ReindexPackagesForFeedJob(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store) : base(store)
+        public ReindexPackagesForFeedJob(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IFeedConfigurationService feedConfigurationService, IPackageService packageService) : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
-            _store = store;
+            _feedConfigurationService = feedConfigurationService;
+            _packageService = packageService;
         }
 
         [AutomaticRetry(Attempts = 0)]
@@ -32,18 +35,13 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         {
             _logger.Info("Executing " + JobId + " job for feed id " + feedId);
 
-            IFeedConfiguration config;
-            using (var dbContext = new DatabaseContext())
-            {
-                config = dbContext.FeedConfigurations.AsNoTracking().FirstOrDefault(fc => fc.FeedId == feedId);
-            }
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(feedId);
 
             if (config == null)
             {
                 _logger.Error("No feed configuration record could be found for feed id " + feedId);
                 return;
             }
-
 
             if (string.IsNullOrWhiteSpace(config.Directory))
             {
@@ -84,10 +82,11 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                     }
                     catch (Exception ex)
                     {
-                        _logger.ErrorException("Failed to open file " + file + " to check if it is indexed for feed id " + feedId, ex);
+                        _logger.ErrorException(
+                            "Failed to open file " + file + " to check if it is indexed for feed id " + feedId, ex);
                         continue;
                     }
-                    
+
                     var existingPackage = packageRepository.GetPackage(package.Id, package.Version);
 
                     if (existingPackage != null)
@@ -105,39 +104,38 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 }
             }
 
-            using (var dbContext = new DatabaseContext())
+            var packages = _packageService.GetAllPackagesForFeed(feedId);
+
+            foreach (var internalPackage in packages)
             {
-                var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feedId).Where(pk => pk.FeedId == feedId);
-
-                foreach (var internalPackage in packages)
+                if (packagesToKeep.ContainsKey(internalPackage.Id))
                 {
-                    if (packagesToKeep.ContainsKey(internalPackage.Id))
+                    var versionList = packagesToKeep[internalPackage.Id];
+                    if (versionList.Contains(internalPackage.Version))
                     {
-                        var versionList = packagesToKeep[internalPackage.Id];
-                        if (versionList.Contains(internalPackage.Version))
-                        {
-                            continue;
-                        }
-
-                        _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
-
-                        dbContext.Packages.Remove(internalPackage);
-                        packagesDeleted++;
+                        continue;
                     }
-                    else
-                    {
-                        _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version + " as the package file no longer exists for feed id " + feedId);
 
-                        dbContext.Packages.Remove(internalPackage);
-                        packagesDeleted++;
-                    }
+                    _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version +
+                                 " as the package file no longer exists for feed id " + feedId);
+
+                    _packageService.Delete(internalPackage);
+                    packagesDeleted++;
                 }
+                else
+                {
+                    _logger.Info("Deleting " + internalPackage.Id + ", v" + internalPackage.Version +
+                                 " as the package file no longer exists for feed id " + feedId);
 
-                dbContext.SaveChanges();
+                    _packageService.Delete(internalPackage);
+                    packagesDeleted++;
+                }
             }
 
+
             _logger.Info("Finished package reindex for feed id " + feedId);
-            _logger.Info("Removed " + packagesDeleted + " packages and added " + packagesAdded + " packages for feed id " + feedId);
+            _logger.Info("Removed " + packagesDeleted + " packages and added " + packagesAdded +
+                         " packages for feed id " + feedId);
         }
 
         private void AddToKeepDictionary(Dictionary<string, List<string>> packagesToKeep, string packageId, string packageVersion)
