@@ -135,3 +135,23 @@ GO
 ALTER TABLE [NuFridge].[Package]
 DROP COLUMN VersionDownloadCount
 GO
+
+
+DROP TABLE [NuFridge].[User];
+
+
+GO
+CREATE TABLE [NuFridge].[User] (
+    [Id]             INT             IDENTITY (1, 1) NOT NULL,
+    [Username]       NVARCHAR (100)  NOT NULL,
+    [DisplayName]    NVARCHAR (255)  NOT NULL,
+    [EmailAddress]   NVARCHAR (4000) NOT NULL,
+    [LastUpdated]    DATETIME2 (7)   NOT NULL,
+    [IsActive]       BIT             NOT NULL,
+    [IsService]      BIT             NOT NULL,
+    [PasswordSalt]   NVARCHAR (MAX)  NOT NULL,
+    [PasswordHashed] NVARCHAR (MAX)  NOT NULL,
+	CONSTRAINT [PK_User_Id] PRIMARY KEY CLUSTERED ([Id] ASC),
+    CONSTRAINT [UQ_UserUsernameUnique] UNIQUE NONCLUSTERED ([Username] ASC)
+);
+GO

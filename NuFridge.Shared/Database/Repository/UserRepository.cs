@@ -28,6 +28,14 @@ namespace NuFridge.Shared.Database.Repository
                 return connection.Query<User>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Username = @username", new {  username }).FirstOrDefault();
             }
         }
+
+        public void Update(User user)
+        {
+            using (var connection = GetConnection())
+            {
+                connection.Update(user);
+            }
+        }
     }
 
     public interface IUserRepository
@@ -36,5 +44,6 @@ namespace NuFridge.Shared.Database.Repository
         void Insert(User user);
         User Find(string username);
         User Find(int userId);
+        void Update(User user);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using SimpleCrypto;
 
 namespace NuFridge.Shared.Database.Services
 {
@@ -20,16 +21,27 @@ namespace NuFridge.Shared.Database.Services
 
         public void CreateAdministratorUserIfNotExist()
         {
-            var totalCount = GetCount();
+            var user = Find("system");
 
-            if (totalCount == 0)
+            if (user == null)
             {
-                User user = new User("administrator");
+                user = new User("system");
                 user.IsActive = true;
-                user.EmailAddress = "admin@nufridge.com";
+                user.IsService = true;
+                user.EmailAddress = "";
                 user.LastUpdated = DateTime.Now;
-                user.SetPassword("password");
-                user.DisplayName = "Administrator";
+                user.DisplayName = "System";
+
+                var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_!£$%^&*(),.;:#";
+                var stringChars = new char[30];
+                var random = new Random();
+
+                for (int i = 0; i < stringChars.Length; i++)
+                {
+                    stringChars[i] = chars[random.Next(chars.Length)];
+                }
+
+                user.Password = new string(stringChars); ;
 
                 Insert(user);
             }
@@ -45,8 +57,37 @@ namespace NuFridge.Shared.Database.Services
             return _userRepository.Find(userId);
         }
 
+        private void SetPassword(User user)
+        {
+            ICryptoService cryptoService = new PBKDF2();
+
+            user.PasswordSalt = cryptoService.GenerateSalt();
+            user.PasswordHashed = cryptoService.Compute(user.Password);
+        }
+
+        public void Update(User user)
+        {
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                SetPassword(user);
+            }
+            else if (string.IsNullOrWhiteSpace(user.PasswordHashed) || string.IsNullOrWhiteSpace(user.PasswordSalt))
+            {
+                User existingUser = Find(user.Id);
+                user.PasswordHashed = existingUser.PasswordHashed;
+                user.PasswordSalt = existingUser.PasswordSalt;
+            }
+
+            _userRepository.Update(user);
+        }
+
         public void Insert(User user)
         {
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                SetPassword(user);
+            }
+
             _userRepository.Insert(user);
         }
     }
@@ -57,5 +98,7 @@ namespace NuFridge.Shared.Database.Services
         User Find(string username);
         User Find(int userId);
         int GetCount();
+        void Insert(User user);
+        void Update(User user);
     }
 }

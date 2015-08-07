@@ -14,6 +14,12 @@ namespace NuFridge.Shared.Database.Model
         public string DisplayName { get; set; }
         public string EmailAddress { get; set; }
 
+        [Editable(false)]
+        public string Password { get; set; }
+
+        public bool IsService { get; set; }
+
+        public string PasswordSalt { get; set; }
         public string PasswordHashed { get; set; }
         public bool IsActive { get; set; }
         public DateTime LastUpdated { get; set; }
@@ -29,20 +35,6 @@ namespace NuFridge.Shared.Database.Model
             Username = username;
             IsActive = true;
         }
-
-        public void SetPassword(string plainTextPassword)
-        {
-            PasswordHashed = PasswordHasher.HashPassword(plainTextPassword);
-        }
-
-        public bool ValidatePassword(string plainTextPassword)
-        {
-            if (PasswordHasher.VerifyPassword(plainTextPassword, PasswordHashed))
-                return true;
-
-            PasswordHashed = PasswordHasher.HashPassword(plainTextPassword);
-            return true;
-        }
     }
 
     public interface IUser
@@ -52,11 +44,9 @@ namespace NuFridge.Shared.Database.Model
         string Username { get; set; }
         string DisplayName { get; set; }
         string EmailAddress { get; set; }
-
+        string PasswordSalt { get; set; }
         string PasswordHashed { get; set; }
         bool IsActive { get; set; }
         DateTime LastUpdated { get; set; }
-
-        void SetPassword(string plainTextPassword);
     }
 }
