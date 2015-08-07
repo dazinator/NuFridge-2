@@ -10,11 +10,11 @@ namespace NuFridge.Shared.Database.Repository
     public class FeedConfigurationRepository : BaseRepository<FeedConfiguration>, IFeedConfigurationRepository
     {
         private const string TableName = "FeedConfiguration";
-        private const string FeedCacheKey = "FeedModel-{0}";
+        private const string CacheKey = "FeedConfigurationModel-{0}";
 
         private string GetCacheKey(int feedId)
         {
-            return string.Format(FeedCacheKey, feedId);
+            return string.Format(CacheKey, feedId);
         }
 
         public FeedConfigurationRepository() : base(TableName)
