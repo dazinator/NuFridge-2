@@ -32,7 +32,10 @@ WHERE pk.FeedId = @feedId AND (@partialId IS NULL OR Id LIKE '%' + @partialId + 
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
 SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND orig.Id = Id AND Listed = 1
-) = rn THEN 1 ELSE 0 END, * FROM CTE as orig
+) = rn THEN 1 ELSE 0 END,
+DownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = orig.FeedId AND pd.PackageIdHash = orig.IdHash),
+VersionDownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = orig.FeedId AND pd.PackageIdHash = orig.IdHash AND pd.VersionMajor = orig.VersionMajor AND pd.VersionMinor = orig.VersionMinor AND pd.VersionBuild = orig.VersionBuild AND pd.VersionRevision = orig.VersionRevision AND pd.VersionSpecial = orig.VersionSpecial),
+ * FROM CTE as orig
 WHERE (@includePrerelease = 1 AND orig.rn = 1 AND orig.Listed = 1) OR (@includePrerelease = 0 AND orig.rn = (SELECT TOP(1) rn FROM cte as ctee where ctee.IsPrerelease = 0 AND ctee.Id = orig.Id AND ctee.Listed = 1))
 GO
 
@@ -53,7 +56,10 @@ WHERE pk.FeedId = @feedId AND pk.Id = @packageId AND (@includePrerelease = 1 OR 
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
 SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
-) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
+) = rn THEN 1 ELSE 0 END,
+DownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash),
+VersionDownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash AND pd.VersionMajor = ctee.VersionMajor AND pd.VersionMinor = ctee.VersionMinor AND pd.VersionBuild = ctee.VersionBuild AND pd.VersionRevision = ctee.VersionRevision AND pd.VersionSpecial = ctee.VersionSpecial),
+ * FROM cte as ctee
 GO
 
 CREATE PROCEDURE [NuFridge].[GetPackage]
@@ -73,7 +79,10 @@ WHERE pk.FeedId = @feedId AND pk.Id = @packageId
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
 SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
-) = rn THEN 1 ELSE 0 END, *  FROM cte as ctee
+) = rn THEN 1 ELSE 0 END, 
+DownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash),
+VersionDownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash AND pd.VersionMajor = ctee.VersionMajor AND pd.VersionMinor = ctee.VersionMinor AND pd.VersionBuild = ctee.VersionBuild AND pd.VersionRevision = ctee.VersionRevision AND pd.VersionSpecial = ctee.VersionSpecial),
+*  FROM cte as ctee
 WHERE ctee.[Version] = @version
 GO
 
@@ -89,9 +98,14 @@ FROM  [NuFridge].[Package] as pk
 WHERE @feedId IS NULL OR pk.FeedId = @feedId
 )
 
-SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
-SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
-) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
+SELECT 
+IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END,
+IsLatestVersion = CASE WHEN (
+	SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
+	) = rn THEN 1 ELSE 0 END, 
+DownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash),
+VersionDownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash AND pd.VersionMajor = ctee.VersionMajor AND pd.VersionMinor = ctee.VersionMinor AND pd.VersionBuild = ctee.VersionBuild AND pd.VersionRevision = ctee.VersionRevision AND pd.VersionSpecial = ctee.VersionSpecial),
+* FROM cte as ctee
 GO
 
 CREATE TABLE [NuFridge].[PackageDownload] (
@@ -112,4 +126,12 @@ GO
 
 CREATE CLUSTERED INDEX [IX_NuFridgePackageDownload_FeedId_PackageIdHash_Version_DownloadedAt]
     ON [NuFridge].[PackageDownload]([FeedId] ASC, [PackageIdHash] ASC, [VersionMajor] DESC, [VersionMinor] DESC, [VersionBuild] DESC, [VersionRevision] DESC, [DownloadedAt] ASC);
+GO
+
+ALTER TABLE [NuFridge].[Package]
+DROP COLUMN DownloadCount
+GO
+
+ALTER TABLE [NuFridge].[Package]
+DROP COLUMN VersionDownloadCount
 GO
