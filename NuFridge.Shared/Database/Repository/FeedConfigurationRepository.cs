@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 
@@ -8,10 +10,15 @@ namespace NuFridge.Shared.Database.Repository
     public class FeedConfigurationRepository : BaseRepository<FeedConfiguration>, IFeedConfigurationRepository
     {
         private const string TableName = "FeedConfiguration";
+        private const string FeedCacheKey = "FeedModel-{0}";
+
+        private string GetCacheKey(int feedId)
+        {
+            return string.Format(FeedCacheKey, feedId);
+        }
 
         public FeedConfigurationRepository() : base(TableName)
         {
-            
         }
 
         public void Insert(FeedConfiguration feedConfiguration)
@@ -20,19 +27,54 @@ namespace NuFridge.Shared.Database.Repository
             {
                 feedConfiguration.Id = connection.Insert<int>(feedConfiguration);
             }
+            var cacheKey = GetCacheKey(feedConfiguration.FeedId);
+
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
+            MemoryCache.Default.Set(cacheKey, feedConfiguration, policy);
+        }
+
+        public override void Delete(FeedConfiguration feedConfiguration)
+        {
+            var cacheKey = GetCacheKey(feedConfiguration.FeedId);
+
+            MemoryCache.Default.Remove(cacheKey);
+
+            base.Delete(feedConfiguration);
         }
 
         public FeedConfiguration FindByFeedId(int feedId)
         {
-            return Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
+            var cacheKey = GetCacheKey(feedId);
+
+            var cachedFeedConfig = MemoryCache.Default.Get(cacheKey);
+
+            if (cachedFeedConfig != null)
+            {
+                return (FeedConfiguration)cachedFeedConfig;
+            }
+
+            var feedConfig = Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
+
+            if (feedConfig != null)
+            {
+                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(1)};
+                MemoryCache.Default.Set(cacheKey, feedConfig, policy);
+            }
+
+            return feedConfig;
         }
 
-        public void Update(FeedConfiguration feedConfig)
+        public void Update(FeedConfiguration feedConfiguration)
         {
             using (var connection = GetConnection())
             {
-                connection.Update(feedConfig);
+                connection.Update(feedConfiguration);
             }
+
+            var cacheKey = GetCacheKey(feedConfiguration.FeedId);
+
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
+            MemoryCache.Default.Set(cacheKey, feedConfiguration, policy);
         }
     }
 

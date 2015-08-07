@@ -19,7 +19,7 @@ namespace NuFridge.Shared.Database.Repository
             _connectionString = new SqlConnectionStringBuilder(DatabaseContext.ConnectionString.Value) { AsynchronousProcessing = true }.ToString();
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             using (var connection = GetConnection())
             {
