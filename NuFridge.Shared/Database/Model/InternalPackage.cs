@@ -250,8 +250,10 @@ namespace NuFridge.Shared.Database.Model
 
         public bool Listed { get; set; }
 
+        [Dapper.ReadOnly(true)]
         public int DownloadCount { get; set; }
 
+        [Dapper.ReadOnly(true)]
         public int VersionDownloadCount { get; set; }
 
         public bool DevelopmentDependency { get; set; }
