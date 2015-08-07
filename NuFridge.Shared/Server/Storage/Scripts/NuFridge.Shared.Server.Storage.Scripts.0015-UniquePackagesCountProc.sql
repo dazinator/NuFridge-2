@@ -5,13 +5,13 @@ with cte as
 (
    SELECT 
    pk.*, 
-      ROW_NUMBER() OVER (PARTITION BY FeedId, PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
 WHERE pk.FeedId = @feedId
 )
 
-SELECT COUNT(DISTINCT PackageId) FROM CTE as ctee
-WHERE (rn = 1 OR (SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1) = rn) AND Listed = 1
+SELECT COUNT(DISTINCT Id) FROM CTE as ctee
+WHERE (rn = 1 OR (SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1) = rn) AND Listed = 1
 GO
 
 
@@ -25,13 +25,15 @@ with cte as
 (
    SELECT
    pk.*, 
-      ROW_NUMBER() OVER (PARTITION BY FeedId, PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId AND (@partialId IS NULL OR PackageId LIKE '%' + @partialId + '%')
+WHERE pk.FeedId = @feedId AND (@partialId IS NULL OR Id LIKE '%' + @partialId + '%')
 )
 
-SELECT rn, * FROM CTE as orig
-WHERE (@includePrerelease = 1 AND orig.rn = 1 AND orig.Listed = 1) OR (@includePrerelease = 0 AND orig.rn = (SELECT TOP(1) rn FROM cte as ctee where ctee.IsPrerelease = 0 AND ctee.PackageId = orig.PackageId AND ctee.Listed = 1))
+SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND orig.Id = Id AND Listed = 1
+) = rn THEN 1 ELSE 0 END, * FROM CTE as orig
+WHERE (@includePrerelease = 1 AND orig.rn = 1 AND orig.Listed = 1) OR (@includePrerelease = 0 AND orig.rn = (SELECT TOP(1) rn FROM cte as ctee where ctee.IsPrerelease = 0 AND ctee.Id = orig.Id AND ctee.Listed = 1))
 GO
 
 CREATE PROCEDURE [NuFridge].[GetVersionsOfPackage]
@@ -44,13 +46,13 @@ with cte as
 (
    SELECT 
    pk.*, 
-      ROW_NUMBER() OVER (PARTITION BY FeedId, PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId AND pk.PackageId = @packageId AND (@includePrerelease = 1 OR pk.IsPrerelease = 0)
+WHERE pk.FeedId = @feedId AND pk.Id = @packageId AND (@includePrerelease = 1 OR pk.IsPrerelease = 0)
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
-SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
 ) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
 GO
 
@@ -64,13 +66,50 @@ with cte as
 (
    SELECT 
    pk.*, 
-      ROW_NUMBER() OVER (PARTITION BY FeedId, PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
-WHERE pk.FeedId = @feedId AND pk.PackageId = @packageId
+WHERE pk.FeedId = @feedId AND pk.Id = @packageId
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
-SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1
-) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
+) = rn THEN 1 ELSE 0 END, *  FROM cte as ctee
 WHERE ctee.[Version] = @version
+GO
+
+ALTER PROCEDURE [NuFridge].[GetAllPackages]
+	@feedId int
+AS
+
+with cte as
+(
+   SELECT    pk.*, 
+      ROW_NUMBER() OVER (PARTITION BY FeedId, IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+FROM  [NuFridge].[Package] as pk
+WHERE @feedId IS NULL OR pk.FeedId = @feedId
+)
+
+SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
+) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
+GO
+
+CREATE TABLE [NuFridge].[PackageDownload] (
+    [Id]              BIGINT          IDENTITY (1, 1) NOT NULL,
+    [FeedId]          INT             NOT NULL,
+    [PackageId]       NVARCHAR (4000) NOT NULL,
+    [PackageIdHash]   AS              (CONVERT([varbinary](16),hashbytes('MD5',[PackageId]))) PERSISTED,
+    [VersionMajor]    INT             NOT NULL,
+    [VersionMinor]    INT             NOT NULL,
+    [VersionBuild]    INT             NOT NULL,
+    [VersionRevision] INT             NOT NULL,
+    [VersionSpecial]  NVARCHAR (255)  NULL,
+    [DownloadedAt]    DATETIME2 (7)   NOT NULL,
+    [UserAgent]       NVARCHAR (MAX)  NOT NULL,
+    [IPAddress]       NVARCHAR (45)   NOT NULL
+);
+GO
+
+CREATE CLUSTERED INDEX [IX_NuFridgePackageDownload_FeedId_PackageIdHash_Version_DownloadedAt]
+    ON [NuFridge].[PackageDownload]([FeedId] ASC, [PackageIdHash] ASC, [VersionMajor] DESC, [VersionMinor] DESC, [VersionBuild] DESC, [VersionRevision] DESC, [DownloadedAt] ASC);
 GO

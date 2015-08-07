@@ -1,5 +1,6 @@
 ﻿namespace NuFridge.Shared.Database.Model
 {
+    [Dapper.Table("Statistic", Schema = "NuFridge")]
     public class Statistic : IStatistic
     {
         public int Id { get; set; }

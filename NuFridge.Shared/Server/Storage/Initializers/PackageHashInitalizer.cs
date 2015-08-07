@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
@@ -15,59 +16,71 @@ namespace NuFridge.Shared.Server.Storage.Initializers
     {
         private readonly ILog _log = LogProvider.For<AdminUserInitializer>();
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
+        private readonly IPackageService _packageService;
+        private object _sync = new object();
+        private readonly List<IInternalPackageRepository> _packageRepositories = new List<IInternalPackageRepository>();
 
-        public PackageHashInitalizer(IInternalPackageRepositoryFactory packageRepositoryFactory)
+        public PackageHashInitalizer(IInternalPackageRepositoryFactory packageRepositoryFactory, IPackageService packageService)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
+            _packageService = packageService;
         }
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            updateStatusAction("Migrating existing packages");
+            IEnumerable<InternalPackage> packages = _packageService.GetAllPackagesWithoutAHash().ToList();
 
-            List<Feed> feeds;
-
-            using (var dbContext = new DatabaseContext())
+            if (!packages.Any())
             {
-                feeds = dbContext.Feeds.AsNoTracking().ToList();
+                return;
             }
 
-            foreach (var feed in feeds)
+            updateStatusAction("Migrating existing packages");
+
+            _log.Info($"{packages.Count()} packages need to be updated with a new package hash. Please wait.");
+
+            Parallel.ForEach(packages, package =>
             {
+                var repo = GetPackageRepository(package.FeedId);
 
-                var feedRepository = _packageRepositoryFactory.Create(feed.Id);
+                var filePath = repo.GetPackageFilePath(package);
 
-                using (var dbContext = new DatabaseContext())
+                if (File.Exists(filePath))
                 {
-                    var packages = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id).Where(pk => pk.FeedId == feed.Id && pk.Hash == "").ToList();
+                    var localPackage = FastZipPackage.Open(filePath, new CryptoHashProvider());
 
-                    if (packages.Any())
+                    using (Stream stream = localPackage.GetStream())
                     {
-                        _log.Debug("Updating packages in the " + feed.Name + " feed without a valid hash");
+                        byte[] hash = new CryptoHashProvider().CalculateHash(stream);
 
-                        Parallel.ForEach(packages, internalPackage =>
-                        {
-                            var filePath = feedRepository.GetPackageFilePath(internalPackage);
-                            if (File.Exists(filePath))
-                            {
-                                var localPackage = FastZipPackage.Open(filePath, new CryptoHashProvider());
+                        package.Hash = Convert.ToBase64String(hash);
 
-                                using (Stream stream = localPackage.GetStream())
-                                {
-                                    byte[] hash = new CryptoHashProvider().CalculateHash(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
 
-                                    internalPackage.Hash = Convert.ToBase64String(hash);
-
-                                    stream.Seek(0, SeekOrigin.Begin);
-
-                                    internalPackage.Size = stream.Length;
-                                }
-                            }
-                        });
+                        package.Size = stream.Length;
                     }
 
-                    dbContext.SaveChanges();
+                    _packageService.Update(package);
                 }
+                else
+                {
+                    _log.Warn($"The {package.Id} v{package.Version} file is missing from the {package.FeedId} feed. It's hash can not be updated.");
+                }
+            });
+        }
+
+        private IInternalPackageRepository GetPackageRepository(int feedId)
+        {
+            lock (_sync)
+            {
+                IInternalPackageRepository repo = _packageRepositories.FirstOrDefault(pr => pr.FeedId == feedId);
+                if (repo == null)
+                {
+                    repo = _packageRepositoryFactory.Create(feedId);
+                    _packageRepositories.Add(repo);
+                }
+
+                return repo;
             }
         }
     }

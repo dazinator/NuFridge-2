@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Autofac;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
@@ -7,7 +6,6 @@ using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.Symbols;
-using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.Modules
@@ -25,7 +23,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>();
             builder.RegisterType<Statistic>().As<IStatistic>();
             builder.RegisterType<Framework>().As<IFramework>();
-            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IPackageService>(), feedId))).InstancePerDependency();
+            builder.Register<Func<int, PackageIndex>>(c => (feedId => new PackageIndex(c.Resolve<IPackageService>(), c.Resolve<IPackageDownloadService>(), feedId))).InstancePerDependency();
 
             builder.Register<Func<int, IPackagePathResolver>>(c => (feedId => new NuGetPackagePathResolver(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();
             builder.Register<Func<int, IFileSystem>>(c => (feedId => new NuGetFileSystem(c.Resolve<IFeedConfigurationService>(), feedId))).InstancePerDependency();

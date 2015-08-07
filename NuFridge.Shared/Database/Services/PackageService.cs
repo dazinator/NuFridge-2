@@ -44,6 +44,11 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetVersionsOfPackage(feedId, includePrerelease, packageId);
         }
 
+        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHash()
+        {
+            return _packageRepository.GetAllPackagesWithoutAHash();
+        }
+
         public void Insert(InternalPackage package)
         {
             _packageRepository.Insert(package);
@@ -74,6 +79,7 @@ namespace NuFridge.Shared.Database.Services
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int feedId, bool includePrerelease, string packageId);
+        IEnumerable<InternalPackage> GetAllPackagesWithoutAHash(); 
         void Insert(InternalPackage package);
         void Update(InternalPackage package);
         InternalPackage GetPackage(int feedId, string packageId, string version);

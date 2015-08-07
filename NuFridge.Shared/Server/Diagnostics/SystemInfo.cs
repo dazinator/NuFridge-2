@@ -76,7 +76,7 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
             
         }
 
-        public SystemInfo(Win32ComputerSystem system, Win32Process process, IJobServer jobServer)
+        public SystemInfo(Win32ComputerSystem system, Win32Process process, IJobServerManager jobServerManager)
         {
             if (system != null)
             {
@@ -103,16 +103,16 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
 
             LastUpdated = DateTime.Now;
 
-            if (totalThreadCount > 0)
-            {
-                ServerThreadCount = ((int)totalThreadCount - jobServer.BackgroundJobServerOptions.WorkerCount);
-                SchedulerThreadCount = jobServer.BackgroundJobServerOptions.WorkerCount;
-            }
-            else
-            {
-                ServerThreadCount = 0;
-                SchedulerThreadCount = jobServer.BackgroundJobServerOptions.WorkerCount;
-            }
+            //if (totalThreadCount > 0)
+            //{
+            //    ServerThreadCount = ((int)totalThreadCount - jobServerManager.BackgroundJobServerOptions.WorkerCount);
+            //    SchedulerThreadCount = jobServerManager.BackgroundJobServerOptions.WorkerCount;
+            //}
+            //else
+            //{
+            //    ServerThreadCount = 0;
+            //    SchedulerThreadCount = jobServerManager.BackgroundJobServerOptions.WorkerCount;
+            //}
 
             ulong freeBytesAvailable;
             ulong totalNumberOfBytes;

@@ -11,12 +11,14 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     {
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
+        private readonly IStatisticService _statisticService;
         private readonly ILog _logger = LogProvider.For<UpdateFeedPackageCountStatisticJob>();
 
-        public UpdateFeedPackageCountStatisticJob(IFeedService feedService, IPackageService packageService)
+        public UpdateFeedPackageCountStatisticJob(IFeedService feedService, IPackageService packageService, IStatisticService statisticService)
         {
             _feedService = feedService;
             _packageService = packageService;
+            _statisticService = statisticService;
         }
 
         [DisableConcurrentExecution(10)]
@@ -25,7 +27,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         {
             _logger.Info("Executing " + JobId + " job");
 
-            FeedPackageCountStatistic stat = new FeedPackageCountStatistic(_feedService, _packageService);
+            FeedPackageCountStatistic stat = new FeedPackageCountStatistic(_feedService, _packageService, _statisticService);
 
             stat.UpdateModel(cancellationToken);
         }

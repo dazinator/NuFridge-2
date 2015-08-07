@@ -49,9 +49,9 @@ namespace NuFridge.Shared.Server.NuGet
             return _packageIndex.GetPackage(packageId, version);
         }
 
-        public void IncrementDownloadCount(IInternalPackage package)
+        public void IncrementDownloadCount(IInternalPackage package, string ipAddress, string userAgent)
         {
-            _packageIndex.IncrementDownloadCount(package);
+            _packageIndex.IncrementDownloadCount(package, ipAddress, userAgent);
         }
 
 

@@ -12,9 +12,9 @@ namespace NuFridge.Shared.Server
         private readonly Lazy<IStoreInitializer> _storeInitializer;
         private readonly Lazy<IStartupPageListener> _startupPageListener;
         private readonly Lazy<IShutdownPageListener> _shutdownPageListener;
-        private readonly Lazy<IJobServer> _jobServer; 
+        private readonly Lazy<IJobServerManager> _jobServer; 
 
-        public ServerEngine(Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer, Lazy<IStartupPageListener> startupPageListener, Lazy<IJobServer> jobServer, Lazy<IShutdownPageListener> shutdownPageListener)
+        public ServerEngine(Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer, Lazy<IStartupPageListener> startupPageListener, Lazy<IJobServerManager> jobServer, Lazy<IShutdownPageListener> shutdownPageListener)
         {
             _webHostInitializer = webHostInitializer;
             _storeInitializer = storeInitializer;

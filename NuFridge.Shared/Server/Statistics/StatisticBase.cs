@@ -4,21 +4,24 @@ using System.Runtime.CompilerServices;
 using Hangfire;
 using Newtonsoft.Json;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 
 namespace NuFridge.Shared.Server.Statistics
 {
     public abstract class StatisticBase<TModel>
     {
+        private readonly IStatisticService _statisticService;
         protected abstract string StatName { get; }
+
+
+        protected StatisticBase(IStatisticService statisticService)
+        {
+            _statisticService = statisticService;
+        }
 
         protected Statistic GetRecord()
         {
-            Statistic record;
-
-            using (var dbContext = new DatabaseContext())
-            {
-                record = dbContext.Statistics.AsNoTracking().FirstOrDefault(rc => rc.Name == StatName);
-            }
+            Statistic record = _statisticService.Find(StatName);
 
             bool statExists = record != null;
 
@@ -54,7 +57,6 @@ namespace NuFridge.Shared.Server.Statistics
             return model;
         }
 
-        [MethodImpl(MethodImplOptions.NoOptimization)]
         public void UpdateModel(IJobCancellationToken cancellationToken)
         {
             var model = Update();
@@ -63,22 +65,14 @@ namespace NuFridge.Shared.Server.Statistics
 
             record.Json = SerializeModel(model);
 
-            using (var dbContext = new DatabaseContext())
+
+            if (record.Id > 0)
             {
-
-                if (record.Id > 0)
-                {
-                    dbContext.Statistics.Attach(record);
-                    dbContext.Entry(record).Property(a => a.Json).IsModified = true;
-                }
-                else
-                {
-                    dbContext.Statistics.Add(record);
-                }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                dbContext.SaveChanges();
+                _statisticService.Update(record);
+            }
+            else
+            {
+                _statisticService.Insert(record);
             }
         }
     }

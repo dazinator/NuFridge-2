@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
@@ -12,11 +13,13 @@ namespace NuFridge.Shared.Server.NuGet
     public class PackageIndex
     {
         private readonly IPackageService _packageService;
+        private readonly IPackageDownloadService _packageDownloadService;
         private readonly int _feedId;
 
-        public PackageIndex(IPackageService packageService, int feedId)
+        public PackageIndex(IPackageService packageService, IPackageDownloadService packageDownloadService, int feedId)
         {
             _packageService = packageService;
+            _packageDownloadService = packageDownloadService;
             _feedId = feedId;
 
             if (feedId <= 0)
@@ -47,27 +50,13 @@ namespace NuFridge.Shared.Server.NuGet
             return _packageService.GetPackage(_feedId, packageId, version.ToString());
         }
 
-        public void IncrementDownloadCount(IInternalPackage package)
+        public void IncrementDownloadCount(IInternalPackage package, string ipAddress, string userAgent)
         {
-            using (var dbContext = new DatabaseContext())
-            {
-                IEnumerable<IInternalPackage> packages =
-                    EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + _feedId).Where(
-                        pk =>
-                            pk.Id.Equals(package.Id, StringComparison.InvariantCultureIgnoreCase) &&
-                            pk.FeedId == _feedId);
-
-                var newestPackage = packages.Single(pk => pk.PrimaryId == package.PrimaryId);
-
-                newestPackage.VersionDownloadCount++;
-
-                foreach (var versionOfPackage in packages)
-                {
-                    versionOfPackage.DownloadCount = packages.Sum(pk => pk.VersionDownloadCount);
-                }
-
-                dbContext.SaveChanges();
-            }
+            //This shouldn't block the download of the package
+            BackgroundJob.Enqueue(
+                () =>
+                    _packageDownloadService.IncrementDownloadCount(_feedId, package.Id, package.Version,
+                        DateTime.UtcNow, userAgent, ipAddress));
         }
     }
 }

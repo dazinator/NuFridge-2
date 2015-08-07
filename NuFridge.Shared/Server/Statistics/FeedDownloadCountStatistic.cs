@@ -11,7 +11,7 @@ namespace NuFridge.Shared.Server.Statistics
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
 
-        public FeedDownloadCountStatistic(IFeedService feedService, IPackageService packageService)
+        public FeedDownloadCountStatistic(IFeedService feedService, IPackageService packageService, IStatisticService statisticService) : base(statisticService)
         {
             _feedService = feedService;
             _packageService = packageService;

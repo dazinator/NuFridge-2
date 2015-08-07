@@ -197,6 +197,8 @@ Begin
 
     DELETE #PackagesTemp WHERE Id = @Id
 
+	DROP TABLE #PackagesTemp
+
 END
 GO
 PRINT 'Dropping the [NuFridge].[Package] table'

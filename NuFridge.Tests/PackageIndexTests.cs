@@ -58,7 +58,7 @@ namespace NuFridge.Tests
 
         public class TestPackageIndex : PackageIndex
         {
-            public TestPackageIndex(int feedId) : base(null, feedId)
+            public TestPackageIndex(int feedId) : base(null,null, feedId)
             {
                 
             }

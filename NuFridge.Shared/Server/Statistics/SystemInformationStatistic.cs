@@ -1,15 +1,16 @@
-﻿using NuFridge.Shared.Server.Diagnostics;
+﻿using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Server.Diagnostics;
 using NuFridge.Shared.Server.Scheduler;
 
 namespace NuFridge.Shared.Server.Statistics
 {
     public class SystemInformationStatistic : StatisticBase<SystemInfo>
     {
-        private readonly IJobServer _jobServer;
+        private readonly IJobServerManager _jobServerManager;
 
-        public SystemInformationStatistic(IJobServer jobServer)
+        public SystemInformationStatistic(IJobServerManager jobServerManager, IStatisticService statisticService) : base(statisticService)
         {
-            _jobServer = jobServer;
+            _jobServerManager = jobServerManager;
         }
 
         protected override SystemInfo Update()
@@ -17,7 +18,7 @@ namespace NuFridge.Shared.Server.Statistics
             var system = SystemInfo.GetComputerSystem();
             var process = SystemInfo.GetProcess();
 
-            var systemInfo = new SystemInfo(system, process, _jobServer);
+            var systemInfo = new SystemInfo(system, process, _jobServerManager);
 
             system.Dispose();
             process.Dispose();

@@ -35,9 +35,7 @@ namespace NuFridge.Shared.Database.Model
         {
             modelBuilder.Entity<InternalPackage>()
                 .ToTable("Package", "NuFridge")
-                .HasKey(package => package.PrimaryId)
-                .Ignore(package => package.IsLatestVersion)
-                .Ignore(package => package.IsAbsoluteLatestVersion);
+                .HasKey(package => package.PrimaryId);
                 //.MapToStoredProcedures(s => s.Insert(u => u.HasName("InsertPackage", "NuFridge"))
                 //                            .Update(u => u.HasName("UpdatePackage", "NuFridge"))
                 //                            .Delete(u => u.HasName("DeletePackage", "NuFridge")));

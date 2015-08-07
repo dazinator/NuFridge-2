@@ -1,5 +1,6 @@
 ﻿using Nancy;
 using Nancy.Security;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Statistics;
 using NuFridge.Shared.Server.Storage;
@@ -8,18 +9,20 @@ namespace NuFridge.Shared.Server.Web.Actions.DiagnosticsApi
 {
     public class GetDiagnosticInformationAction : IAction
     {
-        private readonly IJobServer _jobServer;
+        private readonly IJobServerManager _jobServerManager;
+        private readonly IStatisticService _statisticService;
 
-        public GetDiagnosticInformationAction(IJobServer jobServer)
+        public GetDiagnosticInformationAction(IJobServerManager jobServerManager, IStatisticService statisticService)
         {
-            _jobServer = jobServer;
+            _jobServerManager = jobServerManager;
+            _statisticService = statisticService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            var model = new SystemInformationStatistic(_jobServer).GetModel();
+            var model = new SystemInformationStatistic(_jobServerManager, _statisticService).GetModel();
             return model;
         }
     }

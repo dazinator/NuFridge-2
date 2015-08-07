@@ -2,6 +2,7 @@
 using Autofac;
 using NuFridge.Shared.Server.Scheduler;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Servers;
 using Module = Autofac.Module;
 
 namespace NuFridge.Shared.Server.Modules
@@ -17,10 +18,16 @@ namespace NuFridge.Shared.Server.Modules
                 .As<JobBase>()
                 .AsSelf();
 
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .AssignableTo<JobServerInstance>()
+                .As<JobServerInstance>()
+                .AsSelf().SingleInstance();
+
+
             builder.RegisterType<ReindexPackagesForFeedJob>().AsSelf();
             builder.RegisterType<ImportPackagesForFeedJob>().AsSelf();
 
-            builder.RegisterType<JobServer>().As<IJobServer>().SingleInstance();
+            builder.RegisterType<JobServerManager>().As<IJobServerManager>().SingleInstance();
         }
     }
 }

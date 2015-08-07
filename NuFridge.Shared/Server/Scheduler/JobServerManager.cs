@@ -8,22 +8,22 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.States;
 using Hangfire.Storage;
+using Nancy.Bootstrappers.Autofac;
 using NCrontab;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Servers;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler
 {
-    public class JobServer : IJobServer
+    public class JobServerManager : IJobServerManager
     {
-        private readonly ILog _log = LogProvider.For<JobServer>();
-        private BackgroundJobServer _backgroundJobServer;
-        public BackgroundJobServerOptions BackgroundJobServerOptions { get; private set; }
+        private readonly ILog _log = LogProvider.For<JobServerManager>();
         private readonly IStore _store;
         private readonly IContainer _container;
 
-        public JobServer(IContainer container, IStore store)
+        public JobServerManager(IContainer container, IStore store)
         {
             _container = container;
             _store = store;
@@ -65,9 +65,15 @@ namespace NuFridge.Shared.Server.Scheduler
                 _log.Warn("The " + processingJob.Value.Job.Type.Name + " job will be terminated as it execeeded the 3 minute timeout.");
             }
 
-            updateStatusAction("Shutting down the job server");
+            updateStatusAction("Shutting down the job servers");
 
-            _backgroundJobServer.Dispose();
+            IEnumerable<JobServerInstance> jobServers = _container.Resolve<IEnumerable<JobServerInstance>>();
+
+            foreach (var jobServerInstance in jobServers)
+            {
+                jobServerInstance.Stop();
+                _log.Info("Successfully stopped job server for " + jobServerInstance.QueueName);
+            }
         }
 
         public void Start(Action<string> updateStatusAction)
@@ -76,11 +82,10 @@ namespace NuFridge.Shared.Server.Scheduler
 
             _log.Info("Starting the job scheduler");
             var options = new SqlServerStorageOptions {PrepareSchemaIfNecessary = true};
-            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background");
+            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background", "download");
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
             GlobalConfiguration.Configuration.UseFilter(new JobContext());
-
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 
@@ -98,43 +103,6 @@ namespace NuFridge.Shared.Server.Scheduler
                 }
             }
 
-            
-            var queuedJobs =
-                monitorApi.EnqueuedJobs("filesystem", 0, int.MaxValue)
-                    .Union(monitorApi.EnqueuedJobs("background", 0, int.MaxValue)).ToList();
-
-            if (queuedJobs.Any())
-            {
-
-                _log.Warn("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
-
-                updateStatusAction("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
-
-                foreach (var queuedJob in queuedJobs)
-                {
-                    BackgroundJob.Delete(queuedJob.Key);
-                }
-            }
-
-
-            var fetchedJobs =
-                monitorApi.FetchedJobs("filesystem", 0, int.MaxValue)
-                    .Union(monitorApi.FetchedJobs("background", 0, Int32.MaxValue))
-                    .ToList();
-
-
-            if (fetchedJobs.Any())
-            {
-                _log.Warn("Deleting " + fetchedJobs.Count() + " jobs which are currently feteched.");
-
-                updateStatusAction("Deleting " + fetchedJobs.Count() + " jobs which are currently fetched.");
-
-                foreach (var fetchedJob in fetchedJobs)
-                {
-                    BackgroundJob.Delete(fetchedJob.Key);
-                }
-            }
-
             var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue).ToList();
 
             if (scheduledJobs.Any())
@@ -149,17 +117,17 @@ namespace NuFridge.Shared.Server.Scheduler
                 }
             }
 
-            BackgroundJobServerOptions = new BackgroundJobServerOptions
+            IEnumerable<JobServerInstance> jobServers = _container.Resolve<IEnumerable<JobServerInstance>>();
+
+            foreach (var jobServerInstance in jobServers)
             {
-                Queues = new[] {"background", "filesystem"},
-                ServerName = Environment.MachineName
-            };
+                jobServerInstance.Start(monitorApi, updateStatusAction);
+                _log.Info("Successfully started job server for " + jobServerInstance.QueueName);
+            }
 
-            _backgroundJobServer = new BackgroundJobServer(BackgroundJobServerOptions);
 
-            _log.Info("Successfully started job server");
 
-            var tasks = _container.Resolve<IEnumerable<JobBase>>().ToList();
+            List<JobBase> tasks = _container.Resolve<IEnumerable<JobBase>>().ToList();
 
 
             updateStatusAction("Adding " + tasks.Count() + " jobs to the scheduler");
@@ -250,9 +218,8 @@ namespace NuFridge.Shared.Server.Scheduler
         }
     }
 
-    public interface IJobServer
+    public interface IJobServerManager
     {
-        BackgroundJobServerOptions BackgroundJobServerOptions { get; }
         void Start(Action<string> updateStatusAction);
         void Stop(Action<string> updateStatusAction);
     }

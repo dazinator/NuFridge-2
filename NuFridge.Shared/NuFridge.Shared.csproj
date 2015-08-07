@@ -253,14 +253,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
-    <Reference Include="TrackerEnabledDbContext, Version=2.5.0.0, Culture=neutral, PublicKeyToken=4f92af0b908c4a0a, processorArchitecture=MSIL">
-      <HintPath>..\packages\TrackerEnabledDbContext.2.7.0\lib\net45\TrackerEnabledDbContext.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="TrackerEnabledDbContext.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4f92af0b908c4a0a, processorArchitecture=MSIL">
-      <HintPath>..\packages\TrackerEnabledDbContext.Common.1.1.0\lib\net45\TrackerEnabledDbContext.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -275,6 +267,7 @@
     <Compile Include="Database\Model\Interfaces\IFeedConfiguration.cs" />
     <Compile Include="Database\Model\Interfaces\IInternalPackage.cs" />
     <Compile Include="Database\Model\InternalPackage.cs" />
+    <Compile Include="Database\Model\PackageDownload.cs" />
     <Compile Include="Database\Model\Statistic.cs" />
     <Compile Include="Database\Model\User.cs" />
     <Compile Include="Database\Model\UserRole.cs" />
@@ -282,12 +275,16 @@
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
     <Compile Include="Database\Repository\FeedRepository.cs" />
     <Compile Include="Database\Repository\FrameworkRepository.cs" />
+    <Compile Include="Database\Repository\PackageDownloadRepository.cs" />
     <Compile Include="Database\Repository\PackageRepository.cs" />
+    <Compile Include="Database\Repository\StatisticRepository.cs" />
     <Compile Include="Database\Repository\UserRepository.cs" />
     <Compile Include="Database\Services\FeedConfigurationService.cs" />
     <Compile Include="Database\Services\FeedService.cs" />
     <Compile Include="Database\Services\FrameworkService.cs" />
+    <Compile Include="Database\Services\PackageDownloadService.cs" />
     <Compile Include="Database\Services\PackageService.cs" />
+    <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
@@ -324,7 +321,11 @@
     <Compile Include="Server\Scheduler\AutofacPerLifetimeScopeJobActivator.cs" />
     <Compile Include="Server\Scheduler\HangfirePerLifetimeScopeConfigurer.cs" />
     <Compile Include="Server\Scheduler\JobContext.cs" />
-    <Compile Include="Server\Scheduler\JobServer.cs" />
+    <Compile Include="Server\Scheduler\JobServerManager.cs" />
+    <Compile Include="Server\Scheduler\Servers\JobServerBackground.cs" />
+    <Compile Include="Server\Scheduler\Servers\JobServerDownload.cs" />
+    <Compile Include="Server\Scheduler\Servers\JobServerFileSystem.cs" />
+    <Compile Include="Server\Scheduler\Servers\JobServerInstance.cs" />
     <Compile Include="Server\Scheduler\Jobs\ImportPackagesForFeedJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\JobBase.cs" />
     <Compile Include="Server\Scheduler\Jobs\ReindexPackagesForFeedJob.cs" />

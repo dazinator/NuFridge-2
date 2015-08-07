@@ -33,7 +33,7 @@ namespace NuFridge.Shared.Database.Repository
 
             using (var connection = GetConnection())
             {
-                connection.Execute(string.Format("DELETE FROM [NuFridge].[{0}] WHERE {1} IN {2}", _tableName, idColumnName, listOfIdsJoined));
+                connection.Execute($"DELETE FROM [NuFridge].[{_tableName}] WHERE {idColumnName} IN {listOfIdsJoined}");
             }
         }
 
@@ -42,6 +42,14 @@ namespace NuFridge.Shared.Database.Repository
             using (var connection = GetConnection())
             {
                 return SqlMapper.Query<TRecord>(connection, sql, param);
+            }
+        }
+
+        public IEnumerable<TRecord> Query<TRecord>(object whereConditions)
+        {
+            using (var connection = GetConnection())
+            {
+                return connection.GetList<TRecord>();
             }
         }
 
@@ -73,7 +81,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             using (var connection = GetConnection())
             {
-                return connection.Query<int>($"SELECT COUNT(Id) FROM [NuFridge].[{_tableName}]").Single();
+                return connection.Query<int>($"SELECT COUNT(*) FROM [NuFridge].[{_tableName}]").Single();
             }
         }
 

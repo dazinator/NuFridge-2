@@ -18,7 +18,7 @@ namespace NuFridge.Shared.Server.NuGet
 
         Stream GetRawContents(IInternalPackage package);
 
-        void IncrementDownloadCount(IInternalPackage package);
+        void IncrementDownloadCount(IInternalPackage package, string ipAddress, string userAgent);
 
 
         void DeletePackage(IInternalPackage packageToDelete);

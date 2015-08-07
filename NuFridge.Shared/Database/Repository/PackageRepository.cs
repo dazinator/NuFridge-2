@@ -11,10 +11,10 @@ namespace NuFridge.Shared.Database.Repository
         private const string TableName = "Package";
 
         private const string GetAllPackagesStoredProcCommand = "NuFridge.GetAllPackages @feedId";
-        private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId @includePrerelease @partialId";
+        private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId, @includePrerelease, @partialId";
         private const string GetUniquePackageCountStoredProcCommand = "NuFridge.GetUniquePackageCount @feedId";
-        private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId @includePrerelease @packageId";
-        private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId @packageId @version";
+        private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId, @includePrerelease, @packageId";
+        private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId, @packageId, @version";
 
         public PackageRepository() : base(TableName)
         {
@@ -74,6 +74,11 @@ namespace NuFridge.Shared.Database.Repository
         {
             return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).SingleOrDefault();
         }
+
+        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHash()
+        {
+            return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Hash = ''");
+        }
     }
 
     public interface IPackageRepository
@@ -88,5 +93,6 @@ namespace NuFridge.Shared.Database.Repository
         void Update(InternalPackage package);
         void Delete(InternalPackage package);
         InternalPackage GetPackage(int feedId, string packageId, string version);
+        IEnumerable<InternalPackage> GetAllPackagesWithoutAHash();
     }
 }

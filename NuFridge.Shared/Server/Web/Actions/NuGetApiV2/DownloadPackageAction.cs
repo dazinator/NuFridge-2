@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using Nancy;
+using Nancy.Extensions;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
@@ -30,7 +31,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string version = parameters.version;
             string feedName = parameters.feed;
 
-            Feed feed = _feedService.Find(id, true);
+            Feed feed = _feedService.Find(feedName, true);
 
             if (feed == null)
             {
@@ -51,7 +52,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            packageRepository.IncrementDownloadCount(package);
+            string ipAddress = module.Request.IsLocal() ? "127.0.0.1" : module.Request.UserHostAddress;
+            string userAgent = module.Request.Headers.UserAgent;
+
+            packageRepository.IncrementDownloadCount(package, ipAddress, userAgent);
 
             Response result;
 

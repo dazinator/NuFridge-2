@@ -10,18 +10,20 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
     {
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
+        private readonly IStatisticService _statisticService;
 
-        public GetFeedDownloadCountAction(IFeedService feedService, IPackageService packageService)
+        public GetFeedDownloadCountAction(IFeedService feedService, IPackageService packageService, IStatisticService statisticService)
         {
             _feedService = feedService;
             _packageService = packageService;
+            _statisticService = statisticService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            var model = new FeedDownloadCountStatistic(_feedService, _packageService).GetModel();
+            var model = new FeedDownloadCountStatistic(_feedService, _packageService, _statisticService).GetModel();
 
             return model;
         }

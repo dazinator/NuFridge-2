@@ -1,8 +1,8 @@
 ﻿CREATE TABLE [NuFridge].[Package] (
-    [Id]                       INT             IDENTITY (1, 1) NOT NULL,
+    [PrimaryId]                INT             IDENTITY (1, 1) NOT NULL,
     [FeedId]                   INT             NOT NULL,
-    [PackageId]                NVARCHAR (4000) NOT NULL,
-    [PackageIdHash]            AS              (CONVERT([varbinary](16),hashbytes('MD5',[PackageId]))) PERSISTED,
+    [Id]                NVARCHAR (4000) NOT NULL,
+    [IdHash]            AS              (CONVERT([varbinary](16),hashbytes('MD5',[Id]))) PERSISTED,
     [Title]                    NVARCHAR (4000) NULL,
     [Version]                  NVARCHAR (4000) NOT NULL,
     [VersionMajor]             INT             NOT NULL,
@@ -37,8 +37,8 @@
 );
 GO
 
-CREATE CLUSTERED INDEX [IX_NuFridgePackage_FeedId_PackageId]
-    ON [NuFridge].[Package]([FeedId] ASC, [PackageIdHash] ASC);
+CREATE CLUSTERED INDEX [IX_NuFridgePackage_FeedId_Id]
+    ON [NuFridge].[Package]([FeedId] ASC, [IdHash] ASC);
 GO
 
 
@@ -46,7 +46,12 @@ DECLARE @Id INT
 DECLARE @ReturnValue NVARCHAR(MAX)
 DECLARE @query NVARCHAR(MAX)
 
+IF OBJECT_ID('tempdb..#PackagesTemp') IS NOT NULL
+   DROP TABLE #PackagesTemp
+
 PRINT 'Getting a list of existing feeds'
+
+
 
 SELECT * INTO   #PackagesTemp FROM   [NuFridge].[Feed]
 
@@ -69,7 +74,7 @@ Begin
                  WHERE TABLE_SCHEMA = 'NuFridge' 
                  AND  TABLE_NAME = @tableName))
 BEGIN
-	set @query = 'INSERT INTO [NuFridge].[Package] ([PackageId]
+	set @query = 'INSERT INTO [NuFridge].[Package] ([Id]
 		   ,[FeedId]
            ,[Title]
            ,[Version]
@@ -160,6 +165,9 @@ BEGIN
 	    DELETE #PackagesTemp WHERE Id = @Id
 	END
 END
+
+DROP TABLE #PackagesTemp
+
 GO
 
 CREATE PROCEDURE [NuFridge].[GetAllPackages]
@@ -170,21 +178,21 @@ with cte as
 (
    SELECT 
    pk.*, 
-      ROW_NUMBER() OVER (PARTITION BY PackageIdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
+      ROW_NUMBER() OVER (PARTITION BY IdHash ORDER BY Listed DESC, VersionMajor DESC, VersionMinor DESC, VersionBuild DESC, VersionRevision DESC,  IsPrerelease ASC, VersionSpecial DESC) AS rn
 FROM  [NuFridge].[Package] as pk
 WHERE pk.FeedId = 1
 
 )
 
 SELECT IsAbsoluteLatestVersion = CASE WHEN rn = 1 THEN 1 ELSE 0 END, IsLatestVersion = CASE WHEN (
-SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.PackageId = PackageId AND Listed = 1
+SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
 ) = rn THEN 1 ELSE 0 END, * FROM cte as ctee
 
 GO
 
 CREATE NONCLUSTERED INDEX [IX_NuFridgePackage_Version]
-    ON [NuFridge].[Package]([PackageIdHash] ASC, [Listed] DESC, [VersionMajor] DESC, [VersionMinor] DESC, [VersionBuild] DESC, [VersionRevision] DESC, [IsPrerelease] ASC, [VersionSpecial] DESC)
-    INCLUDE([PackageId]);
+    ON [NuFridge].[Package]([IdHash] ASC, [Listed] DESC, [VersionMajor] DESC, [VersionMinor] DESC, [VersionBuild] DESC, [VersionRevision] DESC, [IsPrerelease] ASC, [VersionSpecial] DESC)
+    INCLUDE([Id]);
 
 GO
 
