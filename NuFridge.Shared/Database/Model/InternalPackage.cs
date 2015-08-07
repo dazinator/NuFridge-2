@@ -28,7 +28,6 @@ namespace NuFridge.Shared.Database.Model
         /// <summary>
         /// This is the package id
         /// </summary>
-        [Column("Id")]
         [Required(AllowEmptyStrings = false)]
         public string Id { get; set; }
 
