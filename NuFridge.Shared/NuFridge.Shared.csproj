@@ -326,6 +326,7 @@
     <Compile Include="Server\Scheduler\HangfirePerLifetimeScopeConfigurer.cs" />
     <Compile Include="Server\Scheduler\JobContext.cs" />
     <Compile Include="Server\Scheduler\JobServerManager.cs" />
+    <Compile Include="Server\Scheduler\Jobs\ReindexPackagesJob.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerBackground.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerDownload.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerFileSystem.cs" />
