@@ -40,9 +40,7 @@ namespace NuFridge.Shared.Server.Web.Actions.AccountApi
 
         private User GetUser(string username)
         {
-            var user = _userService.Find(username);
-
-            user.PasswordHashed = null;
+            var user = _userService.Find(username, false);
 
             return user;
         }

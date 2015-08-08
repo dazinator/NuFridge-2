@@ -122,6 +122,7 @@ namespace NuFridge.Shared.Server.NuGet
 
             var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
+
             _packageIndex.AddPackage(localPackage);
 
             _frameworkNamesManager.Add(localPackage.SupportedFrameworks);

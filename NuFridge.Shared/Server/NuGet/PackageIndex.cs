@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
-using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -15,6 +12,7 @@ namespace NuFridge.Shared.Server.NuGet
         private readonly IPackageService _packageService;
         private readonly IPackageDownloadService _packageDownloadService;
         private readonly int _feedId;
+        private readonly object _sync = new object();
 
         public PackageIndex(IPackageService packageService, IPackageDownloadService packageDownloadService, int feedId)
         {
@@ -30,7 +28,18 @@ namespace NuFridge.Shared.Server.NuGet
 
         public void AddPackage(IInternalPackage package)
         {
-            _packageService.Insert((InternalPackage)package);
+            lock (_sync)
+            {
+                var existingPackage = GetPackage(package.Id, package.GetSemanticVersion());
+
+                if (existingPackage != null)
+                {
+                    throw new Exception(
+                        "A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
+                }
+
+                _packageService.Insert((InternalPackage) package);
+            }
         }
 
         public void UnlistPackage(IInternalPackage package)

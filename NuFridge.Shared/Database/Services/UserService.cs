@@ -21,7 +21,7 @@ namespace NuFridge.Shared.Database.Services
 
         public void CreateAdministratorUserIfNotExist()
         {
-            var user = Find("system");
+            var user = Find("system", false);
 
             if (user == null)
             {
@@ -47,14 +47,35 @@ namespace NuFridge.Shared.Database.Services
             }
         }
 
-        public User Find(string username)
+        private void ConfigureUserEntity(User user, bool includePassword)
         {
-            return _userRepository.Find(username);
+            if (!includePassword)
+            {
+                user.PasswordSalt = null;
+                user.PasswordHashed = null;
+            }
         }
 
-        public User Find(int userId)
+        public User Find(string username, bool includePassword)
         {
-            return _userRepository.Find(userId);
+            var user =  _userRepository.Find(username);
+            if (user != null)
+            {
+                ConfigureUserEntity(user, includePassword);
+            }
+
+            return user;
+        }
+
+        public User Find(int userId, bool includePassword)
+        {
+            var user = _userRepository.Find(userId);
+            if (user != null)
+            {
+                ConfigureUserEntity(user, includePassword);
+            }
+
+            return user;
         }
 
         private void SetPassword(User user)
@@ -73,7 +94,7 @@ namespace NuFridge.Shared.Database.Services
             }
             else if (string.IsNullOrWhiteSpace(user.PasswordHashed) || string.IsNullOrWhiteSpace(user.PasswordSalt))
             {
-                User existingUser = Find(user.Id);
+                User existingUser = Find(user.Id, true);
                 user.PasswordHashed = existingUser.PasswordHashed;
                 user.PasswordSalt = existingUser.PasswordSalt;
             }
@@ -95,8 +116,8 @@ namespace NuFridge.Shared.Database.Services
     public interface IUserService
     {
         void CreateAdministratorUserIfNotExist();
-        User Find(string username);
-        User Find(int userId);
+        User Find(string username, bool includePassword);
+        User Find(int userId, bool includePassword);
         int GetCount();
         void Insert(User user);
         void Update(User user);

@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using Autofac;
 
 namespace NuFridge.Shared.Server.NuGet
 {
     public class InternalPackageRepositoryFactory : IInternalPackageRepositoryFactory
     {
+        private readonly object _sync = new object();
+        private readonly ConcurrentDictionary<int, IInternalPackageRepository> _packageRepositories = new ConcurrentDictionary<int, IInternalPackageRepository>();
         private Func<int, IInternalPackageRepository> CreateRepoFunc { get; }
 
         public InternalPackageRepositoryFactory(Func<int, IInternalPackageRepository> createRepoFunc)
@@ -13,7 +17,20 @@ namespace NuFridge.Shared.Server.NuGet
 
         public IInternalPackageRepository Create(int feedId)
         {
-            var packageRepository = CreateRepoFunc(feedId);
+            IInternalPackageRepository packageRepository;
+
+            lock (_sync)
+            {
+                if (_packageRepositories.ContainsKey(feedId))
+                {
+                    packageRepository = _packageRepositories[feedId];
+                }
+                else
+                {
+                    packageRepository = CreateRepoFunc(feedId);
+                    _packageRepositories.TryAdd(feedId, packageRepository);
+                }
+            }
 
             return packageRepository;
         }
