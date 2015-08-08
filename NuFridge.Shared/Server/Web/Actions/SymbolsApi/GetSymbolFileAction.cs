@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
-using Nancy;
+﻿using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Symbols;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
 {

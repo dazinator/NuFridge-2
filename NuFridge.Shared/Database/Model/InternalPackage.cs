@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Versioning;
+using Dapper;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
@@ -21,14 +21,14 @@ namespace NuFridge.Shared.Database.Model
         /// <summary>
         /// This is the primary key id
         /// </summary>
+        [System.ComponentModel.DataAnnotations.Key]
         [Key]
-        [Dapper.Key]
         public int PrimaryId { get; set; }
 
         /// <summary>
         /// This is the package id
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = false)]
         public string Id { get; set; }
 
         public int FeedId { get; set; }
@@ -83,7 +83,7 @@ namespace NuFridge.Shared.Database.Model
         public string Summary { get; set; }
 
         [NotMapped]
-        [Editable(false)]
+        [System.ComponentModel.DataAnnotations.Editable(false)]
         public long Size { get; set; }
 
         public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies { get; set; }
@@ -214,7 +214,7 @@ namespace NuFridge.Shared.Database.Model
 
 
         [NotMapped]
-        [Editable(false)]
+        [System.ComponentModel.DataAnnotations.Editable(false)]
         public IEnumerable<PackageDependencySet> DependencySets
         {
             get { return PackageDependencySetConverter.Parse((Dependencies ?? string.Empty).Split(new[] { "|" }, StringSplitOptions.RemoveEmptyEntries)); }
@@ -228,31 +228,31 @@ namespace NuFridge.Shared.Database.Model
         public string Tags { get; set; }
 
         [NotMapped]
-        [Editable(false)]
+        [System.ComponentModel.DataAnnotations.Editable(false)]
         public string PackageHashAlgorithm { get; set; }
 
         [NotMapped]
-        [Editable(false)]
+        [System.ComponentModel.DataAnnotations.Editable(false)]
         public long PackageSize { get; set; }
 
         public DateTime LastUpdated { get; set; }
 
         public DateTime Created { get; set; }
 
-        [Dapper.ReadOnly(true)]
+        [ReadOnly(true)]
         public bool IsAbsoluteLatestVersion { get; set; }
 
-        [Dapper.ReadOnly(true)]
+        [ReadOnly(true)]
         public bool IsLatestVersion { get; set; }
 
         public bool IsPrerelease { get; set; }
 
         public bool Listed { get; set; }
 
-        [Dapper.ReadOnly(true)]
+        [ReadOnly(true)]
         public int DownloadCount { get; set; }
 
-        [Dapper.ReadOnly(true)]
+        [ReadOnly(true)]
         public int VersionDownloadCount { get; set; }
 
         public bool DevelopmentDependency { get; set; }

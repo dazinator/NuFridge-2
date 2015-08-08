@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Dapper;
 using NuGet;
 
 namespace NuFridge.Shared.Database.Model
 {
-    [Dapper.Table("PackageDownload", Schema = "NuFridge")]
+    [Table("PackageDownload", Schema = "NuFridge")]
     public class PackageDownload : IPackageDownload
     {
-        [Dapper.Key]
+        [Key]
         public long Id { get; set; }
 
         public int FeedId { get; set; }
@@ -33,7 +29,7 @@ namespace NuFridge.Shared.Database.Model
 
         public string VersionSpecial { get; set; }
 
-        [Editable(false)]
+        [System.ComponentModel.DataAnnotations.Editable(false)]
         public string Version
         {
             get { return _version; }

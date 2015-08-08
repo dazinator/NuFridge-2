@@ -1,10 +1,8 @@
 ﻿using System.IO;
-using System.Linq;
 using Nancy;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {

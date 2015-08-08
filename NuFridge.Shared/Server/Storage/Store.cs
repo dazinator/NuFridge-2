@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Runtime.Serialization.Formatters;
-using Autofac;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Server.Storage

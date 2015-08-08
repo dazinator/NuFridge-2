@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Hangfire;
 using Newtonsoft.Json;
 using NuFridge.Shared.Database.Model;

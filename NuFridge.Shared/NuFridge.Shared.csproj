@@ -286,6 +286,10 @@
     <Compile Include="Database\Services\PackageService.cs" />
     <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
+    <Compile Include="Exceptions\Kb\ExceptionKnowledge.cs" />
+    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBase.cs" />
+    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
+    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
       <SubType>Form</SubType>
@@ -446,13 +450,6 @@
     <Compile Include="Commands\Options\OptionValueType.cs" />
     <Compile Include="Commands\RunCommand.cs" />
     <Compile Include="Server\CommandLine\CommandLineRunner.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledge.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBase.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
-    <Compile Include="Exceptions\ResourceNotFoundException.cs" />
-    <Compile Include="Exceptions\StringTooLongException.cs" />
-    <Compile Include="Exceptions\UniqueConstraintViolationException.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\AutofacExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
@@ -478,7 +475,6 @@
     <Compile Include="Server\NuGet\PackageIndex.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepository.cs" />
     <Compile Include="Server\NuGet\IInternalPackageRepository.cs" />
-    <Compile Include="Server\Security\HashCalculator.cs" />
     <Compile Include="Server\Storage\DatabaseMigrator.cs" />
     <Compile Include="Server\Storage\IDatabaseMigrator.cs" />
     <Compile Include="Server\Storage\Initializers\MigrationInitializer.cs" />
@@ -490,7 +486,6 @@
     <Compile Include="Server\Storage\IStoreFactory.cs" />
     <Compile Include="Server\FileSystem\ILocalFileSystem.cs" />
     <Compile Include="Server\FileSystem\PhysicalFileSystem.cs" />
-    <Compile Include="Server\Security\PasswordHasher.cs" />
     <Compile Include="Server\Storage\IStore.cs" />
     <Compile Include="Server\Storage\Store.cs" />
     <Compile Include="Server\Storage\StoreFactory.cs" />
@@ -502,7 +497,6 @@
     <Compile Include="Server\Web\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Server\Web\IPortalBootstrapper.cs" />
     <Compile Include="Server\Web\IWebServerInitializer.cs" />
-    <Compile Include="Exceptions\SecurityException.cs" />
     <Compile Include="Server\Configuration\WebPortalConfiguration.cs" />
     <Compile Include="Server\Web\Nancy\NancyCompression.cs" />
     <Compile Include="Server\Web\Nancy\CustomJsonNetSerializer.cs" />

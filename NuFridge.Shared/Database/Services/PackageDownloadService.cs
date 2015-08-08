@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
-using NuGet;
 
 namespace NuFridge.Shared.Database.Services
 {

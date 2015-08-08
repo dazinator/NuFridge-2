@@ -2,7 +2,6 @@
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Database.Model.Interfaces;
 
 namespace NuFridge.Shared.Database.Repository
 {

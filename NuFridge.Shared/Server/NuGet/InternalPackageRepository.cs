@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Symbols;
-using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet

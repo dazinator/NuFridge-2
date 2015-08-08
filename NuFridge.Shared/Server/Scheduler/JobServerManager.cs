@@ -8,7 +8,6 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.States;
 using Hangfire.Storage;
-using Nancy.Bootstrappers.Autofac;
 using NCrontab;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler.Jobs;

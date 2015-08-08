@@ -1,6 +1,5 @@
 ﻿using System;
 using Dapper;
-using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Database.Model
 {

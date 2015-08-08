@@ -2,7 +2,6 @@
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Statistics;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {

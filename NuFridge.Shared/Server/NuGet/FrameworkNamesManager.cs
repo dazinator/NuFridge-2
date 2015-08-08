@@ -7,7 +7,6 @@ using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Application;
-using NuFridge.Shared.Server.Storage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet

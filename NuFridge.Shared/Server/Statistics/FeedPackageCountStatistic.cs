@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Statistics.Design;
-using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Statistics
 {

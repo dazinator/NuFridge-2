@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NuFridge.Shared.Database.Services;
+﻿using NuFridge.Shared.Database.Services;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet

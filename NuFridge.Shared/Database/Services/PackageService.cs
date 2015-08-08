@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Shared.Database.Services

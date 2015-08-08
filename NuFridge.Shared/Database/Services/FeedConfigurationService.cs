@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Nancy;
-using Nancy.Responses;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Logging;

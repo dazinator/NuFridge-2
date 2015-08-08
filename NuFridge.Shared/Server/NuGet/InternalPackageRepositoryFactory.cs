@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Autofac;
 
 namespace NuFridge.Shared.Server.NuGet
 {
