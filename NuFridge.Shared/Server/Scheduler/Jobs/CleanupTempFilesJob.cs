@@ -13,7 +13,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
     [Queue("filesystem")]
     public class CleanupTempFilesJob : JobBase
     {
-        public override string JobId => typeof(CleanupExpiredImportPackagesJob).Name;
+        public override string JobId => typeof(CleanupTempFilesJob).Name;
         public override bool TriggerOnRegister => true;
         public override string Cron => Hangfire.Cron.Daily(20);
 
