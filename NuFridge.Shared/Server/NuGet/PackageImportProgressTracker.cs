@@ -22,6 +22,21 @@ namespace NuFridge.Shared.Server.NuGet
 
         }
 
+        public void RemoveExpiredJobs()
+        {
+            var expiryDate = DateTime.UtcNow.AddHours(-12);
+
+            List<KeyValuePair<string, PackageImportProgress>> progressItems = _dictionary.Where(di => di.Value.LastUpdated < expiryDate).ToList();
+
+            foreach (var progressItem in progressItems)
+            {
+                _log.Warn($"Removing import progress tracker for feed {progressItem.Value.FeedId} as it timed out. {progressItem.Value.Counters.ImportedCount} packages of {progressItem.Value.Counters.TotalCount} imported.");
+
+                PackageImportProgress progress;
+                _dictionary.TryRemove(progressItem.Key, out progress);
+            }
+        }
+
         public void IncrementSuccessCount(string jobId, PackageImportProgressAuditItem item)
         {
             item.Attempts++;
@@ -36,6 +51,8 @@ namespace NuFridge.Shared.Server.NuGet
 
                 progress.Summary.ImportedPackages.Add(item);
                 progress.Counters.ImportedCount++;
+
+                progress.LastUpdated = DateTime.UtcNow;
                 return progress;
             });
         }
@@ -64,6 +81,8 @@ namespace NuFridge.Shared.Server.NuGet
                         progress.Counters.FailedCount++;
                     }
                 }
+
+                progress.LastUpdated = DateTime.UtcNow;
 
                 return progress;
             });
@@ -137,8 +156,14 @@ namespace NuFridge.Shared.Server.NuGet
         {
             _log.Info("Tracking package import job for feed id " + feedId);
 
-            PackageImportProgress progress = new PackageImportProgress {FeedId = feedId, HubContext = hubContext, JobId = jobId};
-            progress.Counters.TotalCount = total;
+            PackageImportProgress progress = new PackageImportProgress
+            {
+                FeedId = feedId,
+                HubContext = hubContext,
+                JobId = jobId,
+                LastUpdated = DateTime.UtcNow,
+                Counters = {TotalCount = total}
+            };
 
             _dictionary.TryAdd(jobId, progress);
 
@@ -169,6 +194,7 @@ namespace NuFridge.Shared.Server.NuGet
         public IHubContext HubContext { get; set; }
         public int FeedId { get; set; }
         public string JobId { get; set; }
+        public DateTime LastUpdated { get; set; }
 
         public PackageImportProgressSummary Summary = new PackageImportProgressSummary();
         public PackageImportProgressCounters Counters = new PackageImportProgressCounters();
