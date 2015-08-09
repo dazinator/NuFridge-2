@@ -14,36 +14,36 @@ namespace NuFridge.Shared.Server.Scheduler.Servers
 
         public override void BeforeStart(IMonitoringApi monitorApi, Action<string> updateStatusAction)
         {
-            var queuedJobs = monitorApi.EnqueuedJobs(QueueName, 0, int.MaxValue).ToList();
+            //var queuedJobs = monitorApi.EnqueuedJobs(QueueName, 0, int.MaxValue).ToList();
 
-            if (queuedJobs.Any())
-            {
-                Log.Warn("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
+            //if (queuedJobs.Any())
+            //{
+            //    Log.Warn("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
 
-                updateStatusAction("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
+            //    updateStatusAction("Deleting " + queuedJobs.Count() + " jobs which are currently queued.");
 
-                foreach (var queuedJob in queuedJobs)
-                {
-                    BackgroundJob.Delete(queuedJob.Key);
-                }
-            }
+            //    foreach (var queuedJob in queuedJobs)
+            //    {
+            //        BackgroundJob.Delete(queuedJob.Key);
+            //    }
+            //}
 
-            var fetchedJobs =
-                monitorApi.FetchedJobs(QueueName, 0, int.MaxValue)
-                    .ToList();
+            //var fetchedJobs =
+            //    monitorApi.FetchedJobs(QueueName, 0, int.MaxValue)
+            //        .ToList();
 
 
-            if (fetchedJobs.Any())
-            {
-                Log.Warn("Deleting " + fetchedJobs.Count() + " jobs which are currently feteched.");
+            //if (fetchedJobs.Any())
+            //{
+            //    Log.Warn("Deleting " + fetchedJobs.Count() + " jobs which are currently feteched.");
 
-                updateStatusAction("Deleting " + fetchedJobs.Count() + " jobs which are currently fetched.");
+            //    updateStatusAction("Deleting " + fetchedJobs.Count() + " jobs which are currently fetched.");
 
-                foreach (var fetchedJob in fetchedJobs)
-                {
-                    BackgroundJob.Delete(fetchedJob.Key);
-                }
-            }
+            //    foreach (var fetchedJob in fetchedJobs)
+            //    {
+            //        BackgroundJob.Delete(fetchedJob.Key);
+            //    }
+            //}
         }
     }
 }

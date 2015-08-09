@@ -22,6 +22,7 @@
         self.showSuccessfulFeedImports = ko.observable(false);
         self.showFailedFeedImports = ko.observable(false);
         self.feedImportMode = ko.observable(null);
+        self.signalRStatusText = ko.observable(null);
 
         self.showPrereleasePackages.subscribe(function(newValue) {
             self.loadPackages(0);
@@ -321,11 +322,15 @@
         var self = this;
 
         self.errorUploadingMessage("");
+        self.signalRStatusText(null);
 
         $.connection.hub.url = "/signalr";
         var hub = $.connection.importPackagesHub;
 
         hub.client.updateImportStatus = function (response) {
+
+            self.signalRStatusText(null);
+
             var mapping = {
                 create: function (options) {
                     return databindingfeedimportstatus(options.data);
@@ -338,6 +343,7 @@
                 self.successUploadingPackage(true);
                 self.isUploadingPackage(false);
                 self.loadPackages(0);
+                $.connection.hub.stop();
             }
         };
 
@@ -348,9 +354,24 @@
             self.errorUploadingMessage(response);
         };
 
-        $.connection.hub.start().done(function () {
-      
+        $.connection.hub.reconnecting(function () {
+            self.signalRStatusText("Attempting to reconnect to the server.");
+        });
 
+        $.connection.hub.disconnected(function () {
+            var message = "The connection to the server has been lost.";
+            if ($.connection.hub.lastError) {
+                message += ". " + $.connection.hub.lastError.message;
+            }
+
+            self.signalRStatusText(message);
+
+            setTimeout(function () {
+                $.connection.hub.start();
+            }, 5000);
+        });
+
+        $.connection.hub.start().done(function () {
             $.ajax({
                 url: "/api/feeds/" + self.feed().Id() + "/import",
                 type: 'POST',

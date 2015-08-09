@@ -92,13 +92,13 @@ namespace NuFridge.Shared.Server.Scheduler
 
             if (processingJobs.Any())
             {
-                updateStatusAction("Deleting " + processingJobs.Count() + " jobs which are currently stuck processing. This happens when NuFridge is shutdown during job execution.");
-
-                _log.Warn("Deleting " + processingJobs.Count() + " jobs which are currently stuck processing. This happens when NuFridge is shutdown during job execution.");
-
                 foreach (var processingJob in processingJobs)
                 {
-                    BackgroundJob.Delete(processingJob.Key);
+                    var jobDetails = monitorApi.JobDetails(processingJob.Key);
+                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
+                    {
+                        BackgroundJob.Delete(processingJob.Key);
+                    }
                 }
             }
 
@@ -106,13 +106,13 @@ namespace NuFridge.Shared.Server.Scheduler
 
             if (scheduledJobs.Any())
             {
-                _log.Warn("Deleting " + scheduledJobs.Count() + " jobs which are currently scheduled.");
-
-                updateStatusAction("Deleting " + scheduledJobs.Count() + " jobs which are currently scheduled.");
-
                 foreach (var scheduledJob in scheduledJobs)
                 {
-                    BackgroundJob.Delete(scheduledJob.Key);
+                    var jobDetails = monitorApi.JobDetails(scheduledJob.Key);
+                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
+                    {
+                        BackgroundJob.Delete(scheduledJob.Key);
+                    }
                 }
             }
 
@@ -123,8 +123,6 @@ namespace NuFridge.Shared.Server.Scheduler
                 jobServerInstance.Start(monitorApi, updateStatusAction);
                 _log.Info("Successfully started job server for " + jobServerInstance.QueueName);
             }
-
-
 
             List<JobBase> tasks = _container.Resolve<IEnumerable<JobBase>>().ToList();
 
@@ -211,7 +209,7 @@ namespace NuFridge.Shared.Server.Scheduler
                 _log.Info("The " + job.Job.Type.Name + " job state is " + job.History[0].StateName);
             }
 
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             WaitForEnqueuedTaskToComplete(monitorApi, jobIdToWaitFor, updateStatusAction);
         }

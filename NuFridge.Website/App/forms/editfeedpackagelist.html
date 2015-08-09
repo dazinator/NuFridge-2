@@ -205,6 +205,7 @@
         <h4 data-bind="visible: isUploadingPackage() || successUploadingPackage(), text: isUploadingPackage() ? 'Import Progress' : 'Import Summary'"></h4>
         <div data-bind="visible: isUploadingPackage() && feedimportstatus().Counters().TotalCount() > 0, text: feedimportstatus().ProgressCount() + ' of ' + feedimportstatus().Counters().TotalCount() + ' packages have been processed.'"></div>
         <div data-bind="visible: isUploadingPackage() && feedimportstatus().Counters().TotalCount() === 0 && feedimportstatus().Summary().IsCompleted() === false">The package import will begin shortly.</div>
+        <div data-bind="visible: isUploadingPackage() && feedimportstatus().Summary().IsCompleted() === false && signalRStatusText(), text: signalRStatusText"></div>
         <div data-bind="visible: successUploadingPackage(), text: 'Successfully imported ' + feedimportstatus().Counters().ImportedCount() + ' of ' + feedimportstatus().Counters().TotalCount() + ' packages.'"></div>
         <div data-bind="visible: successUploadingPackage() && feedimportstatus().Counters().FailedCount() > 0 , text: feedimportstatus().Counters().FailedCount() + ' packages failed to import.'"></div>
         <h4 style="margin: calc(2rem - .14285em) 0 1rem;" data-bind="visible: errorUploadingPackage()">Error Message</h4>

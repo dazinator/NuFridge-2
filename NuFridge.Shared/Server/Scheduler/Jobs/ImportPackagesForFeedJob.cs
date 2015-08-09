@@ -80,6 +80,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 BackgroundJob.Enqueue(() => ImportPackage(jobId, feedId, feedUrl, package.Id, package.Version.ToString(), useLocalPackages));
             });
 
+            _log.Info($"{packages.Count()} packages have been enqueued for import on feed id {feedId}");
+
             PackageImportProgressTracker.Instance.WaitUntilComplete(JobContext.JobId);
         }
 
