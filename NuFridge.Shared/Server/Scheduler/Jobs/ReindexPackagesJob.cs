@@ -35,8 +35,12 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _packageService = packageService;
         }
 
+        [AutomaticRetry(Attempts = 0)]
+        [DisableConcurrentExecution(10)]
         public override void Execute(IJobCancellationToken cancellationToken)
         {
+            _log.Info("Executing " + JobId + " job");
+
             IEnumerable<Feed> feeds = _feedService.GetAll().ToList();
 
             string jobId = null;

@@ -164,7 +164,7 @@ namespace NuFridge.Shared.Server.FileSystem
             return OpenFile(path, FileAccess.ReadWrite, FileShare.Read);
         }
 
-        private static string GetTempBasePath()
+        public static string GetTempBasePath()
         {
             string path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Assembly.GetEntryAssembly().GetName().Name), "Temp");
             if (!Directory.Exists(path))
