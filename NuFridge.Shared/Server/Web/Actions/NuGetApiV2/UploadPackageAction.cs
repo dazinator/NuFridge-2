@@ -151,20 +151,20 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return response;
                 }
 
-                if (HasSourceAndSymbols(package))
-                {
-                    _log.Debug("Redirecting package upload to symbol upload as it contains source and symbols: " + package.Id + " - " + package.Version);
+                //if (HasSourceAndSymbols(package))
+                //{
+                //    _log.Debug("Redirecting package upload to symbol upload as it contains source and symbols: " + package.Id + " - " + package.Version);
 
-                    var response = new Response();
+                //    var response = new Response();
 
-                    bool endsWithSlash = _portalConfiguration.ListenPrefixes.EndsWith("/");
-                    var location = $"{_portalConfiguration.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/symbols";
+                //    bool endsWithSlash = _portalConfiguration.ListenPrefixes.EndsWith("/");
+                //    var location = $"{_portalConfiguration.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/symbols";
                 
-                    response.Headers.Add("Location", location);
-                    response.StatusCode = HttpStatusCode.TemporaryRedirect;
+                //    response.Headers.Add("Location", location);
+                //    response.StatusCode = HttpStatusCode.TemporaryRedirect;
 
-                    return response;
-                }
+                //    return response;
+                //}
 
                 IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feed.Id);
 
