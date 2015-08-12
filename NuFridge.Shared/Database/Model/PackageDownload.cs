@@ -16,9 +16,6 @@ namespace NuFridge.Shared.Database.Model
         public string UserAgent { get; set; }
         public string IPAddress { get; set; }
 
-        private SemanticVersion SemanticVersion { get; set; }
-        private string _version { get; set; }
-
         public int VersionMajor { get; set; }
 
         public int VersionMinor { get; set; }
@@ -32,16 +29,18 @@ namespace NuFridge.Shared.Database.Model
         [System.ComponentModel.DataAnnotations.Editable(false)]
         public string Version
         {
-            get { return _version; }
+            get
+            {
+                return new SemanticVersion(new Version(VersionMajor, VersionMinor, VersionBuild, VersionRevision), VersionSpecial).ToString();
+            }
             set
             {
-                _version = value;
-                SemanticVersion = SemanticVersion.Parse(value);
-                VersionBuild = SemanticVersion.Version.Build;
-                VersionMinor = SemanticVersion.Version.Minor;
-                VersionMajor = SemanticVersion.Version.Major;
-                VersionRevision = SemanticVersion.Version.Revision;
-                VersionSpecial = SemanticVersion.SpecialVersion;
+                var semanticVersion = SemanticVersion.Parse(value);
+                VersionBuild = semanticVersion.Version.Build;
+                VersionMinor = semanticVersion.Version.Minor;
+                VersionMajor = semanticVersion.Version.Major;
+                VersionRevision = semanticVersion.Version.Revision;
+                VersionSpecial = semanticVersion.SpecialVersion;
             }
         }
     }

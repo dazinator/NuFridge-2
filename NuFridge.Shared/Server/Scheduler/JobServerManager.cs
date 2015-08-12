@@ -95,7 +95,7 @@ namespace NuFridge.Shared.Server.Scheduler
                 foreach (var processingJob in processingJobs)
                 {
                     var jobDetails = monitorApi.JobDetails(processingJob.Key);
-                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
+                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background" ))
                     {
                         BackgroundJob.Delete(processingJob.Key);
                     }

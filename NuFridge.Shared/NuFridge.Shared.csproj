@@ -276,6 +276,7 @@
     <Compile Include="Database\Model\Interfaces\IInternalPackage.cs" />
     <Compile Include="Database\Model\InternalPackage.cs" />
     <Compile Include="Database\Model\PackageDownload.cs" />
+    <Compile Include="Database\Model\PackageUpload.cs" />
     <Compile Include="Database\Model\Statistic.cs" />
     <Compile Include="Database\Model\User.cs" />
     <Compile Include="Database\Model\UserRole.cs" />

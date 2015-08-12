@@ -29,7 +29,7 @@ namespace NuFridge.Shared.Database.Services
                 user.IsActive = true;
                 user.IsService = true;
                 user.EmailAddress = "";
-                user.LastUpdated = DateTime.Now;
+                user.LastUpdated = DateTime.UtcNow;
                 user.DisplayName = "System";
 
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_!£$%^&*(),.;:#";

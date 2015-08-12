@@ -17,7 +17,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
         private readonly ILog _log = LogProvider.For<AdminUserInitializer>();
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IPackageService _packageService;
-        private object _sync = new object();
+        private readonly object _sync = new object();
         private readonly List<IInternalPackageRepository> _packageRepositories = new List<IInternalPackageRepository>();
 
         public PackageHashAndSizeInitalizer(IInternalPackageRepositoryFactory packageRepositoryFactory, IPackageService packageService)
@@ -64,7 +64,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
                 }
                 else
                 {
-                    _log.Warn($"The {package.Id} v{package.Version} file is missing from the {package.FeedId} feed. It's hash can not be updated.");
+                    _log.Warn($"The {package.Id} v{package.Version} file is missing from the {package.FeedId} feed. It's hash/size can not be updated.");
                 }
             });
         }

@@ -40,8 +40,7 @@ namespace NuFridge.Shared.Server.NuGet
                 FeedConfiguration config = new FeedConfiguration
                 {
                     FeedId = feed.Id,
-                    Directory = feedFolder,
-                    RetentionPolicyDeletePackages = true
+                    Directory = feedFolder
                 };
 
                 _feedConfigurationService.Insert(config);

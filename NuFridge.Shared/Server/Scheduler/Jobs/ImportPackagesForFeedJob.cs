@@ -12,7 +12,7 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
-    [Queue("filesystem")]
+    [Queue("background")]
     public class ImportPackagesForFeedJob
     {
         private readonly IFeedService _feedService;
@@ -68,12 +68,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         {
             _log.Debug("Enqueuing packages for import for feed id " + feedId);
 
-            Parallel.ForEach(packages, package =>
+            if (packages.Any())
             {
-                BackgroundJob.Enqueue(() => _packageImporter.ImportPackage(jobId, feedId, feedUrl, package.Id, package.Version.ToString(), useLocalPackages));
-            });
+                string childId = BackgroundJob.Enqueue(() => _packageImporter.ImportPackage(jobId, feedId, feedUrl, packages[0].Id, packages[0].Version.ToString(), useLocalPackages));
 
-            _log.Info($"{packages.Count()} packages have been enqueued for import on feed id {feedId}");
+                foreach (var package in packages.Skip(1))
+                {
+                    childId = BackgroundJob.ContinueWith(childId, () => _packageImporter.ImportPackage(jobId, feedId, feedUrl, package.Id, package.Version.ToString(), useLocalPackages), JobContinuationOptions.OnAnyFinishedState);
+                }
+            }
 
             PackageImportProgressTracker.Instance.WaitUntilComplete(JobContext.JobId);
         }

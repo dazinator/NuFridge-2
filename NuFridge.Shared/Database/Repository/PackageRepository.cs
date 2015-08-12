@@ -25,6 +25,15 @@ namespace NuFridge.Shared.Database.Repository
             return Query<InternalPackage>(GetAllPackagesStoredProcCommand, new {feedId});
         }
 
+        public IEnumerable<PackageUpload> GetLatestUploads(int feedId)
+        {
+            return
+                Query<PackageUpload>(
+                    $"SELECT TOP(5) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId ORDER BY Published DESC",
+                    new {feedId});
+        }
+
+
         public void Delete(IEnumerable<int> ids)
         {
             Delete(ids, "Id");
@@ -85,6 +94,7 @@ namespace NuFridge.Shared.Database.Repository
         IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
+        int GetCount();
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
@@ -93,5 +103,6 @@ namespace NuFridge.Shared.Database.Repository
         void Delete(InternalPackage package);
         InternalPackage GetPackage(int? feedId, string packageId, string version);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
+        IEnumerable<PackageUpload> GetLatestUploads(int feedId);
     }
 }

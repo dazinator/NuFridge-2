@@ -139,7 +139,7 @@ namespace NuFridge.Shared.Database.Model
 
             newPackage.SupportedFrameworks = string.Join("|", package.GetSupportedFrameworks().Select(VersionUtility.GetShortFrameworkName));
 
-            newPackage.Published = package.Published.HasValue ? package.Published.Value.LocalDateTime : DateTime.Now;
+            newPackage.Published = package.Published.HasValue ? package.Published.Value.UtcDateTime : DateTime.UtcNow;
 
             if (string.IsNullOrWhiteSpace(newPackage.Title))
             {

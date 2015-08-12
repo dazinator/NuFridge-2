@@ -98,14 +98,22 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
             _log.Info("Finished package import for feed id " + progress.FeedId + ". Sending final update to connected clients.");
 
-            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId)).updateImportStatus( new { progress.Summary } );
+            if (progress.HubContext != null)
+            {
+                progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
+                    .updateImportStatus(new {progress.Summary});
+            }
         }
 
         private void SendInProgressUpdate(PackageImportProgress progress)
         {
             _log.Info($"{progress.Counters.ImportedCount} of {progress.Counters.TotalCount} packages have been imported for feed id {progress.FeedId}");
 
-            progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId)).updateImportStatus(  new { progress.Counters } );
+            if (progress.HubContext != null)
+            {
+                progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
+                    .updateImportStatus(new {progress.Counters});
+            }
         }
 
         public void WaitUntilComplete(string jobId)
@@ -185,7 +193,10 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
         public void ReportStartFailure(IHubContext hubContext, string jobId, string message)
         {
-            hubContext.Clients.Group(ImportPackagesHub.GetGroup(jobId)).startFailure(message);
+            if (hubContext != null)
+            {
+                hubContext.Clients.Group(ImportPackagesHub.GetGroup(jobId)).startFailure(message);
+            }
         }
     }
 

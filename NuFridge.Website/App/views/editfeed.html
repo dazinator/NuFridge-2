@@ -32,47 +32,58 @@
             <a class="item settingTab" data-tab="fourth">Settings</a>
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
-            <div class="ui grid">
-                <div class="eight wide column">
+
+            <div class="ui equal width grid">
+                <div class="column">
                     <h3>Recent Package Uploads</h3>
-                    <table class="ui compact table">
+                    <table class="ui compact table" data-bind="visible: audit().Uploads().length > 0">
                         <thead>
-                            <tr>
-                                <th>Package Id</th>
-                                <th>Version</th>
-                                <th>Uploaded At</th>
-                            </tr>
+                        <tr>
+                            <th>Package Id</th>
+                            <th>Version</th>
+                            <th>Uploaded At</th>
+                        </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Example.Id</td>
-                                <td>1.0.0</td>
-                                <td>Today</td>
-                            </tr>
+                        <tbody data-bind="foreach: audit().Uploads">
+                        <tr>
+                            <td data-bind="text: Id"></td>
+                            <td data-bind="text: Version"></td>
+                            <td data-bind="text: $root.formatDate(Published())"></td>
+                        </tr>
                         </tbody>
                     </table>
+                    <div data-bind="visible: audit().Uploads().length === 0">
+                       No packages have been uploaded
+                    </div>
                 </div>
-                <div class="eight wide column">
+                <div class="column">
                     <h3>Recent Package Downloads</h3>
-                    <table class="ui compact table">
+                    <table class="ui compact table" data-bind="visible: audit().Downloads().length > 0">
                         <thead>
-                            <tr>
-                                <th>Package Id</th>
-                                <th>Version</th>
-                                <th>Uploaded At</th>
-                            </tr>
+                        <tr>
+                            <th>Package Id</th>
+                            <th>Version</th>
+                            <th>Downloaded At</th>
+                        </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Example.Id</td>
-                                <td>1.0.0</td>
-                                <td>Today</td>
-                            </tr>
+                        <tbody data-bind="foreach: audit().Downloads">
+                        <tr>
+                            <td data-bind="text: PackageId"></td>
+                            <td data-bind="text: Version"></td>
+                            <td data-bind="text: $root.formatDate(DownloadedAt())"></td>
+                        </tr>
                         </tbody>
                     </table>
+                    <div data-bind="visible: audit().Downloads().length === 0">
+                       No packages have been downloaded
+                    </div>
                 </div>
             </div>
-           
+
+
+
+
+
             <h3>Administrative Actions</h3>
             <button class="ui primary button reindexPackagesButton" data-bind="click: ReindexPackages">
                 Reindex Packages

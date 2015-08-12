@@ -226,6 +226,14 @@
         }
     };
 
+    ctor.prototype.firePackageDownloadedEvent = function() {
+        $("body").trigger("packageDownloaded");
+    };
+
+    ctor.prototype.firePackageUploadedEvent = function() {
+        $("body").trigger("packageUploaded");
+    };
+
     ctor.prototype.getSearchTermParam = function() {
         var self = this;
         return "searchTerm=" + self.activeSearchTerms().join(" ");
@@ -294,6 +302,7 @@
                 self.successUploadingPackage(true);
                 self.isUploadingPackage(false);
                 self.loadPackages(0);
+                self.firePackageUploadedEvent();
                 $(".urlUploadMessage").text("The package has been pushed to the feed.");
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
@@ -343,6 +352,7 @@
                 self.successUploadingPackage(true);
                 self.isUploadingPackage(false);
                 self.loadPackages(0);
+                self.firePackageUploadedEvent();
                 $.connection.hub.stop();
             }
         };
@@ -569,6 +579,7 @@
                 self.successUploadingPackage(true);
                 self.isUploadingPackage(false);
                 self.loadPackages(0);
+                self.firePackageUploadedEvent();
                 $(".fileUploadProgress").find("div.label").text("The package has been pushed to the feed.");
             },
             error: function (xmlHttpRequest, textStatus, errorThrown) {
@@ -600,6 +611,10 @@
         var self = this;
 
         window.location = pkg.GetDownloadLink(self.feed().Name());
+
+        setTimeout(function() {
+            self.firePackageDownloadedEvent();
+        }, 5000);
     };
 
     ctor.prototype.compositionComplete = function () {

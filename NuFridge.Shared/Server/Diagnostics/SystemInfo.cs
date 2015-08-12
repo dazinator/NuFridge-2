@@ -101,7 +101,7 @@ static extern bool GetDiskFreeSpaceEx(string lpDirectoryName,
                 WorkingSetSize = string.Format("{0} MB", workingSetSizeInMb.ToString("0.00"));
             }
 
-            LastUpdated = DateTime.Now;
+            LastUpdated = DateTime.UtcNow;
 
             //if (totalThreadCount > 0)
             //{

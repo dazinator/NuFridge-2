@@ -28,6 +28,11 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetCount(feedId);
         }
 
+        public int GetCount()
+        {
+            return _packageRepository.GetCount();
+        }
+
         public int GetUniquePackageIdCount(int feedId)
         {
             return _packageRepository.GetUniquePackageIdCount(feedId);
@@ -63,6 +68,11 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetPackage(feedId, packageId, version);
         }
 
+        public IEnumerable<PackageUpload> GetLatestUploads(int feedId)
+        {
+            return _packageRepository.GetLatestUploads(feedId);
+        }
+
         public void Delete(IEnumerable<int> ids)
         {
             _packageRepository.Delete(ids);
@@ -80,7 +90,9 @@ namespace NuFridge.Shared.Database.Services
         IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize(); 
         void Insert(InternalPackage package);
+        int GetCount();
         void Update(InternalPackage package);
         InternalPackage GetPackage(int? feedId, string packageId, string version);
+        IEnumerable<PackageUpload> GetLatestUploads(int feedId);
     }
 }

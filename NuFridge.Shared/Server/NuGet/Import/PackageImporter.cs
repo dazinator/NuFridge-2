@@ -6,6 +6,7 @@ using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet.Import
@@ -67,7 +68,7 @@ namespace NuFridge.Shared.Server.NuGet.Import
             }
             catch (PackageConflictException ex)
             {
-                _log.ErrorException(ex.Message, ex);
+                _log.Info(ex.Message);
 
                 var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
 
@@ -113,9 +114,9 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
                     if (File.Exists(cachePackagePath))
                     {
-                        var cachePackage = FastZipPackage.FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
+                        IFastZipPackage cachePackage = FastZipPackage.FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
 
-                        cachePackage.Listed = true;
+                        cachePackage.Listed = remotePackage.IsListed();
 
                         localRepository.AddPackage(cachePackage);
 
@@ -126,7 +127,7 @@ namespace NuFridge.Shared.Server.NuGet.Import
                     }
                 }
             }
-
+             
             return false;
         }
     }

@@ -8,11 +8,13 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
     {
         private readonly IFeedService _feedService;
         private readonly IUserService _userService;
+        private readonly IPackageService _packageService;
 
-        public GetDashboardAction(IFeedService feedService, IUserService userService)
+        public GetDashboardAction(IFeedService feedService, IUserService userService, IPackageService packageService)
         {
             _feedService = feedService;
             _userService = userService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -21,11 +23,13 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
 
             var feedsCount = _feedService.GetCount();
             var usersCount = _userService.GetCount();
+            var packagesCount = _packageService.GetCount();
 
             return new
             {
                 feedCount = feedsCount,
-                userCount = usersCount
+                userCount = usersCount,
+                packageCount = packagesCount
             };
         }
     }

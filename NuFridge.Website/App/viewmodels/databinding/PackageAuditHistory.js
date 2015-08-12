@@ -3,7 +3,8 @@
         var self = {};
 
         var data = $.extend({
-            Downloads: ko.observableArray()
+            Downloads: ko.observableArray(),
+            Uploads: ko.observableArray()
         }, config);
 
 

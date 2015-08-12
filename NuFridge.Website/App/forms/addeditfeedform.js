@@ -60,20 +60,6 @@
         if (self.feedconfig().RetentionPolicyEnabled() === true) {
             $('.ui.checkbox.retentionPolicyEnabled').checkbox('check');
         }
-
-        $('.ui.checkbox.retentionPolicyDeleteEnabled').checkbox({
-            fireOnInit: false,
-            onChecked: function () {
-                self.feedconfig().RpDeletePackages(true);
-            },
-            onUnchecked: function () {
-                self.feedconfig().RpDeletePackages(false);
-            }
-        });
-
-        if (self.feedconfig().RpDeletePackages() === true) {
-            $('.ui.checkbox.retentionPolicyDeleteEnabled').checkbox('check');
-        }
     };
 
 

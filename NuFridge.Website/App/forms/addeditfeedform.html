@@ -45,14 +45,6 @@
         </div>
     </div>
     <div class="field" data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">
-        <div class="inline field">
-            <div class="ui toggle checkbox retentionPolicyDeleteEnabled">
-                <input type="checkbox">
-                <label style="font-size: .9285em; font-weight: 700;">Delete Packages</label>
-            </div>
-        </div>
-    </div>
-    <div class="field" data-bind="visible: feedconfig().RetentionPolicyEnabled() === true && mode() === 'Update'">
         <div class="required field" data-bind="css: {error: feedconfig().MaxReleasePackages.isValid() === false}">
             <label>Max Release Packages</label>
             <input type="text" data-bind="value: feedconfig().MaxReleasePackages, valueUpdate: 'afterkeydown'">

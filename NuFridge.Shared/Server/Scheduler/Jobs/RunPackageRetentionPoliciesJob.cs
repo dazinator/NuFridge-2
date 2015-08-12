@@ -169,14 +169,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     try
                     {
-                        if (config.RetentionPolicyDeletePackages)
-                        {
-                            packageRepo.DeletePackage(packageToDelete);
-                        }
-                        else
-                        {
-                            packageRepo.RemovePackage(packageToDelete);
-                        }
+                        packageRepo.DeletePackage(packageToDelete);
                     }
                     catch (Exception ex)
                     {
@@ -222,15 +215,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                 {
                     try
                     {
-                        if (config.RetentionPolicyDeletePackages)
-                        {
-                            packageRepo.DeletePackage(packageToDelete);
-                        }
-                        else
-                        {
-                            packageRepo.RemovePackage(packageToDelete);
-                        }
-        
+                        packageRepo.DeletePackage(packageToDelete);
                     }
                     catch (Exception ex)
                     {

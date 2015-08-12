@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageDownload>(
-                    $"SELECT TOP(10) * FROM [NuFridge].[{TableName}] ORDER BY [DownloadedAt] DESC WHERE FeedId = @feedId",
+                    $"SELECT TOP(5) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
                     new {feedId});
         }
     }

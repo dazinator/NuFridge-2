@@ -160,3 +160,8 @@ CREATE NONCLUSTERED INDEX [IX_NuFridgePackageDownload_DownloadedAt]
     ON [NuFridge].[PackageDownload]([DownloadedAt])
 	INCLUDE(Id, FeedId, PackageId, PackageIdHash, VersionMajor, VersionMinor, VersionBuild, VersionRevision, VersionSpecial, UserAgent, IPAddress)
 GO
+
+CREATE NONCLUSTERED INDEX [IX_NuFridgePackage_Published]
+    ON [NuFridge].[Package]([Published] DESC)
+	INCLUDE([Id], [Version]);
+GO

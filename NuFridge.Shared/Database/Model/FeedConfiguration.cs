@@ -16,7 +16,6 @@ namespace NuFridge.Shared.Database.Model
         public bool RetentionPolicyEnabled { get; set; }
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
-        public bool RetentionPolicyDeletePackages { get; set; }
 
         [Editable(false)]
         public string PackagesDirectory => Path.Combine(Directory, "Packages");

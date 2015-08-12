@@ -1,9 +1,10 @@
-﻿define(['plugins/router', 'databinding-feed', 'databinding-package', 'api', 'auth', 'databinding-feedconfig'], function (router, databindingFeed, databindingPackage, api, auth, databindingFeedConfig) {
+﻿define(['plugins/router', 'databinding-feed', 'databinding-package', 'api', 'auth', 'databinding-feedconfig', 'databinding-packageaudithistory', 'moment'], function (router, databindingFeed, databindingPackage, api, auth, databindingFeedConfig, databindingpackageaudithistory, moment) {
     var ctor = function () {
         var self = this;
 
         self.feedconfig = ko.validatedObservable(databindingFeedConfig());
         self.feed = ko.validatedObservable(databindingFeed());
+        self.audit = ko.observable(databindingpackageaudithistory());
         self.showSuccessMessageOnLoad = ko.observable(false);
 
         self.isSaving = ko.observable(false);
@@ -31,6 +32,33 @@
 
     };
 
+    ctor.prototype.formatDate = function (value) {
+        return moment(value).format('DD/MM/YYYY HH:mm:ss');
+    };
+
+    ctor.prototype.loadAuditHistory = function() {
+        var self = this;
+
+        $.ajax({
+            url: api.get_feed + "/" + router.activeInstruction().params[0] + "/audit",
+            cache: false,
+            headers: new auth().getAuthHttpHeader(),
+            dataType: 'json'
+        }).then(function(response) {
+
+            var mapping = {
+                create: function(options) {
+                    return databindingpackageaudithistory(options.data);
+                }
+            };
+
+            ko.mapping.fromJS(response, mapping, self.audit);
+        }).fail(function(xmlHttpRequest, textStatus, errorThrown) {
+            if (xmlHttpRequest.status === 401) {
+                router.navigate("#signin");
+            }
+        });
+    };
 
     ctor.prototype.activate = function () {
 
@@ -40,8 +68,6 @@
         var feedConfigDfd = jQuery.Deferred();
 
         if (router.activeInstruction().params.length >= 1) {
-
-
 
             $.ajax({
                 url: api.get_feed + "/" + router.activeInstruction().params[0],
@@ -64,6 +90,16 @@
                     router.navigate("#signin");
                 }
                 //Materialize.toast(errorThrown ? errorThrown : "An unknown error has occurred.", 7500);
+            });
+
+            self.loadAuditHistory();
+
+            $("body").on("packageUploaded", function() {
+                self.loadAuditHistory();
+            });
+
+            $("body").on("packageDownloaded", function () {
+                self.loadAuditHistory();
             });
 
             $.ajax({
