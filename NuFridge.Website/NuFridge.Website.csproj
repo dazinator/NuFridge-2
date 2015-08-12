@@ -347,6 +347,7 @@
     <EmbeddedResource Include="App\viewmodels\databinding\feedimportoptions.js" />
     <EmbeddedResource Include="App\forms\feedendpoints.html" />
     <EmbeddedResource Include="App\forms\feedendpoints.js" />
+    <EmbeddedResource Include="App\viewmodels\databinding\packageaudithistory.js" />
     <Content Include="packages.config" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.eot" />
     <EmbeddedResource Include="Semantic\themes\basic\assets\fonts\icons.ttf" />

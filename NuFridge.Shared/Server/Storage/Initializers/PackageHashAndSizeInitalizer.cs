@@ -12,7 +12,7 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.Storage.Initializers
 {
-    public class PackageHashInitalizer : IInitializeStore
+    public class PackageHashAndSizeInitalizer : IInitializeStore
     {
         private readonly ILog _log = LogProvider.For<AdminUserInitializer>();
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
@@ -20,7 +20,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
         private object _sync = new object();
         private readonly List<IInternalPackageRepository> _packageRepositories = new List<IInternalPackageRepository>();
 
-        public PackageHashInitalizer(IInternalPackageRepositoryFactory packageRepositoryFactory, IPackageService packageService)
+        public PackageHashAndSizeInitalizer(IInternalPackageRepositoryFactory packageRepositoryFactory, IPackageService packageService)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _packageService = packageService;
@@ -28,7 +28,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            IEnumerable<InternalPackage> packages = _packageService.GetAllPackagesWithoutAHash().ToList();
+            IEnumerable<InternalPackage> packages = _packageService.GetAllPackagesWithoutAHashOrSize().ToList();
 
             if (!packages.Any())
             {
@@ -37,7 +37,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
             updateStatusAction("Migrating existing packages");
 
-            _log.Info($"{packages.Count()} packages need to be updated with a new package hash. Please wait.");
+            _log.Info($"{packages.Count()} packages need to be updated as they are missing a hash/size. Please wait.");
 
             Parallel.ForEach(packages, package =>
             {
@@ -57,7 +57,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 
                         stream.Seek(0, SeekOrigin.Begin);
 
-                        package.Size = stream.Length;
+                        package.PackageSize = stream.Length;
                     }
 
                     _packageService.Update(package);

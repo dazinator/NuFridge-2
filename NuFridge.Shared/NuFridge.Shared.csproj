@@ -368,7 +368,7 @@
     <Compile Include="Server\Statistics\FeedPackageCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\StatisticBase.cs" />
     <Compile Include="Server\Storage\EFStoredProcMapper.cs" />
-    <Compile Include="Server\Storage\Initializers\PackageHashInitalizer.cs" />
+    <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\GetAccountAction.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\RegisterAccountAction.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\SignInAction.cs" />

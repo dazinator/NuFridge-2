@@ -18,7 +18,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<DatabaseMigrator>().As<IDatabaseMigrator>().SingleInstance();
             builder.RegisterType<AdminUserInitializer>().AsSelf();
             builder.RegisterType<MigrationInitializer>().AsSelf();
-            builder.RegisterType<PackageHashInitalizer>().AsSelf();
+            builder.RegisterType<PackageHashAndSizeInitalizer>().AsSelf();
 
             builder.RegisterType<UserService>().As<IUserService>();
             builder.RegisterType<UserRepository>().As<IUserRepository>();
@@ -47,7 +47,7 @@ namespace NuFridge.Shared.Server.Modules
             {
                 c.Resolve<MigrationInitializer>(),
                 c.Resolve<AdminUserInitializer>(),
-                c.Resolve<PackageHashInitalizer>()
+                c.Resolve<PackageHashAndSizeInitalizer>()
             }))).As<IStoreInitializer>();
 
             builder.Register((c => c.Resolve<IStoreFactory>().Store)).As<IStore>().SingleInstance();

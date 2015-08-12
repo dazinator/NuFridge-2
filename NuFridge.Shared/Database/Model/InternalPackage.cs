@@ -82,9 +82,6 @@ namespace NuFridge.Shared.Database.Model
 
         public string Summary { get; set; }
 
-        [NotMapped]
-        [System.ComponentModel.DataAnnotations.Editable(false)]
-        public long Size { get; set; }
 
         public IEnumerable<FrameworkAssemblyReference> FrameworkAssemblies { get; set; }
 
@@ -100,8 +97,9 @@ namespace NuFridge.Shared.Database.Model
 
         public long GetSize()
         {
-            return Size;
+            return PackageSize;
         }
+
 
         public string CalculateHash()
         {
@@ -194,7 +192,7 @@ namespace NuFridge.Shared.Database.Model
                     stream.Seek(0, SeekOrigin.Begin);
                     newPackage.Created = FastZipPackageBase.GetPackageCreatedDateTime(stream);
 
-                    newPackage.Size = stream.Length;
+                    newPackage.PackageSize = stream.Length;
                 }
             }
             else
@@ -204,7 +202,7 @@ namespace NuFridge.Shared.Database.Model
                 {
                     var zip = zipPackage;
                     newPackage.Hash = Convert.ToBase64String(zip.Hash);
-                    newPackage.Size = zip.Size;
+                    newPackage.PackageSize = zip.Size;
                     newPackage.Created = zipPackage.Created.DateTime;
                 }
             }
@@ -231,9 +229,11 @@ namespace NuFridge.Shared.Database.Model
         [System.ComponentModel.DataAnnotations.Editable(false)]
         public string PackageHashAlgorithm { get; set; }
 
+        public long PackageSize { get; set; }
+
         [NotMapped]
         [System.ComponentModel.DataAnnotations.Editable(false)]
-        public long PackageSize { get; set; }
+        public long Size { get { return PackageSize; } set { PackageSize = value; } }
 
         public DateTime LastUpdated { get; set; }
 

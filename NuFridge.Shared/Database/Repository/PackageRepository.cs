@@ -74,9 +74,9 @@ namespace NuFridge.Shared.Database.Repository
             return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).FirstOrDefault();
         }
 
-        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHash()
+        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize()
         {
-            return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Hash = ''");
+            return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Hash = '' OR PackageSize = 0");
         }
     }
 
@@ -92,6 +92,6 @@ namespace NuFridge.Shared.Database.Repository
         void Update(InternalPackage package);
         void Delete(InternalPackage package);
         InternalPackage GetPackage(int? feedId, string packageId, string version);
-        IEnumerable<InternalPackage> GetAllPackagesWithoutAHash();
+        IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
     }
 }

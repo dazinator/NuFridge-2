@@ -24,7 +24,10 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int feedId = int.Parse(parameters.id);
 
-            return _packageDownloadService.GetLatestDownloads(feedId);
+            return new
+            {
+                Downloads = _packageDownloadService.GetLatestDownloads(feedId)
+            };
         }
     }
 }

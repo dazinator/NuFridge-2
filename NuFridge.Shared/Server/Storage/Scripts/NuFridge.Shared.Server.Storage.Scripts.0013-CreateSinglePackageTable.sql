@@ -33,7 +33,8 @@
     [DevelopmentDependency]    BIT             NOT NULL,
     [VersionDownloadCount]     INT             NOT NULL,
     [Language]                 NVARCHAR (4000) NULL,
-    [ReportAbuseUrl]           NVARCHAR (MAX)  NULL
+    [ReportAbuseUrl]           NVARCHAR (MAX)  NULL,
+	[PackageSize]			   BIGINT		   NOT NULL
 );
 GO
 
@@ -108,7 +109,8 @@ BEGIN
            ,[DevelopmentDependency]
            ,[VersionDownloadCount]
            ,[Language]
-           ,[ReportAbuseUrl])
+           ,[ReportAbuseUrl]
+		   ,[PackageSize])
 	SELECT [PackageId]
 		   ,' + CONVERT(NVARCHAR(MAX),@Id) + '
            ,[Title]
@@ -144,6 +146,7 @@ BEGIN
            ,[VersionDownloadCount]
            ,[Language]
            ,[ReportAbuseUrl]
+		   ,0
 	FROM [NuFridge].[' + @tableName + ']'
 
 	PRINT 'Importing existing packages from [NuFridge].[' + @tableName + '] into [NuFridge].[Package]' 
