@@ -32,12 +32,51 @@
             <a class="item settingTab" data-tab="fourth">Settings</a>
         </div>
         <div data-tab="first" class="ui bottom attached tab segment active">
-            <h3>Actions</h3>
-            <button class="ui primary button" data-bind="click: ReindexPackages">
+            <div class="ui grid">
+                <div class="eight wide column">
+                    <h3>Recent Package Uploads</h3>
+                    <table class="ui compact table">
+                        <thead>
+                            <tr>
+                                <th>Package Id</th>
+                                <th>Version</th>
+                                <th>Uploaded At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Example.Id</td>
+                                <td>1.0.0</td>
+                                <td>Today</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="eight wide column">
+                    <h3>Recent Package Downloads</h3>
+                    <table class="ui compact table">
+                        <thead>
+                            <tr>
+                                <th>Package Id</th>
+                                <th>Version</th>
+                                <th>Uploaded At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Example.Id</td>
+                                <td>1.0.0</td>
+                                <td>Today</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+           
+            <h3>Administrative Actions</h3>
+            <button class="ui primary button reindexPackagesButton" data-bind="click: ReindexPackages">
                 Reindex Packages
             </button>
-
-
         </div>
         <div data-tab="second" class="ui bottom attached tab segment">
             <div data-bind="compose: { model: '../forms/feedendpoints', view: '../forms/feedendpoints', activationData: feedOptions }">

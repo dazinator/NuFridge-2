@@ -110,8 +110,6 @@
     };
 
 
-
-
     ctor.prototype.compositionComplete = function() {
         var self = this;
 
@@ -124,6 +122,14 @@
             $(".ui.bottom.attached.tab.segment").removeClass("active");
             $(".settingTab").addClass("active");
         }
+
+        $('.reindexPackagesButton')
+            .popup({
+                hoverable: true,
+                position: 'right center',
+                title: "This will check for new packages in the packages folder and remove any indexed packages which are missing.",
+                variation: 'wide'
+            });
     };
 
     return ctor;
