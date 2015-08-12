@@ -694,6 +694,13 @@
                 title: 'Add Package'
             });
 
+        $('.importFeedLocalCacheCheckBox')
+            .popup({
+                hoverable: true,
+                position: 'right center',
+                title: "This enables importing packages from existing NuFridge feeds on successful package matches.",
+                variation: 'wide'
+            });
     };
 
 

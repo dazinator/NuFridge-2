@@ -3,7 +3,7 @@
         var self = {};
 
         var data = $.extend({
-            FeedUrl: ko.observable(""),
+            FeedUrl: ko.observable("https://www.nuget.com/api/v2"),
             SpecificPackageId: ko.observable(""),
             SearchPackageId: ko.observable(""),
             IncludePrerelease: ko.observable(true),
