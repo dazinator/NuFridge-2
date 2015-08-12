@@ -294,10 +294,13 @@
     <Compile Include="Database\Services\PackageService.cs" />
     <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
+    <Compile Include="Exceptions\ImportPackageException.cs" />
+    <Compile Include="Exceptions\InvalidPackageMetadataException.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledge.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBase.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
+    <Compile Include="Exceptions\PackageConflictException.cs" />
     <Compile Include="Extensions\RandomStringGenerator.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
       <SubType>Form</SubType>

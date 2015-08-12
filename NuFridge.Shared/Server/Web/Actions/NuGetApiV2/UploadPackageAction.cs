@@ -6,6 +6,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
@@ -151,40 +152,21 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return response;
                 }
 
-                //if (HasSourceAndSymbols(package))
-                //{
-                //    _log.Debug("Redirecting package upload to symbol upload as it contains source and symbols: " + package.Id + " - " + package.Version);
-
-                //    var response = new Response();
-
-                //    bool endsWithSlash = _portalConfiguration.ListenPrefixes.EndsWith("/");
-                //    var location = $"{_portalConfiguration.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/symbols";
-                
-                //    response.Headers.Add("Location", location);
-                //    response.StatusCode = HttpStatusCode.TemporaryRedirect;
-
-                //    return response;
-                //}
-
                 IInternalPackageRepository packageRepository = _packageRepositoryFactory.Create(feed.Id);
-
-                var existingPackage = packageRepository.GetPackage(package.Id, package.Version);
-
-                if (existingPackage != null)
-                {
-                    _log.Warn("A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
-                    var response = module.Response.AsText("A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
-                    response.StatusCode = HttpStatusCode.Conflict;
-                    return response;
-                }
-
-
 
                 try
                 {
                     packageRepository.AddPackage(package);
                 }
-                catch (IOException ex)
+                catch (PackageConflictException ex)
+                {
+                    return new TextResponse(HttpStatusCode.Conflict, ex.Message);
+                }
+                catch (InvalidPackageMetadataException ex)
+                {
+                    return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
+                }
+                catch (Exception ex)
                 {
                     return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }

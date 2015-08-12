@@ -3,6 +3,7 @@ using System.IO;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuGet;
@@ -98,6 +99,18 @@ namespace NuFridge.Shared.Server.NuGet
 
         public new void AddPackage(IPackage package)
         {
+            if (string.IsNullOrWhiteSpace(package.Id) || package.Version == null)
+            {
+                throw new InvalidPackageMetadataException("The package being added does not have a valid Id or Version");
+            }
+
+            IInternalPackage existingPackage = GetPackage(package.Id, package.Version);
+
+            if (existingPackage != null)
+            {
+                throw new PackageConflictException($"A package with the same ID and version already exists - {package.Id} v{package.Version}");
+            }
+
             try
             {
                 base.AddPackage(package);

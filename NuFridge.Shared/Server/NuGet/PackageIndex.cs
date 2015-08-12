@@ -3,6 +3,7 @@ using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet
@@ -34,8 +35,7 @@ namespace NuFridge.Shared.Server.NuGet
 
                 if (existingPackage != null)
                 {
-                    throw new Exception(
-                        "A package with the same ID and version already exists. Overwriting packages is not enabled on this feed.");
+                    throw new PackageConflictException($"A package with the same ID and version already exists - {package.Id} v{package.Version}");
                 }
 
                 _packageService.Insert((InternalPackage) package);

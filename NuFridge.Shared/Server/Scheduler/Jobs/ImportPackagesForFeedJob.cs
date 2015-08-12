@@ -7,6 +7,7 @@ using Hangfire;
 using Microsoft.AspNet.SignalR;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
@@ -97,16 +98,6 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 IInternalPackageRepository localRepository = _factory.Create(feedId);
 
-                var existingPackage = localRepository.GetPackage(packageId, version);
-
-                if (existingPackage != null)
-                {
-                    _log.Warn(
-                        "A package with the same ID and version already exists. Overwriting packages is not enabled on this feed. Id = " +
-                        packageId + ", Version = " + version);
-                    throw new ImportPackageException("A package with the same ID and version already exists.");
-                }
-
                 IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(feedUrl);
 
                 DataServicePackage remotePackage =
@@ -117,13 +108,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 if (remotePackage == null)
                 {
-                    _log.Warn("This package was not found on the remote NuGet feed. Id = " + packageId + ", Version = " + version);
+                    _log.Warn("This package was not found on the remote NuGet feed. Id = " + packageId + ", Version = " +
+                              version);
                     throw new ImportPackageException("This package was not found on the remote NuGet feed.");
                 }
 
                 if (useLocalPackages)
                 {
-                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, strVersion, remotePackage,localRepository, version))
+                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, strVersion, remotePackage,
+                        localRepository, version))
                         return;
                 }
 
@@ -131,23 +124,38 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                 _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
 
-                PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString()));
+                PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,
+                    new PackageImportProgressAuditItem(packageId, version.ToString()));
+            }
+            catch (PackageConflictException ex)
+            {
+                _log.ErrorException(ex.Message, ex);
+
+                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
+
+                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
+                //Do not throw an exception as this will trigger a retry of the job
+            }
+            catch (InvalidPackageMetadataException ex)
+            {
+                _log.ErrorException(ex.Message, ex);
+
+                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
+
+                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
+                //Do not throw an exception as this will trigger a retry of the job
             }
             catch (Exception ex)
             {
-                var message = "There was an error importing the " + packageId + " package v" + strVersion +
-                              " to the feed " + feedId + ".";
-
-                string exception = "Exception: " + ex.Message;
-
-                if (ex.InnerException != null)
-                {
-                    exception += "\r\nInner Exception: " + ex.InnerException.Message;
-                }
+                var message = "There was an error importing the " + packageId + " package v" + strVersion + " to the feed " + feedId + ".";
 
                 _log.ErrorException(message, ex);
 
-                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString(), exception));
+                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
+
+                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
+
+                //Throw an exception so it will trigger a retry of the job
                 throw new ImportPackageException(ex.Message);
             }
         }
@@ -173,11 +181,9 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
 
                         localRepository.AddPackage(cachePackage);
 
-                        _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " +
-                                  feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
+                        _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
 
-                        PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,
-                            new PackageImportProgressAuditItem(packageId, version.ToString()));
+                        PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString()));
                         return true;
                     }
                 }
@@ -498,14 +504,6 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             {
                 SpecificPackageId = packageId;
                 return this;
-            }
-        }
-
-        public class ImportPackageException : Exception
-        {
-            public ImportPackageException(string message) : base(message)
-            {
-
             }
         }
     }
