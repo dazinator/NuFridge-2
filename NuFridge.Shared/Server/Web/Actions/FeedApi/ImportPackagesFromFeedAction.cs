@@ -3,6 +3,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Server.NuGet.Import;
 using NuFridge.Shared.Server.Scheduler.Jobs;
 
 namespace NuFridge.Shared.Server.Web.Actions.FeedApi
@@ -22,7 +23,7 @@ namespace NuFridge.Shared.Server.Web.Actions.FeedApi
 
             int feedId = parameters.id;
 
-            ImportPackagesForFeedJob.FeedImportOptions options = module.Bind<ImportPackagesForFeedJob.FeedImportOptions>();
+            PackageImportOptions options = module.Bind<PackageImportOptions>();
 
 
             string errorMessage;

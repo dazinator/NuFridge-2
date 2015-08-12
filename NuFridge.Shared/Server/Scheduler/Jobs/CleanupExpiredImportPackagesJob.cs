@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.NuGet.Import;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs
 {

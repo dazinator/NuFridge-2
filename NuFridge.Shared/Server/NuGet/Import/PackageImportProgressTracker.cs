@@ -7,7 +7,7 @@ using Microsoft.AspNet.SignalR;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Web.SignalR;
 
-namespace NuFridge.Shared.Server.NuGet
+namespace NuFridge.Shared.Server.NuGet.Import
 {
     public class PackageImportProgressTracker
     {

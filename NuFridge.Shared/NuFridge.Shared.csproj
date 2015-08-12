@@ -323,11 +323,14 @@
     <Compile Include="Server\Modules\FullModule.cs" />
     <Compile Include="Server\NuGet\FeedManager.cs" />
     <Compile Include="Server\NuGet\FrameworkNamesManager.cs" />
+    <Compile Include="Server\NuGet\Import\PackageImporter.cs" />
+    <Compile Include="Server\NuGet\Import\PackageImportRepository.cs" />
+    <Compile Include="Server\NuGet\Import\PackageImportOptions.cs" />
+    <Compile Include="Server\NuGet\Import\PackageImportProgressTracker.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\NuGet\NuGetFileSystem.cs" />
     <Compile Include="Server\NuGet\NuGetPackagePathResolver.cs" />
     <Compile Include="Server\NuGet\PackageDependencySetConverter.cs" />
-    <Compile Include="Server\NuGet\PackageImportProgressTracker.cs" />
     <Compile Include="Server\NuGet\Symbols\ReadStream.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolSource.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolSourceMapper.cs" />

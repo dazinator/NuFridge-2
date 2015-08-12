@@ -5,6 +5,7 @@ using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.NuGet.Import;
 using NuFridge.Shared.Server.NuGet.Symbols;
 using NuGet;
 
@@ -23,6 +24,8 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>().InstancePerDependency();
             builder.RegisterType<Statistic>().As<IStatistic>();
             builder.RegisterType<Framework>().As<IFramework>();
+            builder.RegisterType<PackageImporter>().As<IPackageImporter>().AsSelf();
+            builder.RegisterType<PackageImportRepository>().As<IPackageImportRepository>().AsSelf();
             builder.Register<Func<int, PackageIndex>>(c => feedId =>
                 new PackageIndex(c.Resolve<IPackageService>(), c.Resolve<IPackageDownloadService>(), feedId)
                 ).InstancePerDependency();
