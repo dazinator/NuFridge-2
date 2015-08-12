@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
@@ -31,10 +32,16 @@ namespace NuFridge.Shared.Database.Services
 
             _packageDownloadRepository.Insert(packageDownload);
         }
+
+        public IEnumerable<PackageDownload> GetLatestDownloads(int feedId)
+        {
+            return _packageDownloadRepository.GetLatestDownloads(feedId);
+        }
     }
 
     public interface IPackageDownloadService
     {
         void IncrementDownloadCount(int feedId, string packageId, string version, DateTime downloadedAt, string userAgent, string ipAddress);
+        IEnumerable<PackageDownload> GetLatestDownloads(int feedId);
     }
 }

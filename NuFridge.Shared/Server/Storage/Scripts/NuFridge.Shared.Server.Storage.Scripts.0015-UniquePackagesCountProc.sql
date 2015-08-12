@@ -155,3 +155,8 @@ CREATE TABLE [NuFridge].[User] (
     CONSTRAINT [UQ_UserUsernameUnique] UNIQUE NONCLUSTERED ([Username] ASC)
 );
 GO
+
+CREATE NONCLUSTERED INDEX [IX_NuFridgePackageDownload_DownloadedAt]
+    ON [NuFridge].[PackageDownload]([DownloadedAt])
+	INCLUDE(Id, FeedId, PackageId, PackageIdHash, VersionMajor, VersionMinor, VersionBuild, VersionRevision, VersionSpecial, UserAgent, IPAddress)
+GO

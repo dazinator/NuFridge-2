@@ -382,6 +382,7 @@
     <Compile Include="Server\Web\Actions\FeedApi\GetFeedAuditHistoryAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\GetFeedConfigurationAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\GetFeedsAction.cs" />
+    <Compile Include="Server\Web\Actions\FeedApi\GetPackageAuditHistoryAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\ImportPackagesFromFeedAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\InsertFeedAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\ReindexPackagesAction.cs" />
