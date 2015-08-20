@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -24,18 +27,30 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(Statistic statistic)
         {
-            using (var connection = GetConnection())
-            {
-                statistic.Id = connection.Insert<int>(statistic);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        statistic.Id = connection.Insert<int>(statistic);
+                    }
+                });
         }
 
         public void Update(Statistic statistic)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Update(statistic);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Update(statistic);
+                    }
+                });
         }
     }
     public interface IStatisticRepository

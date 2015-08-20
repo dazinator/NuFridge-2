@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -15,10 +18,16 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(PackageDownload packageDownload)
         {
-            using (var connection = GetConnection())
-            {
-                packageDownload.Id = connection.Insert<int>(packageDownload);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        packageDownload.Id = connection.Insert<int>(packageDownload);
+                    }
+                });
         }
 
         public IEnumerable<PackageDownload> GetLatestDownloads(int feedId)

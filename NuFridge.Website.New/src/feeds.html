@@ -1,0 +1,102 @@
+<template>
+  <h1>Feeds</h1>
+
+  <div class="stackable two column ui grid">
+    <div class="column">
+      <div class="ui fluid search">
+        <input class="prompt" type="text" placeholder="Search..." style="width: 100%">
+
+        <div class="results"></div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui fluid basic button" click.trigger="addFeedGroup($event)">Add Feed Group</div>
+    </div>
+  </div>
+
+  <div class="ui segment">
+    <h2 class="ui center aligned horizontal divider header">
+      <a href="/#/feedgroup/view/1">Default</a>
+    </h2>
+
+    <div class="ui fluid primary button">Add Feed</div>
+
+    <div class="ui selection divided list">
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>Feed1</h4></div>
+          <span>This feed is used for ABC.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>Feed2</h4></div>
+          <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eget laoreet ante. Nam a dictum urna, in ultrices lectus. Fusce ac dapibus tellus, vel laoreet metus. Morbi molestie commodo lorem et posuere. Donec eu ultrices arcu, et suscipit nulla. Proin porttitor at nibh ac viverra. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin laoreet, libero eget convallis varius, dolor lacus consectetur dolor, ut feugiat risus quam in nunc. Ut fringilla risus at maximus vulputate. Nullam metus neque, pulvinar ut est vitae, malesuada varius purus.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>Feed3</h4></div>
+          <span>No description provided.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>Feed4</h4></div>
+          <span>No description provided.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>Feed5</h4></div>
+          <span>No description provided.</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="ui center aligned horizontal divider header">
+      <a href="/#/feedgroup/view/2">Second Feed Group</a>
+    </h2>
+
+    <div class="ui fluid primary button">Add Feed</div>
+
+    <div class="ui selection divided list">
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>FeedGroup2Feed1</h4></div>
+          <span>This feed is used for ABC.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>FeedGroup2Feed2</h4></div>
+          <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eget laoreet ante. Nam a dictum urna, in ultrices lectus. Fusce ac dapibus tellus, vel laoreet metus. Morbi molestie commodo lorem et posuere. Donec eu ultrices arcu, et suscipit nulla. Proin porttitor at nibh ac viverra. Interdum et malesuada fames ac ante ipsum primis in faucibus. Proin laoreet, libero eget convallis varius, dolor lacus consectetur dolor, ut feugiat risus quam in nunc. Ut fringilla risus at maximus vulputate. Nullam metus neque, pulvinar ut est vitae, malesuada varius purus.</span>
+        </div>
+      </div>
+      <div class="item" click.trigger="feedClick($event)">
+        <i class="large circle thin icon" style="padding:5px;"></i>
+
+        <div class="content">
+          <div class="header"><h4>FeedGroup3Feed3</h4></div>
+          <span>No description provided.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</template>

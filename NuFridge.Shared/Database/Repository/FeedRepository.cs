@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Caching;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -33,10 +36,16 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(Feed feed)
         {
-            using (var connection = GetConnection())
-            {
-                feed.Id = connection.Insert<int>(feed);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        feed.Id = connection.Insert<int>(feed);
+                    }
+                });
 
             var cacheKey = GetCacheKey(feed.Name);
 
@@ -74,10 +83,16 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(Feed feed)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Update(feed);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Update(feed);
+                    }
+                });
 
             var cacheKey = GetCacheKey(feed.Name);
 

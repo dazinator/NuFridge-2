@@ -14,13 +14,15 @@ namespace NuFridge.Shared.Server.Web
     {
         private readonly IWebPortalConfiguration _configuration;
         private readonly IPortalBootstrapper _portalBootstrapper;
+        private readonly IHomeConfiguration _homeConfiguration;
         private readonly ILog _log = LogProvider.For<WebServerInitializer>();
         private CustomNancyHost _host;
 
-        public WebServerInitializer(IWebPortalConfiguration configuration, IPortalBootstrapper portalBootstrapper)
+        public WebServerInitializer(IWebPortalConfiguration configuration, IPortalBootstrapper portalBootstrapper, IHomeConfiguration homeConfiguration)
         {
             _configuration = configuration;
             _portalBootstrapper = portalBootstrapper;
+            _homeConfiguration = homeConfiguration;
         }
 
         public void Start()
@@ -33,7 +35,7 @@ namespace NuFridge.Shared.Server.Web
             hostConfiguration.UnhandledExceptionCallback = (OnException);
             HostConfiguration configuration = hostConfiguration;
             Uri[] uriArray = listenPrefixes;
-            _host = new CustomNancyHost(portalBootstrapper, configuration, uriArray)
+            _host = new CustomNancyHost(portalBootstrapper, configuration, _homeConfiguration, uriArray)
             {
                 AuthenticationSchemeSelector = request => AuthenticationSchemes.Anonymous
             };

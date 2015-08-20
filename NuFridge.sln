@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ciao", "Ciao", "{BC30ADE2-A030-450E-815F-EE922476A4D2}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website", "NuFridge.Website\NuFridge.Website.csproj", "{84F87ACC-E6A4-4641-AC22-CF09EEA9C4AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Tests", "NuFridge.Tests\NuFridge.Tests.csproj", "{66B3E20F-0ED3-45BB-9186-23EE1C95E898}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website.New", "NuFridge.Website.New\NuFridge.Website.New.csproj", "{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +78,18 @@ Global
 		{66B3E20F-0ED3-45BB-9186-23EE1C95E898}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{66B3E20F-0ED3-45BB-9186-23EE1C95E898}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{66B3E20F-0ED3-45BB-9186-23EE1C95E898}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Debug|x86.Build.0 = Debug|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -198,24 +198,3 @@ CREATE NONCLUSTERED INDEX [IX_NuFridgePackage_Version]
     INCLUDE([Id]);
 
 GO
-
-CREATE TABLE [dbo].[AuditLogs] (
-    [AuditLogId]   INT                IDENTITY (1, 1) NOT NULL,
-    [UserName]     NVARCHAR (100)     NOT NULL,
-    [EventDateUTC] DATETIMEOFFSET (7) NOT NULL,
-    [EventType]    INT                NOT NULL,
-    [TableName]    NVARCHAR (256)     NOT NULL,
-    [RecordId]     NVARCHAR (256)     NOT NULL
-);
-
-GO
-
-CREATE TABLE [dbo].[AuditLogDetails] (
-    [Id]            INT             IDENTITY (1, 1) NOT NULL,
-    [ColumnName]    NVARCHAR (256)  NOT NULL,
-    [OriginalValue] NVARCHAR (4000) NULL,
-    [NewValue]      NVARCHAR (4000) NULL,
-    [AuditLogId]    INT             NULL
-);
-
-GO

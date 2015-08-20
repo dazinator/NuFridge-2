@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Runtime.Caching;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -23,10 +26,17 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(FeedConfiguration feedConfiguration)
         {
-            using (var connection = GetConnection())
-            {
-                feedConfiguration.Id = connection.Insert<int>(feedConfiguration);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        feedConfiguration.Id = connection.Insert<int>(feedConfiguration);
+                    }
+                });
+
             var cacheKey = GetCacheKey(feedConfiguration.FeedId);
 
             CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
@@ -53,11 +63,11 @@ namespace NuFridge.Shared.Database.Repository
                 return (FeedConfiguration)cachedFeedConfig;
             }
 
-            var feedConfig = Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new {feedId}).SingleOrDefault();
+            var feedConfig = Query<FeedConfiguration>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId", new { feedId }).SingleOrDefault();
 
             if (feedConfig != null)
             {
-                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(1)};
+                CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
                 MemoryCache.Default.Set(cacheKey, feedConfig, policy);
             }
 
@@ -66,10 +76,16 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(FeedConfiguration feedConfiguration)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Update(feedConfiguration);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Update(feedConfiguration);
+                    }
+                });
 
             var cacheKey = GetCacheKey(feedConfiguration.FeedId);
 

@@ -1,4 +1,6 @@
 ﻿using System.Configuration;
+using System.IO;
+using System.Reflection;
 using NuFridge.Shared.Server.Application;
 
 namespace NuFridge.Shared.Server.Configuration
@@ -8,6 +10,7 @@ namespace NuFridge.Shared.Server.Configuration
         private readonly IApplicationInstanceSelector _instance;
 
         public string InstallDirectory { get; set; }
+        public string WebsiteDirectory { get; set; }
         public string ConnectionString { get; set; }
         public string ListenPrefixes { get; set; }
         public string WindowsDebuggingToolsPath { get; set; }
@@ -25,6 +28,24 @@ namespace NuFridge.Shared.Server.Configuration
             ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
             WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
+
+            WebsiteDirectory = Path.Combine(InstallDirectory, "Website");
+
+#if DEBUG
+            var entryAssemblyFile = Assembly.GetEntryAssembly().Location;
+            var entryAssemblyFolder = Directory.GetParent(entryAssemblyFile).FullName;
+            var binFolder = Directory.GetParent(entryAssemblyFolder).FullName;
+            var serviceFolder = Directory.GetParent(binFolder).FullName;
+            var solutionFolder = Directory.GetParent(serviceFolder).FullName;
+
+            WebsiteDirectory = Path.Combine(solutionFolder, "NuFridge.Website.New");
+#endif
+
+            if (!Directory.Exists(WebsiteDirectory))
+            {
+                throw new DirectoryNotFoundException("Failed to find the website folder at " + WebsiteDirectory);
+            }
+
         }
     }
 }

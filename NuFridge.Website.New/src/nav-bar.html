@@ -1,0 +1,17 @@
+<template>
+  <div class="ui top attached stackable menu">
+        <a repeat.for="row of router.navigation" class="item ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
+    <div class="right menu">
+      <div class="item">
+        <i class="ui large user icon" ></i>
+        <div class="content">
+          <div class="ui sub header">     Administrator</div>
+          System Administrator
+        </div>
+      </div>
+      <a class="ui item">
+        Sign Out
+      </a>
+    </div>
+  </div>
+</template>

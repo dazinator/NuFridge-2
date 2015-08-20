@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -17,12 +20,12 @@ namespace NuFridge.Shared.Database.Repository
 
         public PackageRepository() : base(TableName)
         {
-            
+
         }
 
         public IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId)
         {
-            return Query<InternalPackage>(GetAllPackagesStoredProcCommand, new {feedId});
+            return Query<InternalPackage>(GetAllPackagesStoredProcCommand, new { feedId });
         }
 
         public IEnumerable<PackageUpload> GetLatestUploads(int feedId)
@@ -30,7 +33,7 @@ namespace NuFridge.Shared.Database.Repository
             return
                 Query<PackageUpload>(
                     $"SELECT TOP(5) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId ORDER BY Published DESC",
-                    new {feedId});
+                    new { feedId });
         }
 
 
@@ -64,18 +67,30 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(InternalPackage package)
         {
-            using (var connection = GetConnection())
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
             {
-                package.PrimaryId = connection.Insert<int>(package);
-            }
+                using (var connection = GetConnection())
+                {
+                    package.PrimaryId = connection.Insert<int>(package);
+                }
+            });
         }
 
         public void Update(InternalPackage package)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Update(package);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Update(package);
+                    }
+                });
         }
 
         public InternalPackage GetPackage(int? feedId, string packageId, string version)

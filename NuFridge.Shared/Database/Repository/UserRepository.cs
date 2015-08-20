@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Data.SqlClient;
+using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server;
+using Palmer;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -15,26 +18,38 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(User user)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Insert<int>(user);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Insert<int>(user);
+                    }
+                });
         }
 
         public User Find(string username)
         {
             using (var connection = GetConnection())
             {
-                return connection.Query<User>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Username = @username", new {  username }).FirstOrDefault();
+                return connection.Query<User>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Username = @username", new { username }).FirstOrDefault();
             }
         }
 
         public void Update(User user)
         {
-            using (var connection = GetConnection())
-            {
-                connection.Update(user);
-            }
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Update(user);
+                    }
+                });
         }
     }
 
