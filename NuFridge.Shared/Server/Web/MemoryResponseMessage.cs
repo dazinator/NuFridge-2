@@ -31,13 +31,7 @@ namespace NuFridge.Shared.Server.Web
             return _memoryStream;
         }
 
-        public IEnumerable<KeyValuePair<string, string>> Headers
-        {
-            get
-            {
-                return _headers;
-            }
-        }
+        public IEnumerable<KeyValuePair<string, string>> Headers => _headers;
 
         public int StatusCode { get; set; }
     }

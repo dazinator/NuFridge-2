@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
@@ -10,30 +8,22 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class GetFeedsAction : IAction
     {
-        private readonly IFeedService _feedService;
+        private readonly IFeedGroupService _feedGroupService;
 
-        public GetFeedsAction(IFeedService feedService)
+        public GetFeedsAction(IFeedGroupService feedGroupService)
         {
-            _feedService = feedService;
+            _feedGroupService = feedGroupService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
             module.RequiresAuthentication();
 
-            int page = int.Parse(module.Request.Query["page"]);
-            int pageSize = int.Parse(module.Request.Query["pageSize"]);
-
-            int totalResults = _feedService.GetCount();
-            List<Feed> feeds = _feedService.GetAllPaged(page, pageSize, false).ToList();
-
-            var totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
+            IEnumerable<FeedGroup> groups = _feedGroupService.GetAll();
 
             return new
             {
-                TotalCount = totalResults,
-                TotalPages = totalPages,
-                Results = feeds
+                Results = groups
             };
         }
     }

@@ -21,6 +21,8 @@ namespace NuFridge.Shared.Database.Model
         public string ApiKeyHashed { get; set; }
         public string ApiKeySalt { get; set; }
 
+        public int GroupId { get; set; }
+
         [NotMapped]
         [Editable(false)]
         public bool HasApiKey { get; set; }

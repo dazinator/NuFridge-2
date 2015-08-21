@@ -26,7 +26,32 @@ export class Feeds {
   }
 
   activate() {
-    // called when the VM is activated
+    $.ajax({
+      url: "/api/feeds",
+      cache: false,
+      headers: new auth().getAuthHttpHeader(),
+      dataType: 'json'
+    }).then(function(response) {
+      self.feedsLoaded(true);
+      self.pageCount(response.TotalPages);
+      self.currentPage(pageNumber);
+
+      var mapping = {
+        create: function(options) {
+          return databindingFeed(options.data);
+        }
+      };
+
+      ko.mapping.fromJS(response.Results, mapping, self.feeds);
+
+
+    }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+      self.feedsLoaded(true);
+
+      if (xmlHttpRequest.status === 401) {
+        router.navigate("#signin");
+      }
+    });
   }
 
   attached() {

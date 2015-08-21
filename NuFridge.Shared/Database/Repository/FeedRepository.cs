@@ -100,6 +100,11 @@ namespace NuFridge.Shared.Database.Repository
             MemoryCache.Default.Set(cacheKey, feed, policy);
         }
 
+        public IEnumerable<Feed> FindByGroupId(int id)
+        {
+            return Query<Feed>($"SELECT * FROM [NuFridge].[{TableName}] WHERE GroupId = @id", new {id});
+        }
+
         public IEnumerable<Feed> Search(string name)
         {
             return Query<Feed>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Name LIKE '%' + @name + '%'", new {name});
@@ -117,5 +122,6 @@ namespace NuFridge.Shared.Database.Repository
         IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage);
         int GetCount();
         void Update(Feed feed);
+        IEnumerable<Feed> FindByGroupId(int id);
     }
 }

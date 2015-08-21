@@ -165,3 +165,28 @@ CREATE NONCLUSTERED INDEX [IX_NuFridgePackage_Published]
     ON [NuFridge].[Package]([Published] DESC)
 	INCLUDE([Id], [Version]);
 GO
+
+
+CREATE TABLE [NuFridge].[FeedGroup] (
+    [Id]   INT            IDENTITY (1, 1) NOT NULL,
+    [Name] NVARCHAR (100) NOT NULL, 
+    CONSTRAINT [PK_FeedGroup] PRIMARY KEY ([Id])
+);
+GO
+
+INSERT INTO [NuFridge].[FeedGroup] ([Name])
+VALUES ('Default')
+GO
+
+
+ALTER TABLE [NuFridge].[Feed]
+ADD [GroupId] int
+GO
+
+UPDATE [NuFridge].[Feed]
+SET GroupId = 1
+
+ALTER TABLE [NuFridge].[Feed]
+ADD FOREIGN KEY ([GroupId])
+REFERENCES [NuFridge].[FeedGroup](Id)
+GO

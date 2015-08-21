@@ -283,6 +283,7 @@
     <Compile Include="Database\Model\DatabaseContext.cs" />
     <Compile Include="Database\Model\Feed.cs" />
     <Compile Include="Database\Model\FeedConfiguration.cs" />
+    <Compile Include="Database\Model\FeedGroup.cs" />
     <Compile Include="Database\Model\Framework.cs" />
     <Compile Include="Database\Model\Interfaces\IFeedConfiguration.cs" />
     <Compile Include="Database\Model\Interfaces\IInternalPackage.cs" />
@@ -294,6 +295,7 @@
     <Compile Include="Database\Model\UserRole.cs" />
     <Compile Include="Database\Repository\BaseRepository.cs" />
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
+    <Compile Include="Database\Repository\FeedGroupRepository.cs" />
     <Compile Include="Database\Repository\FeedRepository.cs" />
     <Compile Include="Database\Repository\FrameworkRepository.cs" />
     <Compile Include="Database\Repository\PackageDownloadRepository.cs" />
@@ -301,6 +303,7 @@
     <Compile Include="Database\Repository\StatisticRepository.cs" />
     <Compile Include="Database\Repository\UserRepository.cs" />
     <Compile Include="Database\Services\FeedConfigurationService.cs" />
+    <Compile Include="Database\Services\FeedGroupService.cs" />
     <Compile Include="Database\Services\FeedService.cs" />
     <Compile Include="Database\Services\FrameworkService.cs" />
     <Compile Include="Database\Services\PackageDownloadService.cs" />
@@ -370,6 +373,7 @@
     <Compile Include="Server\Statistics\FeedDownloadCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\FeedPackageCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\StatisticBase.cs" />
+    <Compile Include="Server\Storage\Initializers\DefaultDataInitalizer.cs" />
     <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
     <Compile Include="Server\Web\Actions\IAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
@@ -479,7 +483,6 @@
     <Compile Include="Server\Storage\IDatabaseMigrator.cs" />
     <Compile Include="Server\Storage\Initializers\MigrationInitializer.cs" />
     <Compile Include="Server\Storage\IStoreInitializer.cs" />
-    <Compile Include="Server\Storage\Initializers\AdminUserInitializer.cs" />
     <Compile Include="Server\Storage\IInitializeStore.cs" />
     <Compile Include="Server\ServerEngine.cs" />
     <Compile Include="Server\ServerState.cs" />

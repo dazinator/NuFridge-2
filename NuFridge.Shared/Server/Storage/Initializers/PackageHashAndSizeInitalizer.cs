@@ -14,7 +14,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
 {
     public class PackageHashAndSizeInitalizer : IInitializeStore
     {
-        private readonly ILog _log = LogProvider.For<AdminUserInitializer>();
+        private readonly ILog _log = LogProvider.For<PackageHashAndSizeInitalizer>();
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly IPackageService _packageService;
         private readonly object _sync = new object();

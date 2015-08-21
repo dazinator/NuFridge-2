@@ -27,7 +27,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        protected void Delete(IEnumerable<int> ids, string idColumnName)
+        protected virtual void Delete(IEnumerable<int> ids, string idColumnName)
         {
             string listOfIdsJoined = "(" + String.Join(",", ids.ToArray()) + ")";
 
@@ -37,7 +37,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<TRecord> Query<TRecord>(string sql, dynamic param = null)
+        public virtual IEnumerable<TRecord> Query<TRecord>(string sql, dynamic param = null)
         {
             using (var connection = GetConnection())
             {
@@ -45,7 +45,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<TRecord> Query<TRecord>(object whereConditions)
+        public virtual IEnumerable<TRecord> Query<TRecord>(object whereConditions)
         {
             using (var connection = GetConnection())
             {
@@ -53,7 +53,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public T Find(int id)
+        public virtual T Find(int id)
         {
             using (var connection = GetConnection())
             {
@@ -61,7 +61,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage)
+        public virtual IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage)
         {
             using (var connection = GetConnection())
             {
@@ -69,7 +69,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
             using (var connection = GetConnection())
             {
@@ -77,7 +77,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public int GetCount()
+        public virtual int GetCount()
         {
             using (var connection = GetConnection())
             {

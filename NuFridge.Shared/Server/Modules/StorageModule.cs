@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server.Modules
 
             builder.Register((c => new StoreFactory(c.Resolve<IHomeConfiguration>()))).As<IStoreFactory>().SingleInstance();
             builder.RegisterType<DatabaseMigrator>().As<IDatabaseMigrator>().SingleInstance();
-            builder.RegisterType<AdminUserInitializer>().AsSelf();
+            builder.RegisterType<DefaultDataInitalizer>().AsSelf();
             builder.RegisterType<MigrationInitializer>().AsSelf();
             builder.RegisterType<PackageHashAndSizeInitalizer>().AsSelf();
 
@@ -35,6 +35,9 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<FrameworkService>().As<IFrameworkService>();
             builder.RegisterType<FrameworkRepository>().As<IFrameworkRepository>();
 
+            builder.RegisterType<FeedGroupService>().As<IFeedGroupService>();
+            builder.RegisterType<FeedGroupRepository>().As<IFeedGroupRepository>();
+
             builder.RegisterType<PackageDownloadService>().As<IPackageDownloadService>().AsSelf();
             builder.RegisterType<PackageDownloadRepository>().As<IPackageDownloadRepository>();
 
@@ -46,7 +49,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.Register((c => new StoreInitializer(c.Resolve<IStore>(), new IInitializeStore[]
             {
                 c.Resolve<MigrationInitializer>(),
-                c.Resolve<AdminUserInitializer>(),
+                c.Resolve<DefaultDataInitalizer>(),
                 c.Resolve<PackageHashAndSizeInitalizer>()
             }))).As<IStoreInitializer>();
 
