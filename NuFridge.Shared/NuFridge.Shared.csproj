@@ -493,20 +493,16 @@
     <Compile Include="Server\Application\IApplicationInstanceSelector.cs" />
     <Compile Include="Server\Application\IApplicationInstanceStore.cs" />
     <Compile Include="Server\Configuration\IWebPortalConfiguration.cs" />
-    <Compile Include="Server\Web\ResponseDecorator.cs" />
-    <Compile Include="Server\Web\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Server\Web\IPortalBootstrapper.cs" />
     <Compile Include="Server\Web\IWebServerInitializer.cs" />
     <Compile Include="Server\Configuration\WebPortalConfiguration.cs" />
     <Compile Include="Server\Web\Nancy\NancyCompression.cs" />
-    <Compile Include="Server\Web\Nancy\CustomJsonNetSerializer.cs" />
     <Compile Include="Server\Web\Nancy\CustomNancyHost.cs" />
     <Compile Include="Server\Web\Responses\FeedSearchResponse.cs" />
     <Compile Include="Server\Web\SignInRequest.cs" />
     <Compile Include="Server\Web\UserDatabase.cs" />
     <Compile Include="Server\Web\WebBootstrapper.cs" />
     <Compile Include="Server\Web\RouteResolvers\LazyRouteResolver.cs" />
-    <Compile Include="Server\Web\Serializers\JsonSerialization.cs" />
     <Compile Include="Server\Web\WebPackage.cs" />
     <Compile Include="Server\Web\WebServerInitializer.cs" />
   </ItemGroup>

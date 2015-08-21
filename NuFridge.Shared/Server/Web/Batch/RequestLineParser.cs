@@ -8,13 +8,13 @@ namespace NuFridge.Shared.Server.Web.Batch
 {
     internal static class RequestLineParser
     {
-        private const int CR = '\r';
-        private const int LF = '\n';
+        private const int Cr = '\r';
+        private const int Lf = '\n';
 
         public static RequestLine Parse(Stream stream)
         {
             int b = stream.ReadByte();
-            while (b == CR || b == LF)
+            while (b == Cr || b == Lf)
             {
                 b = stream.ReadByte();
             }
@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Web.Batch
             while (true)
             {
                 b = stream.ReadByte();
-                if (b == CR || b < 0)
+                if (b == Cr || b < 0)
                 {
                     stream.ReadByte();
                     break;
@@ -42,7 +42,6 @@ namespace NuFridge.Shared.Server.Web.Batch
             }
 
             throw new InvalidOperationException("Invalid Request Line.");
-            //throw new InvalidRequestException("Invalid Request Line.");
         }
     }
 }

@@ -2,30 +2,17 @@
 {
     internal class RequestLine
     {
-        private readonly string method;
-        private readonly string uri;
-        private readonly string httpVersion;
-
         public RequestLine(string method, string uri, string httpVersion)
         {
-            this.method = method;
-            this.uri = uri;
-            this.httpVersion = httpVersion;
+            Method = method;
+            Uri = uri;
+            HttpVersion = httpVersion;
         }
 
-        public string HttpVersion
-        {
-            get { return httpVersion; }
-        }
+        public string HttpVersion { get; }
 
-        public string Uri
-        {
-            get { return uri; }
-        }
+        public string Uri { get; }
 
-        public string Method
-        {
-            get { return method; }
-        }
+        public string Method { get; }
     }
 }

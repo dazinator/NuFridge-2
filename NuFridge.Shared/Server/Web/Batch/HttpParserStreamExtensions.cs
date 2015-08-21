@@ -9,13 +9,6 @@ namespace NuFridge.Shared.Server.Web.Batch
 {
     public static class HttpParserStreamExtensions
     {
-        /// <summary>
-        /// Read the http stream as a <see cref="Request"/>.
-        /// </summary>
-        /// <param name="stream">The http stream.</param>
-        /// <param name="scheme">The url scheme.</param>
-        /// <param name="ip">The ip address.</param>
-        /// <returns>Returns the parse <see cref="Request"/>.</returns>
         public static Request ReadAsRequest(this Stream stream, IDictionary<string, IEnumerable<string>> headers)
         {
             if (stream == null)
