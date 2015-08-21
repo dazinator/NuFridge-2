@@ -1,4 +1,18 @@
-﻿using System;
+﻿/* 
+* @author themotleyfool https://github.com/themotleyfool/NuGet.Lucene
+* Apache License
+* Version 2.0, January 2004
+* http://www.apache.org/licenses/
+*
+* Copyright 2008-2012 by themotleyfool
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*/
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -37,7 +51,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
                     writer.Write(sourceMappingIndexContent);
                 }
 
-                ExecuteTool("pdbstr", string.Format(" -w -p:\"{0}\" -i:\"{1}\" -s:srcsrv", symbolFile, indexFile));
+                ExecuteTool("pdbstr", $" -w -p:\"{symbolFile}\" -i:\"{indexFile}\" -s:srcsrv");
             }
             finally
             {
@@ -47,7 +61,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
 
         public void IndexSymbolFile(IPackageName package, string symbolPath,  string symbolFile)
         {
-            ExecuteTool("symstore", string.Format(" add /f \"{0}\" /s \"{1}\" /t {2} /v {3}", symbolFile, symbolPath, package.Id, package.Version));
+            ExecuteTool("symstore", $" add /f \"{symbolFile}\" /s \"{symbolPath}\" /t {package.Id} /v {package.Version}");
         }
 
         private IEnumerable<string> ExecuteTool(string tool, string arguments)

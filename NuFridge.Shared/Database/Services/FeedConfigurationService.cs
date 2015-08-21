@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Database.Services
 
         public void Insert(FeedConfiguration feedConfiguration)
         {
-           _feedConfigurationRepository.Insert(feedConfiguration);
+            _feedConfigurationRepository.Insert(feedConfiguration);
         }
 
         public void Delete(FeedConfiguration feedConfiguration)
@@ -35,10 +35,9 @@ namespace NuFridge.Shared.Database.Services
             return _feedConfigurationRepository.FindByFeedId(feedId);
         }
 
-        
-
         public void Update(FeedConfiguration feedConfig)
         {
+
             if (string.IsNullOrWhiteSpace(feedConfig.Directory))
             {
                 throw new InvalidOperationException("A feed directory must be provided.");

@@ -36,7 +36,6 @@ namespace NuFridge.Shared.Server.Hosts
                 Console.WriteLine("Base Error: " + ex.GetBaseException().GetErrorSummary());
                 Console.WriteLine(new string('-', 79));
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine("See the log files for more information.");
                 Console.Write("At: ");
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.ResetColor();
@@ -64,7 +63,7 @@ namespace NuFridge.Shared.Server.Hosts
         {
             Console.Title = _displayName + " - Running";
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Running. Press <enter> to shut down.");
+            Console.WriteLine("Running. Press <enter> to shut down the service.");
             Console.ResetColor();
             string str;
             do

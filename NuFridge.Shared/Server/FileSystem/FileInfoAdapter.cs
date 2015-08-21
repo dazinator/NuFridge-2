@@ -7,37 +7,13 @@ namespace NuFridge.Shared.Server.FileSystem
     {
         private readonly FileInfo _info;
 
-        public string FullPath
-        {
-            get
-            {
-                return _info.FullName;
-            }
-        }
+        public string FullPath => _info.FullName;
 
-        public string Extension
-        {
-            get
-            {
-                return _info.Extension;
-            }
-        }
+        public string Extension => _info.Extension;
 
-        public DateTime LastAccessTimeUtc
-        {
-            get
-            {
-                return _info.LastAccessTimeUtc;
-            }
-        }
+        public DateTime LastAccessTimeUtc => _info.LastAccessTimeUtc;
 
-        public DateTime LastWriteTimeUtc
-        {
-            get
-            {
-                return _info.LastWriteTimeUtc;
-            }
-        }
+        public DateTime LastWriteTimeUtc => _info.LastWriteTimeUtc;
 
         public FileInfoAdapter(FileInfo info)
         {

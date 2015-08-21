@@ -46,17 +46,26 @@ namespace NuFridge.Shared.Server.NuGet
         {
             package.Listed = false;
 
-            _packageService.Update((InternalPackage)package);
+            lock (_sync)
+            {
+                _packageService.Update((InternalPackage) package);
+            }
         }
 
         public void DeletePackage(IInternalPackage package)
         {
-            _packageService.Delete((InternalPackage)package);
+            lock (_sync)
+            {
+                _packageService.Delete((InternalPackage) package);
+            }
         }
 
         public IInternalPackage GetPackage(string packageId, SemanticVersion version)
         {
-            return _packageService.GetPackage(_feedId, packageId, version.ToString());
+            lock (_sync)
+            {
+                return _packageService.GetPackage(_feedId, packageId, version.ToString());
+            }
         }
 
         public void IncrementDownloadCount(IInternalPackage package, string ipAddress, string userAgent)

@@ -2,7 +2,6 @@
 using NuFridge.Shared.Server.Web;
 using NuFridge.Shared.Server.Web.Actions.AccountApi;
 using NuFridge.Shared.Server.Web.Actions.DashboardApi;
-using NuFridge.Shared.Server.Web.Actions.DiagnosticsApi;
 using NuFridge.Shared.Server.Web.Actions.FeedApi;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using NuFridge.Shared.Server.Web.Actions.SchedulerApi;
@@ -31,9 +30,6 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<GetDashboardAction>().AsSelf();
             builder.RegisterType<GetFeedDownloadCountAction>().AsSelf();
             builder.RegisterType<GetFeedPackageCountAction>().AsSelf();
-
-            //Diagnostics api module
-            builder.RegisterType<GetDiagnosticInformationAction>().AsSelf();
 
             //Feed api module
             builder.RegisterType<DeleteFeedAction>().AsSelf();

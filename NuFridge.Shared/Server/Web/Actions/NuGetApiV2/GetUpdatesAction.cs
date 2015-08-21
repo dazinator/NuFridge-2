@@ -22,12 +22,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     {
         private readonly IWebPortalConfiguration _portalConfig;
         private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
 
-        public GetUpdatesAction(IWebPortalConfiguration portalConfig, IFeedService feedService)
+        public GetUpdatesAction(IWebPortalConfiguration portalConfig, IFeedService feedService, IPackageService packageService)
 
         {
             _portalConfig = portalConfig;
             _feedService = feedService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -56,16 +58,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             var request = new HttpRequestMessage(method, url);
             request.Properties.AddRange(queryDictionary);
 
-            var context = new ODataQueryContext(builder.Model, typeof(IInternalPackage));
+            var context = new ODataQueryContext(builder.Model, typeof (IInternalPackage));
 
-            using (var dbContext = new DatabaseContext())
-            {
-                var ds = CreateQuery(dbContext, queryDictionary, feed);
+            var ds = CreateQuery(queryDictionary, feed);
 
-                ds = ExecuteQuery(context, request, ds);
+            ds = ExecuteQuery(context, request, ds);
 
-                return ProcessResponse(module, request, feed, ds, selectValue);
-            }
+            return ProcessResponse(module, request, feed, ds, selectValue);
         }
 
         private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
@@ -153,10 +152,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             return value.Substring(trimStart, trimEnd);
         }
 
-        protected IQueryable<IInternalPackage> CreateQuery(DatabaseContext dbContext,
-            IDictionary<string, object> queryDictionary, IFeed feed)
+        protected IQueryable<IInternalPackage> CreateQuery(IDictionary<string, object> queryDictionary, IFeed feed)
         {
-            IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+            IQueryable<InternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
 
             ds = ds.Where(pk => pk.Listed);
 
@@ -167,9 +165,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             string versions = queryDictionary.ContainsKey("versions")
                 ? RemoveQuotesFromQueryValue(queryDictionary["versions"].ToString())
                 : string.Empty;
-
-            
-
 
             bool includeAllVersions = queryDictionary.ContainsKey("includeAllVersions") && bool.Parse(queryDictionary["includeAllVersions"].ToString());
 
@@ -184,7 +179,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             if (string.IsNullOrEmpty(packageIds) || string.IsNullOrEmpty(versions))
             {
-                //TODO
+               throw new Exception("Package ids and versions must be supplied.");
             }
 
             var idValues = packageIds.Trim().Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
@@ -195,7 +190,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             if ((idValues.Length == 0) || (idValues.Length != versionValues.Length) || (idValues.Length != versionConstraintValues.Length))
             {
-               //TODO
+               throw new Exception("Mismatched amount of package ids and versions.");
             }
 
             var packages = idValues

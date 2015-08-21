@@ -44,6 +44,8 @@ namespace NuFridge.Shared.Server.Scheduler.Servers
                     BackgroundJob.Delete(fetchedJob.Key);
                 }
             }
+
+            RecurringJob.RemoveIfExists("UpdateSystemInformationJob");
         }
     }
 }

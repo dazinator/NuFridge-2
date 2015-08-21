@@ -20,13 +20,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         protected readonly IStore Store;
         private readonly IWebPortalConfiguration _portalConfig;
         private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
 
-        public GetODataPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService)
+        public GetODataPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService, IPackageService packageService)
         {
             PackageRepositoryFactory = packageRepositoryFactory;
             Store = store;
             _portalConfig = portalConfig;
             _feedService = feedService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -42,36 +44,29 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            using (var dbContext = new DatabaseContext())
+            string packageId = parameters.PackageId;
+            string packageVersion = parameters.PackageVersion;
+
+            if (!string.IsNullOrWhiteSpace(packageId) && !string.IsNullOrWhiteSpace(packageVersion))
             {
-                IQueryable<IInternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+                var package = _packageService.GetPackage(feed.Id, packageId, packageVersion);
 
-                ds = ds.Where(pk => pk.Listed);
-
-                string packageId = parameters.PackageId;
-                string packageVersion = parameters.PackageVersion;
-
-                if (!string.IsNullOrWhiteSpace(packageId) && !string.IsNullOrWhiteSpace(packageVersion))
-                {
-                    ds = ds.Where(pk => pk.Id == packageId && pk.Version == packageVersion);
-                }
-
-                var package = ds.FirstOrDefault();
-
-                if (package == null)
+                if (package == null || !package.Listed)
                 {
                     return new Response {StatusCode = HttpStatusCode.NotFound};
                 }
 
                 return ProcessResponse(module, feed, package);
             }
+
+            return new Response {StatusCode = HttpStatusCode.BadRequest};
         }
 
         protected virtual dynamic ProcessResponse(INancyModule module, IFeed feed, IInternalPackage package)
         {
             bool endsWithSlash = _portalConfig.ListenPrefixes.EndsWith("/");
 
-            var baseAddress = string.Format("{0}{1}feeds/{2}/api/v2/", _portalConfig.ListenPrefixes, endsWithSlash ? "" : "/", feed.Name);
+            var baseAddress = $"{_portalConfig.ListenPrefixes}{(endsWithSlash ? "" : "/")}feeds/{feed.Name}/api/v2/";
 
             NuGetODataModelBuilderODataPackage builder = new NuGetODataModelBuilderODataPackage();
             builder.Build();

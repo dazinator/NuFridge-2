@@ -314,7 +314,6 @@
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
     <Compile Include="Exceptions\PackageConflictException.cs" />
-    <Compile Include="Extensions\RandomStringGenerator.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -327,13 +326,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Server\Constants.cs" />
-    <Compile Include="Server\Diagnostics\SystemInfo.cs" />
-    <Compile Include="Server\Diagnostics\Win\Win32_ComputerSystem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Server\Diagnostics\Win\Win32_Process.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Server\Modules\FullModule.cs" />
     <Compile Include="Server\NuGet\FeedManager.cs" />
     <Compile Include="Server\NuGet\FrameworkNamesManager.cs" />
@@ -365,7 +357,6 @@
     <Compile Include="Server\Scheduler\Jobs\JobBase.cs" />
     <Compile Include="Server\Scheduler\Jobs\ReindexPackagesForFeedJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\RunPackageRetentionPoliciesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\UpdateSystemInformationJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\UpdateFeedDownloadCountStatisticJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\UpdateFeedPackageCountStatisticJob.cs" />
     <Compile Include="Server\Modules\SchedulerModule.cs" />
@@ -374,14 +365,11 @@
     <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageFile.cs" />
     <Compile Include="Server\NuGet\FastZipPackage\IFastZipPackage.cs" />
     <Compile Include="Server\Statistics\Design\ColorGenerator.cs" />
-    <Compile Include="Server\Statistics\SystemInformationStatisticItem.cs" />
-    <Compile Include="Server\Statistics\SystemInformationStatistic.cs" />
     <Compile Include="Server\Statistics\FeedDownloadCountStatistic.cs" />
     <Compile Include="Server\Statistics\FeedPackageCountStatistic.cs" />
     <Compile Include="Server\Statistics\FeedDownloadCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\FeedPackageCountStatisticItem.cs" />
     <Compile Include="Server\Statistics\StatisticBase.cs" />
-    <Compile Include="Server\Storage\EFStoredProcMapper.cs" />
     <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\GetAccountAction.cs" />
     <Compile Include="Server\Web\Actions\AccountApi\RegisterAccountAction.cs" />
@@ -389,7 +377,6 @@
     <Compile Include="Server\Web\Actions\DashboardApi\GetDashboardAction.cs" />
     <Compile Include="Server\Web\Actions\DashboardApi\GetFeedDownloadCountAction.cs" />
     <Compile Include="Server\Web\Actions\DashboardApi\GetFeedPackageCountAction.cs" />
-    <Compile Include="Server\Web\Actions\DiagnosticsApi\GetDiagnosticInformationAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\DeleteFeedAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\FeedSearchAction.cs" />
     <Compile Include="Server\Web\Actions\FeedApi\GetFeedAction.cs" />
@@ -437,7 +424,6 @@
     <Compile Include="Server\Web\Batch\RequestLineParser.cs" />
     <Compile Include="Server\Web\Modules\AccountApiModule.cs" />
     <Compile Include="Server\Web\Modules\DashboardApiModule.cs" />
-    <Compile Include="Server\Web\Modules\DiagnosticsApiModule.cs" />
     <Compile Include="Server\Web\Modules\FeedApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV1ApiModule.cs" />
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
@@ -461,13 +447,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Server\Hosts\WindowsServiceHost.cs" />
-    <Compile Include="Server\CommandLine\CommandLineResult.cs" />
-    <Compile Include="Server\CommandLine\CommandLineException.cs" />
-    <Compile Include="Server\CommandLine\CommandLineOptions.cs" />
     <Compile Include="Commands\Util\CommandLocator.cs" />
     <Compile Include="Commands\Util\CommandMetadata.cs" />
     <Compile Include="Commands\Modules\CommandModule.cs" />
-    <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\Interfaces\ICommand.cs" />
     <Compile Include="Commands\Interfaces\ICommandHost.cs" />
     <Compile Include="Commands\Interfaces\ICommandLocator.cs" />
@@ -481,13 +463,10 @@
     <Compile Include="Commands\Options\OptionValueCollection.cs" />
     <Compile Include="Commands\Options\OptionValueType.cs" />
     <Compile Include="Commands\RunCommand.cs" />
-    <Compile Include="Server\CommandLine\CommandLineRunner.cs" />
-    <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\AutofacExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
-    <Compile Include="Extensions\NancyContextExtensions.cs" />
     <Compile Include="Logging\LibLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\Application\ApplicationInstanceRecord.cs" />

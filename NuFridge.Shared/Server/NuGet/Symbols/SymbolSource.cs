@@ -1,4 +1,18 @@
-﻿using System;
+﻿/* 
+* @author themotleyfool https://github.com/themotleyfool/NuGet.Lucene
+* Apache License
+* Version 2.0, January 2004
+* http://www.apache.org/licenses/
+*
+* Copyright 2008-2012 by themotleyfool
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +35,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
         }
 
         public bool KeepSourcesCompressed { get; set; }
-        public bool Enabled { get { return _symbolTools.Enabled; } }
+        public bool Enabled => _symbolTools.Enabled;
 
         public void AddSymbolPackage(IFeedConfiguration config, IPackage package, string symbolSourceUri)
         {
@@ -33,10 +47,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
             finally
             {
                 var disposablePackage = package as IDisposable;
-                if (disposablePackage != null)
-                {
-                    disposablePackage.Dispose();
-                }
+                disposablePackage?.Dispose();
             }
         }
 
@@ -130,7 +141,6 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
 
             if (stream != null) return stream;
 
-            // If the file wasn't found uncompressed look for it in symbol package zip file
             var packagePath = GetNupkgPath(config.SymbolsDirectory, packageId, packageVersion);
             if (!File.Exists(packagePath)) return null;
 

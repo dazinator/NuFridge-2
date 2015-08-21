@@ -1,4 +1,18 @@
-﻿using System;
+﻿/* 
+* @author themotleyfool https://github.com/themotleyfool/NuGet.Lucene
+* Apache License
+* Version 2.0, January 2004
+* http://www.apache.org/licenses/
+*
+* Copyright 2008-2012 by themotleyfool
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
@@ -33,10 +47,13 @@ namespace NuFridge.Shared.Server.NuGet.FastZipPackage
                 if (_targetFrameworkParsed)
                     return _targetFramework;
                 _targetFrameworkParsed = true;
-                _targetFramework = VersionUtility.ParseFrameworkNameFromFilePath(Path, out _effectivePath);
+
+                var path = Uri.UnescapeDataString(Path);
+
+                _targetFramework = VersionUtility.ParseFrameworkNameFromFilePath(path, out _effectivePath);
                 if (_targetFramework != VersionUtility.UnsupportedFrameworkName)
                     return _targetFramework;
-                string[] strArray1 = Path.Split('/', '\\');
+                string[] strArray1 = path.Split('/', '\\');
                 if (strArray1.Length < 3)
                 {
                     _targetFramework = null;

@@ -13,9 +13,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
     public class GetUpdatesCountAction : GetUpdatesAction
     {
-
-        public GetUpdatesCountAction(IWebPortalConfiguration webConfig, IFeedService feedService)
-            : base(webConfig, feedService)
+        public GetUpdatesCountAction(IWebPortalConfiguration webConfig, IFeedService feedService, IPackageService packageService)
+            : base(webConfig, feedService, packageService)
         {
 
         }

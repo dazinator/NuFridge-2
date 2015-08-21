@@ -15,8 +15,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
     public class GetODataPackagesCountAction : GetODataPackagesAction
     {
 
-        public GetODataPackagesCountAction(IFrameworkNamesManager frameworkNamesManager, IStore store, IWebPortalConfiguration webConfig, IFeedService feedService)
-            : base(frameworkNamesManager, store, webConfig, feedService)
+        public GetODataPackagesCountAction(IFrameworkNamesManager frameworkNamesManager, IStore store, IWebPortalConfiguration webConfig, IFeedService feedService, IPackageService packageService)
+            : base(frameworkNamesManager, store, webConfig, feedService, packageService)
         {
 
         }

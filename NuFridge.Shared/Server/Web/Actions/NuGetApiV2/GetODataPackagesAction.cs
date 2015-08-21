@@ -25,13 +25,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         protected readonly IStore Store;
         private readonly IWebPortalConfiguration _portalConfig;
         private readonly IFeedService _feedService;
+        private readonly IPackageService _packageService;
 
-        public GetODataPackagesAction(IFrameworkNamesManager frameworkNamesManager, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService)
+        public GetODataPackagesAction(IFrameworkNamesManager frameworkNamesManager, IStore store, IWebPortalConfiguration portalConfig, IFeedService feedService, IPackageService packageService)
         {
             _frameworkNamesManager = frameworkNamesManager;
             Store = store;
             _portalConfig = portalConfig;
             _feedService = feedService;
+            _packageService = packageService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -61,17 +63,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             var request = new HttpRequestMessage(method, url);
             ListExtensions.AddRange(request.Properties, queryDictionary);
 
-            var context = new ODataQueryContext(builder.Model, typeof(InternalPackage));
+            var context = new ODataQueryContext(builder.Model, typeof (InternalPackage));
 
-            using (var dbContext = new DatabaseContext())
-            {
-                bool enableStableOrdering;
-                var ds = CreateQuery(dbContext, queryDictionary, feed, out enableStableOrdering);
+            bool enableStableOrdering;
+            var ds = CreateQuery(queryDictionary, feed, out enableStableOrdering);
 
-                ds = ExecuteQuery(context, request, ds, enableStableOrdering);
+            ds = ExecuteQuery(context, request, ds, enableStableOrdering);
 
-                return ProcessResponse(module, request, feed, ds, selectValue);
-            }
+            return ProcessResponse(module, request, feed, ds, selectValue);
         }
 
         private string ProcessQueryAndRegenerateUrl(IDictionary<string, object> queryDictionary, string url)
@@ -145,13 +144,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
 
 
-        protected virtual IQueryable<InternalPackage> CreateQuery(DatabaseContext dbContext, IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
+        protected virtual IQueryable<InternalPackage> CreateQuery(IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
         {
             enableStableOrdering = true;
 
-            //var query = dbContext.Database.SqlQuery<InternalPackage>("NuFridge.GetAllPackages @feedId", new SqlParameter("feedId", feed.Id));
-
-            IQueryable<InternalPackage> ds = EFStoredProcMapper.Map<InternalPackage>(dbContext, dbContext.Database.Connection, "NuFridge.GetAllPackages " + feed.Id);
+            IQueryable<InternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
 
             ds = ds.Where(pk => pk.Listed);
 
@@ -225,8 +222,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             }
             return ds;
         }
-
-
 
         protected virtual void AddAdditionalQueryParams(IDictionary<string, object> queryDictionary)
         {
