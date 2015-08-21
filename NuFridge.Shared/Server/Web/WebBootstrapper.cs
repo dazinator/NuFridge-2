@@ -57,16 +57,6 @@ namespace NuFridge.Shared.Server.Web
             return _container;
         }
 
-        protected override void ConfigureConventions(NancyConventions nancyConventions)
-        {
-            base.ConfigureConventions(nancyConventions);
-
-            Assembly assembly = Assembly.LoadFile(Path.Combine(Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName, "NuFridge.Website.New.dll"));
-            string resourceNamespaceRoot = "NuFridge.Website.New";
-            //nancyConventions.StaticContentsConventions.Add(ResponseDecorator.StaticContent(EmbeddedStaticContentConventionBuilder.MapVirtualDirectory("", resourceNamespaceRoot, assembly), _portalConfiguration.Value));
-            //nancyConventions.StaticContentsConventions.Add(ResponseDecorator.StaticContent(EmbeddedStaticContentConventionBuilder.MapFile("/", resourceNamespaceRoot + ".index.html", assembly), _portalConfiguration.Value));
-        }
-
         protected override void ApplicationStartup(ILifetimeScope applicationContainer, IPipelines pipelines)
         {
             base.ApplicationStartup(_container, pipelines);

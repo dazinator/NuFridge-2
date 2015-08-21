@@ -3,7 +3,7 @@ using Nancy;
 using Nancy.Authentication.Token;
 using Nancy.ModelBinding;
 
-namespace NuFridge.Shared.Server.Web.Actions.AccountApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class SignInAction : IAction
     {

@@ -2,7 +2,7 @@
 using Nancy.Security;
 using NuFridge.Shared.Database.Services;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class GetFeedConfigurationAction : IAction
     {

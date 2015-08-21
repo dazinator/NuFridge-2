@@ -1,6 +1,6 @@
 ﻿using Nancy;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class GetFeedAuditHistoryAction : IAction
     {

@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nancy;
+﻿using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Services;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class GetPackageAuditHistoryAction : IAction
     {

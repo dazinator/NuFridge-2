@@ -7,7 +7,7 @@ using Nancy.Security;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler.Jobs;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class ReindexPackagesAction : IAction
     {

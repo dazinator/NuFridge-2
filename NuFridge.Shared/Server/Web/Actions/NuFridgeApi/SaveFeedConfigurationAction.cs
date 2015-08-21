@@ -6,7 +6,7 @@ using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class SaveFeedConfigurationAction : IAction
     {

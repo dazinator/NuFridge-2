@@ -7,7 +7,7 @@ using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using HttpStatusCode = Nancy.HttpStatusCode;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class UploadPackageFromUrlAction : IAction
     {

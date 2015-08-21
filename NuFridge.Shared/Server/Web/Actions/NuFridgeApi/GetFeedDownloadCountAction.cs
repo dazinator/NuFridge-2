@@ -3,15 +3,15 @@ using Nancy.Security;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Statistics;
 
-namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
-    public class GetFeedPackageCountAction : IAction
+    public class GetFeedDownloadCountAction : IAction
     {
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
         private readonly IStatisticService _statisticService;
 
-        public GetFeedPackageCountAction(IFeedService feedService, IPackageService packageService, IStatisticService statisticService) 
+        public GetFeedDownloadCountAction(IFeedService feedService, IPackageService packageService, IStatisticService statisticService)
         {
             _feedService = feedService;
             _packageService = packageService;
@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.DashboardApi
         {
             module.RequiresAuthentication();
 
-            var model = new FeedPackageCountStatistic(_feedService, _packageService, _statisticService).GetModel();
+            var model = new FeedDownloadCountStatistic(_feedService, _packageService, _statisticService).GetModel();
 
             return model;
         }

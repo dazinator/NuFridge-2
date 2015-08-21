@@ -1,12 +1,12 @@
 ﻿using Autofac;
 using Nancy;
-using NuFridge.Shared.Server.Web.Actions.FeedApi;
+using NuFridge.Shared.Server.Web.Actions.NuFridgeApi;
 
 namespace NuFridge.Shared.Server.Web.Modules
 {
-    public class FeedApiModule : NancyModule
+    public class NuFridgeApiModule : NancyModule
     {
-        public FeedApiModule(IContainer container)
+        public NuFridgeApiModule(IContainer container)
         {
             Get["api/feeds"] = p => container.Resolve<GetFeedsAction>().Execute(p, this);
             Get["api/feeds/search"] = p => container.Resolve<FeedSearchAction>().Execute(p, this);
@@ -20,6 +20,14 @@ namespace NuFridge.Shared.Server.Web.Modules
             Post["api/feeds/{id}/reindex"] = p => container.Resolve<ReindexPackagesAction>().Execute(p, this);
             Post["api/feeds/{id}/import"] = p => container.Resolve<ImportPackagesFromFeedAction>().Execute(p, this);
             Get["api/feeds/{id}/audit"] = p => container.Resolve<GetPackageAuditHistoryAction>().Execute(p, this);
+
+            Post["api/account/register"] = p => container.Resolve<RegisterAccountAction>().Execute(p, this);
+            Get["api/account/{username?}"] = p => container.Resolve<GetAccountAction>().Execute(p, this);
+            Post["api/signin"] = p => container.Resolve<SignInAction>().Execute(p, this);
+
+            Get["api/dashboard"] = p => container.Resolve<GetDashboardAction>().Execute(p, this);
+            Get["api/stats/feedpackagecount"] = p => container.Resolve<GetFeedPackageCountAction>().Execute(p, this);
+            Get["api/stats/feeddownloadcount"] = p => container.Resolve<GetFeedDownloadCountAction>().Execute(p, this);
         }
     }
 }

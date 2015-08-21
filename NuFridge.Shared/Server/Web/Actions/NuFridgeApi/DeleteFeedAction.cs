@@ -2,7 +2,7 @@
 using Nancy.Security;
 using NuFridge.Shared.Server.NuGet;
 
-namespace NuFridge.Shared.Server.Web.Actions.FeedApi
+namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     public class DeleteFeedAction : IAction
     {
