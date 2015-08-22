@@ -4,57 +4,39 @@ import 'semanticui/semantic';
 import 'semanticui/semantic.css!';
 import '/styles/custom.css!';
 import {Router} from 'aurelia-router';
+import {AuthService} from 'aurelia-auth';
 
-
+@inject(Router, AuthService)
 export class Feeds {
-  hello = 'Welcome to Aurelia!';
+    hello = 'Welcome to Aurelia!';
+    feedGroups = new Array();
+    addFeedGroup(e){
+        this.router.navigate("feedgroup/create");
+    }
 
-  static inject() {
-    return [Router];
-  }
+    constructor(router, auth) {
+        this.router = router;
+        this.auth = auth;
+    }
 
-  addFeedGroup(e){
-    this.router.navigate("feedgroup/create");
-  }
+    feedClick(feed) {
+        this.router.navigate("feeds/view/" + feed.Id);
+    }
 
-  constructor(router) {
-    this.router = router;
-  }
+    activate() {
+        var self = this;
 
-  feedClick(e) {
-    this.router.navigate("feeds/view/1");
-  }
+        $.ajax({
+            url: "/api/feeds",
+            cache: false,
+            headers: {Authorization: 'Token ' + self.auth.auth.getToken()},
+            dataType: 'json'
+        }).then(function(response) {
+            self.feedGroups = response.Results;
+        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
+            if (xmlHttpRequest.status === 401) {
 
-  activate() {
-    $.ajax({
-      url: "/api/feeds",
-      cache: false,
-      headers: new auth().getAuthHttpHeader(),
-      dataType: 'json'
-    }).then(function(response) {
-      self.feedsLoaded(true);
-      self.pageCount(response.TotalPages);
-      self.currentPage(pageNumber);
-
-      var mapping = {
-        create: function(options) {
-          return databindingFeed(options.data);
-        }
-      };
-
-      ko.mapping.fromJS(response.Results, mapping, self.feeds);
-
-
-    }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-      self.feedsLoaded(true);
-
-      if (xmlHttpRequest.status === 401) {
-        router.navigate("#signin");
-      }
-    });
-  }
-
-  attached() {
-    // called when View is attached, you are safe to do DOM operations here
-  }
+            }
+        });
+    }
 }
