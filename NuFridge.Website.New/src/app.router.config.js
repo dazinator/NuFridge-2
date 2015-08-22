@@ -21,7 +21,7 @@ export default class{
         { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', auth: true },
         { route: 'feedgroup/create', title: 'Create Feed Group', moduleId: 'feedgroup', auth: true },
         { route: 'settings', title: 'Settings', moduleId: 'settings', nav: true, auth: true},
-        { route: 'feeds/create', title: 'Create Feed', moduleId: 'addfeed', nav: false, auth: true },
+        { route: 'feeds/create/:id', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true },
         { route: 'login', title: 'Sign in', moduleId: 'signin', nav: false },
         { route: 'signout', title: 'Sign out', nav: true, moduleId:'signout', nav: false, auth: true}
 				]);

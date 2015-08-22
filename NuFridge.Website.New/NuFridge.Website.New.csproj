@@ -646,6 +646,8 @@
     <Content Include="src\app.js" />
     <Content Include="src\app.router.config.js" />
     <Content Include="src\authConfig.js" />
+    <Content Include="src\feedcreate.html" />
+    <Content Include="src\feedcreate.js" />
     <Content Include="src\feedgroup.html" />
     <Content Include="src\feedgroup.js" />
     <Content Include="src\feeds.html" />

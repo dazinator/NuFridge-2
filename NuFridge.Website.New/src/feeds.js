@@ -14,6 +14,10 @@ export class Feeds {
         this.http = http;
     }
 
+    addFeedClick(group) {
+        this.router.navigate("feeds/create/" + group.Id);
+    }
+
     feedClick(feed) {
         this.router.navigate("feeds/view/" + feed.Id);
     }

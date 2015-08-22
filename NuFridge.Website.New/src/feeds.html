@@ -20,7 +20,7 @@
                 <a href="/#/feedgroup/view/1">${group.Name}</a>
             </h2>
 
-            <div class="ui fluid primary button">Add Feed</div>
+            <div class="ui fluid primary button" click.trigger="$parent.addFeedClick(group)">Add Feed</div>
 
             <div class="ui selection divided list">
                 <div class="item" click.delegate="$parent.$parent.feedClick(feed)" repeat.for="feed of group.Feeds">

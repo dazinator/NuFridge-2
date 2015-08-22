@@ -3,7 +3,7 @@ import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-http-client';
 
 @inject(HttpClient)
-export class Feeds {
+export class FeedView {
 
     feed = null;
     feedName = "";
