@@ -3,6 +3,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 
@@ -11,12 +12,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
     public class InsertFeedAction : IAction
     {
         private readonly IFeedManager _feedManager;
+        private readonly IFeedService _feedService;
 
         private readonly ILog _log = LogProvider.For<InsertFeedAction>();
 
-        public InsertFeedAction(IFeedManager feedManager)
+        public InsertFeedAction(IFeedManager feedManager, IFeedService feedService)
         {
             _feedManager = feedManager;
+            _feedService = feedService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -43,11 +46,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                 return HttpStatusCode.InternalServerError;
             }
 
-
-            feed.ApiKeyHashed = null; //Temporary until API Key table is used
-            feed.ApiKeySalt = null; //Temporary until API Key table is used
-
-            return feed;
+            return _feedService.Find(feed.Id, false);
         }
     }
 }

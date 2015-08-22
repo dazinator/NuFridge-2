@@ -283,12 +283,16 @@
     </h2>
 
     <form class="ui form segment">
-      <div class="field">
-        <label>API Key</label>
-
-        <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
-        <input type="text" value.bind="feed.ApiKey">
-      </div>
+        <div class="field">
+            <label>API Key</label>
+            <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
+            <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
+                <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
+                <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
+                    Clear
+                </button>
+            </div>
+        </div>
     </form>
 
     <h2 class="ui header">
@@ -324,7 +328,7 @@
     <div class="ui buttons">
       <button class="ui button">Cancel</button>
       <div class="or"></div>
-      <button class="ui positive button">Save</button>
+      <button class="ui positive button" click.trigger="updateFeed()">Save</button>
     </div>
 
     <div class="ui buttons floatRight">

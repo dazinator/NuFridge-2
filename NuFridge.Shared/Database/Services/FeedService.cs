@@ -41,6 +41,7 @@ namespace NuFridge.Shared.Database.Services
                 feed.ApiKeyHashed = cryptoService.Compute(feed.ApiKey);
             }
 
+            ConfigureFeedEntity(feed, true);
             _feedRepository.Insert(feed);
         }
 
@@ -68,15 +69,15 @@ namespace NuFridge.Shared.Database.Services
 
         private void ConfigureFeedEntity(Feed feed, bool includeApiKey)
         {
-            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed))
+            if (!string.IsNullOrWhiteSpace(feed.ApiKeyHashed) && !string.IsNullOrWhiteSpace(feed.ApiKeySalt))
             {
                 feed.HasApiKey = true;
             }
 
             if (!includeApiKey)
             {
-                feed.ApiKeyHashed = null; //We don't want to expose this to the front end
-                feed.ApiKeySalt = null; //We don't want to expose this to the front end
+                feed.ApiKeyHashed = null; 
+                feed.ApiKeySalt = null;
             }
 
             feed.RootUrl = $"{_homeConfiguration.ListenPrefixes}{(_homeConfiguration.ListenPrefixes.EndsWith("/") ? "" : "/")}feeds/{feed.Name}";
@@ -130,10 +131,11 @@ namespace NuFridge.Shared.Database.Services
             }
             else if (feed.HasApiKey)
             {
-                feed.ApiKeyHashed = existingFeed.ApiKeyHashed; //Temporary until API Key table is used
-                feed.ApiKeySalt = existingFeed.ApiKeySalt; //Temporary until API Key table is used
+                feed.ApiKeyHashed = existingFeed.ApiKeyHashed;
+                feed.ApiKeySalt = existingFeed.ApiKeySalt;
             }
 
+            ConfigureFeedEntity(feed, true);
             _feedRepository.Update(feed);
         }
     }

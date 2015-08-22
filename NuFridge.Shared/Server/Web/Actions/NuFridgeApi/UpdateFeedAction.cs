@@ -46,7 +46,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             }
 
 
-            return feed;
+            return _feedService.Find(feed.Id, false);
         }
     }
 }
