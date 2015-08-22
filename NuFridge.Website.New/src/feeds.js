@@ -31,18 +31,5 @@ export class Feeds {
         this.http.get("/api/feeds").then(message => {
             self.feedGroups = JSON.parse(message.response);
         });
-
-        $.ajax({
-            url: "/api/feeds",
-            cache: false,
-            headers: {Authorization: 'Token ' + self.auth.auth.getToken()},
-            dataType: 'json'
-        }).then(function(response) {
-       
-        }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
-            if (xmlHttpRequest.status === 401) {
-
-            }
-        });
     }
 }
