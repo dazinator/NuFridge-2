@@ -12,7 +12,9 @@ var configForDevelopment = {
     },
     loginRedirect: "/",
     loginUrl: "/api/signin",
-    signupRedirect: "/"
+    signupRedirect: "/",
+    httpInterceptor: true,
+    authToken: 'Token'
 };
 
 var configForProduction = {

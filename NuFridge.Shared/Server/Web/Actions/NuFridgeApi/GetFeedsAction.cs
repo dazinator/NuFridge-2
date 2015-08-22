@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.Security;
 using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
@@ -21,10 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             IEnumerable<FeedGroup> groups = _feedGroupService.GetAll();
 
-            return new
-            {
-                Results = groups
-            };
+            return module.Negotiate.WithModel(groups);
         }
     }
 }

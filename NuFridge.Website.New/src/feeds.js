@@ -5,8 +5,9 @@ import 'semanticui/semantic.css!';
 import '/styles/custom.css!';
 import {Router} from 'aurelia-router';
 import {AuthService} from 'aurelia-auth';
+import {HttpClient} from 'aurelia-http-client';
 
-@inject(Router, AuthService)
+@inject(Router, AuthService, HttpClient)
 export class Feeds {
     hello = 'Welcome to Aurelia!';
     feedGroups = new Array();
@@ -14,9 +15,10 @@ export class Feeds {
         this.router.navigate("feedgroup/create");
     }
 
-    constructor(router, auth) {
+    constructor(router, auth, http) {
         this.router = router;
         this.auth = auth;
+        this.http = http;
     }
 
     feedClick(feed) {
@@ -26,13 +28,17 @@ export class Feeds {
     activate() {
         var self = this;
 
+        this.http.get("/api/feeds").then(message => {
+            self.feedGroups = JSON.parse(message.response);
+        });
+
         $.ajax({
             url: "/api/feeds",
             cache: false,
             headers: {Authorization: 'Token ' + self.auth.auth.getToken()},
             dataType: 'json'
         }).then(function(response) {
-            self.feedGroups = response.Results;
+       
         }).fail(function (xmlHttpRequest, textStatus, errorThrown) {
             if (xmlHttpRequest.status === 401) {
 
