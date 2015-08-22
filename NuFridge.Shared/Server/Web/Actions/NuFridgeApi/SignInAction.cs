@@ -6,6 +6,8 @@ using Nancy;
 using Nancy.Authentication.Token;
 using Nancy.ModelBinding;
 using Nancy.Responses;
+using Nancy.Security;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
@@ -13,11 +15,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
     public class SignInAction : IAction
     {
         private readonly ITokenizer _tokenizer;
+        private readonly IUserService _userService;
         private readonly ILog _log = LogProvider.For<SignInAction>();
 
-        public SignInAction(ITokenizer tokenizer)
+        public SignInAction(ITokenizer tokenizer, IUserService userService)
         {
             _tokenizer = tokenizer;
+            _userService = userService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -46,9 +50,9 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             }
 
 
-            var userIdentity = UserDatabase.ValidateUser(signInRequest);
+            IUserIdentity user = _userService.ValidateSignInRequest(signInRequest);
 
-            if (userIdentity == null)
+            if (user == null)
             {
                 _log.Warn("Failed sign in for user '" + signInRequest.Email + "' from IP address " +
                           module.Request.UserHostAddress);
@@ -64,12 +68,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                         }
                 };
 
-                response.ReasonPhrase = "Test";
-
                 return response;
             }
 
-            var token = _tokenizer.Tokenize(userIdentity, module.Context);
+            var token = _tokenizer.Tokenize(user, module.Context);
 
             return new
             {

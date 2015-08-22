@@ -38,6 +38,14 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
+        public User Find(string username, string passwordHashed)
+        {
+            using (var connection = GetConnection())
+            {
+                return connection.Query<User>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Username = @username AND PasswordHashed = @passwordHashed", new { username, passwordHashed }).FirstOrDefault();
+            }
+        }
+
         public void Update(User user)
         {
             Retry.On<SqlException>(
@@ -57,6 +65,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         int GetCount();
         void Insert(User user);
+        User Find(string username, string passwordHashed);
         User Find(string username);
         User Find(int userId);
         void Update(User user);

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Server.Web;
 using SimpleCrypto;
 
 namespace NuFridge.Shared.Database.Services
@@ -42,7 +45,7 @@ namespace NuFridge.Shared.Database.Services
                 }
 
                 user.Password = new string(stringChars); ;
-
+                user.Password = "abcd1";
                 Insert(user);
             }
         }
@@ -102,6 +105,30 @@ namespace NuFridge.Shared.Database.Services
             _userRepository.Update(user);
         }
 
+        public IUserIdentity ValidateSignInRequest(SignInRequest signInRequest)
+        {
+            string username = signInRequest.Email;
+
+            var user = _userRepository.Find(username);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            ICryptoService cryptoService = new PBKDF2();
+
+            string signInAttemptPassword = cryptoService.Compute(signInRequest.Password, user.PasswordSalt);
+            bool isPasswordCorrect = cryptoService.Compare(signInAttemptPassword, user.PasswordHashed);
+
+            if (!isPasswordCorrect)
+            {
+                return null;
+            }
+
+            return new TemporaryAdminUserIdentity { UserName = user.Username, Claims = new List<string>() };
+        }
+
         public void Insert(User user)
         {
             if (!string.IsNullOrWhiteSpace(user.Password))
@@ -121,5 +148,6 @@ namespace NuFridge.Shared.Database.Services
         int GetCount();
         void Insert(User user);
         void Update(User user);
+        IUserIdentity ValidateSignInRequest(SignInRequest signInRequest);
     }
 }
