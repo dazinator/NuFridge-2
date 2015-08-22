@@ -19,7 +19,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             int feedId = int.Parse(parameters.id);
 
-            return _feedService.Find(feedId, false);
+            return module.Negotiate.WithModel(_feedService.Find(feedId, false));
         }
     }
 }

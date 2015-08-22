@@ -1,5 +1,5 @@
 <template>
-  <h1>Feeds</h1>
+  <h1 textcontent="${feedName}"></h1>
 
   <div class="ui pointing secondary menu feedMenu">
     <a class="item active" data-tab="first">Overview</a>
@@ -75,11 +75,11 @@
       </thead>
       <tbody>
       <tr>
-        <td><a target="_blank">http://localhost:8080/feeds/feed/api/v2</a></td>
+        <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
         <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
       </tr>
       <tr>
-        <td><a target="_blank">http://localhost:8080/feeds/feed/api/symbols</a></td>
+        <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
         <td>Use this to access the symbol server for this NuGet feed.</td>
       </tr>
       </tbody>
@@ -273,7 +273,7 @@
 
         <p>The feed name is used to generate the feed URL. Changing it will break any applications that access this
           feed.</p>
-        <input type="text">
+        <input type="text" value.bind="feed.Name">
       </div>
     </form>
 
@@ -287,7 +287,7 @@
         <label>API Key</label>
 
         <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
-        <input type="text">
+        <input type="text" value.bind="feed.ApiKey">
       </div>
     </form>
 

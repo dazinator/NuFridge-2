@@ -1,21 +1,30 @@
-import 'jquery';
-import 'semanticui/semantic';
-import 'semanticui/semantic.css!';
 import '/styles/timeline.css!';
-import '/styles/custom.css!';
+import {inject} from 'aurelia-framework';
+import {HttpClient} from 'aurelia-http-client';
 
+@inject(HttpClient)
 export class Feeds {
-  hello = 'Welcome to Aurelia!';
 
-  constructor(){
+    feed = null;
+    feedName = "";
 
-  }
+    constructor(http) {
+        this.http = http;
+    }
 
-  activate() {
-    // called when the VM is activated
-  }
+    activate(params, routeConfig) {
+        var self = this;
 
-  attached() {
-    $(".feedMenu .item").tab();
-  }
+        var feedId = params.id;
+
+        this.http.get("/api/feeds/" + feedId).then(message => {
+            self.feed = JSON.parse(message.response);
+            routeConfig.navModel.setTitle("Viewing " + self.feed.Name);
+            self.feedName = self.feed.Name;
+        });
+    }
+
+    attached() {
+        $(".feedMenu .item").tab();
+    }
 }

@@ -30,6 +30,10 @@ namespace NuFridge.Shared.Database.Model
         [NotMapped]
         [Editable(false)]
         public string RootUrl { get; set; }
+
+        [NotMapped]
+        [Editable(false)]
+        public string Description { get; set; }
     }
 
     public interface IFeed
@@ -43,5 +47,6 @@ namespace NuFridge.Shared.Database.Model
         bool HasApiKey { get; set; }
         string ApiKey { get; set; }
         string RootUrl { get; set; }
+        string Description { get; set; }
     }
 }

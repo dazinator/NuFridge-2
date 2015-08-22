@@ -10,7 +10,7 @@ export default class{
 	}
 	configure(){
 		var appRouterConfig = function(config){
-			config.title = 'Aurelia';
+			config.title = 'NuFridge';
 			config.addPipelineStep('authorize', AuthorizeStep);
 
 			config.map([
