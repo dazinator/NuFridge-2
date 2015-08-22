@@ -10,7 +10,7 @@
                   System Administrator
               </div>
           </div>
-          <a class="ui item" if.bind="isAuthenticated">
+          <a class="ui item" if.bind="isAuthenticated" click.delegate="signOut()">
               Sign out
           </a>
       </div>

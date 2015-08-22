@@ -18,7 +18,7 @@ namespace NuFridge.Shared.Server.Web
         public static IUserIdentity ValidateUser(SignInRequest signInRequest)
         {
             //try to get a user from the "database" that matches the given username and password
-            var userRecord = Users.FirstOrDefault(u => u.Item1 == signInRequest.UserName && u.Item2 == signInRequest.Password);
+            var userRecord = Users.FirstOrDefault(u => u.Item1 == signInRequest.Email && u.Item2 == signInRequest.Password);
 
             if (userRecord == null)
             {
