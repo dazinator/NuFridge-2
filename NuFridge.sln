@@ -22,6 +22,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Shared", "NuFridge.Shared\NuFridge.Shared.csproj", "{4A3AE0A8-3976-4D91-A29A-41FFEF4AF33C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Website", "NuFridge.Website\NuFridge.Website.csproj", "{84F87ACC-E6A4-4641-AC22-CF09EEA9C4AF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F} = {8EC81CDC-60DA-4D9B-BE2B-09A7F68C4B8F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuFridge.Tests", "NuFridge.Tests\NuFridge.Tests.csproj", "{66B3E20F-0ED3-45BB-9186-23EE1C95E898}"
 EndProject

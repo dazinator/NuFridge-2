@@ -1,7 +1,4 @@
-import 'jquery';
-import 'semanticui/semantic';
-import 'semanticui/semantic.css!';
-import '/styles/custom.css!';
+
 
 export class Signin {
 

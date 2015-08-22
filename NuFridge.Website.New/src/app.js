@@ -1,36 +1,24 @@
-import {Redirect} from 'aurelia-router';
+import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+import AppRouterConfig from 'app.router.config';
+import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
+import 'jquery';
+import 'semanticui/semantic';
+import 'semanticui/semantic.css!';
+import "/styles/custom.css!";
 
+@inject(Router,HttpClientConfig,AppRouterConfig)
 export class App {
-  configureRouter(config, router){
-    config.title = 'NuFridge';
-    config.addPipelineStep('authorize', AuthorizeStep);
-    config.map([
-      { route: '', title: 'Dashboard', moduleId: 'home', nav: true, auth: true },
-      { route: 'feeds', title: 'Feeds', moduleId: 'feeds', nav: true, auth: true},
-      { route: 'feeds/view/:id', title: 'View Feed', moduleId: 'feedview', nav: false, auth: true},
-      { route: 'profile', title: 'Profile', moduleId: 'profile', nav: false, auth: true },
-      { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', auth: true },
-      { route: 'feedgroup/create', title: 'Create Feed Group', moduleId: 'feedgroup', auth: true },
-      { route: 'settings', title: 'Settings', moduleId: 'settings', nav: true, auth: true},
-      { route: 'feeds/create', title: 'Create Feed', moduleId: 'addfeed', nav: false, auth: true },
-      { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
-      { route: 'signout', title: 'Sign out', nav: true, moduleId:'signout', nav: false, auth: true}
-    ]);
 
+  constructor(router, httpClientConfig, appRouterConfig){
     this.router = router;
+    this.httpClientConfig = httpClientConfig;
+    this.appRouterConfig = appRouterConfig;
   }
-}
 
-class AuthorizeStep {
-  run(routingContext, next) {
-    if (routingContext.nextInstructions.some(i => i.config.auth)) {
-      var isLoggedIn = false;
+  activate(){
 
-      if (!isLoggedIn) {
-        return next.cancel(new Redirect('signin'));
-      }
-    }
-
-    return next();
+    this.httpClientConfig.configure();
+    this.appRouterConfig.configure();
   }
 }
