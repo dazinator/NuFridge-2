@@ -43,5 +43,6 @@ namespace NuFridge.Shared.Database.Repository
     {
         void Insert(PackageDownload packageDownload);
         IEnumerable<PackageDownload> GetLatestDownloads(int feedId);
+        int GetCount();
     }
 }

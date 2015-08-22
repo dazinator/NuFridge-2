@@ -9,12 +9,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
         private readonly IFeedService _feedService;
         private readonly IUserService _userService;
         private readonly IPackageService _packageService;
+        private readonly IPackageDownloadService _packageDownloadService;
 
-        public GetDashboardAction(IFeedService feedService, IUserService userService, IPackageService packageService)
+        public GetDashboardAction(IFeedService feedService, IUserService userService, IPackageService packageService, IPackageDownloadService packageDownloadService)
         {
             _feedService = feedService;
             _userService = userService;
             _packageService = packageService;
+            _packageDownloadService = packageDownloadService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -24,13 +26,15 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             var feedsCount = _feedService.GetCount();
             var usersCount = _userService.GetCount();
             var packagesCount = _packageService.GetCount();
+            var downloadCount = _packageDownloadService.GetCount();
 
-            return new
+            return module.Negotiate.WithModel(new
             {
-                feedCount = feedsCount,
-                userCount = usersCount,
-                packageCount = packagesCount
-            };
+                FeedCount = feedsCount,
+                UserCount = usersCount,
+                DownloadCount = downloadCount,
+                PackageCount = packagesCount
+            });
         }
     }
 }

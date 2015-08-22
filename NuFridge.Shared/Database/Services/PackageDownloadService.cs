@@ -37,11 +37,17 @@ namespace NuFridge.Shared.Database.Services
         {
             return _packageDownloadRepository.GetLatestDownloads(feedId);
         }
+
+        public int GetCount()
+        {
+            return _packageDownloadRepository.GetCount();
+        }
     }
 
     public interface IPackageDownloadService
     {
         void IncrementDownloadCount(int feedId, string packageId, string version, DateTime downloadedAt, string userAgent, string ipAddress);
         IEnumerable<PackageDownload> GetLatestDownloads(int feedId);
+        int GetCount();
     }
 }
