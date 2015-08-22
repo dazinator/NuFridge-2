@@ -1,10 +1,24 @@
-
-
+import {AuthService} from 'aurelia-auth';
+import {inject} from 'aurelia-framework';
+@inject(AuthService)
 export class Signin {
 
-  constructor(){
+    constructor(auth){
+        this.auth = auth;
+    };
 
-  }
+  username='';
+  password='';
+
+  login(){
+      return this.auth.login(this.username, this.password)
+      .then(response=>{
+          console.log("success logged " + response);
+      })
+      .catch(err=>{
+          console.log("login failure");
+      });
+  };
 
   activate() {
     // called when the VM is activated
