@@ -659,8 +659,6 @@
     <Content Include="src\main.js" />
     <Content Include="src\nav-bar.html" />
     <Content Include="src\nav-bar.js" />
-    <Content Include="src\settings.html" />
-    <Content Include="src\settings.js" />
     <Content Include="src\signin.html" />
     <Content Include="src\signin.js" />
     <Content Include="src\users.html" />

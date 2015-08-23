@@ -182,7 +182,7 @@ namespace NuFridge.Shared.Server.NuGet.Symbols
 
         public void ProcessSymbols(string symbolsDirectory, IPackage package, string symbolSourceUri)
         {
-            var files = package.GetLibFiles().Where(f => f.Path.EndsWith("pdb", StringComparison.InvariantCultureIgnoreCase));
+            var files = package.GetFiles().Where(f => f.Path.EndsWith("pdb", StringComparison.InvariantCultureIgnoreCase));
 
             var tempFolder = _localFileSystem.CreateTemporaryDirectory();
 

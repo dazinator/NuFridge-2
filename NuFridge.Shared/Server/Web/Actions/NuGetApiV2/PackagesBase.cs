@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
         protected bool HasSourceAndSymbols(IPackage package)
         {
-            var hasSymbols = package.GetFiles("lib")
+            var hasSymbols = package.GetFiles()
                 .Any(pf => string.Equals(Path.GetExtension(pf.Path), ".pdb",
                     StringComparison.InvariantCultureIgnoreCase));
 
