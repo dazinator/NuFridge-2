@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Server.Storage.Initializers
         {
             updateStatusAction("Checking for default records in the database");
 
-            _log.Info("Checking if the administrator user exists.");
+            _log.Info("Checking if the system user exists.");
             _userService.CreateAdministratorUserIfNotExist();
         }
     }

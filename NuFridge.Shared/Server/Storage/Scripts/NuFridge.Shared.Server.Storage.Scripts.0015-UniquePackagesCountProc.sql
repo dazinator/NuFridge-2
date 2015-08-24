@@ -190,3 +190,6 @@ ALTER TABLE [NuFridge].[Feed]
 ADD FOREIGN KEY ([GroupId])
 REFERENCES [NuFridge].[FeedGroup](Id)
 GO
+
+TRUNCATE TABLE [NuFridge].[User]
+GO

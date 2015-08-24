@@ -36,7 +36,7 @@ namespace NuFridge.Shared.Database.Services
                 user.DisplayName = "System";
 
                 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_!£$%^&*(),.;:#";
-                var stringChars = new char[30];
+                var stringChars = new char[50];
                 var random = new Random();
 
                 for (int i = 0; i < stringChars.Length; i++)
@@ -45,7 +45,6 @@ namespace NuFridge.Shared.Database.Services
                 }
 
                 user.Password = new string(stringChars); ;
-                user.Password = "abcd1";
                 Insert(user);
             }
         }

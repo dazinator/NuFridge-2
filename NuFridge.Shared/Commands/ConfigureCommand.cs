@@ -24,17 +24,16 @@ namespace NuFridge.Shared.Commands
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         const int SW_HIDE = 0;
-        const int SW_SHOW = 5;
 
         [STAThread]
         protected override void Start()
         {
             base.Start();
 
-                var handle = GetConsoleWindow();
-                ShowWindow(handle, SW_HIDE);
+            var handle = GetConsoleWindow();
+            ShowWindow(handle, SW_HIDE);
 
-                using (ConfigurationForm form = new ConfigurationForm(_installDirectory))
+            using (ConfigurationForm form = new ConfigurationForm(_installDirectory))
             {
                 var value = form.ShowDialog();
                 switch (value)
