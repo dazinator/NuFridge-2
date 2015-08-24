@@ -79,7 +79,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         IEnumerable<FeedGroup> GetAll();
         FeedGroup Find(int id);
-        int GetCount();
+        int GetCount(bool nolock);
         void Update(FeedGroup feedGroup);
         void Insert(FeedGroup feedGroup);
     }

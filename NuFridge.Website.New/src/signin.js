@@ -7,24 +7,31 @@ export class Signin {
         this.auth = auth;
     };
 
-  username='';
-  password='';
+    username='';
+    password='';
 
-  login(){
-      return this.auth.login(this.username, this.password)
-      .then(response=>{
-          console.log("success logged " + response);
-      })
-      .catch(err=>{
-          console.log("login failure");
-      });
-  };
+    login(){
+        return this.auth.login(this.username, this.password)
+        .then(response=>{
+            console.log("success logged " + response);
+        })
+        .catch(err=>{
+            console.log("login failure");
+        });
+    };
 
-  activate() {
-    // called when the VM is activated
-  }
+    authenticate(name){
+        return this.auth.authenticate(name, false, null)
+        .then((response)=>{
+            console.log("auth response " + response);
+        });
+    }
 
-  attached() {
-    // called when View is attached, you are safe to do DOM operations here
-  }
+    activate() {
+        // called when the VM is activated
+    }
+
+    attached() {
+        // called when View is attached, you are safe to do DOM operations here
+    }
 }

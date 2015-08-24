@@ -120,7 +120,7 @@ namespace NuFridge.Shared.Database.Repository
         void Delete(Feed feed);
         IEnumerable<Feed> Search(string name);
         IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage);
-        int GetCount();
+        int GetCount(bool nolock);
         void Update(Feed feed);
         IEnumerable<Feed> FindByGroupId(int id);
     }

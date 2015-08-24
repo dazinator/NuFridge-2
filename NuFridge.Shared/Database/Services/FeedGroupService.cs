@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Database.Services
 
         public int GetCount()
         {
-            return _feedGroupRepository.GetCount();
+            return _feedGroupRepository.GetCount(true);
         }
     }
 

@@ -40,7 +40,7 @@ namespace NuFridge.Shared.Database.Services
 
         public int GetCount()
         {
-            return _packageDownloadRepository.GetCount();
+            return _packageDownloadRepository.GetCount(true);
         }
     }
 

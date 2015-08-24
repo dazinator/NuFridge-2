@@ -32,7 +32,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageUpload>(
-                    $"SELECT TOP(5) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId ORDER BY Published DESC",
+                    $"SELECT TOP(5) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY Published DESC",
                     new { feedId });
         }
 
@@ -44,10 +44,7 @@ namespace NuFridge.Shared.Database.Repository
 
         public int GetCount(int feedId)
         {
-            using (var connection = GetConnection())
-            {
-                return connection.RecordCount<InternalPackage>($"WHERE FeedId = {feedId}");
-            }
+            return RecordCount(true, $"WHERE FeedId = {feedId}");
         }
 
         public int GetUniquePackageIdCount(int feedId)
@@ -100,7 +97,7 @@ namespace NuFridge.Shared.Database.Repository
 
         public IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize()
         {
-            return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Hash = '' OR PackageSize = 0");
+            return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE Hash = '' OR PackageSize = 0");
         }
     }
 
@@ -109,7 +106,7 @@ namespace NuFridge.Shared.Database.Repository
         IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
-        int GetCount();
+        int GetCount(bool noLock);
         int GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);

@@ -19,7 +19,7 @@ namespace NuFridge.Shared.Database.Services
 
         public int GetCount()
         {
-            return _userRepository.GetCount();
+            return _userRepository.GetCount(true);
         }
 
         public void CreateAdministratorUserIfNotExist()

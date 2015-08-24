@@ -34,7 +34,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageDownload>(
-                    $"SELECT TOP(5) * FROM [NuFridge].[{TableName}] WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
+                    $"SELECT TOP(5) * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
                     new {feedId});
         }
     }
@@ -43,6 +43,6 @@ namespace NuFridge.Shared.Database.Repository
     {
         void Insert(PackageDownload packageDownload);
         IEnumerable<PackageDownload> GetLatestDownloads(int feedId);
-        int GetCount();
+        int GetCount(bool nolock);
     }
 }

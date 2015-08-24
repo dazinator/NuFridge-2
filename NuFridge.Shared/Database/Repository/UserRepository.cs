@@ -63,7 +63,7 @@ namespace NuFridge.Shared.Database.Repository
 
     public interface IUserRepository
     {
-        int GetCount();
+        int GetCount(bool nolock);
         void Insert(User user);
         User Find(string username, string passwordHashed);
         User Find(string username);

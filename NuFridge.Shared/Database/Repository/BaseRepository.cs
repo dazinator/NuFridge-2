@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 
@@ -24,6 +26,29 @@ namespace NuFridge.Shared.Database.Repository
             using (var connection = GetConnection())
             {
                 connection.Delete(entity);
+            }
+        }
+
+        public int RecordCount(bool noLock, string conditions = "")
+        {
+            Type type = typeof(T);
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("Select count(1)");
+            stringBuilder.AppendFormat(" from {0}", (object)_tableName);
+
+            if (noLock)
+            {
+                stringBuilder.Append(" WITH(NOLOCK)");
+            }
+
+            stringBuilder.Append(" " + conditions);
+            if (Debugger.IsAttached)
+                Trace.WriteLine($"RecordCount<{(object) type}>: {(object) stringBuilder}");
+            using (var connection = GetConnection())
+            {
+                return
+                    connection.Query<int>(stringBuilder.ToString(), (object) null, (IDbTransaction) null, true,
+                        new int?(), new CommandType?()).Single<int>();
             }
         }
 
@@ -77,11 +102,16 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public virtual int GetCount()
+        public virtual int GetCount(bool nolock)
         {
             using (var connection = GetConnection())
             {
-                return connection.Query<int>($"SELECT COUNT(*) FROM [NuFridge].[{_tableName}]").Single();
+                string query = $"SELECT COUNT(*) FROM [NuFridge].[{_tableName}]";
+                if (nolock)
+                {
+                    query += " WITH(NOLOCK)";
+                }
+                return connection.Query<int>(query).Single();
             }
         }
 

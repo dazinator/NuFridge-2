@@ -115,7 +115,7 @@ namespace NuFridge.Shared.Database.Services
 
         public int GetCount()
         {
-            return _feedRepository.GetCount();
+            return _feedRepository.GetCount(true);
         }
 
         public void Update(Feed feed)

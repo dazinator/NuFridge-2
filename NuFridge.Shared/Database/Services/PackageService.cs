@@ -30,7 +30,7 @@ namespace NuFridge.Shared.Database.Services
 
         public int GetCount()
         {
-            return _packageRepository.GetCount();
+            return _packageRepository.GetCount(true);
         }
 
         public int GetUniquePackageIdCount(int feedId)
