@@ -6,7 +6,8 @@ import {HttpClient} from 'aurelia-http-client';
 export class FeedView {
 
     feed = null;
-    feedName = "";
+    feedName = " ";
+    isUpdatingFeed = false;
 
     constructor(http) {
         this.http = http;
@@ -15,9 +16,23 @@ export class FeedView {
     updateFeed() {
         var self = this;
 
+        self.isUpdatingFeed = true;
+
+        var startDate = new Date();
+
         this.http.put("/api/feeds/" + self.feed.Id, self.feed).then(message => {
             self.feed = JSON.parse(message.response);
             self.refreshFeedName();
+
+            var endDate = new Date();
+
+            var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+
+            if (secondsDifference < 1) {
+                setTimeout(function() { self.isUpdatingFeed = false; }, (1 - secondsDifference) * 1000);
+            } else {
+                self.isUpdatedFeed = false;
+            }
         });
     }
 

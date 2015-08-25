@@ -41,6 +41,8 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<ReindexPackagesAction>().AsSelf();
             builder.RegisterType<ImportPackagesFromFeedAction>().AsSelf();
             builder.RegisterType<GetPackageAuditHistoryAction>().AsSelf();
+            builder.RegisterType<CheckIfPerformedFirstTimeSetupAction>().AsSelf();
+            builder.RegisterType<SetupAction>().AsSelf();
 
             //NuGet api v2 module
             builder.RegisterType<BatchAction>().AsSelf();

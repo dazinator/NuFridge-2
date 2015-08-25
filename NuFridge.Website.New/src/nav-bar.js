@@ -7,12 +7,14 @@ export class NavBar {
     _isAuthenticated = false;
   @bindable router = null;
 
+    profile = null;
+
     constructor(auth) {
         this.auth = auth;
     }
 
     signOut() {
-        this.auth.logout("#/login")
+        this.auth.logout("#/signin")
             .then(response => {
                 console.log("ok logged out on  logout.js");
             })
@@ -22,8 +24,19 @@ export class NavBar {
             });
     }
 
+    activate() {
+
+    }
+
     attached() {
         $("#settingsMenuItem").dropdown();
+        var self = this;
+
+        if (self.isAuthenticated) {
+            self.auth.getMe().then(function(profile) {
+                self.profile = profile;
+            });
+        }
     }
 
     get isAuthenticated() {

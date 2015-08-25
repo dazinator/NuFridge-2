@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
@@ -18,6 +19,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(User user)
         {
+            user.LastUpdated = DateTime.UtcNow;
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)
@@ -48,6 +51,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(User user)
         {
+            user.LastUpdated = DateTime.UtcNow;
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)

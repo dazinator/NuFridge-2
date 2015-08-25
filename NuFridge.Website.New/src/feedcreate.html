@@ -1,6 +1,9 @@
 ﻿<template>
     <h1>Add Feed</h1>
     <div class="ui segment">
+        <div class="ui inverted dimmer ${isCreatingFeed ? 'active' : ''}">
+            <div class="ui indeterminate large text loader">Creating Feed</div>
+        </div>
         <h2 class="ui header">
             General Settings
             <div class="sub header">Manage your general feed settings.</div>

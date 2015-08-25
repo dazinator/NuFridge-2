@@ -377,6 +377,7 @@
     <Compile Include="Server\Storage\Initializers\DefaultDataInitalizer.cs" />
     <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
     <Compile Include="Server\Web\Actions\IAction.cs" />
+    <Compile Include="Server\Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetAccountAction.cs" />
@@ -393,6 +394,7 @@
     <Compile Include="Server\Web\Actions\NuFridgeApi\RegisterAccountAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\ReindexPackagesAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\SaveFeedConfigurationAction.cs" />
+    <Compile Include="Server\Web\Actions\NuFridgeApi\SetupAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\SignInAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\UpdateFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\UploadPackageFromUrlAction.cs" />

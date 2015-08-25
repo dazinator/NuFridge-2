@@ -21,9 +21,6 @@ namespace NuFridge.Shared.Server.Storage.Initializers
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
             updateStatusAction("Checking for default records in the database");
-
-            _log.Info("Checking if the system user exists.");
-            _userService.CreateAdministratorUserIfNotExist();
         }
     }
 }

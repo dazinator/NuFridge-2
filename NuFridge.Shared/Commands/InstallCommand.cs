@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Commands
                 baseUrl += "/";
             }
 
-            var installUrl = $"{baseUrl}#/install?token=abc";
+            var installUrl = $"{baseUrl}#/setup";
 
             _log.Info("InstallUrl: " + installUrl);
 

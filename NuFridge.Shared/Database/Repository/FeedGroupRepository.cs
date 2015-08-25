@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Caching;
 using Dapper;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Server;
@@ -12,6 +14,12 @@ namespace NuFridge.Shared.Database.Repository
     {
         private readonly IFeedRepository _feedRepository;
         private const string TableName = "FeedGroup";
+        private const string CacheKey = "FeedGroupModel-{0}";
+
+        private string GetCacheKey(int groupId)
+        {
+            return string.Format(CacheKey, groupId);
+        }
 
         public FeedGroupRepository(IFeedRepository feedRepository) : base(TableName)
         {
@@ -30,6 +38,11 @@ namespace NuFridge.Shared.Database.Repository
                         feedGroup.Id = connection.Insert<int>(feedGroup);
                     }
                 });
+
+            var cacheKey = GetCacheKey(feedGroup.Id);
+
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
+            MemoryCache.Default.Set(cacheKey, feedGroup, policy);
         }
 
         public void Update(FeedGroup feedGroup)
@@ -44,20 +57,42 @@ namespace NuFridge.Shared.Database.Repository
                         connection.Update(feedGroup);
                     }
                 });
+
+            var cacheKey = GetCacheKey(feedGroup.Id);
+
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
+            MemoryCache.Default.Set(cacheKey, feedGroup, policy);
         }
 
         public override FeedGroup Find(int id)
         {
+            var cacheKey = GetCacheKey(id);
+
+            var cachedRecord = MemoryCache.Default.Get(cacheKey);
+
+            if (cachedRecord != null)
+            {
+                return (FeedGroup) cachedRecord;
+            }
+
+            FeedGroup group;
+
             using (var connection = GetConnection())
             {
-                FeedGroup group = connection.Get<FeedGroup>(id);
+                group = connection.Get<FeedGroup>(id);
                 if (group != null)
                 {
                     group.Feeds = _feedRepository.FindByGroupId(id);
                 }
-
-                return group;
             }
+
+            if (group != null)
+            {
+                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(6)};
+                MemoryCache.Default.Set(cacheKey, group, policy);
+            }
+
+            return group;
         }
 
         public override IEnumerable<FeedGroup> GetAll()

@@ -7,17 +7,23 @@ export class Signin {
         this.auth = auth;
     };
 
+    isSigningIn = false;
+
     username='';
     password='';
 
-    login(){
+    login() {
+        var self = this;
+
+        self.isSigningIn = true;
+
         return this.auth.login(this.username, this.password)
-        .then(response=>{
-            console.log("success logged " + response);
-        })
-        .catch(err=>{
-            console.log("login failure");
-        });
+        .then(message=> {
+
+            })
+        .catch(err=> {
+                self.isSigningIn = false;
+            });
     };
 
     authenticate(name){
@@ -28,7 +34,12 @@ export class Signin {
     }
 
     activate() {
-        // called when the VM is activated
+        var self = this;
+
+        var queryStringUsername = $.QueryString["username"];
+        if (queryStringUsername) {
+            self.username = queryStringUsername;
+        }
     }
 
     attached() {

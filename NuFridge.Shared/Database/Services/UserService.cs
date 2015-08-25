@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Database.Services
             return _userRepository.GetCount(true);
         }
 
-        public void CreateAdministratorUserIfNotExist()
+        public void CreateSystemUserIfNotExist()
         {
             var user = Find("system", false);
 
@@ -141,7 +141,7 @@ namespace NuFridge.Shared.Database.Services
 
     public interface IUserService
     {
-        void CreateAdministratorUserIfNotExist();
+        void CreateSystemUserIfNotExist();
         User Find(string username, bool includePassword);
         User Find(int userId, bool includePassword);
         int GetCount();

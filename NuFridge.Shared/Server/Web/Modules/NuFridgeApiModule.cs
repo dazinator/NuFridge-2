@@ -28,6 +28,9 @@ namespace NuFridge.Shared.Server.Web.Modules
             Get["api/dashboard"] = p => container.Resolve<GetDashboardAction>().Execute(p, this);
             Get["api/stats/feedpackagecount"] = p => container.Resolve<GetFeedPackageCountAction>().Execute(p, this);
             Get["api/stats/feeddownloadcount"] = p => container.Resolve<GetFeedDownloadCountAction>().Execute(p, this);
+
+            Get["api/setup"] = p => container.Resolve<CheckIfPerformedFirstTimeSetupAction>().Execute(p, this);
+            Post["api/setup"] = p => container.Resolve<SetupAction>().Execute(p, this);
         }
     }
 }

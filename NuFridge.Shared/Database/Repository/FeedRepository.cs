@@ -49,7 +49,7 @@ namespace NuFridge.Shared.Database.Repository
 
             var cacheKey = GetCacheKey(feed.Name);
 
-            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
             MemoryCache.Default.Set(cacheKey, feed, policy);
         }
 
@@ -74,7 +74,7 @@ namespace NuFridge.Shared.Database.Repository
 
             if (feed != null)
             {
-                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(1)};
+                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(6)};
                 MemoryCache.Default.Set(cacheKey, feed, policy);
             }
 
@@ -96,7 +96,7 @@ namespace NuFridge.Shared.Database.Repository
 
             var cacheKey = GetCacheKey(feed.Name);
 
-            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(1) };
+            CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
             MemoryCache.Default.Set(cacheKey, feed, policy);
         }
 

@@ -14,6 +14,7 @@ export class FeedCreate {
         Description: ""
     };
 
+    isCreatingFeed = false;
     feedName = "";
 
     constructor(http, router) {
@@ -24,9 +25,22 @@ export class FeedCreate {
     insertFeed() {
         var self = this;
 
+        self.isCreatingFeed = true;
+
+        var startDate = new Date();
+
         this.http.post("/api/feeds/", self.feed).then(message => {
             self.feed = JSON.parse(message.response);
-            self.router.navigate("feeds/view/" + self.feed.Id);
+
+            var endDate = new Date();
+
+            var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+
+            if (secondsDifference < 1) {
+                setTimeout(function() { self.router.navigate("feeds/view/" + self.feed.Id); }, (1 - secondsDifference) * 1000);
+            } else {
+                self.router.navigate("feeds/view/" + self.feed.Id);
+            }
         });
     }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="ui top attached stackable menu">
       <a repeat.for="row of router.navigation | authFilter: isAuthenticated" class="item ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
-      <div class="ui dropdown item" id="settingsMenuItem">
+      <div class="ui dropdown item" id="settingsMenuItem" if.bind="isAuthenticated">
           Settings
           <i class="dropdown icon"></i>
           <div class="menu">
@@ -13,7 +13,7 @@
           <div class="item" if.bind="isAuthenticated">
               <i class="ui large user icon"></i>
               <div class="content">
-                  <div class="ui sub header"> Administrator</div>
+                  <div class="ui sub header" textcontent="${profile.Username}"></div>
                   System Administrator
               </div>
           </div>

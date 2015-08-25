@@ -22,8 +22,8 @@ export default class{
                 { route: 'feedgroup/create', title: 'Create Feed Group', moduleId: 'feedgroup', auth: true },
                 { route: 'feeds/create/:id', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true },
                 { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
-                { route: 'signout', title: 'Sign out', nav: true, moduleId: 'signout', nav: false, auth: true }
-                //{ route: 'settings/database', title: 'Database Settings;', nav: false, moduleId: 'database', auth: true }
+                { route: 'signout', title: 'Sign out', nav: true, moduleId: 'signout', nav: false, auth: true },
+                { route: 'setup', title: 'Setup', nav: false, moduleId: 'setup', auth: false }
             ]);
         };
 

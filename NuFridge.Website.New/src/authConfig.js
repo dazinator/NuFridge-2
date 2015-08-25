@@ -9,7 +9,9 @@ var configForDevelopment = {
     loginRoute: '/signin',
     signupRedirect: "/",
     httpInterceptor: true,
-    authToken: 'Token'
+    authToken: "Token",
+    logoutRedirect: "/signin",
+    profileUrl: "/api/account"
 };
 
 var configForProduction = {

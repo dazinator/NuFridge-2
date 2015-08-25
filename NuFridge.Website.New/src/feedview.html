@@ -11,7 +11,7 @@
 
   <div data-tab="first" class="ui bottom tab segment active">
     <h2 class="ui center aligned horizontal divider header">
-      <i class="circular dashboard icon"></i>
+      <i class="dashboard icon"></i>
       Overview
     </h2>
 
@@ -63,7 +63,7 @@
 
   <div data-tab="second" class="ui bottom tab segment">
     <h2 class="ui center aligned horizontal divider header">
-      <i class="circular desktop icon"></i>
+      <i class="desktop icon"></i>
       Endpoints
     </h2>
     <table class="ui compact table">
@@ -88,7 +88,7 @@
 
   <div data-tab="third" class="ui bottom tab segment">
     <h2 class="ui center aligned horizontal divider header">
-      <i class="circular cube icon"></i>
+      <i class="cube icon"></i>
       Packages
     </h2>
 
@@ -215,7 +215,7 @@
   <div data-tab="fourth" class="ui bottom tab segment">
 
     <h2 class="ui center aligned horizontal divider header">
-      <i class="circular wait icon"></i>
+      <i class="wait icon"></i>
       History
     </h2>
 
@@ -256,33 +256,36 @@
     </section>
   </div>
 
-  <div data-tab="fifth" class="ui bottom tab segment settingTab">
+<div data-tab="fifth" class="ui bottom tab segment settingTab">
+
     <h2 class="ui center aligned horizontal divider header">
-      <i class="circular setting icon"></i>
-      Settings
+        <i class="setting icon"></i>
+        Settings
+    </h2>
+    <div class="ui inverted dimmer ${isUpdatingFeed ? 'active' : ''}">
+        <div class="ui indeterminate large text loader">Updating Feed</div>
+    </div>
+    <h2 class="ui header">
+        General Settings
+        <div class="sub header">Manage your general feed settings.</div>
     </h2>
 
-    <h2 class="ui header">
-    General Settings
-    <div class="sub header">Manage your general feed settings.</div>
-  </h2>
+    <form class="ui form raised segment">
+        <div class="field">
+            <label>Feed Name</label>
 
-    <form class="ui form segment">
-      <div class="field">
-        <label>Feed Name</label>
-
-        <p>The feed name is used to generate the feed URL. Changing it will break any applications that access this
-          feed.</p>
-        <input type="text" value.bind="feed.Name">
-      </div>
+            <p>The feed name is used to generate the feed URL. Changing it will break any applications that access this
+                feed.</p>
+            <input type="text" value.bind="feed.Name">
+        </div>
     </form>
 
     <h2 class="ui header">
-      Security Settings
-      <div class="sub header">Manage your security settings for accessing this feed.</div>
+        Security Settings
+        <div class="sub header">Manage your security settings for accessing this feed.</div>
     </h2>
 
-    <form class="ui form segment">
+    <form class="ui form raised segment">
         <div class="field">
             <label>API Key</label>
             <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
@@ -296,45 +299,43 @@
     </form>
 
     <h2 class="ui header">
-      Package Retention Policy Settings
-      <div class="sub header">Manage your package retention settings for this feed.</div>
+        Package Retention Policy Settings
+        <div class="sub header">Manage your package retention settings for this feed.</div>
     </h2>
-    <form class="ui form segment">
-      <div class="field">
-        <div class="inline field">
-          <div class="ui toggle checkbox retentionPolicyEnabled">
-            <input type="checkbox">
-            <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
-          </div>
+    <form class="ui form raised segment">
+        <div class="field">
+            <div class="inline field">
+                <div class="ui toggle checkbox retentionPolicyEnabled">
+                    <input type="checkbox">
+                    <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="field">
-        <label>Maximum Amount of Release Packages to Keep</label>
+        <div class="field">
+            <label>Maximum Amount of Release Packages to Keep</label>
 
-        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
-        <input type="text">
-      </div>
-      <div class="field">
-        <label>Maximum Amount of Pre-release Packages to Keep</label>
+            <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+            <input type="text">
+        </div>
+        <div class="field">
+            <label>Maximum Amount of Pre-release Packages to Keep</label>
 
-        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+            <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
 
-        <p>A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
-          identifiers immediately following the patch version.</p>
-        <input type="text">
-      </div>
+            <p>A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
+                identifiers immediately following the patch version.</p>
+            <input type="text">
+        </div>
     </form>
 
     <div class="ui buttons">
-      <button class="ui button">Cancel</button>
-      <div class="or"></div>
-      <button class="ui positive button" click.trigger="updateFeed()">Save</button>
+        <button class="ui positive button" click.trigger="updateFeed()">Save</button>
     </div>
 
     <div class="ui buttons floatRight">
-      <button class="ui red button">Delete</button>
+        <button class="ui red button">Delete</button>
     </div>
-  </div>
+</div>
 
 
 </template>
