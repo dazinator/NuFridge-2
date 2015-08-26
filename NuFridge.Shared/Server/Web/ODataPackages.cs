@@ -11,7 +11,7 @@ namespace NuFridge.Shared.Server.Web
 {
     public class ODataPackages
     {
-        public static Stream CreatePackagesStream(string baseUrl, string baseAddress, IEnumerable<IInternalPackage> packages,int total, string strSelectFields)
+        public static Stream CreatePackagesStream(string baseUrl, string baseAddress, IEnumerable<IInternalPackage> packages,int total, string strSelectFields, bool isXmlResponse)
         {
             var writerSettings = new ODataMessageWriterSettings
             {
@@ -21,7 +21,15 @@ namespace NuFridge.Shared.Server.Web
                 Version = ODataVersion.V3
             };
 
-            writerSettings.SetContentType(ODataFormat.Atom);
+            if (!isXmlResponse)
+            {
+                writerSettings.SetMetadataDocumentUri(new Uri(baseAddress));
+                writerSettings.SetContentType(ODataFormat.VerboseJson);
+            }
+            else
+            {
+                writerSettings.SetContentType(ODataFormat.Atom);
+            }
 
             var responseMessage = new MemoryResponseMessage();
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
