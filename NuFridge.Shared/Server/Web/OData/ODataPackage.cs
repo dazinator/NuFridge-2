@@ -18,6 +18,7 @@ namespace NuFridge.Shared.Server.Web.OData
         {
 
             Version = package.Version;
+            NormalizedVersion = package.GetSemanticVersion().ToNormalizedString();
             Authors = package.Authors;
             Owners = package.Owners;
             IconUrl = package.IconUrl;
@@ -52,6 +53,8 @@ namespace NuFridge.Shared.Server.Web.OData
         public string Id { get; }
 
         public string Version { get; }
+
+        public string NormalizedVersion { get; }
 
         public string Title { get; set; }
 

@@ -33,7 +33,7 @@ namespace NuFridge.Shared.Server.Web
 
             var responseMessage = new MemoryResponseMessage();
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
-
+            
             var feedWriter = writer.CreateODataFeedWriter();
             feedWriter.WriteStart(new ODataFeed { Id = "Packages", Count = total});
 

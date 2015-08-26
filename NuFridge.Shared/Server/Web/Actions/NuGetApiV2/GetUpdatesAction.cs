@@ -123,7 +123,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             foreach (var mediaRange in ranges)
             {
-                if (mediaRange.Matches("application/xml"))
+                if (mediaRange.Matches("application/xml") || mediaRange.Matches("application/atom+xml;type=feed") || mediaRange.Matches("application/atom+xml"))
                 {
                     isXmlResponse = true;
                 }
