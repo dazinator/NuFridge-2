@@ -193,3 +193,7 @@ GO
 
 TRUNCATE TABLE [NuFridge].[User]
 GO
+
+ALTER TABLE [NuFridge].[Package]
+ADD [MinClientVersion] NVARCHAR(255) NULL
+GO

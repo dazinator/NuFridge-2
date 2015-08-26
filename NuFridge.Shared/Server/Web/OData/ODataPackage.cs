@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Server.Web.OData
             LicenseUrl = package.LicenseUrl;
             ProjectUrl = package.ProjectUrl;
             Dependencies = package.Dependencies;
-
+            MinClientVersion = package.MinClientVersion;
             Id = package.Id;
             Title = package.Title;
             DisplayTitle = package.Title;
@@ -35,7 +35,7 @@ namespace NuFridge.Shared.Server.Web.OData
             Language = package.Language;
             Tags = package.Tags;
             PackageHash = package.Hash;
-            PackageHashAlgorithm = package.PackageHashAlgorithm;
+            PackageHashAlgorithm = package.PackageHashAlgorithm ?? "SHA512";
             PackageSize = package.PackageSize;
             LastUpdated = package.LastUpdated;
             Published = package.Published;
@@ -78,6 +78,8 @@ namespace NuFridge.Shared.Server.Web.OData
         public string ReleaseNotes { get; set; }
 
         public string Language { get; set; }
+
+        public string MinClientVersion { get; set; }
 
         public DateTime Created { get; set; }
 

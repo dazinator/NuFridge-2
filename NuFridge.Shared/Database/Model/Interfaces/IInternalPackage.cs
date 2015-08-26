@@ -29,7 +29,7 @@ namespace NuFridge.Shared.Database.Model.Interfaces
         int VersionBuild { get; set; }
         int VersionRevision { get; set; }
         string VersionSpecial { get; set; }
-
+        string MinClientVersion { get; set; }
         int DownloadCount { get; set; }
 
         bool IsReleaseVersion();

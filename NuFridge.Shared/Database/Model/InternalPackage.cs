@@ -56,6 +56,8 @@ namespace NuFridge.Shared.Database.Model
             return SemanticVersion;
         }
 
+        public string MinClientVersion { get; set; }
+
         public int VersionMajor { get; set; }
 
         public int VersionMinor { get; set; }
@@ -136,6 +138,11 @@ namespace NuFridge.Shared.Database.Model
                 DependencySets = package.DependencySets,
                 DevelopmentDependency = package.DevelopmentDependency
             };
+
+            if (package.MinClientVersion != new Version())
+            {
+                newPackage.MinClientVersion = package.MinClientVersion.ToString();
+            }
 
             newPackage.SupportedFrameworks = string.Join("|", package.GetSupportedFrameworks().Select(VersionUtility.GetShortFrameworkName));
 
