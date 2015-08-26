@@ -19,18 +19,10 @@
     <div class="ui tiny horizontal statistics">
         <div class="statistic">
             <div class="value">
-                2,204
+                0
             </div>
             <div class="label">
                 Total Packages
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="value">
-                1,218
-            </div>
-            <div class="label">
-                Distinct Packages
             </div>
         </div>
     </div>
@@ -200,8 +192,14 @@
     </table>
 </div>
 
-<div data-tab="fourth" class="ui bottom tab segment">
-    <section id="cd-timeline" class="cd-container">
+<div data-tab="fourth" class="ui bottom tab segment" css="${isLoadingHistory ? 'min-height:150px;' : ''}">
+    <div class="ui inverted dimmer ${isLoadingHistory ? 'active' : ''}">
+        <div class="ui indeterminate large text loader">Loading history</div>
+    </div>
+    <div class="ui" if.bind="isLoadingHistory === false && historyRecords.length === 0">
+        <p>No events have been recorded for this feed yet.</p>
+    </div>
+    <section id="cd-timeline" class="cd-container" if.bind="historyRecords.length > 0">
         <div class="cd-timeline-block" repeat.for="item of historyRecords">
             <div class="cd-timeline-img ${item.Type === 0 ? 'cd-silver' : 'cd-blue'}">
                 <i class="inverted big cube icon"></i>
@@ -209,7 +207,8 @@
 
             <div class="cd-timeline-content">
                 <h3 class="ui header" style="margin: 0;">${item.Title}
-                    <div class="sub header">${item.Description}</div></h3>
+                    <div class="sub header">${item.Description}</div>
+                </h3>
                 <span class="cd-date">${item.Date | dateFormat}</span>
             </div>
         </div>

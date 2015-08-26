@@ -10,6 +10,7 @@ export class FeedView {
     feed = null;
     feedName = " ";
     isUpdatingFeed = false;
+    isLoadingHistory = false;
     historyRecords = new Array();
 
     constructor(http, router) {
@@ -88,9 +89,7 @@ export class FeedView {
             self.refreshFeedName();
         });
 
-        this.http.get("/api/feeds/" + feedId + "/history").then(message => {
-            self.historyRecords = JSON.parse(message.response).Results;
-        });
+
     }
 
     refreshFeedName() {
@@ -101,7 +100,22 @@ export class FeedView {
     }
 
     attached() {
-        $(".feedMenu .item").tab();
+        var self = this;
+
+        $(".feedMenu .item").tab({
+            onFirstLoad: function(tabPath, parameterArray, historyEvent) {
+                if (tabPath === "first") {
+                    return;
+                }
+
+                if (tabPath === "fourth") {
+                    self.isLoadingHistory = true;
+                    self.http.get("/api/feeds/" + self.feed.Id + "/history").then(message => {
+                        self.historyRecords = JSON.parse(message.response).Results;
+                        self.isLoadingHistory = false;
+                    });
+                }
+            }
+        });
     }
 }
-
