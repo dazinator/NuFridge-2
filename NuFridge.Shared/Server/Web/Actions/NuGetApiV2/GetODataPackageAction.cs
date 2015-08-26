@@ -2,8 +2,10 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Data.Edm.Library;
 using Microsoft.Data.OData;
 using Nancy;
+using Nancy.Responses.Negotiation;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
@@ -79,12 +81,35 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 Version = ODataVersion.V3
             };
 
-            writerSettings.SetContentType(ODataFormat.Atom);
+            var enumerable = module.Request.Headers.Accept;
+            var ranges = enumerable.OrderByDescending(o => o.Item2).Select(o => new MediaRange(o.Item1)).ToList();
+
+            bool isXmlResponse = false;
+
+            foreach (var mediaRange in ranges)
+            {
+                if (mediaRange.Matches("application/xml"))
+                {
+                    isXmlResponse = true;
+                }
+            }
+
+            if (!isXmlResponse)
+            {
+                writerSettings.SetMetadataDocumentUri(new Uri(baseAddress));
+                writerSettings.SetContentType(ODataFormat.VerboseJson);
+            }
+            else
+            {
+                writerSettings.SetContentType(ODataFormat.Atom);
+            }
 
             var responseMessage = new MemoryResponseMessage();
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
 
-            var entryWriter = writer.CreateODataEntryWriter();
+            var entryWriter =
+                writer.CreateODataEntryWriter(new EdmEntitySet(new EdmEntityContainer("NS", "CONTAINER"), "NAME",
+                    new EdmEntityType("NS", "NAME")));
 
             entryWriter.WriteStart(ODataPackages.MapPackageToEntry(baseAddress, new ODataPackage(package), new string[0]));
             entryWriter.WriteEnd();
@@ -98,7 +123,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             return new Response
             {
-                ContentType = "application/atom+xml; charset=utf-8",
+                ContentType = isXmlResponse ? "application/atom+xml; charset=utf-8" : "application/json;odata=verbose;charset=utf-8",
                 Contents = contentStream =>
                 {
                     var byteData = Encoding.UTF8.GetBytes(text);
