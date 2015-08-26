@@ -37,7 +37,7 @@
         Administrative Actions
     </h2>
 
-    <button class="ui button" style="margin-bottom: 0.75em">
+    <button class="ui button" style="margin-bottom: 0.75em" click.trigger="reindexPackagesClick()">
         Reindex Packages
     </button>
     <button class="ui button" style="margin-bottom: 0.75em">
@@ -72,15 +72,15 @@
 </div>
 
 <div data-tab="third" class="ui bottom tab segment">
-    <div class="stackable four column ui grid">
+    <div class="stackable five column ui grid">
         <div class="column">
-            <button class="ui basic button labeled icon" style="width: 100%">
+            <button class="ui basic button labeled icon" style="width: 100%" click.trigger="resetPackageListingClick()">
                 <i class="undo icon"></i>
                 Reset
             </button>
         </div>
         <div class="column">
-            <select class="ui dropdown" style="width: 100%">
+            <select class="ui fluid dropdown pageSizeDropdown" style="width: 100%">
                 <option value="10">10 per page</option>
                 <option value="20">20 per page</option>
                 <option value="30">30 per page</option>
@@ -88,7 +88,7 @@
             </select>
         </div>
         <div class="column">
-            <select class="ui dropdown" style="width: 100%">
+            <select class="ui fluid dropdown pageOrderDropdown" style="width: 100%">
                 <option value="0">Downloads descending</option>
                 <option value="1">Downloads ascending</option>
                 <option value="2">Package Id descending</option>
@@ -97,10 +97,15 @@
         </div>
         <div class="column">
             <div class="ui search" style="width: 100%">
-                <input class="prompt" type="text" placeholder="Search..." style="width: 100%">
+                <input class="prompt" type="text" placeholder="Search..." style="width: 100%" value.bind="packagesSearchText">
 
                 <div class="results"></div>
             </div>
+        </div>
+        <div class="column">
+            <button class="ui button labeled" style="width: 100%" click.trigger="loadFeedPackages()">
+                Apply
+            </button>
         </div>
     </div>
 
@@ -109,7 +114,7 @@
 
             <div class="ui floated menu">
                 <div class="item">
-                    Page 1 of 4
+                    Page ${packagesCurrentPage} of ${packagesTotalPages}
                 </div>
             </div>
 

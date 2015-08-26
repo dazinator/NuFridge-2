@@ -85,6 +85,8 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
                         continue;
                     }
 
+                    ((IFastZipPackage)package).Listed = true;
+
                     var existingPackage = packageRepository.GetPackage(package.Id, package.Version);
 
                     if (existingPackage != null)

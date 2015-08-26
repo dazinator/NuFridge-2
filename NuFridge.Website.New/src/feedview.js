@@ -14,7 +14,10 @@ export class FeedView {
     isLoadingHistory = false;
     historyRecords = new Array();
 
+    packagesSearchText = "";
+    packagesSortOrder = 0;
     packagesPageSize = 10;
+    packagesTotalPages = 1;
     packagesCurrentPage = 1;
     packagesShowPrerelease = false;
     packagesTotalMatchingQuery = 0;
@@ -66,6 +69,12 @@ export class FeedView {
         });
     }
 
+    reindexPackagesClick() {
+        var self = this;
+
+        this.http.post("/api/feeds/" + self.feed.Id + "/reindex");
+    }
+
     deleteFeedClick() {
         var self = this;
 
@@ -83,6 +92,20 @@ export class FeedView {
         };
 
         $('#deleteConfirmModal').modal(options).modal('show');
+    }
+
+    resetPackageListingClick() {
+        var self = this;
+
+        self.packagesPageSize = 10;
+        $('.ui.dropdown.pageSizeDropdown').dropdown('set selected', 10);
+
+        self.packagesSortOrder = 0;
+        $('.ui.dropdown.pageOrderDropdown').dropdown('set selected', 0);
+
+        self.packagesSearchText = "";
+
+        self.loadFeedPackages();
     }
 
     activate(params, routeConfig) {
@@ -107,16 +130,34 @@ export class FeedView {
 
         if (self.packagesShowPrerelease === true) {
             filter = "$filter=IsAbsoluteLatestVersion";
-        } 
+        }
+
+        var order = "$orderby=";
+
+        if (self.packagesSortOrder === 0) {
+            order += "DownloadCount desc";
+        } else  if (self.packagesSortOrder === 1) {
+            order += "DownloadCount asc";
+        } else  if (self.packagesSortOrder === 2) {
+            order += "Id desc";
+        }  else  if (self.packagesSortOrder === 3) {
+            order += "Id asc";
+        }
+
+        var search = "";
+
+        if (self.packagesSearchText) {
+            search = "&searchTerm=" + self.packagesSearchText;
+        }
 
         var url = "/Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
-                  "$skip=" + skip + "&$top=" + take + "&" + filter;
+                  "$skip=" + skip + "&$top=" + take + "&" + filter + "&" + order + search;
 
         self.http.get(url).then(message => {
             var xmlDoc = $.parseXML(message.response), $xml = $(xmlDoc);
             $($xml).each(function() {
-                self.packagesTotalMatchingQuery = $(this).find("feed>count");
-
+                self.packagesTotalMatchingQuery = $(this).find("feed>count").text();
+                self.packagesTotalPages = Math.ceil(self.packagesTotalMatchingQuery / self.packagesPageSize);
                 self.packagesRecords = $.map($(this).find("feed>entry"), function(value, index) {
                     var jvalue = $(value);
                     return {
@@ -178,6 +219,18 @@ export class FeedView {
                 else if (tabPath === "fourth") {
                     self.loadFeedHistory();
                 }
+            }
+        });
+
+        $('.ui.dropdown.pageSizeDropdown').dropdown({
+            onChange: function(value) {
+                self.packagesPageSize = value;
+            }
+        });
+
+        $('.ui.dropdown.pageOrderDropdown').dropdown({
+            onChange: function(value) {
+                self.packagesSortOrder = value;
             }
         });
     }
