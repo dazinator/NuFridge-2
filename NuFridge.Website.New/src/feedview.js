@@ -110,9 +110,24 @@ export class FeedView {
 
                 if (tabPath === "fourth") {
                     self.isLoadingHistory = true;
+
+                    var startDate = new Date();
+
                     self.http.get("/api/feeds/" + self.feed.Id + "/history").then(message => {
-                        self.historyRecords = JSON.parse(message.response).Results;
-                        self.isLoadingHistory = false;
+                        var func = function() {
+                            self.isLoadingHistory = false;
+                            self.historyRecords = JSON.parse(message.response).Results;
+                        };
+
+                        var endDate = new Date();
+
+                        var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+
+                        if (secondsDifference < 0.5) {
+                            setTimeout(function() { func(); }, (0.5 - secondsDifference) * 1000);
+                        } else {
+                            func();
+                        }
                     });
                 }
             }
