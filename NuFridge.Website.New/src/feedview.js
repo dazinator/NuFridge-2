@@ -14,6 +14,7 @@ export class FeedView {
     isLoadingHistory = false;
     historyRecords = new Array();
 
+    isLoadingPackages = false;
     packagesSearchText = "";
     packagesSortOrder = 0;
     packagesPageSize = 10;
@@ -123,6 +124,14 @@ export class FeedView {
     loadFeedPackages() {
         var self = this;
 
+        if (self.isLoadingPackages === true) {
+            return;
+        }
+
+        self.isLoadingPackages = true;
+
+        var startDate = new Date();
+
         var skip = self.packagesPageSize * (self.packagesCurrentPage - 1);
         var take = self.packagesPageSize;
 
@@ -155,10 +164,13 @@ export class FeedView {
 
         self.http.get(url).then(message => {
             var xmlDoc = $.parseXML(message.response), $xml = $(xmlDoc);
+
+            var packagesTotalMatchingQuery, packagesTotalPages, packagesRecords;
+
             $($xml).each(function() {
-                self.packagesTotalMatchingQuery = $(this).find("feed>count").text();
-                self.packagesTotalPages = Math.ceil(self.packagesTotalMatchingQuery / self.packagesPageSize);
-                self.packagesRecords = $.map($(this).find("feed>entry"), function(value, index) {
+                packagesTotalMatchingQuery = $(this).find("feed>count").text();
+                packagesTotalPages = Math.ceil(packagesTotalMatchingQuery / self.packagesPageSize);
+                packagesRecords = $.map($(this).find("feed>entry"), function(value, index) {
                     var jvalue = $(value);
                     return {
                         Title: jvalue.find("title").text(),
@@ -169,6 +181,23 @@ export class FeedView {
                     }
                 });
             });
+
+            var endDate = new Date();
+
+            var func = function() {
+                self.isLoadingPackages = false;
+                self.packagesTotalMatchingQuery = packagesTotalMatchingQuery;
+                self.packagesTotalPages = packagesTotalPages;
+                self.packagesRecords = packagesRecords;
+            };
+
+            var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+
+            if (secondsDifference < 0.5) {
+                setTimeout(function() { func(); }, (0.5 - secondsDifference) * 1000);
+            } else {
+                func();
+            }
         });
     }
 
