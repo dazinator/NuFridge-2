@@ -127,67 +127,20 @@
             </div>
         </div>
     </div>
+
     <table class="ui basic table">
         <tbody>
-        <tr>
-            <td><strong>EntityFramework</strong></td>
-            <td>
-                <div class="ui blue labels">
-                    <a class="ui label">
-                        microsoft
-                    </a>
-                    <a class="ui label">
-                        aspnet
-                    </a>
-                    <a class="ui label">
-                        EntityFramework
-                    </a>
-                </div>
-            </td>
-            <td>Entity Framework is Microsoft's recommended data access technology for new applications.</td>
-        </tr>
-        <tr>
-            <td><strong>Json.NET</strong></td>
-            <td>
-                <div class="ui blue labels">
-                    <a class="ui label">
-                        jamesnk
-                    </a>
-                </div>
-            </td>
-            <td>Json.NET is a popular high-performance JSON framework for .NET</td>
-        </tr>
-        <tr>
-            <td><strong>Bootstrap CSS</strong></td>
-            <td>
-                <div class="ui blue labels">
-                    <a class="ui label">
-                        Supergibbs
-                    </a>
-                    <a class="ui label">
-                        twbs
-                    </a>
-                </div>
-            </td>
-            <td>The most popular front-end framework for developing responsive, mobile first projects on the web.</td>
-        </tr>
-        <tr>
-            <td><strong>Microsoft HTTP Client Libraries</strong></td>
-            <td>
-                <div class="ui blue labels">
-                    <a class="ui label">
-                        microsft
-                    </a>
-                    <a class="ui label">
-                        dotnetframework
-                    </a>
-                </div>
-            </td>
-            <td>This package contains everything you need to host ASP.NET Web API on IIS. ASP.NET Web API is a framework
-                that makes it easy to build HTTP services that reach a broad range of clients, including browsers and mobile
-                devices. ASP.NET Web API is an ideal platform for building RESTful applications on the .NET Framework.
-            </td>
-        </tr>
+            <tr repeat.for="package of packagesRecords">
+                <td><strong>${package.Title}</strong></td>
+                <td>
+                    <div class="ui blue labels">
+                        <a class="ui label" repeat.for="author of package.Authors">
+                            ${author}
+                        </a>
+                    </div>
+                </td>
+                <td>${package.Description}</td>
+            </tr>
         </tbody>
     </table>
 </div>

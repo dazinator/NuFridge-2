@@ -10,8 +10,15 @@ export class FeedView {
     feed = null;
     feedName = " ";
     isUpdatingFeed = false;
+
     isLoadingHistory = false;
     historyRecords = new Array();
+
+    packagesPageSize = 10;
+    packagesCurrentPage = 1;
+    packagesShowPrerelease = false;
+    packagesTotalMatchingQuery = 0;
+    packagesRecords = new Array();
 
     constructor(http, router) {
         this.http = http;
@@ -88,8 +95,65 @@ export class FeedView {
             self.feed = JSON.parse(message.response);
             self.refreshFeedName();
         });
+    }
 
+    loadFeedPackages() {
+        var self = this;
 
+        var skip = self.packagesPageSize * (self.packagesCurrentPage - 1);
+        var take = self.packagesPageSize;
+
+        var filter = "$filter=IsLatestVersion";
+
+        if (self.packagesShowPrerelease === true) {
+            filter = "$filter=IsAbsoluteLatestVersion";
+        } 
+
+        var url = "/Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
+                  "$skip=" + skip + "&$top=" + take + "&" + filter;
+
+        self.http.get(url).then(message => {
+            var xmlDoc = $.parseXML(message.response), $xml = $(xmlDoc);
+            $($xml).each(function() {
+                self.packagesTotalMatchingQuery = $(this).find("feed>count");
+
+                self.packagesRecords = $.map($(this).find("feed>entry"), function(value, index) {
+                    var jvalue = $(value);
+                    return {
+                        Title: jvalue.find("title").text(),
+                        Authors: $.map($(value).find("author>name"), function(authorValue) {
+                            return $(authorValue).text();
+                        }),
+                        Description: jvalue.find("properties").find("Description").text()
+                    }
+                });
+            });
+        });
+    }
+
+    loadFeedHistory() {
+        var self = this;
+
+        self.isLoadingHistory = true;
+
+        var startDate = new Date();
+
+        self.http.get("/api/feeds/" + self.feed.Id + "/history").then(message => {
+            var func = function() {
+                self.isLoadingHistory = false;
+                self.historyRecords = JSON.parse(message.response).Results;
+            };
+
+            var endDate = new Date();
+
+            var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+
+            if (secondsDifference < 0.5) {
+                setTimeout(function() { func(); }, (0.5 - secondsDifference) * 1000);
+            } else {
+                func();
+            }
+        });
     }
 
     refreshFeedName() {
@@ -108,27 +172,11 @@ export class FeedView {
                     return;
                 }
 
-                if (tabPath === "fourth") {
-                    self.isLoadingHistory = true;
-
-                    var startDate = new Date();
-
-                    self.http.get("/api/feeds/" + self.feed.Id + "/history").then(message => {
-                        var func = function() {
-                            self.isLoadingHistory = false;
-                            self.historyRecords = JSON.parse(message.response).Results;
-                        };
-
-                        var endDate = new Date();
-
-                        var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
-
-                        if (secondsDifference < 0.5) {
-                            setTimeout(function() { func(); }, (0.5 - secondsDifference) * 1000);
-                        } else {
-                            func();
-                        }
-                    });
+                if (tabPath === "third") {
+                    self.loadFeedPackages();
+                }
+                else if (tabPath === "fourth") {
+                    self.loadFeedHistory();
                 }
             }
         });
