@@ -34,7 +34,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageDownload>(
-                    $"SELECT TOP(5) * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
+                    $"SELECT TOP(10) * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
                     new {feedId});
         }
     }

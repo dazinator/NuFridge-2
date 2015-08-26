@@ -33,8 +33,10 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
                 if (feedId != feed.Id)
                 {
-                    return HttpStatusCode.BadRequest;
+                    return module.Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel("The feed id provided did not match.");
                 }
+
+                throw new Exception("Test error message lets see if it works!");
 
                 _feedService.Update(feed);
             }
@@ -42,7 +44,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             {
                 _log.ErrorException(ex.Message, ex);
 
-                return HttpStatusCode.InternalServerError;
+                return module.Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(ex.Message);
             }
 
 

@@ -34,7 +34,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
                 if (_feedManager.Exists(feed.Name))
                 {
-                    return HttpStatusCode.Conflict;
+                    return module.Negotiate.WithStatusCode(HttpStatusCode.Conflict).WithModel($"A feed with the name '{feed.Name}' already exists.");
                 }
 
                 _feedManager.Create(feed);
@@ -43,7 +43,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             {
                 _log.ErrorException(ex.Message, ex);
 
-                return HttpStatusCode.InternalServerError;
+                return module.Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(ex.Message);
             }
 
             return _feedService.Find(feed.Id, false);

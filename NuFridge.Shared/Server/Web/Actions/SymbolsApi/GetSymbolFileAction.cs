@@ -37,7 +37,7 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
             {
                 _log.Warn($"Feed does not exist called {feedName}");
                 var errorResponse = module.Response.AsText("Feed does not exist.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                errorResponse.StatusCode = HttpStatusCode.NotFound;
                 return errorResponse;
             }
 
@@ -47,7 +47,7 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
             {
                 _log.Warn($"Feed config does not exist called {feedName}");
                 var errorResponse = module.Response.AsText("Feed config does not exist.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                errorResponse.StatusCode = HttpStatusCode.NotFound;
                 return errorResponse;
             }
 

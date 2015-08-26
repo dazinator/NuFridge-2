@@ -33,7 +33,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             if (feed == null)
             {
                 var errorResponse = module.Response.AsText($"Feed does not exist called {feedName}.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                errorResponse.StatusCode = HttpStatusCode.NotFound;
                 return errorResponse;
             }
 

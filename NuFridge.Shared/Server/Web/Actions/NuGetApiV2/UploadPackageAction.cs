@@ -43,7 +43,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             {
                 _log.Warn("Feed does not exist called " + feedName);
                 var errorResponse = module.Response.AsText("Feed does not exist.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                errorResponse.StatusCode = HttpStatusCode.NotFound;
 
                 if (File.Exists(filePath))
                 {
@@ -106,7 +106,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             {
                 _log.Warn("Must provide package with valid id and version.");
                 var errorResponse = module.Response.AsText("Must provide package with valid id and version.");
-                errorResponse.StatusCode = HttpStatusCode.BadRequest;
+                errorResponse.StatusCode = HttpStatusCode.NotFound;
                 return errorResponse;
             }
 
@@ -148,7 +148,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 {
                     _log.Warn("Must provide package with valid id and version.");
                     var response = module.Response.AsText("Must provide package with valid id and version.");
-                    response.StatusCode = HttpStatusCode.BadRequest;
+                    response.StatusCode = HttpStatusCode.NotFound;
                     return response;
                 }
 

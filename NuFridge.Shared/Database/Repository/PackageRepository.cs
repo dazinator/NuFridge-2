@@ -32,7 +32,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageUpload>(
-                    $"SELECT TOP(5) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY Published DESC",
+                    $"SELECT TOP(10) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY Published DESC",
                     new { feedId });
         }
 

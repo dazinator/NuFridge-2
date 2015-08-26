@@ -1,275 +1,230 @@
 <template>
-  <h1 textcontent="${feedName}"></h1>
+<require from="./date-format"></require>
 
-  <div class="ui pointing secondary menu feedMenu">
+<h1 textcontent="${feedName}"></h1>
+
+<div class="ui pointing secondary menu feedMenu">
     <a class="item active" data-tab="first">Overview</a>
     <a class="item" data-tab="second">Endpoints</a>
     <a class="item" data-tab="third">Packages</a>
     <a class="item" data-tab="fourth">History</a>
     <a class="item settingTab" data-tab="fifth">Settings</a>
-  </div>
+</div>
 
-  <div data-tab="first" class="ui bottom tab segment active">
-    <h2 class="ui center aligned horizontal divider header">
-      <i class="dashboard icon"></i>
-      Overview
-    </h2>
-
+<div data-tab="first" class="ui bottom tab segment active">
     <h2 class="ui header">
-      Statistics
+        Statistics
     </h2>
 
     <div class="ui tiny horizontal statistics">
-      <div class="statistic">
-        <div class="value">
-          2,204
+        <div class="statistic">
+            <div class="value">
+                2,204
+            </div>
+            <div class="label">
+                Total Packages
+            </div>
         </div>
-        <div class="label">
-          Total Packages
+        <div class="statistic">
+            <div class="value">
+                1,218
+            </div>
+            <div class="label">
+                Distinct Packages
+            </div>
         </div>
-      </div>
-      <div class="statistic">
-        <div class="value">
-          1,218
-        </div>
-        <div class="label">
-          Distinct Packages
-        </div>
-      </div>
     </div>
 
     <h2 class="ui header">
-      Background Jobs
+        Background Jobs
     </h2>
 
     <p>No background jobs are executing for this feed.</p>
 
     <h2 class="ui header">
-      Administrative Actions
+        Administrative Actions
     </h2>
 
-      <button class="ui button" style="margin-bottom: 0.75em">
+    <button class="ui button" style="margin-bottom: 0.75em">
         Reindex Packages
-      </button>
-      <button class="ui button" style="margin-bottom: 0.75em">
+    </button>
+    <button class="ui button" style="margin-bottom: 0.75em">
         Execute Package Retention Policy
-      </button>
-      <button class="ui button" style="margin-bottom: 0.75em">
+    </button>
+    <button class="ui button" style="margin-bottom: 0.75em">
         Change Package Directory
-      </button>
+    </button>
 
-  </div>
+</div>
 
 
-  <div data-tab="second" class="ui bottom tab segment">
-    <h2 class="ui center aligned horizontal divider header">
-      <i class="desktop icon"></i>
-      Endpoints
-    </h2>
+<div data-tab="second" class="ui bottom tab segment">
     <table class="ui compact table">
-      <thead>
-      <tr>
-        <th>URL</th>
-        <th>Usage</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
-        <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
-      </tr>
-      <tr>
-        <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
-        <td>Use this to access the symbol server for this NuGet feed.</td>
-      </tr>
-      </tbody>
+        <thead>
+        <tr>
+            <th>URL</th>
+            <th>Usage</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
+            <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
+        </tr>
+        <tr>
+            <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
+            <td>Use this to access the symbol server for this NuGet feed.</td>
+        </tr>
+        </tbody>
     </table>
-  </div>
+</div>
 
-  <div data-tab="third" class="ui bottom tab segment">
-    <h2 class="ui center aligned horizontal divider header">
-      <i class="cube icon"></i>
-      Packages
-    </h2>
-
+<div data-tab="third" class="ui bottom tab segment">
     <div class="stackable four column ui grid">
-      <div class="column">
-        <button class="ui basic button labeled icon" style="width: 100%">
-          <i class="undo icon"></i>
-          Reset
-        </button>
-      </div>
-      <div class="column">
-        <select class="ui dropdown" style="width: 100%">
-          <option value="10">10 per page</option>
-          <option value="20">20 per page</option>
-          <option value="30">30 per page</option>
-          <option value="40">40 per page</option>
-        </select>
-      </div>
-      <div class="column">
-        <select class="ui dropdown" style="width: 100%">
-          <option value="0">Downloads descending</option>
-          <option value="1">Downloads ascending</option>
-          <option value="2">Package Id descending</option>
-          <option value="3">Package Id ascending</option>
-        </select>
-      </div>
-      <div class="column">
-        <div class="ui search" style="width: 100%">
-          <input class="prompt" type="text" placeholder="Search..." style="width: 100%">
-
-          <div class="results"></div>
+        <div class="column">
+            <button class="ui basic button labeled icon" style="width: 100%">
+                <i class="undo icon"></i>
+                Reset
+            </button>
         </div>
-      </div>
+        <div class="column">
+            <select class="ui dropdown" style="width: 100%">
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+                <option value="30">30 per page</option>
+                <option value="40">40 per page</option>
+            </select>
+        </div>
+        <div class="column">
+            <select class="ui dropdown" style="width: 100%">
+                <option value="0">Downloads descending</option>
+                <option value="1">Downloads ascending</option>
+                <option value="2">Package Id descending</option>
+                <option value="3">Package Id ascending</option>
+            </select>
+        </div>
+        <div class="column">
+            <div class="ui search" style="width: 100%">
+                <input class="prompt" type="text" placeholder="Search..." style="width: 100%">
+
+                <div class="results"></div>
+            </div>
+        </div>
     </div>
 
     <div class="one column ui grid">
-      <div class="column">
+        <div class="column">
 
-        <div class="ui floated menu">
-          <div class="item">
-            Page 1 of 4
-          </div>
-        </div>
+            <div class="ui floated menu">
+                <div class="item">
+                    Page 1 of 4
+                </div>
+            </div>
 
-        <div class="ui floated pagination menu">
-          <a class="icon item">
-            <i class="left chevron icon"></i>
-          </a>
-          <a class="item">1</a>
-          <a class="item">2</a>
-          <a class="item">3</a>
-          <a class="item">4</a>
-          <a class="icon item">
-            <i class="right chevron icon"></i>
-          </a>
+            <div class="ui floated pagination menu">
+                <a class="icon item">
+                    <i class="left chevron icon"></i>
+                </a>
+                <a class="item">1</a>
+                <a class="item">2</a>
+                <a class="item">3</a>
+                <a class="item">4</a>
+                <a class="icon item">
+                    <i class="right chevron icon"></i>
+                </a>
+            </div>
         </div>
-      </div>
     </div>
     <table class="ui basic table">
-      <tbody>
-      <tr>
-        <td><strong>EntityFramework</strong></td>
-        <td>
-          <div class="ui blue labels">
-            <a class="ui label">
-              microsoft
-            </a>
-            <a class="ui label">
-              aspnet
-            </a>
-            <a class="ui label">
-              EntityFramework
-            </a>
-          </div>
-        </td>
-        <td>Entity Framework is Microsoft's recommended data access technology for new applications.</td>
-      </tr>
-      <tr>
-        <td><strong>Json.NET</strong></td>
-        <td>
-          <div class="ui blue labels">
-            <a class="ui label">
-              jamesnk
-            </a>
-          </div>
-        </td>
-        <td>Json.NET is a popular high-performance JSON framework for .NET</td>
-      </tr>
-      <tr>
-        <td><strong>Bootstrap CSS</strong></td>
-        <td>
-          <div class="ui blue labels">
-            <a class="ui label">
-              Supergibbs
-            </a>
-            <a class="ui label">
-              twbs
-            </a>
-          </div>
-        </td>
-        <td>The most popular front-end framework for developing responsive, mobile first projects on the web.</td>
-      </tr>
-      <tr>
-        <td><strong>Microsoft HTTP Client Libraries</strong></td>
-        <td>
-          <div class="ui blue labels">
-            <a class="ui label">
-              microsft
-            </a>
-            <a class="ui label">
-              dotnetframework
-            </a>
-          </div>
-        </td>
-        <td>This package contains everything you need to host ASP.NET Web API on IIS. ASP.NET Web API is a framework
-          that makes it easy to build HTTP services that reach a broad range of clients, including browsers and mobile
-          devices. ASP.NET Web API is an ideal platform for building RESTful applications on the .NET Framework.
-        </td>
-      </tr>
-      </tbody>
+        <tbody>
+        <tr>
+            <td><strong>EntityFramework</strong></td>
+            <td>
+                <div class="ui blue labels">
+                    <a class="ui label">
+                        microsoft
+                    </a>
+                    <a class="ui label">
+                        aspnet
+                    </a>
+                    <a class="ui label">
+                        EntityFramework
+                    </a>
+                </div>
+            </td>
+            <td>Entity Framework is Microsoft's recommended data access technology for new applications.</td>
+        </tr>
+        <tr>
+            <td><strong>Json.NET</strong></td>
+            <td>
+                <div class="ui blue labels">
+                    <a class="ui label">
+                        jamesnk
+                    </a>
+                </div>
+            </td>
+            <td>Json.NET is a popular high-performance JSON framework for .NET</td>
+        </tr>
+        <tr>
+            <td><strong>Bootstrap CSS</strong></td>
+            <td>
+                <div class="ui blue labels">
+                    <a class="ui label">
+                        Supergibbs
+                    </a>
+                    <a class="ui label">
+                        twbs
+                    </a>
+                </div>
+            </td>
+            <td>The most popular front-end framework for developing responsive, mobile first projects on the web.</td>
+        </tr>
+        <tr>
+            <td><strong>Microsoft HTTP Client Libraries</strong></td>
+            <td>
+                <div class="ui blue labels">
+                    <a class="ui label">
+                        microsft
+                    </a>
+                    <a class="ui label">
+                        dotnetframework
+                    </a>
+                </div>
+            </td>
+            <td>This package contains everything you need to host ASP.NET Web API on IIS. ASP.NET Web API is a framework
+                that makes it easy to build HTTP services that reach a broad range of clients, including browsers and mobile
+                devices. ASP.NET Web API is an ideal platform for building RESTful applications on the .NET Framework.
+            </td>
+        </tr>
+        </tbody>
     </table>
-  </div>
+</div>
 
-  <div data-tab="fourth" class="ui bottom tab segment">
-
-    <h2 class="ui center aligned horizontal divider header">
-      <i class="wait icon"></i>
-      History
-    </h2>
-
+<div data-tab="fourth" class="ui bottom tab segment">
     <section id="cd-timeline" class="cd-container">
-      <div class="cd-timeline-block">
-        <div class="cd-timeline-img cd-green">
-          <i class="inverted big cube icon"></i>
-        </div>
+        <div class="cd-timeline-block" repeat.for="item of historyRecords">
+            <div class="cd-timeline-img ${item.Type === 0 ? 'cd-silver' : 'cd-blue'}">
+                <i class="inverted big cube icon"></i>
+            </div>
 
-        <div class="cd-timeline-content">
-          <h3>EntityFramework v2.0.0.0 uploaded</h3>
-          <span class="cd-date">Jan 18</span>
+            <div class="cd-timeline-content">
+                <h3 class="ui header" style="margin: 0;">${item.Title}
+                    <div class="sub header">${item.Description}</div></h3>
+                <span class="cd-date">${item.Date | dateFormat}</span>
+            </div>
         </div>
-      </div>
-
-      <div class="cd-timeline-block">
-        <div class="cd-timeline-img cd-red">
-          <i class="inverted big cube icon"></i>
-        </div>
-
-        <div class="cd-timeline-content">
-          <h3>EntityFramework v1.0.0.0 deleted</h3>
-          <span class="cd-date">Jan 18</span>
-        </div>
-      </div>
-
-      <div class="cd-timeline-block">
-        <div class="cd-timeline-img cd-green">
-          <i class="inverted big cube icon"></i>
-        </div>
-
-        <div class="cd-timeline-content">
-          <h3>EntityFramework v1.0.0.0 uploaded</h3>
-          <span class="cd-date">Jan 14</span>
-        </div>
-      </div>
-
     </section>
-  </div>
+</div>
 
 <div data-tab="fifth" class="ui bottom tab segment settingTab">
-
-    <h2 class="ui center aligned horizontal divider header">
-        <i class="setting icon"></i>
-        Settings
-    </h2>
-    <div class="ui inverted dimmer ${isUpdatingFeed ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">Updating Feed</div>
-    </div>
+   
     <h2 class="ui header">
         General Settings
         <div class="sub header">Manage your general feed settings.</div>
     </h2>
-
+    <div class="ui inverted dimmer ${isUpdatingFeed ? 'active' : ''}">
+        <div class="ui indeterminate large text loader">Saving Feed</div>
+    </div>
     <form class="ui form raised segment">
         <div class="field">
             <label>Feed Name</label>
@@ -333,9 +288,28 @@
     </div>
 
     <div class="ui buttons floatRight">
-        <button class="ui red button">Delete</button>
+        <button class="ui red button" click.trigger="deleteFeedClick()">Delete</button>
     </div>
 </div>
 
+
+    <div class="ui small modal transition hidden" id="deleteConfirmModal">
+        <div class="ui icon header">
+            <i class="cube icon"></i>
+            <span>Delete the '${feedName}' feed?</span>
+        </div>
+        <div class="content">
+            <p style="text-align: center;">Are you sure you want to delete this feed? All packages will be deleted permanently.</p>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                No
+            </div>
+            <div class="ui positive right labeled icon button">
+                Yes
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
+    </div>
 
 </template>

@@ -32,7 +32,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
                 if (feedId != feedConfig.FeedId)
                 {
-                    return HttpStatusCode.BadRequest;
+                    return module.Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel("Feed id does not match.");
                 }
 
                 _feedConfigurationService.Update(feedConfig);
@@ -42,7 +42,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
             {
                 _log.ErrorException(ex.Message, ex);
 
-                return HttpStatusCode.InternalServerError;
+                return module.Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(ex.Message);
             }
 
             return feedConfig;

@@ -31,7 +31,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             if (feed == null)
             {
                 var response = module.Response.AsText("Feed does not exist.");
-                response.StatusCode = HttpStatusCode.BadRequest;
+                response.StatusCode = HttpStatusCode.NotFound;
                 return response;
             }
 

@@ -22,12 +22,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             if (!_feedManager.Exists(feedId))
             {
-                return HttpStatusCode.NotFound;
+                return module.Negotiate.WithStatusCode(HttpStatusCode.NotFound);
             }
 
             _feedManager.Delete(feedId);
 
-            return module.Response.AsJson(new object());
+            return module.Negotiate.WithModel(new object());
         }
     }
 }

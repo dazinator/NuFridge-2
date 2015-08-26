@@ -13,8 +13,8 @@
 #cd-timeline {
   position: relative;
   padding: 2em 0;
-  margin-top: 2em;
-  margin-bottom: 2em; }
+  margin-top: 0em;
+  margin-bottom: 0em; }
 
 #cd-timeline::before {
   /* this is the vertical line */
@@ -28,8 +28,8 @@
 
 @media only screen and (min-width: 1170px) {
   #cd-timeline {
-    margin-top: 3em;
-    margin-bottom: 3em; }
+    margin-top: 0em;
+    margin-bottom: 0em; }
   #cd-timeline::before {
     left: 50%;
     margin-left: -2px; } }
@@ -77,8 +77,15 @@
 .cd-timeline-img.cd-green {
   background: #75ce66; }
 
+.cd-timeline-img.cd-blue {
+    background: #2185d0;
+}
+
 .cd-timeline-img.cd-red {
   background: #c03b44; }
+
+.cd-timeline-img.cd-silver {
+  background: gray; }
 
 .cd-timeline-img.cd-location {
   background: #f0ca45; }
