@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Data.OData;
 using Nancy;
+using Nancy.Responses.Negotiation;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Web.OData;
@@ -47,6 +49,29 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             writerSettings.BaseUri = new Uri(url);
 
+            var enumerable = module.Request.Headers.Accept;
+            var ranges = enumerable.OrderByDescending(o => o.Item2).Select(o => new MediaRange(o.Item1)).ToList();
+
+            bool isXmlResponse = false;
+
+            foreach (var mediaRange in ranges)
+            {
+                if (mediaRange.Matches("application/xml"))
+                {
+                    isXmlResponse = true;
+                }
+            }
+
+            if (!isXmlResponse)
+            {
+                writerSettings.SetMetadataDocumentUri(new Uri(url));
+                writerSettings.SetContentType(ODataFormat.VerboseJson);
+            }
+            else
+            {
+                writerSettings.SetContentType(ODataFormat.Atom);
+            }
+
 
             using (var msgWriter = new ODataMessageWriter(message, writerSettings, builder.Model))
             {
@@ -74,7 +99,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
                 return new Response
                 {
-                    ContentType = "application/xml; charset=utf-8",
+                    ContentType = isXmlResponse ? "application/atom+xml; charset=utf-8" : "application/json;odata=verbose;charset=utf-8",
                     Contents = contentStream =>
                     {
                         var byteData = Encoding.UTF8.GetBytes(text);

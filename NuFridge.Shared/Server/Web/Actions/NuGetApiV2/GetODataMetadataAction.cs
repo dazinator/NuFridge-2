@@ -1,7 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.Data.OData;
 using Nancy;
+using Nancy.Responses.Negotiation;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Web.OData;
@@ -35,6 +38,28 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             IODataResponseMessage message = new MemoryResponseMessage();
             ODataMessageWriterSettings writerSettings = new ODataMessageWriterSettings();
+
+            var enumerable = module.Request.Headers.Accept;
+            var ranges = enumerable.OrderByDescending(o => o.Item2).Select(o => new MediaRange(o.Item1)).ToList();
+
+            bool isXmlResponse = false;
+
+            foreach (var mediaRange in ranges)
+            {
+                if (mediaRange.Matches("application/xml"))
+                {
+                    isXmlResponse = true;
+                }
+            }
+
+            if (!isXmlResponse)
+            {
+                return module.Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithContentType("Unsupported media type requested.");
+            }
+            else
+            {
+                writerSettings.SetContentType(ODataFormat.Atom);
+            }
 
             using (var msgWriter = new ODataMessageWriter(message, writerSettings, builder.Model))
             {
