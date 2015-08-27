@@ -50,6 +50,7 @@
     <Content Include="CONTRIBUTING.md" />
     <Content Include="doc\api.json" />
     <Content Include="doc\CHANGELOG.md" />
+    <Content Include="img\default.png" />
     <Content Include="jsconfig.json" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />

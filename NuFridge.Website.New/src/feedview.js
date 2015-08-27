@@ -18,7 +18,7 @@ export class FeedView {
     packagesSearchText = "";
     packagesSortOrder = 0;
     packagesPageSize = 10;
-    packagesTotalPages = 1;
+    packagesTotalPages = new Array();
     packagesCurrentPage = 1;
     packagesShowPrerelease = false;
     packagesTotalMatchingQuery = 0;
@@ -49,8 +49,12 @@ export class FeedView {
             } else {
                 self.isUpdatedFeed = false;
             }
-        }, message => {
-            var t = 1;
+        },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }
         });
     }
 
@@ -67,13 +71,25 @@ export class FeedView {
             self.router.navigate("feeds");
         }, message => {
             $('#deleteConfirmModal').modal("hide");
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }
         });
     }
 
     reindexPackagesClick() {
         var self = this;
 
-        this.http.post("/api/feeds/" + self.feed.Id + "/reindex");
+        this.http.post("/api/feeds/" + self.feed.Id + "/reindex").then(function() {
+            
+        },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }
+        });
     }
 
     deleteFeedClick() {
@@ -106,6 +122,9 @@ export class FeedView {
 
         self.packagesSearchText = "";
 
+        self.packagesTotalPages = new Array();
+        self.packagesCurrentPage = 1;
+
         self.loadFeedPackages();
     }
 
@@ -118,7 +137,54 @@ export class FeedView {
         this.http.get("/api/feeds/" + feedId).then(message => {
             self.feed = JSON.parse(message.response);
             self.refreshFeedName();
+        },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }
         });
+    }
+
+    previousPageClick() {
+        var self = this;
+
+        if (self.packagesCurrentPage <= 1) {
+            return;
+        }
+
+        self.packagesCurrentPage--;
+
+        self.loadFeedPackages();
+    }
+
+    goToPageClick(page) {
+        var self = this;
+
+        self.packagesCurrentPage = page;
+        
+        self.loadFeedPackages();
+    }
+
+    nextPageClick() {
+        var self = this;
+
+        if (self.packagesCurrentPage >= self.packagesTotalPages.length) {
+            return;
+        }
+
+        self.packagesCurrentPage++;
+
+        self.loadFeedPackages();
+    }
+
+    applyFilterClick() {
+        var self = this;
+
+        self.packagesTotalPages = new Array();
+        self.packagesCurrentPage = 1;
+
+        self.loadFeedPackages();
     }
 
     loadFeedPackages() {
@@ -162,22 +228,27 @@ export class FeedView {
         var url = "/Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
                   "$skip=" + skip + "&$top=" + take + "&" + filter + "&" + order + search;
 
-        self.http.get(url).then(message => {
+        var request = self.http.createRequest(url).asGet().withHeader("Accept", "application/xml");
+
+        request.send().then(message => {
             var xmlDoc = $.parseXML(message.response), $xml = $(xmlDoc);
 
             var packagesTotalMatchingQuery, packagesTotalPages, packagesRecords;
 
             $($xml).each(function() {
                 packagesTotalMatchingQuery = $(this).find("feed>count").text();
-                packagesTotalPages = Math.ceil(packagesTotalMatchingQuery / self.packagesPageSize);
+                packagesTotalPages = new Array(Math.ceil(packagesTotalMatchingQuery / self.packagesPageSize));
                 packagesRecords = $.map($(this).find("feed>entry"), function(value, index) {
                     var jvalue = $(value);
+                    var props = jvalue.find("properties");
                     return {
                         Title: jvalue.find("title").text(),
                         Authors: $.map($(value).find("author>name"), function(authorValue) {
                             return $(authorValue).text();
                         }),
-                        Description: jvalue.find("properties").find("Description").text()
+                        Description: props.find("Description").text(),
+                        IconUrl: props.find("IconUrl").text(),
+                        NormalizedVersion: props.find("NormalizedVersion").text()
                     }
                 });
             });
@@ -222,6 +293,12 @@ export class FeedView {
                 setTimeout(function() { func(); }, (0.5 - secondsDifference) * 1000);
             } else {
                 func();
+            }
+        },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
             }
         });
     }

@@ -49,6 +49,12 @@ export class Feeds {
 
         this.http.get("/api/feeds").then(message => {
             self.feedGroups = JSON.parse(message.response);
+        },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }
         });
     }
 }
