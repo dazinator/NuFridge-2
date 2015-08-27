@@ -34,7 +34,6 @@ namespace NuFridge.Shared.Server.Web.Nancy
             _homeConfiguration = homeConfiguration;
             _configuration = configuration ?? new HostConfiguration();
             _baseUriList = baseUris;
-            bootstrapper.Initialise();
         }
 
         public void Dispose()
