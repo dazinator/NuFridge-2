@@ -41,7 +41,7 @@ export class Profile {
 
         var startDate = new Date();
 
-        this.http.post("/api/account/", self.authUser.data.Username, self.authUser.data).then(message => {
+        this.http.post("/api/account/", self.authUser.data).then(message => {
 
             var endDate = new Date();
 
@@ -49,8 +49,8 @@ export class Profile {
 
             if (secondsDifference < 1) {
                 setTimeout(function() {
-                    self.isUpdatingUser = true;
-                }, (1 - secondsDifference) * false);
+                    self.isUpdatingUser = false;
+                }, (1 - secondsDifference) * 1000);
             } else {
                 self.isUpdatingUser = false;
             }

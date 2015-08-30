@@ -8,6 +8,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
@@ -15,6 +16,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
     public class UpdateAccountAction : IAction
     {
         private readonly IUserService _userService;
+        private readonly ILog _log = LogProvider.For<UpdateAccountAction>();
 
         public UpdateAccountAction(IUserService userService)
         {
@@ -23,30 +25,27 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            string username = parameters.username;
-
             module.RequiresAuthentication();
 
-            User user = module.Bind<User>();
-
-            if (!string.IsNullOrWhiteSpace(username))
+            try
             {
-                if (module.Context.CurrentUser.HasAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUpdateUsers }))
-                {
-                    if (user.Username != username)
-                    {
-                        return new Response {StatusCode = HttpStatusCode.BadRequest};
-                    }
+                User user = module.Bind<User>();
 
+                if (user.Username == module.Context.CurrentUser.UserName)
+                {
                     return UpdateUser(user);
                 }
-            }
-            else
-            {
+
+
+                module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUpdateUsers });
                 return UpdateUser(user);
             }
+            catch (Exception ex)
+            {
+                _log.ErrorException(ex.Message, ex);
 
-            return new Response { StatusCode = HttpStatusCode.Unauthorized };
+                return module.Negotiate.WithStatusCode(HttpStatusCode.InternalServerError).WithModel(ex.Message);
+            }
         }
 
         private dynamic UpdateUser(User user)
@@ -58,7 +57,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             _userService.Update(existingUser);
 
-            return new Response {StatusCode = HttpStatusCode.OK};
+            return new Response { StatusCode = HttpStatusCode.OK };
         }
     }
 }

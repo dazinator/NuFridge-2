@@ -8,6 +8,7 @@ export class errorParser{
 
     parseResponse(responseMessage) {
         var self = this;
+
         if (responseMessage.statusCode) {
             if (responseMessage.statusCode === 500) {
                 if (responseMessage.response) {
@@ -24,7 +25,11 @@ export class errorParser{
                         }
                         return self.returnMessage("There was an error processing the request.", errorText);
                     } else {
-                        return self.returnMessage(responseMessage.response);
+                        var message = responseMessage.response;
+                        if (responseMessage.responseType === "json") {
+                            message = JSON.parse(message);
+                        }
+                        return self.returnMessage("There was an error processing the request.", message);
                     }
                 } else if (responseMessage.responseText) {
                     return self.returnMessage(responseMessage.responseText);
@@ -32,8 +37,15 @@ export class errorParser{
                     return self.returnMessage("There was an error processing the request. Check the server logs for more information.");
                 }
             } else if (responseMessage.statusCode === 405) {
-                return self.returnMessage("The server has rejected the request. Check the server logs for more information.");
-            } else {
+                return self.returnMessage("The server does not accept requests on " + responseMessage.requestMessage.url + ". Check the server logs for more information or raise this as an issue on GitHub.");
+            }  else if (responseMessage.statusCode === 400) {
+                var responseText = responseMessage.response;
+                if (responseMessage.responseType === "json") {
+                    responseText = JSON.parse(responseText);
+                }
+                return self.returnMessage("The server has rejected the request. Check the server logs for more information or raise this as an issue on GitHub.", responseText);
+            }
+            else {
                 return self.returnMessage("There was an error processing the request. Check the server logs for more information.");
             }
         } else {
