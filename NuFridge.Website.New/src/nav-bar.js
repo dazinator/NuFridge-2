@@ -2,24 +2,26 @@ import {bindable } from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
 import {AuthService} from 'aurelia-auth';
-@inject(AuthService)
+import {authUser} from './authuser';
+
+@inject(AuthService, authUser)
 export class NavBar {
     _isAuthenticated = false;
   @bindable router = null;
 
     profile = null;
 
-    constructor(auth) {
+    constructor(auth, authUser) {
         this.auth = auth;
+        this.authUser = authUser;
     }
 
     signOut() {
         this.auth.logout("#/signin")
             .then(response => {
-                console.log("ok logged out on  logout.js");
+
             })
             .catch(err => {
-                console.log("error logged out  logout.js");
 
             });
     }
@@ -34,7 +36,7 @@ export class NavBar {
 
         if (self.isAuthenticated) {
             self.auth.getMe().then(function(profile) {
-                self.profile = profile;
+                self.authUser.set(profile);
             }, 
             function(message) {
                 if (message.statusCode === 401) {

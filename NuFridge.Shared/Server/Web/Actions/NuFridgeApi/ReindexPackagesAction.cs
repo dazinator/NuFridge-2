@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Hangfire;
 using Nancy;
@@ -6,6 +7,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
@@ -21,7 +23,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            module.RequiresAuthentication();
+            module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanReindexPackages });
 
             int feedId = parameters.id;
 

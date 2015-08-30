@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -6,6 +7,7 @@ using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
@@ -24,7 +26,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            module.RequiresAuthentication();
+            module.RequiresAnyClaim(new List<string> {Claims.SystemAdministrator, Claims.CanInsertFeed});
 
             Feed feed;
 

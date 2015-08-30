@@ -1,10 +1,12 @@
-﻿using Hangfire;
+﻿using System.Collections.Generic;
+using Hangfire;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Server.NuGet.Import;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
@@ -19,7 +21,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            module.RequiresAuthentication();
+            module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUploadPackages });
 
             int feedId = parameters.id;
 

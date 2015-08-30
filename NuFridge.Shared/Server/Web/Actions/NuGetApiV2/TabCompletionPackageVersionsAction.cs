@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Nancy;
+using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
@@ -30,6 +32,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 var response = module.Response.AsText($"Feed does not exist called {feedName}.");
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
+            }
+
+            if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
+            {
+                module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanViewPackages });
             }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;

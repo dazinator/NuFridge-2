@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
@@ -21,7 +23,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            module.RequiresAuthentication();
+            module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUpdateFeed });
 
             Feed feed;
 
@@ -35,8 +37,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                 {
                     return module.Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithModel("The feed id provided did not match.");
                 }
-
-                throw new Exception("Test error message lets see if it works!");
 
                 _feedService.Update(feed);
             }

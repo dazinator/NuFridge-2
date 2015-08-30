@@ -1,7 +1,9 @@
-﻿using Nancy;
+﻿using System.Collections.Generic;
+using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
@@ -22,23 +24,27 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             if (!string.IsNullOrWhiteSpace(username))
             {
-                //TODO once roles are in place
-                if (module.Context.CurrentUser.UserName.ToLower() == "administrator")
+                if (module.Context.CurrentUser.HasAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanViewUsers }))
                 {
-                    return GetUser(username);
+                    return GetUser(module, username);
                 }
             }
             else
             {
-                return GetUser(module.Context.CurrentUser.UserName);
+                return GetUser(module, module.Context.CurrentUser.UserName);
             }
 
-            return new Response {StatusCode = HttpStatusCode.Unauthorized};
+            return new Response { StatusCode = HttpStatusCode.Unauthorized };
         }
 
-        private User GetUser(string username)
+        private User GetUser(INancyModule module, string username)
         {
             var user = _userService.Find(username, false);
+
+            if (username == module.Context.CurrentUser.UserName)
+            {
+                user.Claims = module.Context.CurrentUser.Claims;
+            }
 
             return user;
         }

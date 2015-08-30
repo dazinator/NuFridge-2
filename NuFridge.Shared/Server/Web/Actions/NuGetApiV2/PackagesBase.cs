@@ -61,11 +61,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                     return false;
                 }
             }
+
             return true;
         }
-
-
-
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Dapper;
 
 namespace NuFridge.Shared.Database.Model
@@ -23,6 +24,8 @@ namespace NuFridge.Shared.Database.Model
         public bool IsActive { get; set; }
         public DateTime LastUpdated { get; set; }
 
+        [Editable(false)]
+        public IEnumerable<string> Claims { get; set; }
 
         public User()
             : this(null)
@@ -47,5 +50,6 @@ namespace NuFridge.Shared.Database.Model
         string PasswordHashed { get; set; }
         bool IsActive { get; set; }
         DateTime LastUpdated { get; set; }
+        IEnumerable<string> Claims { get; set; }
     }
 }

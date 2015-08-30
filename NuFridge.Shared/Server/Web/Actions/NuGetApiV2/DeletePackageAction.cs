@@ -1,8 +1,11 @@
-﻿using Nancy;
+﻿using System.Collections.Generic;
+using Nancy;
+using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
@@ -35,11 +38,18 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            if (!IsValidNuGetApiKey(module, feed))
+            if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
             {
-                var response = module.Response.AsText("Invalid API key.");
-                response.StatusCode = HttpStatusCode.Forbidden;
-                return response;
+                module.RequiresAnyClaim(new List<string> {Claims.SystemAdministrator, Claims.CanDeletePackages});
+            }
+            else
+            {
+                if (!IsValidNuGetApiKey(module, feed))
+                {
+                    var response = module.Response.AsText("You are not authorized to delete packages from this feed.");
+                    response.StatusCode = HttpStatusCode.Forbidden;
+                    return response;
+                }
             }
 
             var packageRepository = _packageRepositoryFactory.Create(feed.Id);

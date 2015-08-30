@@ -4,6 +4,7 @@ using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Web.Responses;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
@@ -21,7 +22,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
-            module.RequiresAuthentication();
+            module.RequiresAnyClaim(new List<string> {Claims.SystemAdministrator, Claims.CanViewFeeds });
 
             FeedSearchResponse response = new FeedSearchResponse();
 

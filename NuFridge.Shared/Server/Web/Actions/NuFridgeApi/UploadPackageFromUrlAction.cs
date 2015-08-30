@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using Nancy;
 using Nancy.Responses;
+using Nancy.Security;
 using NuFridge.Shared.Server.FileSystem;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using HttpStatusCode = Nancy.HttpStatusCode;
 
@@ -22,6 +25,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
+            module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUploadPackages });
+
             int feed = parameters.id;
 
             string url = module.Request.Query["url"];

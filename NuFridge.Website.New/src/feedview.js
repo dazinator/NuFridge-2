@@ -3,8 +3,10 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
 import moment from 'moment';
+import {authUser} from './authuser';
+import {Claims} from './claims';
 
-@inject(HttpClient, Router)
+@inject(HttpClient, Router, authUser)
 export class FeedView {
 
     feed = null;
@@ -24,9 +26,10 @@ export class FeedView {
     packagesTotalMatchingQuery = 0;
     packagesRecords = new Array();
 
-    constructor(http, router) {
+    constructor(http, router, authUser) {
         this.http = http;
         this.router = router;
+        this.authUser = authUser;
     }
 
     updateFeed() {
@@ -134,16 +137,26 @@ export class FeedView {
 
         var feedId = params.id;
 
-        this.http.get("/api/feeds/" + feedId).then(message => {
-            self.feed = JSON.parse(message.response);
-            self.refreshFeedName();
-        },
-        function(message) {
-            if (message.statusCode === 401) {
-                var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
-            }
-        });
+        self.canViewPage = self.authUser.hasClaim(Claims.CanViewFeeds, Claims.SystemAdministrator);
+        self.canReindexPackages = self.authUser.hasClaim(Claims.CanReindexPackages, Claims.SystemAdministrator);
+        self.canChangePackageDirectory = self.authUser.hasClaim(Claims.CanChangePackageDirectory, Claims.SystemAdministrator);
+        self.canExecuteRetentionPolicy = self.authUser.hasClaim(Claims.CanExecuteRetentionPolicy, Claims.SystemAdministrator);
+        self.canViewPackages = self.authUser.hasClaim(Claims.CanViewPackages, Claims.SystemAdministrator);
+        self.canViewFeedHistory = self.authUser.hasClaim(Claims.CanViewFeedHistory, Claims.SystemAdministrator);
+        self.canUpdateFeed = self.authUser.hasClaim(Claims.CanUpdateFeed, Claims.SystemAdministrator);
+
+        if (self.canViewPage) {
+            this.http.get("/api/feeds/" + feedId).then(message => {
+                    self.feed = JSON.parse(message.response);
+                    self.refreshFeedName();
+                },
+                function(message) {
+                    if (message.statusCode === 401) {
+                        var loginRoute = self.auth.auth.getLoginRoute();
+                        self.auth.logout(loginRoute);
+                    }
+                });
+        }
     }
 
     previousPageClick() {

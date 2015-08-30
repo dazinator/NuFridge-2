@@ -75,7 +75,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             return new
             {
-                token
+                token,
+                roles = user.Claims
             };
         }
     }

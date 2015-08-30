@@ -368,6 +368,7 @@
     <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageBase.cs" />
     <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageFile.cs" />
     <Compile Include="Server\NuGet\FastZipPackage\IFastZipPackage.cs" />
+    <Compile Include="Server\Security\Claims.cs" />
     <Compile Include="Server\Statistics\Design\ColorGenerator.cs" />
     <Compile Include="Server\Statistics\FeedDownloadCountStatistic.cs" />
     <Compile Include="Server\Statistics\FeedPackageCountStatistic.cs" />
@@ -383,7 +384,6 @@
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetAccountAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetDashboardAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedAuditHistoryAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedConfigurationAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedDownloadCountAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedPackageCountAction.cs" />
@@ -432,7 +432,7 @@
     <Compile Include="Server\Web\Listeners\ShutdownPageListener.cs" />
     <Compile Include="Server\Web\Listeners\StartupPageListener.cs" />
     <Compile Include="Server\Web\SignalR\ImportPackagesHub.cs" />
-    <Compile Include="Server\Web\TemporaryAdminUserIdentity.cs" />
+    <Compile Include="Server\Web\LocalUserIdentity.cs" />
     <Compile Include="Server\Web\IWebPackage.cs" />
     <Compile Include="Server\Web\MemoryResponseMessage.cs" />
     <Compile Include="Server\Web\ODataPackages.cs" />

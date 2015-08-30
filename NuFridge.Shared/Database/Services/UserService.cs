@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Web;
 using SimpleCrypto;
 
@@ -125,7 +127,15 @@ namespace NuFridge.Shared.Database.Services
                 return null;
             }
 
-            return new TemporaryAdminUserIdentity { UserName = user.Username, Claims = new List<string>() };
+            return new LocalUserIdentity
+            {
+                UserName = user.Username,
+                Claims = new List<string>
+                {
+                    Claims.SystemAdministrator,
+                    Claims.CanInsertFeed
+                }
+            };
         }
 
         public void Insert(User user)

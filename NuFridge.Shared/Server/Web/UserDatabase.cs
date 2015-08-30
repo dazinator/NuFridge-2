@@ -25,7 +25,7 @@ namespace NuFridge.Shared.Server.Web
                 return null;
             }
 
-            return new TemporaryAdminUserIdentity { UserName = userRecord.Item1, Claims = new List<string>()};
+            return new LocalUserIdentity { UserName = userRecord.Item1, Claims = new List<string>()};
         }
     }
 }

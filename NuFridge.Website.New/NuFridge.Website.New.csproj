@@ -647,7 +647,10 @@
     <Content Include="src\app.js" />
     <Content Include="src\app.router.config.js" />
     <Content Include="src\authConfig.js" />
+    <Content Include="src\authUser.js" />
+    <Content Include="src\claims.js" />
     <Content Include="src\date-format.js" />
+    <Content Include="src\enum.js" />
     <Content Include="src\feedcreate.html" />
     <Content Include="src\feedcreate.js" />
     <Content Include="src\setup.html" />

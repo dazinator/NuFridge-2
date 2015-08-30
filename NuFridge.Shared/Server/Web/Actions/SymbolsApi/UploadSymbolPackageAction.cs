@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
@@ -10,6 +11,7 @@ using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
 using NuFridge.Shared.Server.NuGet.Symbols;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using NuGet;
@@ -64,6 +66,10 @@ namespace NuFridge.Shared.Server.Web.Actions.SymbolsApi
                 return response;
             }
 
+            if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
+            {
+                module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUploadPackages });
+            }
 
             IFeedConfiguration config = _feedConfigurationService.FindByFeedId(feed.Id);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Nancy;
@@ -12,6 +13,7 @@ using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.FileSystem;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 
@@ -51,6 +53,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
 
                 return errorResponse;
+            }
+
+            if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
+            {
+                module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUploadPackages });
             }
 
             if (RequiresApiKeyCheck(feed))

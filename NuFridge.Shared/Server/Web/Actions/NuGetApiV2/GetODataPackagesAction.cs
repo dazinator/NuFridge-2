@@ -10,11 +10,13 @@ using System.Web.Http.OData.Query;
 using Microsoft.Data.OData;
 using Nancy;
 using Nancy.Responses.Negotiation;
+using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
+using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
 using NuGet;
@@ -48,6 +50,11 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 var response = module.Response.AsText($"Feed does not exist called {feedName}.");
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
+            }
+
+            if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
+            {
+                module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanViewPackages });
             }
 
             IDictionary<string, object> queryDictionary = module.Request.Query;

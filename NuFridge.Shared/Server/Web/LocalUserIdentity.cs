@@ -3,7 +3,7 @@ using Nancy.Security;
 
 namespace NuFridge.Shared.Server.Web
 {
-    public class TemporaryAdminUserIdentity : IUserIdentity
+    public class LocalUserIdentity : IUserIdentity
     {
         public string UserName { get; set; }
 
