@@ -44,6 +44,7 @@ export class FeedCreate {
         }
 
         self.isCreatingFeed = true;
+        self.shownotification = false;
 
         var startDate = new Date();
 

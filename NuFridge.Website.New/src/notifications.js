@@ -1,6 +1,7 @@
-﻿import {bindingMode, customElement, bindable, inject} from 'aurelia-framework';
+﻿import {containerless, bindingMode, customElement, bindable, inject} from 'aurelia-framework';
 import {Enum} from 'enum';
 
+@containerless
 export class notifications{
     
     @bindable({defaultBindingMode: bindingMode.twoWay, defaultValue: false}) notificationvisible = false;

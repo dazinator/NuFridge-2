@@ -5,8 +5,10 @@ import {HttpClient} from 'aurelia-http-client';
 import moment from 'moment';
 import {authUser} from './authuser';
 import {Claims} from './claims';
+import {notificationType} from 'notifications';
+import {errorParser} from 'errorparser';
 
-@inject(HttpClient, Router, authUser)
+@inject(HttpClient, Router, authUser, errorParser)
 export class FeedView {
 
     feed = null;
@@ -26,10 +28,15 @@ export class FeedView {
     packagesTotalMatchingQuery = 0;
     packagesRecords = new Array();
 
-    constructor(http, router, authUser) {
+    shownotification = false;
+    notificationmessage = "";
+    notificationtype = notificationType.Info.value;
+
+    constructor(http, router, authUser, errorParser) {
         this.http = http;
         this.router = router;
         this.authUser = authUser;
+        this.errorParser = errorParser;
     }
 
     updateFeed() {
@@ -42,6 +49,7 @@ export class FeedView {
         }
 
         self.isUpdatingFeed = true;
+        self.shownotification = false;
 
         var startDate = new Date();
 
@@ -66,6 +74,17 @@ export class FeedView {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout(loginRoute);
+            }else {
+                self.isUpdatingFeed = false;
+                var parsedError = self.errorParser.parseResponse(message);
+                self.notificationmessage =  parsedError.Message;
+
+                if (parsedError.StackTrace) {
+                    self.notificationmessage += "<br><br>Detailed Error:<br>" + parsedError.StackTrace;
+                }
+
+                self.shownotification = true;
+                self.notificationtype = notificationType.Warning.value;
             }
         });
     }

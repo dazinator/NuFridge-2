@@ -5,6 +5,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Security;
@@ -36,10 +37,18 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
                 if (_feedManager.Exists(feed.Name))
                 {
-                    return module.Negotiate.WithStatusCode(HttpStatusCode.Conflict).WithModel($"A feed with the name '{feed.Name}' already exists.");
+                    return
+                        module.Negotiate.WithStatusCode(HttpStatusCode.Conflict)
+                            .WithModel($"A feed with the name '{feed.Name}' already exists.");
                 }
 
                 _feedManager.Create(feed);
+            }
+            catch (FeedConflictException ex)
+            {
+                _log.ErrorException(ex.Message, ex);
+
+                return module.Negotiate.WithStatusCode(HttpStatusCode.Conflict).WithModel(ex.Message);
             }
             catch (Exception ex)
             {

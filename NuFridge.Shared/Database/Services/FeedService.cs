@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Server.Configuration;
 using SimpleCrypto;
 
@@ -33,6 +34,12 @@ namespace NuFridge.Shared.Database.Services
 
         public void Insert(Feed feed)
         {
+            var feedWithName = Find(feed.Name, true);
+            if (feedWithName != null)
+            {
+                throw new FeedConflictException("A feed with the name '" + feed.Name + "' already exists.");
+            }
+
             if (!string.IsNullOrWhiteSpace(feed.ApiKey))
             {
                 ICryptoService cryptoService = new PBKDF2();
@@ -42,6 +49,7 @@ namespace NuFridge.Shared.Database.Services
             }
 
             ConfigureFeedEntity(feed, true);
+
             _feedRepository.Insert(feed);
         }
 
@@ -133,6 +141,15 @@ namespace NuFridge.Shared.Database.Services
             {
                 feed.ApiKeyHashed = existingFeed.ApiKeyHashed;
                 feed.ApiKeySalt = existingFeed.ApiKeySalt;
+            }
+
+            if (existingFeed.Name != feed.Name)
+            {
+                var feedWithName = Find(feed.Name, true);
+                if (feedWithName != null && feedWithName.Id != feed.Id)
+                {
+                    throw new FeedConflictException("A feed with the name '" + feed.Name + "' already exists.");
+                }
             }
 
             ConfigureFeedEntity(feed, true);

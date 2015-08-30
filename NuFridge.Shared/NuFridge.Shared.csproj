@@ -311,6 +311,7 @@
     <Compile Include="Database\Services\PackageService.cs" />
     <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
+    <Compile Include="Exceptions\FeedConflictException.cs" />
     <Compile Include="Exceptions\ImportPackageException.cs" />
     <Compile Include="Exceptions\InvalidPackageMetadataException.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledge.cs" />

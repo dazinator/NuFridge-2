@@ -5,6 +5,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
+using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Security;
 
@@ -39,6 +40,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                 }
 
                 _feedService.Update(feed);
+            }
+            catch (FeedConflictException ex)
+            {
+                _log.ErrorException(ex.Message, ex);
+
+                return module.Negotiate.WithStatusCode(HttpStatusCode.Conflict).WithModel(ex.Message);
             }
             catch (Exception ex)
             {
