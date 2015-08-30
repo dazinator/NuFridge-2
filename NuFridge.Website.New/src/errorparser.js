@@ -45,6 +45,13 @@ export class errorParser{
                 }
                 return self.returnMessage("The server has rejected the request. Check the server logs for more information or raise this as an issue on GitHub.", responseText);
             }
+            else if (responseMessage.statusCode === 409) {
+                if (responseMessage.responseType === "json" && responseMessage.response) {
+                    return self.returnMessage(JSON.parse(responseMessage.response));
+                } else {
+                     return self.returnMessage("There was an error processing the request. The resource already exists."); 
+                }
+            }
             else {
                 return self.returnMessage("There was an error processing the request. Check the server logs for more information.");
             }

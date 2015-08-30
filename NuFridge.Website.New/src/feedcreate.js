@@ -5,8 +5,10 @@ import {Router} from 'aurelia-router';
 import {authUser} from './authuser';
 import {Claims} from './claims';
 import {AuthService} from 'aurelia-auth';
+import {notificationType} from 'notifications';
+import {errorParser} from 'errorparser';
 
-@inject(HttpClient, Router, AuthService, authUser)
+@inject(HttpClient, Router, AuthService, authUser, errorParser)
 export class FeedCreate {
 
     feed = {
@@ -20,11 +22,16 @@ export class FeedCreate {
     isCreatingFeed = false;
     feedName = "";
 
-    constructor(http, router, auth, authUser) {
+    shownotification = false;
+    notificationmessage = "";
+    notificationtype = notificationType.Info.value;
+
+    constructor(http, router, auth, authUser, errorParser) {
         this.http = http;
         this.router = router;
         this.auth = auth;
         this.authUser = authUser;
+        this.errorParser = errorParser;
     }
 
     insertFeed() {
@@ -57,6 +64,17 @@ export class FeedCreate {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout(loginRoute);
+            } else {
+                self.isCreatingFeed = false;
+                var parsedError = self.errorParser.parseResponse(message);
+                self.notificationmessage =  parsedError.Message;
+
+                if (parsedError.StackTrace) {
+                    self.notificationmessage += "<br><br>Detailed Error:<br>" + parsedError.StackTrace;
+                }
+
+                self.shownotification = true;
+                self.notificationtype = notificationType.Warning.value;
             }
         });
     }
@@ -69,6 +87,12 @@ export class FeedCreate {
         self.feed.GroupId = groupId;
 
         self.hasRequiredClaims = self.authUser.hasClaim(Claims.CanInsertFeed, Claims.SystemAdministrator);
+
+        if (!self.hasRequiredClaims) {
+            self.notificationmessage = "You are not authorized to create feeds.";
+            self.notificationtype = notificationType.Warning.value;
+            self.shownotification = true;
+        }
     }
 
     attached() {
