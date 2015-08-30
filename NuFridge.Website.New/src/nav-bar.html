@@ -10,13 +10,13 @@
       </div>
       <span class="item" if.bind="!isAuthenticated">NuFridge</span>
       <div class="right menu">
-          <div class="item" if.bind="isAuthenticated">
+          <a class="item" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
               <i class="ui large user icon"></i>
               <div class="content">
-                  <div class="ui sub header" textcontent="${profile.Username}"></div>
+                  <div class="ui sub header" textcontent="${authUser.data.Username}"></div>
                   System Administrator
               </div>
-          </div>
+          </a>
           <a class="ui item" if.bind="isAuthenticated" click.delegate="signOut()">
               Sign out
           </a>

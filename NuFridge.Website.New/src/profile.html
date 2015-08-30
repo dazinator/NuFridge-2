@@ -1,0 +1,30 @@
+﻿<template>
+    <require from='notifications' as="notification-message"></require>
+    <h1>${authUser.Username}</h1>
+    <div class="ui segment">
+        <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
+        <div class="ui inverted dimmer ${isUpdatingUser ? 'active' : ''}">
+            <div class="ui indeterminate large text loader">Saving user</div>
+        </div>
+        <form class="ui form segment">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" value.bind="authUser.data.Username" readonly="readonly" style="opacity: 0.7;">
+            </div>
+            <div class="field">
+                <label>Display Name</label>
+                <input type="text" value.bind="authUser.data.DisplayName" readonly.bind="!canUpdateUsers">
+            </div>
+            <div class="field">
+                <label>Email Address</label>
+                <input type="text" value.bind="authUser.data.EmailAddress" readonly.bind="!canUpdateUsers">
+            </div>
+        </form>
+
+        <div class="ui buttons" if.bind="canUpdateUsers">
+            <button class="ui button">Cancel</button>
+            <div class="or"></div>
+            <button class="ui positive button" click.trigger="updateUser()">Save</button>
+        </div>
+    </div>
+</template>

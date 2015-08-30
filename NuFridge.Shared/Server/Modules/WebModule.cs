@@ -43,6 +43,7 @@ namespace NuFridge.Shared.Server.Modules
             builder.RegisterType<GetPackageAuditHistoryAction>().AsSelf();
             builder.RegisterType<CheckIfPerformedFirstTimeSetupAction>().AsSelf();
             builder.RegisterType<SetupAction>().AsSelf();
+            builder.RegisterType<UpdateAccountAction>().AsSelf();
 
             //NuGet api v2 module
             builder.RegisterType<BatchAction>().AsSelf();

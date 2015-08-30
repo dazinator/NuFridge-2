@@ -54,6 +54,7 @@ export class Feeds {
         self.canViewPage = self.authUser.hasClaim(Claims.CanViewFeeds, Claims.SystemAdministrator);
         self.canInsertFeed =  self.authUser.hasClaim(Claims.CanInsertFeed, Claims.SystemAdministrator);
         self.canUpdateFeedGroup = self.authUser.hasClaim(Claims.CanUpdateFeedGroup, Claims.SystemAdministrator);
+        self.canInsertFeedGroup = self.authUser.hasClaim(Claims.CanInsertFeedGroup, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
             this.http.get("/api/feeds").then(message => {

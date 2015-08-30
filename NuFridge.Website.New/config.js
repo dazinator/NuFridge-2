@@ -14,7 +14,7 @@ System.config({
     "npm:*": "jspm_packages/npm/*",
     "semanticui/*": "semantic/dist/*"
   },
-  buildCSS: false,
+  buildCSS: true,
 
   map: {
     "aurelia-animator-css": "github:aurelia/animator-css@0.15.0",

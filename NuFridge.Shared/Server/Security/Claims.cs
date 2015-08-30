@@ -26,5 +26,6 @@ namespace NuFridge.Shared.Server.Security
         public const string CanViewPackages = "CanViewPackages";
         public const string CanExecuteRetentionPolicy = "CanExecuteRetentionPolicy";
         public const string CanChangePackageDirectory = "CanChangePackageDirectory";
+        public const string CanUpdateUsers = "CanUpdateUsers";
     }
 }

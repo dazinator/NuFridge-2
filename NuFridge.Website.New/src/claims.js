@@ -16,5 +16,7 @@ export const Claims = new Enum({
     CanDeletePackages: {value: 'CanDeletePackages'},
     CanDownloadPackages: {value: 'CanDownloadPackages'},
     CanViewPackages: {value: 'CanViewPackages'},
-    CanUpdateFeedGroup: {value: 'CanEditFeedGroup'}
+    CanUpdateFeedGroup: {value: 'CanUpdateFeedGroup'},
+    CanInsertFeedGroup: {value: 'CanInsertFeedGroup'},
+    CanUpdateUsers: {value: 'CanUpdateUsers'}
 });

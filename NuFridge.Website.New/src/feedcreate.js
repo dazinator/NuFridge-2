@@ -4,8 +4,9 @@ import {HttpClient} from 'aurelia-http-client';
 import {Router} from 'aurelia-router';
 import {authUser} from './authuser';
 import {Claims} from './claims';
+import {AuthService} from 'aurelia-auth';
 
-@inject(HttpClient, Router, authUser)
+@inject(HttpClient, Router, AuthService, authUser)
 export class FeedCreate {
 
     feed = {
@@ -19,11 +20,11 @@ export class FeedCreate {
     isCreatingFeed = false;
     feedName = "";
 
-    constructor(http, router, authUser) {
+    constructor(http, router, auth, authUser) {
         this.http = http;
         this.router = router;
+        this.auth = auth;
         this.authUser = authUser;
-        this.Claims = Claims;
     }
 
     insertFeed() {

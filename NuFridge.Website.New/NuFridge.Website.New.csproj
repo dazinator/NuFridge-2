@@ -651,8 +651,13 @@
     <Content Include="src\claims.js" />
     <Content Include="src\date-format.js" />
     <Content Include="src\enum.js" />
+    <Content Include="src\errorparser.js" />
     <Content Include="src\feedcreate.html" />
     <Content Include="src\feedcreate.js" />
+    <Content Include="src\notifications.html" />
+    <Content Include="src\notifications.js" />
+    <Content Include="src\profile.html" />
+    <Content Include="src\profile.js" />
     <Content Include="src\setup.html" />
     <Content Include="src\setup.js" />
     <Content Include="src\feedgroup.html" />

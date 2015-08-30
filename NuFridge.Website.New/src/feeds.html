@@ -19,7 +19,9 @@
                     </div>
                 </div>
                 <div class="column">
-                    <a click.trigger="addFeedGroup($event)">Add Feed Group</a>
+                    <button class="ui small button" click.trigger="addFeedGroup($event)" if.bind="canInsertFeedGroup">
+                        Add Feed Group
+                    </button>
                 </div>
             </div>
 

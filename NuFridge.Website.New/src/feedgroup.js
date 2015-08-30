@@ -5,7 +5,6 @@ import 'semanticui/semantic.css!';
 import '/styles/custom.css!';
 
 export class Feedgroup {
-  hello = 'Welcome to Aurelia!';
 
   constructor(){
 

@@ -9,8 +9,6 @@ export class NavBar {
     _isAuthenticated = false;
   @bindable router = null;
 
-    profile = null;
-
     constructor(auth, authUser) {
         this.auth = auth;
         this.authUser = authUser;
@@ -24,6 +22,11 @@ export class NavBar {
             .catch(err => {
 
             });
+    }
+
+    viewMyProfile() {
+        var self = this;
+        self.router.navigate("profile");
     }
 
     activate() {
