@@ -1,5 +1,5 @@
 <template>
-<require from="./date-format"></require>
+    <require from="./date-format"></require>
     <div class="ui warning message" if.bind="!canViewPage">
         <div class="header">
             You are not authorized to view feeds.
@@ -205,74 +205,77 @@
             <div class="ui inverted dimmer ${isUpdatingFeed ? 'active' : ''}">
                 <div class="ui indeterminate large text loader">Saving Feed</div>
             </div>
-            <form class="ui form raised segment">
-                <div class="field">
-                    <label>Feed Name</label>
+            <form class="ui form">
+                <div class="ui segment">
+                    <div class="field">
+                        <label>Feed Name</label>
 
-                    <p>
-                        The feed name is used to generate the feed URL. Changing it will break any applications that access this
-                        feed.
-                    </p>
-                    <input type="text" value.bind="feed.Name">
-                </div>
-            </form>
-
-            <h2 class="ui header">
-                Security Settings
-                <div class="sub header">Manage your security settings for accessing this feed.</div>
-            </h2>
-
-            <form class="ui form raised segment">
-                <div class="field">
-                    <label>API Key</label>
-                    <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
-                    <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
-                        <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
-                        <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
-                            Clear
-                        </button>
+                        <p>
+                            The feed name is used to generate the feed URL. Changing it will break any applications that access this
+                            feed.
+                        </p>
+                        <input type="text" name="feedname" value.bind="feed.Name">
                     </div>
                 </div>
-            </form>
 
-            <h2 class="ui header">
-                Package Retention Policy Settings
-                <div class="sub header">Manage your package retention settings for this feed.</div>
-            </h2>
-            <form class="ui form raised segment">
-                <div class="field">
-                    <div class="inline field">
-                        <div class="ui toggle checkbox retentionPolicyEnabled">
-                            <input type="checkbox">
-                            <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
+                <h2 class="ui header">
+                    Security Settings
+                    <div class="sub header">Manage your security settings for accessing this feed.</div>
+                </h2>
+
+                <div class="ui segment">
+                    <div class="field">
+                        <label>API Key</label>
+                        <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
+                        <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
+                            <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
+                            <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
+                                Clear
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="field">
-                    <label>Maximum Amount of Release Packages to Keep</label>
 
-                    <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
-                    <input type="text">
-                </div>
-                <div class="field">
-                    <label>Maximum Amount of Pre-release Packages to Keep</label>
+                <h2 class="ui header">
+                    Package Retention Policy Settings
+                    <div class="sub header">Manage your package retention settings for this feed.</div>
+                </h2>
+                <div class="ui segment">
+                    <div class="field">
+                        <div class="inline field">
+                            <div class="ui toggle checkbox retentionPolicyEnabled">
+                                <input type="checkbox">
+                                <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Maximum Amount of Release Packages to Keep</label>
 
-                    <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+                        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+                        <input type="text">
+                    </div>
+                    <div class="field">
+                        <label>Maximum Amount of Pre-release Packages to Keep</label>
 
-                    <p>
-                        A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
-                        identifiers immediately following the patch version.
-                    </p>
-                    <input type="text">
+                        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+
+                        <p>
+                            A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
+                            identifiers immediately following the patch version.
+                        </p>
+                        <input type="text">
+                    </div>
                 </div>
             </form>
+            <div style="padding-top: 15px;">
+                <div class="ui buttons">
+                    <button class="ui positive button" click.trigger="updateFeed()">Save</button>
+                </div>
 
-            <div class="ui buttons">
-                <button class="ui positive button" click.trigger="updateFeed()">Save</button>
-            </div>
-
-            <div class="ui buttons floatRight">
-                <button class="ui red button" click.trigger="deleteFeedClick()">Delete</button>
+                <div class="ui buttons floatRight">
+                    <button class="ui red button" click.trigger="deleteFeedClick()">Delete</button>
+                </div>
             </div>
         </div>
 

@@ -35,6 +35,12 @@ export class FeedView {
     updateFeed() {
         var self = this;
 
+        $('form.form').form("validate form");
+
+        if ($('form.form').form("is valid") === false) {
+            return false;
+        }
+
         self.isUpdatingFeed = true;
 
         var startDate = new Date();
@@ -350,6 +356,26 @@ export class FeedView {
         $('.ui.dropdown.pageOrderDropdown').dropdown({
             onChange: function(value) {
                 self.packagesSortOrder = value;
+            }
+        });
+
+        $('form.form').form({
+            inline: true,
+            on: 'blur',
+            fields: {
+                feedname: {
+                    identifier: 'feedname',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a feed name'
+                        },
+                        {
+                            type: 'minLength[3]',
+                            prompt: 'The feed name must be at least 3 characters long'
+                        }
+                    ]
+                }
             }
         });
     }
