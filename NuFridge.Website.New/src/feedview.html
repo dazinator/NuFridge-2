@@ -229,7 +229,7 @@
                         <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
                         <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
                             <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
-                            <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
+                            <button class="ui gray right labeled button" show.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
                                 Clear
                             </button>
                         </div>

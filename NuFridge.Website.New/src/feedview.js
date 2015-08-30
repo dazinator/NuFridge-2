@@ -54,9 +54,12 @@ export class FeedView {
             var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
 
             if (secondsDifference < 1) {
-                setTimeout(function() { self.isUpdatingFeed = false; }, (1 - secondsDifference) * 1000);
+                setTimeout(function() {
+                    self.isUpdatingFeed = false;
+                }, (1 - secondsDifference) * 1000);
             } else {
-                self.isUpdatedFeed = false;
+                self.isUpdatingFeed = false;
+
             }
         },
         function(message) {
