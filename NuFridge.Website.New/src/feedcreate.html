@@ -8,39 +8,40 @@
             Contact your System Administrator to request this permission.
         </div>
         <div if.bind="hasRequiredClaims">
-            <h2 class="ui header">
-                General Settings
-                <div class="sub header">Manage your general feed settings.</div>
-            </h2>
-            <div class="ui inverted dimmer ${isCreatingFeed ? 'active' : ''}">
-                <div class="ui indeterminate large text loader">Creating Feed</div>
-            </div>
             <form class="ui form segment">
-                <div class="field">
-                    <label>Feed Name</label>
-                    <p>
-                        The feed name is used to generate the feed URL. Changing it will break any applications that access this
-                        feed.
-                    </p>
-                    <input type="text" value.bind="feed.Name">
+                <h2 class="ui header">
+                    General Settings
+                    <div class="sub header">Manage your general feed settings.</div>
+                </h2>
+                <div class="ui inverted dimmer ${isCreatingFeed ? 'active' : ''}">
+                    <div class="ui indeterminate large text loader">Creating Feed</div>
                 </div>
-            </form>
+                <div class="ui segment">
+                    <div class="field">
+                        <label>Feed Name</label>
+                        <p>
+                            The feed name is used to generate the feed URL. Changing it will break any applications that access this
+                            feed.
+                        </p>
+                        <input type="text" name="feedname" value.bind="feed.Name">
+                    </div>
+                </div>
 
-            <h2 class="ui header">
-                Security Settings
-                <div class="sub header">Manage your security settings for accessing this feed.</div>
-            </h2>
+                <h2 class="ui header">
+                    Security Settings
+                    <div class="sub header">Manage your security settings for accessing this feed.</div>
+                </h2>
 
-            <form class="ui form segment">
-                <div class="field">
-                    <label>API Key</label>
-                    <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
-                    <div class="ui input">
-                        <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey">
+                <div class="ui segment">
+                    <div class="field">
+                        <label>API Key</label>
+                        <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
+                        <div class="ui input">
+                            <input type="text" value="apikey" class="apiKeyTextBox" value.bind="feed.ApiKey">
+                        </div>
                     </div>
                 </div>
             </form>
-
             <div class="ui buttons">
                 <button class="ui button">Cancel</button>
                 <div class="or"></div>

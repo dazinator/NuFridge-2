@@ -29,12 +29,51 @@ export class Profile {
         self.canUpdateUsers = self.authUser.hasClaim(Claims.CanUpdateUsers, Claims.SystemAdministrator);
     }
 
-    attached() {
-
+    attached()
+    {
+        $('form.segment.form')
+            .form({
+                inline: true,
+                on: 'blur',
+                fields: {
+                    displayname: {
+                        identifier: 'displayname',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a display name'
+                            },
+                            {
+                                type: 'minLength[3]',
+                                prompt: 'Your display name must be at least 3 characters long'
+                            }
+                        ]
+                    },
+                    email: {
+                        identifier: 'email',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an email address'
+                            },
+                            {
+                                type: 'email',
+                                prompt: 'Please enter a valid email address'
+                            }
+                        ]
+                    }
+                }
+            });
     }
 
     updateUser() {
         var self = this;
+
+        $('form.segment.form').form("validate form");
+
+        if ($('form.segment.form').form("is valid") === false) {
+            return false;
+        }
 
         self.isUpdatingUser = true;
         self.shownotification = false;

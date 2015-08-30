@@ -30,6 +30,12 @@ export class FeedCreate {
     insertFeed() {
         var self = this;
 
+        $('form.segment.form').form("validate form");
+
+        if ($('form.segment.form').form("is valid") === false) {
+            return false;
+        }
+
         self.isCreatingFeed = true;
 
         var startDate = new Date();
@@ -66,6 +72,24 @@ export class FeedCreate {
     }
 
     attached() {
-
+        $('form.segment.form').form({
+            inline: true,
+            on: 'blur',
+            fields: {
+                feedname: {
+                    identifier: 'feedname',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a feed name'
+                        },
+                        {
+                            type: 'minLength[3]',
+                            prompt: 'The feed name must be at least 3 characters long'
+                        }
+                    ]
+                }
+            }
+        });
     }
 }

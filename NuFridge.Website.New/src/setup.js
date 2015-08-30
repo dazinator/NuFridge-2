@@ -35,13 +35,13 @@ export class Setup {
     setupClick() {
         var self = this;
 
-    $('form.segment.form').form("validate form");
+        $('form.segment.form').form("validate form");
 
         if ($('form.segment.form').form("is valid") === false) {
             return false;
         }
 
-    self.isCreatingUser = true;
+        self.isCreatingUser = true;
 
         this.http.post("/api/setup", self.request).then(message => {
             if (message.statusCode === 201) {
@@ -50,60 +50,60 @@ export class Setup {
                 self.isCreatingUser = false;
             }
         });
-}
+    }
 
     attached()
-{
-    $('form.segment.form')
-        .form({
-            inline: true,
-            on: 'blur',
-            fields: {
-                username: {
-                    identifier: 'username',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter a username'
-                        },
-                        {
-                            type: 'minLength[3]',
-                            prompt: 'Your username must be at least 3 characters long'
-                        }
-                    ]
-                },
-                email: {
-                    identifier: 'email',
-                    rules: [
-                        {
-                            type: 'empty',
-                            prompt: 'Please enter an email address'
-                        },
-                        {
-                            type: 'email',
-                            prompt: 'Please enter a valid email address'
-                        }
-                    ]
-                },
-                password: {
-                    identifier  : 'password',
-                    rules: [
-                        {
-                            type: 'minLength[8]',
-                            prompt: 'Your password must be at least 8 characters long'
-                        }
-                    ]
-                },
-                confirmPassword: {
-                    identifier  : 'confirmPassword',
-                    rules: [
-                      {
-                          type   : 'match[password]',
-                          prompt : 'The passwords do not match'
-                      }
-                    ]
+    {
+        $('form.segment.form')
+            .form({
+                inline: true,
+                on: 'blur',
+                fields: {
+                    username: {
+                        identifier: 'username',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter a username'
+                            },
+                            {
+                                type: 'minLength[3]',
+                                prompt: 'Your username must be at least 3 characters long'
+                            }
+                        ]
+                    },
+                    email: {
+                        identifier: 'email',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: 'Please enter an email address'
+                            },
+                            {
+                                type: 'email',
+                                prompt: 'Please enter a valid email address'
+                            }
+                        ]
+                    },
+                    password: {
+                        identifier  : 'password',
+                        rules: [
+                            {
+                                type: 'minLength[8]',
+                                prompt: 'Your password must be at least 8 characters long'
+                            }
+                        ]
+                    },
+                    confirmPassword: {
+                        identifier  : 'confirmPassword',
+                        rules: [
+                          {
+                              type   : 'match[password]',
+                              prompt : 'The passwords do not match'
+                          }
+                        ]
+                    }
                 }
-            }
-        });
-}
+            });
+    }
 }
