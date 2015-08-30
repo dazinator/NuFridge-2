@@ -15,6 +15,8 @@ export class FeedView {
     feedName = "Feed";
     isUpdatingFeed = false;
 
+    overviewPackageCount = 0;
+
     isLoadingHistory = false;
     historyRecords = new Array();
 
@@ -177,6 +179,7 @@ export class FeedView {
             this.http.get("/api/feeds/" + feedId).then(message => {
                     self.feed = JSON.parse(message.response);
                     self.refreshFeedName();
+                    self.loadFeedPackageCount();
                 },
                 function(message) {
                     if (message.statusCode === 401) {
@@ -226,6 +229,18 @@ export class FeedView {
         self.packagesCurrentPage = 1;
 
         self.loadFeedPackages();
+    }
+
+    loadFeedPackageCount() {
+        var self = this;
+
+        var url = "/Feeds/" + self.feed.Name + "/api/v2/Search()/$count";
+
+        var request = self.http.createRequest(url).asGet().withHeader("Accept", "application/text");
+
+        request.send().then(message => {
+            self.overviewPackageCount = message.response;
+        });
     }
 
     loadFeedPackages() {
