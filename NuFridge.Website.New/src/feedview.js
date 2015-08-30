@@ -60,18 +60,36 @@ export class FeedView {
             self.feed = JSON.parse(message.response);
             self.refreshFeedName();
 
-            var endDate = new Date();
+            this.http.put("/api/feeds/" + self.feed.Id + "/config", self.feedconfig).then(message => {
+                var endDate = new Date();
 
-            var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
+                var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
 
-            if (secondsDifference < 1) {
-                setTimeout(function() {
+                if (secondsDifference < 1) {
+                    setTimeout(function() {
+                        self.isUpdatingFeed = false;
+                    }, (1 - secondsDifference) * 1000);
+                } else {
                     self.isUpdatingFeed = false;
-                }, (1 - secondsDifference) * 1000);
-            } else {
+                }
+            },
+        function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout(loginRoute);
+            }else {
                 self.isUpdatingFeed = false;
+                var parsedError = self.errorParser.parseResponse(message);
+                self.notificationmessage =  parsedError.Message;
 
+                if (parsedError.StackTrace) {
+                    self.notificationmessage += "<br><br>Detailed Error:<br>" + parsedError.StackTrace;
+                }
+
+                self.shownotification = true;
+                self.notificationtype = notificationType.Warning.value;
             }
+        });
         },
         function(message) {
             if (message.statusCode === 401) {
@@ -177,11 +195,12 @@ export class FeedView {
         self.canUpdateFeed = self.authUser.hasClaim(Claims.CanUpdateFeed, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            this.http.get("/api/feeds/" + feedId).then(message => {
-                    self.feed = JSON.parse(message.response);
-                    self.refreshFeedName();
-                    self.loadFeedPackageCount();
-                },
+            self.http.get("/api/feeds/" + feedId).then(message => {
+                self.feed = JSON.parse(message.response);
+                self.refreshFeedName();
+                self.loadFeedPackageCount();
+                self.loadFeedConfig();
+            },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
@@ -189,6 +208,20 @@ export class FeedView {
                     }
                 });
         }
+    }
+
+    loadFeedConfig() {
+        var self = this;
+
+        self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
+            self.feedconfig = JSON.parse(message.response);;
+        },
+            function(message) {
+                if (message.statusCode === 401) {
+                    var loginRoute = self.auth.auth.getLoginRoute();
+                    self.auth.logout(loginRoute);
+                }
+            });
     }
 
     previousPageClick() {
@@ -402,6 +435,20 @@ export class FeedView {
                 self.packagesSortOrder = value;
             }
         });
+
+        $('.ui.checkbox.retentionPolicyEnabled').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedconfig.RetentionPolicyEnabled = true;
+            },
+            onUnchecked: function () {
+                self.feedconfig.RetentionPolicyEnabled = false;
+            }
+        });
+
+        if (self.feedconfig.RetentionPolicyEnabled === true) {
+            $('.ui.checkbox.retentionPolicyEnabled').checkbox('check');
+        }
 
         $('form.form').form({
             inline: true,

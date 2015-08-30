@@ -251,7 +251,7 @@
                 <div class="sub header">Manage your package retention settings for this feed.</div>
             </h2>
             <div class="ui segment">
-                <div class="field">
+                <div class="field" css="${!feedconfig.RetentionPolicyEnabled ? 'margin:0;' : ''}">
                     <div class="inline field">
                         <div class="ui toggle checkbox retentionPolicyEnabled">
                             <input type="checkbox">
@@ -259,13 +259,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="field">
+                <div class="field" show.bind="feedconfig.RetentionPolicyEnabled">
                     <label>Maximum Amount of Release Packages to Keep</label>
 
                     <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
-                    <input type="text">
+                    <input type="text" value.bind="feedconfig.MaxReleasePackages">
                 </div>
-                <div class="field">
+                <div class="field" show.bind="feedconfig.RetentionPolicyEnabled">
                     <label>Maximum Amount of Pre-release Packages to Keep</label>
 
                     <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
@@ -274,7 +274,7 @@
                         A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
                         identifiers immediately following the patch version.
                     </p>
-                    <input type="text">
+                    <input type="text" value.bind="feedconfig.MaxPrereleasePackages">
                 </div>
             </div>
         </form>
