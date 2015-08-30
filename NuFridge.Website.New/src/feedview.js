@@ -10,7 +10,7 @@ import {Claims} from './claims';
 export class FeedView {
 
     feed = null;
-    feedName = " ";
+    feedName = "Feed";
     isUpdatingFeed = false;
 
     isLoadingHistory = false;

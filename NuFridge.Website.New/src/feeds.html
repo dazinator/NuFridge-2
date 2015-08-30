@@ -1,56 +1,60 @@
 <template>
     <h1>Feeds</h1>
-
- 
-
     <div class="ui segment">
-
-        <div class="two column ui grid">
-            <div class="column">
-                <div class="ui fluid category search feedSearch">
-                    <div class="ui icon input" style="width: 100%;">
-                        <input class="prompt" type="text" placeholder="Search feeds...">
-                        <i class="search icon"></i>
-                    </div>
-                    <div class="results"></div>
-                </div>
+        <div class="ui warning message" if.bind="!canViewPage">
+            <div class="header">
+                You are not authorized to view feeds.
             </div>
-            <div class="column">
-                <a click.trigger="addFeedGroup($event)">Add Feed Group</a>
-            </div>
+            Contact your System Administrator to request this permission.
         </div>
-
-        <div class="ui raised segment" repeat.for="group of feedGroups">
-
-            <h2 class="ui header" style="margin-bottom: 5px;">
-               ${group.Name} Feeds
-            </h2>
-
-            <div class="ui" if.bind="group.Feeds.length === 0">
-                <p>There are no feeds in this group.</p>
-            </div>
-
-            <div class="ui horizontal list" if.bind="group.Feeds.length > 0">
-                <div class="item" repeat.for="feed of group.Feeds">
-                    <div class="content">
-                        <a class="ui blue large label" click.trigger="$parent.$parent.feedClick(feed)">
-                            ${feed.Name}
-                        </a>
+        <div if.bind="canViewPage">
+            <div class="two column ui grid">
+                <div class="column">
+                    <div class="ui fluid category search feedSearch">
+                        <div class="ui icon input" style="width: 100%;">
+                            <input class="prompt" type="text" placeholder="Search feeds...">
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results"></div>
                     </div>
+                </div>
+                <div class="column">
+                    <a click.trigger="addFeedGroup($event)">Add Feed Group</a>
                 </div>
             </div>
 
-            <h3 class="ui header" style="margin-top: 15px;">
-                Administrative Actions
-            </h3>
+            <div class="ui raised segment" repeat.for="group of feedGroups">
 
-            <button class="ui small button" click.trigger="$parent.addFeedClick(group)">
-                Add Feed
-            </button>
+                <h2 class="ui header" style="margin-bottom: 5px;">
+                    ${group.Name} Feeds
+                </h2>
 
-            <button class="ui small button" click.trigger="$parent.groupClick(group)">
-                Edit Feed Group
-            </button>
+                <div class="ui" if.bind="group.Feeds.length === 0">
+                    <p>There are no feeds in this group.</p>
+                </div>
+
+                <div class="ui horizontal list" if.bind="group.Feeds.length > 0">
+                    <div class="item" repeat.for="feed of group.Feeds">
+                        <div class="content">
+                            <a class="ui blue large label" click.trigger="$parent.$parent.feedClick(feed)">
+                                ${feed.Name}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="ui header" style="margin-top: 15px;" if.bind="$parent.canInsertFeed || $parent.canUpdateFeedGroup">
+                    Administrative Actions
+                </h3>
+
+                <button class="ui small button" click.trigger="$parent.addFeedClick(group)" if.bind="$parent.canInsertFeed">
+                    Add Feed
+                </button>
+
+                <button class="ui small button" click.trigger="$parent.groupClick(group)" if.bind="$parent.canUpdateFeedGroup">
+                    Edit Feed Group
+                </button>
+            </div>
         </div>
     </div>
 </template>
