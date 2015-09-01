@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Database.Repository;
+using NuGet;
+using IPackageRepository = NuFridge.Shared.Database.Repository.IPackageRepository;
 
 namespace NuFridge.Shared.Database.Services
 {
@@ -63,7 +64,7 @@ namespace NuFridge.Shared.Database.Services
             _packageRepository.Update(package);
         }
 
-        public InternalPackage GetPackage(int? feedId, string packageId, string version)
+        public InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
         {
             return _packageRepository.GetPackage(feedId, packageId, version);
         }
@@ -92,7 +93,7 @@ namespace NuFridge.Shared.Database.Services
         void Insert(InternalPackage package);
         int GetCount();
         void Update(InternalPackage package);
-        InternalPackage GetPackage(int? feedId, string packageId, string version);
+        InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
     }
 }

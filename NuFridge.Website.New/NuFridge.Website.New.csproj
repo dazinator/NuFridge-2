@@ -656,6 +656,8 @@
     <Content Include="src\feedcreate.js" />
     <Content Include="src\notifications.html" />
     <Content Include="src\notifications.js" />
+    <Content Include="src\package.html" />
+    <Content Include="src\package.js" />
     <Content Include="src\profile.html" />
     <Content Include="src\profile.js" />
     <Content Include="src\setup.html" />

@@ -65,7 +65,11 @@ GO
 CREATE PROCEDURE [NuFridge].[GetPackage]
 	@feedId int,
 	@packageId nvarchar(4000),
-	@version nvarchar(4000)
+	@versionMajor int,
+	@versionMinor int,
+	@versionBuild int,
+	@versionRevision int,
+	@versionSpecial nvarchar(255)
 AS
 
 with cte as
@@ -83,7 +87,7 @@ SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1
 DownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WITH(NOLOCK) WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash),
 VersionDownloadCount = (SELECT COUNT(*) FROM [NuFridge].[PackageDownload] as pd WITH(NOLOCK) WHERE pd.FeedId = ctee.FeedId AND pd.PackageIdHash = ctee.IdHash AND pd.VersionMajor = ctee.VersionMajor AND pd.VersionMinor = ctee.VersionMinor AND pd.VersionBuild = ctee.VersionBuild AND pd.VersionRevision = ctee.VersionRevision AND pd.VersionSpecial = ctee.VersionSpecial),
 *  FROM cte as ctee
-WHERE ctee.[Version] = @version
+WHERE ctee.[VersionMajor] = @versionMajor AND ctee.[VersionMinor] = @versionMinor AND ctee.[VersionBuild] = @versionBuild AND ctee.[VersionRevision] = @versionRevision AND (@versionSpecial IS NULL OR ctee.[VersionSpecial] = @versionSpecial)
 GO
 
 ALTER PROCEDURE [NuFridge].[GetAllPackages]

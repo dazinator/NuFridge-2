@@ -152,7 +152,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 EnsureStableOrdering = enableStableOrdering
             };
 
-
             ds = options.ApplyTo(ds, settings) as IQueryable<InternalPackage>;
             return ds;
         }

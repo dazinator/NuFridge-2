@@ -64,7 +64,7 @@ namespace NuFridge.Shared.Server.NuGet
         {
             lock (_sync)
             {
-                return _packageService.GetPackage(_feedId, packageId, version.ToString());
+                return _packageService.GetPackage(_feedId, packageId, version);
             }
         }
 

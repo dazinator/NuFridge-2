@@ -87,7 +87,7 @@
         </div>
 
         <div data-tab="third" class="ui bottom tab segment" if.bind="canViewPackages">
-            <div class="stackable five column ui grid">
+            <div class="stackable four column ui grid">
                 <div class="column">
                     <button class="ui basic button labeled icon" style="width: 100%" click.trigger="resetPackageListingClick()">
                         <i class="undo icon"></i>
@@ -117,11 +117,6 @@
 
                         <div class="results"></div>
                     </div>
-                </div>
-                <div class="column">
-                    <button class="ui button labeled" style="width: 100%" click.trigger="applyFilterClick()">
-                        Apply
-                    </button>
                 </div>
             </div>
 
@@ -163,7 +158,7 @@
 
             <table class="ui basic selectable table" if.bind="packagesTotalMatchingQuery > 0">
                 <tbody>
-                    <tr repeat.for="package of packagesRecords" style="cursor: pointer;">
+                    <tr repeat.for="package of packagesRecords" style="cursor: pointer;" click.trigger="$parent.viewPackageClick(package)">
                         <td><img src="${package.IconUrl}" width="48" height="48" onerror="this.onerror = null; this.src = 'img/default.png';" /></td>
                         <td><strong>${package.Title}</strong></td>
                         <td>
@@ -239,13 +234,12 @@
                     <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
                     <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
                         <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
-                        <button class="ui gray right labeled button" show.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
+                        <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
                             Clear
                         </button>
                     </div>
                 </div>
             </div>
-
             <h2 class="ui header">
                 Package Retention Policy Settings
                 <div class="sub header">Manage your package retention settings for this feed.</div>
@@ -254,18 +248,18 @@
                 <div class="field" css="${!feedconfig.RetentionPolicyEnabled ? 'margin:0;' : ''}">
                     <div class="inline field">
                         <div class="ui toggle checkbox retentionPolicyEnabled">
-                            <input type="checkbox">
+                            <input type="checkbox" checked.bind="feedconfig.RetentionPolicyEnabled">
                             <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
                         </div>
                     </div>
                 </div>
-                <div class="field" show.bind="feedconfig.RetentionPolicyEnabled">
+                <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
                     <label>Maximum Amount of Release Packages to Keep</label>
 
                     <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
-                    <input type="text" value.bind="feedconfig.MaxReleasePackages">
+                    <input type="text" value.bind="feedconfig.MaxReleasePackages" name="maxreleasepackages">
                 </div>
-                <div class="field" show.bind="feedconfig.RetentionPolicyEnabled">
+                <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
                     <label>Maximum Amount of Pre-release Packages to Keep</label>
 
                     <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
@@ -274,9 +268,13 @@
                         A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
                         identifiers immediately following the patch version.
                     </p>
-                    <input type="text" value.bind="feedconfig.MaxPrereleasePackages">
+                    <input type="text" value.bind="feedconfig.MaxPrereleasePackages" name="maxprereleasepackages">
+                </div>
+                <div class="ui warning message" css="${feedconfig.RetentionPolicyEnabled && feedconfig.MaxPrereleasePackages == 0 && feedconfig.MaxReleasePackages == 0 ? 'display:block;' : 'display:none;'}">
+                    <p>All packages will be removed when the package retention policy is enforced. Either disable the package retention policy or increase the amount of packages to keep.</p>
                 </div>
             </div>
+
         </form>
         <div style="padding-top: 15px;">
             <div class="ui buttons">

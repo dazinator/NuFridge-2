@@ -16,6 +16,7 @@ using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Security;
 using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.OData;
+using NuGet;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 {
@@ -59,7 +60,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
 
             if (!string.IsNullOrWhiteSpace(packageId) && !string.IsNullOrWhiteSpace(packageVersion))
             {
-                var package = _packageService.GetPackage(feed.Id, packageId, packageVersion);
+                var package = _packageService.GetPackage(feed.Id, packageId, new SemanticVersion(packageVersion));
 
                 if (package == null || !package.Listed)
                 {

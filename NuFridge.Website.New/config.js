@@ -17,6 +17,7 @@ System.config({
   buildCSS: true,
 
   map: {
+    "asual/jquery-address": "github:asual/jquery-address@master",
     "aurelia-animator-css": "github:aurelia/animator-css@0.15.0",
     "aurelia-auth": "github:paulvanbladel/aurelia-auth@0.9.10",
     "aurelia-binding": "github:aurelia/binding@0.8.6",

@@ -1,0 +1,46 @@
+﻿<template>
+    <require from='notifications' as="notification-message"></require>
+    <require from="./date-format"></require>
+    <div class="ui warning message" if.bind="!canViewPage">
+        <div class="header">
+            You are not authorized to view packages.
+        </div>
+        Contact your System Administrator to request this permission.
+    </div>
+    <div if.bind="canViewPage">
+        <h1 textcontent="${feed.Name}"></h1>
+        <div class="ui segment">
+            <h3>${package.Id} v${package.NormalizedVersion}</h3>
+
+            <h4>Version History</h4>
+            <table class="ui celled table">
+                <thead>
+                <tr>
+                    <th>
+                        Version
+                    </th>
+                    <th>
+                        Downloads
+                    </th>
+                    <th>
+                        Last Updated
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr repeat.for="versionOfPackage of versionsOfPackage">
+                    <td>
+                        ${versionOfPackage.Id} ${versionOfPackage.NormalizedVersion}
+                    </td>
+                    <td>
+                        ${versionOfPackage.VersionDownloadCount}
+                    </td>
+                    <td>
+                        ${versionOfPackage.LastUpdated | dateFormat}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

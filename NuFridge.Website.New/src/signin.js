@@ -35,11 +35,6 @@ export class Signin {
 
     activate() {
         var self = this;
-
-        var queryStringUsername = $.QueryString["username"];
-        if (queryStringUsername) {
-            self.username = queryStringUsername;
-        }
     }
 
     attached() {

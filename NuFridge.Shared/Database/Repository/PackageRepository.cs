@@ -3,8 +3,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Server;
+using NuGet;
 using Palmer;
+using Constants = NuFridge.Shared.Server.Constants;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -16,7 +17,7 @@ namespace NuFridge.Shared.Database.Repository
         private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId, @includePrerelease, @partialId";
         private const string GetUniquePackageCountStoredProcCommand = "NuFridge.GetUniquePackageCount @feedId";
         private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId, @includePrerelease, @packageId";
-        private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId, @packageId, @version";
+        private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId, @packageId, @versionMajor, @versionMinor, @versionBuild, @versionRevision, @versionSpecial";
 
         public PackageRepository() : base(TableName)
         {
@@ -90,9 +91,19 @@ namespace NuFridge.Shared.Database.Repository
                 });
         }
 
-        public InternalPackage GetPackage(int? feedId, string packageId, string version)
+        public InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
         {
-            return Query<InternalPackage>(GetPackageStoredProcCommand, new { feedId, packageId, version }).FirstOrDefault();
+            return Query<InternalPackage>(GetPackageStoredProcCommand,
+                new
+                {
+                    feedId,
+                    packageId,
+                    versionMajor = version.Version.Major,
+                    versionMinor = version.Version.Minor,
+                    versionBuild = version.Version.Build,
+                    versionRevision = version.Version.Revision,
+                    versionSpecial = version.SpecialVersion
+                }).FirstOrDefault();
         }
 
         public IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize()
@@ -113,7 +124,7 @@ namespace NuFridge.Shared.Database.Repository
         void Insert(InternalPackage package);
         void Update(InternalPackage package);
         void Delete(InternalPackage package);
-        InternalPackage GetPackage(int? feedId, string packageId, string version);
+        InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
     }

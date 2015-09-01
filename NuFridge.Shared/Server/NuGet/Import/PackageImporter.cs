@@ -54,8 +54,7 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
                 if (useLocalPackages)
                 {
-                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, strVersion, remotePackage,
-                        localRepository, version))
+                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, remotePackage, localRepository, version))
                         return;
                 }
 
@@ -99,10 +98,9 @@ namespace NuFridge.Shared.Server.NuGet.Import
             }
         }
 
-        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, string strVersion,
-            DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
+        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
         {
-            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, packageId, strVersion);
+            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, packageId, version);
 
             if (!string.IsNullOrWhiteSpace(localVersionOfPackage?.Hash))
             {
@@ -120,7 +118,7 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
                         localRepository.AddPackage(cachePackage);
 
-                        _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
+                        _log.Info("Completed import of package " + packageId + " v" + version + " to feed id " + feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
 
                         PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString()));
                         return true;

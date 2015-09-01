@@ -1,5 +1,5 @@
 import '/styles/timeline.css!';
-import {inject} from 'aurelia-framework';
+import {inject,ObserverLocator} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
 import moment from 'moment';
@@ -8,7 +8,7 @@ import {Claims} from './claims';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
 
-@inject(HttpClient, Router, authUser, errorParser)
+@inject(HttpClient, Router, authUser, errorParser, ObserverLocator)
 export class FeedView {
 
     feed = null;
@@ -22,6 +22,7 @@ export class FeedView {
     historyRecords = new Array();
 
     isLoadingPackages = false;
+    packagesSearchTimeout = null;
     packagesSearchText = "";
     packagesSortOrder = 0;
     packagesPageSize = 10;
@@ -35,11 +36,26 @@ export class FeedView {
     notificationmessage = "";
     notificationtype = notificationType.Info.value;
 
-    constructor(http, router, authUser, errorParser) {
+    constructor(http, router, authUser, errorParser, observerLocator) {
+        var self = this;
         this.http = http;
         this.router = router;
         this.authUser = authUser;
         this.errorParser = errorParser;
+
+        observerLocator.getObserver(this, 'packagesSearchText').subscribe(function() {
+            self.packagesSearchTextOnChange();
+        });
+    }
+
+    packagesSearchTextOnChange(newValue, oldValue) {
+        var self = this;
+        if (self.packagesSearchTimeout) {
+            window.clearTimeout(self.packagesSearchTimeout);
+        }
+        self.packagesSearchTimeout = setTimeout(function() {
+            self.applyFilterClick();
+        }, 400);
     }
 
     updateFeed() {
@@ -214,8 +230,8 @@ export class FeedView {
         var self = this;
 
         self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
-            self.feedconfig = JSON.parse(message.response);;
-        },
+                self.feedconfig = JSON.parse(message.response);
+            },
             function(message) {
                 if (message.statusCode === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
@@ -283,10 +299,27 @@ export class FeedView {
         
     }
 
+    viewPackageClick(pkg) {
+        var self = this;
+
+        var hash = "#feeds/view/" + self.feed.Id + "?tab=third&ps=" + self.packagesPageSize + "&pn=" + self.packagesCurrentPage + "&so=" + self.packagesSortOrder + "&st=" + self.packagesSearchText;
+
+        window.history.replaceState(null, null, hash);
+
+        self.router.navigate("feeds/view/" + self.feed.Id + "/package/" + pkg.Id + "/" + pkg.Version);
+    }
+
     loadFeedPackages() {
         var self = this;
 
         if (self.isLoadingPackages === true) {
+            return;
+        }
+
+        if (self.feed === null) {
+            setTimeout(function() {
+                self.loadFeedPackages();
+            }, 50);
             return;
         }
 
@@ -344,8 +377,10 @@ export class FeedView {
                         }),
                         Description: props.find("Description").text(),
                         IconUrl: props.find("IconUrl").text(),
-                        NormalizedVersion: props.find("NormalizedVersion").text()
-                    }
+                        NormalizedVersion: props.find("NormalizedVersion").text(),
+                        Version: props.find("Version").text(),
+                        Id: props.find("Id").text()
+                    };
                 });
             });
 
@@ -370,6 +405,13 @@ export class FeedView {
 
     loadFeedHistory() {
         var self = this;
+
+        if (self.feed === null) {
+            setTimeout(function() {
+                self.loadFeedHistory();
+            }, 50);
+            return;
+        }
 
         self.isLoadingHistory = true;
 
@@ -406,6 +448,30 @@ export class FeedView {
         self.feedName = self.feed.Name;
     }
 
+    getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+
+    getUrlQueryValue(index) {
+        var hash = window.location.hash;
+        var beginningOfQuery = hash.substr(index);
+        var endOfQueryIndex = beginningOfQuery.indexOf("&");
+        if (endOfQueryIndex < 0) {
+            endOfQueryIndex = beginningOfQuery.length;
+        }
+        var value = beginningOfQuery.substr(0, endOfQueryIndex);
+        return value;
+    }
+
     attached() {
         var self = this;
 
@@ -421,18 +487,70 @@ export class FeedView {
                 else if (tabPath === "fourth") {
                     self.loadFeedHistory();
                 }
+            },
+            onLoad: function(tabPath, parameterArray, historyEvent) {
+                var hash = window.location.hash;
+                if (hash.indexOf("?tab=") > 0) {
+                    hash = hash.substr(0, hash.indexOf("?tab="));
+                } 
+
+                hash += "?tab=" + tabPath;
+                window.history.replaceState(null, null, hash);
             }
         });
+
+        var tabIndex = window.location.hash.indexOf("?tab=");
+        if (tabIndex > 0) {
+            var tabName = self.getUrlQueryValue(tabIndex + 5);
+
+            if (tabName === "third") {
+                var indexOfPageSize = window.location.hash.indexOf("&ps="),
+                    indexOfSortOrder = window.location.hash.indexOf("&so="),
+                    indexOfSearchTerm = window.location.hash.indexOf("&st="),
+                    indexOfPageNumber = window.location.hash.indexOf("&pn=");
+
+                var value;
+
+                if (indexOfPageSize > 0) {
+                    value = parseInt(self.getUrlQueryValue(indexOfPageSize + 4), 10);
+                    if (!isNaN(value)) {
+                        self.packagesPageSize = value;
+                        $('.ui.dropdown.pageSizeDropdown').dropdown('set selected', value);
+                    }
+                }
+                if (indexOfSortOrder > 0) {
+                    value = parseInt(self.getUrlQueryValue(indexOfSortOrder + 4), 10);
+                    if (!isNaN(value)) {
+                        self.packagesSortOrder = value;
+                        $('.ui.dropdown.pageOrderDropdown').dropdown('set selected', value);
+                    }
+                }
+                if (indexOfSearchTerm > 0) {
+                    self.packagesSearchText = self.getUrlQueryValue(indexOfSearchTerm + 4);
+                }
+                if (indexOfPageNumber > 0) {
+                    value = parseInt(self.getUrlQueryValue(indexOfPageNumber + 4), 10);
+                    if (!isNaN(value)) {
+                        self.packagesCurrentPage = value;
+                    }
+                    
+                }
+            }
+
+            $(".feedMenu .item").tab('change tab', tabName);
+        }
 
         $('.ui.dropdown.pageSizeDropdown').dropdown({
             onChange: function(value) {
                 self.packagesPageSize = value;
+                self.applyFilterClick();
             }
         });
 
         $('.ui.dropdown.pageOrderDropdown').dropdown({
             onChange: function(value) {
                 self.packagesSortOrder = value;
+                self.applyFilterClick();
             }
         });
 
@@ -445,10 +563,6 @@ export class FeedView {
                 self.feedconfig.RetentionPolicyEnabled = false;
             }
         });
-
-        if (self.feedconfig.RetentionPolicyEnabled === true) {
-            $('.ui.checkbox.retentionPolicyEnabled').checkbox('check');
-        }
 
         $('form.form').form({
             inline: true,
@@ -464,6 +578,24 @@ export class FeedView {
                         {
                             type: 'minLength[3]',
                             prompt: 'The feed name must be at least 3 characters long'
+                        }
+                    ]
+                },
+                maxreleasepackages: {
+                    identifier: 'maxreleasepackages',
+                    rules: [
+                        {
+                            type: 'integer[0..2147483647]',
+                            prompt: 'Please enter an integer value'
+                        }
+                    ]
+                },
+                maxprereleasepackages: {
+                    identifier: 'maxprereleasepackages',
+                    rules: [
+                        {
+                            type: 'integer[0..2147483647]',
+                            prompt: 'Please enter an integer value'
                         }
                     ]
                 }
