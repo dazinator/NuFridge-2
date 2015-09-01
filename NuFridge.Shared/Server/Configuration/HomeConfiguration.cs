@@ -26,7 +26,11 @@ namespace NuFridge.Shared.Server.Configuration
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
             WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
             DatabaseReadOnly = bool.Parse(ConfigurationManager.AppSettings["DatabaseReadOnly"]);
-            WebsiteDirectory = Path.Combine(InstallDirectory, "Website");
+
+            var entryLocation = Assembly.GetEntryAssembly().Location;
+            var currentFolder = Directory.GetParent(entryLocation).FullName;
+
+            WebsiteDirectory = Path.Combine(currentFolder, "Website");
 
 #if DEBUG
             var entryAssemblyFile = Assembly.GetEntryAssembly().Location;
