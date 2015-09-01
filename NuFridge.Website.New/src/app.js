@@ -4,8 +4,6 @@ import AppRouterConfig from 'app.router.config';
 import HttpClientConfig from 'aurelia-auth/app.httpClient.config';
 import 'jquery';
 import 'semanticui/semantic';
-import 'semanticui/semantic.css!';
-import "/styles/custom.css!";
 
 @inject(Router,HttpClientConfig,AppRouterConfig)
 export class App {

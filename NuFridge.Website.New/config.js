@@ -14,8 +14,7 @@ System.config({
     "npm:*": "jspm_packages/npm/*",
     "semanticui/*": "semantic/dist/*"
   },
-  buildCSS: true,
-
+  buildCSS: false,
   map: {
     "asual/jquery-address": "github:asual/jquery-address@master",
     "aurelia-animator-css": "github:aurelia/animator-css@0.15.0",
