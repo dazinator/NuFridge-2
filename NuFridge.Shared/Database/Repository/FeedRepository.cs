@@ -27,6 +27,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public override void Delete(Feed feed)
         {
+            ThrowIfReadOnly();
+
             var cacheKey = GetCacheKey(feed.Name);
 
             MemoryCache.Default.Remove(cacheKey);
@@ -36,6 +38,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(Feed feed)
         {
+            ThrowIfReadOnly();
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)
@@ -83,6 +87,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(Feed feed)
         {
+            ThrowIfReadOnly();
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)

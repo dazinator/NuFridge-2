@@ -6,7 +6,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Dapper;
+using Microsoft.AspNet.SignalR;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Server.Configuration;
 
 namespace NuFridge.Shared.Database.Repository
 {
@@ -14,15 +16,27 @@ namespace NuFridge.Shared.Database.Repository
     {
         private readonly string _tableName;
         private readonly string _connectionString;
+        protected bool ReadOnly { get; set; }
 
         protected BaseRepository(string tableName)
         {
             _tableName = tableName;
             _connectionString = new SqlConnectionStringBuilder(DatabaseContext.ConnectionString.Value) { AsynchronousProcessing = true }.ToString();
+            ReadOnly = GlobalHost.DependencyResolver.Resolve<IHomeConfiguration>().DatabaseReadOnly;
+        }
+
+        protected void ThrowIfReadOnly()
+        {
+            if (ReadOnly)
+            {
+                throw new ReadOnlyException();
+            }
         }
 
         public virtual void Delete(T entity)
         {
+            ThrowIfReadOnly();
+
             using (var connection = GetConnection())
             {
                 connection.Delete(entity);
@@ -43,17 +57,19 @@ namespace NuFridge.Shared.Database.Repository
 
             stringBuilder.Append(" " + conditions);
             if (Debugger.IsAttached)
-                Trace.WriteLine($"RecordCount<{(object) type}>: {(object) stringBuilder}");
+                Trace.WriteLine($"RecordCount<{(object)type}>: {(object)stringBuilder}");
             using (var connection = GetConnection())
             {
                 return
-                    connection.Query<int>(stringBuilder.ToString(), (object) null, (IDbTransaction) null, true,
+                    connection.Query<int>(stringBuilder.ToString(), (object)null, (IDbTransaction)null, true,
                         new int?(), new CommandType?()).Single<int>();
             }
         }
 
         protected virtual void Delete(IEnumerable<int> ids, string idColumnName)
         {
+            ThrowIfReadOnly();
+
             string listOfIdsJoined = "(" + String.Join(",", ids.ToArray()) + ")";
 
             using (var connection = GetConnection())

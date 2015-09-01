@@ -25,15 +25,12 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
         private readonly IInternalPackageRepositoryFactory _packageRepositoryFactory;
         private readonly ILocalFileSystem _fileSystem;
         private readonly ILog _log = LogProvider.For<UploadPackageAction>();
-        private readonly IWebPortalConfiguration _portalConfiguration;
 
-
-        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store, IWebPortalConfiguration portalConfiguration, IFeedService feedService)
+        public UploadPackageAction(IInternalPackageRepositoryFactory packageRepositoryFactory, ILocalFileSystem fileSystem, IStore store, IFeedService feedService)
             : base(store)
         {
             _packageRepositoryFactory = packageRepositoryFactory;
             _fileSystem = fileSystem;
-            _portalConfiguration = portalConfiguration;
             _feedService = feedService;
         }
 
@@ -167,14 +164,17 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
                 catch (PackageConflictException ex)
                 {
+                    _log.WarnException(ex.Message, ex);
                     return new TextResponse(HttpStatusCode.Conflict, ex.Message);
                 }
                 catch (InvalidPackageMetadataException ex)
                 {
+                    _log.WarnException(ex.Message, ex);
                     return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
                 catch (Exception ex)
                 {
+                    _log.WarnException(ex.Message, ex);
                     return new TextResponse(HttpStatusCode.InternalServerError, ex.Message);
                 }
             }

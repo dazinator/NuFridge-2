@@ -40,6 +40,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Delete(IEnumerable<int> ids)
         {
+            ThrowIfReadOnly();
+
             Delete(ids, "Id");
         }
 
@@ -65,6 +67,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(InternalPackage package)
         {
+            ThrowIfReadOnly();
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)
@@ -79,6 +83,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(InternalPackage package)
         {
+            ThrowIfReadOnly();
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)

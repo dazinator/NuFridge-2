@@ -19,6 +19,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(User user)
         {
+            ThrowIfReadOnly();
+
             user.LastUpdated = DateTime.UtcNow;
 
             Retry.On<SqlException>(
@@ -51,6 +53,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(User user)
         {
+            ThrowIfReadOnly();
+
             user.LastUpdated = DateTime.UtcNow;
 
             Retry.On<SqlException>(

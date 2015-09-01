@@ -294,6 +294,7 @@
     <Compile Include="Database\Model\Statistic.cs" />
     <Compile Include="Database\Model\User.cs" />
     <Compile Include="Database\Model\UserRole.cs" />
+    <Compile Include="Database\ReadOnlyException.cs" />
     <Compile Include="Database\Repository\BaseRepository.cs" />
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
     <Compile Include="Database\Repository\FeedGroupRepository.cs" />

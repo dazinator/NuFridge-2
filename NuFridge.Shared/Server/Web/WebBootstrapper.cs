@@ -75,7 +75,7 @@ namespace NuFridge.Shared.Server.Web
             {
                 var stopwatch = (Stopwatch)ctx.Items["stopwatch"];
                 stopwatch.Stop();
-                _log.Trace(ctx.Request.Method + "   " + ctx.Request.Url + "   " + stopwatch.ElapsedMilliseconds + "ms");
+                _log.Trace(ctx.Request.Method + "   " + ctx.Request.Url + "   " + ctx.Response.StatusCode + "   " + stopwatch.ElapsedMilliseconds + "ms");
             }
         }
 

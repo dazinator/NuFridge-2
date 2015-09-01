@@ -7,18 +7,15 @@ namespace NuFridge.Shared.Server.Configuration
 {
     public class HomeConfiguration : IHomeConfiguration
     {
-        private readonly IApplicationInstanceSelector _instance;
-
         public string InstallDirectory { get; set; }
         public string WebsiteDirectory { get; set; }
         public string ConnectionString { get; set; }
         public string ListenPrefixes { get; set; }
+        public bool DatabaseReadOnly { get; set; }
         public string WindowsDebuggingToolsPath { get; set; }
 
         public HomeConfiguration(IApplicationInstanceSelector instance)
         {
-            _instance = instance;
-
             if (instance.Current == null)
             {
                 instance.LoadInstance();
@@ -28,7 +25,7 @@ namespace NuFridge.Shared.Server.Configuration
             ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
             ListenPrefixes = ConfigurationManager.AppSettings["WebsiteUrl"];
             WindowsDebuggingToolsPath = ConfigurationManager.AppSettings["WindowsDebuggingToolsPath"];
-
+            DatabaseReadOnly = bool.Parse(ConfigurationManager.AppSettings["DatabaseReadOnly"]);
             WebsiteDirectory = Path.Combine(InstallDirectory, "Website");
 
 #if DEBUG
@@ -45,7 +42,6 @@ namespace NuFridge.Shared.Server.Configuration
             {
                 throw new DirectoryNotFoundException("Failed to find the website folder at " + WebsiteDirectory);
             }
-
         }
     }
 }

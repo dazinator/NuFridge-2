@@ -7,5 +7,6 @@
         string ListenPrefixes { get; }
         string WindowsDebuggingToolsPath { get;}
         string ConnectionString { get; }
+        bool DatabaseReadOnly { get; }
     }
 }

@@ -18,6 +18,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(PackageDownload packageDownload)
         {
+            ThrowIfReadOnly();
+
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)
