@@ -1,4 +1,3 @@
-import '/styles/timeline.css!';
 import {inject,ObserverLocator} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';

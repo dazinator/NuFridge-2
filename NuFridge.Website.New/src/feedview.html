@@ -1,6 +1,7 @@
 <template>
     <require from='notifications' as="notification-message"></require>
-    <require from="./date-format"></require>
+<require from="./date-format"></require>
+    <require from="/styles/timeline.css!"></require>
     <div class="ui warning message" if.bind="!canViewPage">
         <div class="header">
             You are not authorized to view feeds.

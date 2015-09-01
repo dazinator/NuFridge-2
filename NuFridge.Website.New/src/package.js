@@ -1,5 +1,4 @@
-﻿import '/styles/timeline.css!';
-import {inject} from 'aurelia-framework';
+﻿import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
 import moment from 'moment';
