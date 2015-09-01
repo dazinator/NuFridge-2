@@ -21,6 +21,7 @@ export class Package {
     feed = null;
     pkg = null;
     versionsOfPackage = new Array();
+    isLoadingPackage = true;
 
     activate(params, routeConfig) {
         var self = this;
@@ -67,6 +68,7 @@ export class Package {
                         }
 
                         self.package = pkg;
+                        self.isLoadingPackage = false;
                     });
 
                     self.http.get("/feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
@@ -87,6 +89,8 @@ export class Package {
         if (self.package.NormalizedVersion === pkg.NormalizedVersion) {
             return;
         }
+
+        self.isLoadingPackage = true;
 
         self.router.navigate("feeds/view/" + self.feed.Id + "/package/" + pkg.Id + "/" + pkg.Version);
     }

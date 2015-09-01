@@ -10,7 +10,12 @@
     <div if.bind="canViewPage">
         <h1 textcontent="${feed.Name}"></h1>
         <div class="ui segment">
-            <h3>${package.Id} v${package.NormalizedVersion}</h3>
+            <h3>${package.Id} ${package.NormalizedVersion}</h3>
+
+            <div class="ui inverted dimmer ${isLoadingPackage ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading package</div>
+            </div>
+
             <p>${package.Description}</p>
 
             <p>To install this package you can run the following command in the Package Manager Console</p>
