@@ -511,7 +511,6 @@
     <Compile Include="Server\Web\UserDatabase.cs" />
     <Compile Include="Server\Web\WebBootstrapper.cs" />
     <Compile Include="Server\Web\RouteResolvers\LazyRouteResolver.cs" />
-    <Compile Include="Server\Web\WebPackage.cs" />
     <Compile Include="Server\Web\WebServerInitializer.cs" />
   </ItemGroup>
   <ItemGroup>

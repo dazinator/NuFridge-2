@@ -11,9 +11,51 @@
         <h1 textcontent="${feed.Name}"></h1>
         <div class="ui segment">
             <h3>${package.Id} v${package.NormalizedVersion}</h3>
+            <p>${package.Description}</p>
+
+            <p>To install this package you can run the following command in the Package Manager Console</p>
+
+            <div class="ui message">
+                ${package.InstallCommand}
+            </div>
+            <p>Or <a target="_blank" href.bind="package.DownloadUrl"><strong>Download </strong>${package.Id}-${package.NormalizedVersion}.nupkg</a></p>
+
+            <h4 if.bind="package.ReleaseNotes">Release Notes</h4>
+            <p if.bind="package.ReleaseNotes">${package.ReleaseNotes}</p>
+
+            <h4 if.bind="package.Owners.length > 0">Owners</h4>
+            <div class="ui labels" if.bind="package.Owners.length > 0">
+                <span class="ui label" repeat.for="owner of package.Owners">
+                    ${owner}
+                </span>
+            </div>
+
+            <h4 if.bind="package.Authors.length > 0">Authors</h4>
+            <div class="ui labels" if.bind="package.Authors.length > 0">
+                <span class="ui label" repeat.for="author of package.Authors">
+                    ${author}
+                </span>
+            </div>
+
+            <h4 if.bind="package.Copyright">Copyright</h4>
+            <p if.bind="package.Copyright">${package.Copyright}</p>
+
+            <h4 if.bind="package.Tags.length > 0">Tags</h4>
+            <div if.bind="package.Tags.length > 0" class="ui labels">
+                <span class="ui label" repeat.for="tag of package.Tags">
+                    ${tag}
+                </span>
+            </div>
+
+            <h4 if.bind="package.Dependencies.length > 0">Dependencies</h4>
+            <div if.bind="package.Dependencies.length > 0" class="ui labels">
+                <span class="ui label" repeat.for="depend of package.Dependencies">
+                    ${depend.Id} <div class="detail">${depend.Version} </div>
+                </span>
+            </div>
 
             <h4>Version History</h4>
-            <table class="ui celled table">
+            <table class="ui celled selectable table">
                 <thead>
                 <tr>
                     <th>
@@ -28,7 +70,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr repeat.for="versionOfPackage of versionsOfPackage">
+                <tr repeat.for="versionOfPackage of versionsOfPackage" click.trigger="$parent.packageHistoryVersionClick(versionOfPackage)" class="${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? 'active' : ''}" css="${versionOfPackage.IsLatestVersion ? 'font-weight:bold;' : ''} ${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? '' : 'cursor:pointer;'}">
                     <td>
                         ${versionOfPackage.Id} ${versionOfPackage.NormalizedVersion}
                     </td>

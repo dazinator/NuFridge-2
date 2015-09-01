@@ -16,7 +16,7 @@ namespace NuFridge.Shared.Server.Web.OData
 
         public ODataPackage(IInternalPackage package)
         {
-
+            Copyright = package.Copyright;
             Version = package.Version;
             NormalizedVersion = package.GetSemanticVersion().ToNormalizedString();
             Authors = package.Authors;

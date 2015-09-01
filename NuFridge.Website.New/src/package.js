@@ -37,10 +37,39 @@ export class Package {
                     self.feed = JSON.parse(message.response);
 
                     self.http.get("/feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
-                        self.package = JSON.parse(message.response).d;
+                        var pkg = JSON.parse(message.response).d;
+                        pkg.Tags = pkg.Tags.replace(/^\s+|\s+$/g, '').split(" ");
+                        pkg.Owners = pkg.Owners.replace(/^\s+|\s+$/g, '').split(",");
+                        pkg.Authors = pkg.Authors.replace(/^\s+|\s+$/g, '').split(",");
+                        pkg.DownloadUrl = "/feeds/" + self.feed.Name + "/packages/" + pkg.Id + "/" + pkg.NormalizedVersion;
+                        pkg.Dependencies = pkg.Dependencies.split("|").map(function(value) {
+                            var versionIndex = value.indexOf(":");
+                            var version = value.substr(versionIndex + 1, value.length - versionIndex - 2);
+                            var id = value.substr(0, versionIndex);
+                            return {
+                                Id: id,
+                                Version: version
+                            }
+                        });
+                        pkg.InstallCommand = "Install-Package " + pkg.Id;
+
+                        if (pkg.IsLatestVersion) {
+                            //Do nothing
+                        }
+                        else if (pkg.IsAbsoluteLatestVersion && !pkg.IsLatestVersion) {
+                            pkg.InstallCommand += " -Pre";
+                        }
+                        else {
+                            pkg.InstallCommand += " -Version " + pkg.NormalizedVersion;
+                            if (pkg.IsPrerelease) {
+                                pkg.InstallCommand += " -Pre";
+                            }
+                        }
+
+                        self.package = pkg;
                     });
 
-                    self.http.get("/feeds/" + self.feed.Name + "/api/v2/Search()?$filter=Id eq '" + packageId + "'").then(message => {
+                    self.http.get("/feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
                         self.versionsOfPackage = JSON.parse(message.response).d.results;
                     });
                 },
@@ -51,6 +80,15 @@ export class Package {
                     }
                 });
         }
+    }
+
+    packageHistoryVersionClick(pkg) {
+        var self = this;
+        if (self.package.NormalizedVersion === pkg.NormalizedVersion) {
+            return;
+        }
+
+        self.router.navigate("feeds/view/" + self.feed.Id + "/package/" + pkg.Id + "/" + pkg.Version);
     }
 
     attached() {
