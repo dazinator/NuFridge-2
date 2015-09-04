@@ -4,6 +4,8 @@
 
 	}
 
+    data = null;
+
     hasClaim() {
         var self = this;
         if (self.data && self.data.Claims) {

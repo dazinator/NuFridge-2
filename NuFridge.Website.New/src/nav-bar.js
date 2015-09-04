@@ -29,25 +29,10 @@ export class NavBar {
         self.router.navigate("profile");
     }
 
-    activate() {
 
-    }
 
     attached() {
         $("#settingsMenuItem").dropdown();
-        var self = this;
-
-        if (self.isAuthenticated) {
-            self.auth.getMe().then(function(profile) {
-                self.authUser.set(profile);
-            }, 
-            function(message) {
-                if (message.statusCode === 401) {
-                    var loginRoute = self.auth.auth.getLoginRoute();
-                    self.auth.logout("#" + loginRoute);
-                }
-            });
-        }
     }
 
     get isAuthenticated() {
