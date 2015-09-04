@@ -15,10 +15,10 @@ System.config({
     "semanticui/*": "semantic/dist/*"
   },
   buildCSS: false,
+
   map: {
     "asual/jquery-address": "github:asual/jquery-address@master",
     "aurelia-animator-css": "github:aurelia/animator-css@0.15.0",
-    "aurelia-auth": "github:paulvanbladel/aurelia-auth@0.9.10",
     "aurelia-binding": "github:aurelia/binding@0.8.6",
     "aurelia-bootstrapper": "github:aurelia/bootstrapper@0.16.0",
     "aurelia-dependency-injection": "github:aurelia/dependency-injection@0.9.2",
@@ -52,6 +52,8 @@ System.config({
     "font-awesome": "npm:font-awesome@4.4.0",
     "jquery": "github:components/jquery@2.1.4",
     "moment": "github:moment/moment@2.10.6",
+    "ms-signalr-client": "npm:ms-signalr-client@2.2.2",
+    "paulvanbladel/aurelia-auth": "github:paulvanbladel/aurelia-auth@0.9.10",
     "github:aurelia/animator-css@0.15.0": {
       "aurelia-metadata": "github:aurelia/metadata@0.7.3",
       "aurelia-templating": "github:aurelia/templating@0.14.4"
@@ -272,6 +274,12 @@ System.config({
     },
     "npm:inherits@2.0.1": {
       "util": "github:jspm/nodelibs-util@0.1.0"
+    },
+    "npm:jquery@2.1.4": {
+      "process": "github:jspm/nodelibs-process@0.1.1"
+    },
+    "npm:ms-signalr-client@2.2.2": {
+      "jquery": "npm:jquery@2.1.4"
     },
     "npm:os-browserify@0.1.2": {
       "os": "github:jspm/nodelibs-os@0.1.0"

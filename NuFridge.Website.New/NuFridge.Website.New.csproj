@@ -654,6 +654,8 @@
     <Content Include="src\errorparser.js" />
     <Content Include="src\feedcreate.html" />
     <Content Include="src\feedcreate.js" />
+    <Content Include="src\importpackages.html" />
+    <Content Include="src\importpackages.js" />
     <Content Include="src\notifications.html" />
     <Content Include="src\notifications.js" />
     <Content Include="src\package.html" />

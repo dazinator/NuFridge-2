@@ -18,8 +18,6 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(PackageDownload packageDownload)
         {
-            ThrowIfReadOnly();
-
             Retry.On<SqlException>(
                 handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
                 .For(5)
@@ -36,7 +34,7 @@ namespace NuFridge.Shared.Database.Repository
         {
             return
                 Query<PackageDownload>(
-                    $"SELECT TOP(10) * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
+                    $"SELECT TOP(50) * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY [DownloadedAt] DESC",
                     new {feedId});
         }
     }

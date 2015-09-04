@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Autofac;
 using NuFridge.Shared.Server.Scheduler;
-using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
 using NuFridge.Shared.Server.Scheduler.Servers;
 using Module = Autofac.Module;
 

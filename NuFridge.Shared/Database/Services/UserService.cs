@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
@@ -138,6 +139,20 @@ namespace NuFridge.Shared.Database.Services
             };
         }
 
+        public int GetLoggedInUserId(INancyModule module)
+        {
+            if (!string.IsNullOrWhiteSpace(module.Context.CurrentUser?.UserName))
+            {
+                var user = Find(module.Context.CurrentUser.UserName, false);
+                if (user != null)
+                {
+                    return user.Id;
+                }
+            }
+
+            return 0;
+        }
+
         public void Insert(User user)
         {
             if (!string.IsNullOrWhiteSpace(user.Password))
@@ -158,5 +173,6 @@ namespace NuFridge.Shared.Database.Services
         void Insert(User user);
         void Update(User user);
         IUserIdentity ValidateSignInRequest(SignInRequest signInRequest);
+        int GetLoggedInUserId(INancyModule module);
     }
 }

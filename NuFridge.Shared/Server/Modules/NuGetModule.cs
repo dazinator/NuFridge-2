@@ -2,6 +2,7 @@
 using Autofac;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
+using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.Configuration;
 using NuFridge.Shared.Server.NuGet;
@@ -16,6 +17,11 @@ namespace NuFridge.Shared.Server.Modules
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+
+            builder.RegisterType<PackageImportJobItemService>().As<IPackageImportJobItemService>();
+            builder.RegisterType<JobRepository>().As<IJobRepository>();
+            builder.RegisterType<JobService>().As<IJobService>();
+            builder.RegisterType<PackageImportJobItemRepository>().As<IPackageImportJobItemRepository>();
 
             builder.RegisterType<PackageIndex>().AsSelf().InstancePerDependency();
             builder.RegisterType<Feed>().As<IFeed>();
@@ -44,6 +50,8 @@ namespace NuFridge.Shared.Server.Modules
             builder.Register(c => new SymbolTools(c.Resolve<IHomeConfiguration>().WindowsDebuggingToolsPath)).AsSelf();
 
             builder.RegisterType<InternalPackageRepositoryFactory>().As<IInternalPackageRepositoryFactory>().SingleInstance();
+
+            builder.RegisterType<PackageImportJobRepository>().As<IJobTypeRepository<IJobType>>();
 
             builder.Register<Func<int, IInternalPackageRepositoryFactory>>(
                 c =>

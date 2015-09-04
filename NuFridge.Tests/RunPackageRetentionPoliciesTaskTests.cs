@@ -9,7 +9,7 @@ using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Server.Modules;
 using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
 using NuFridge.Shared.Server.Storage;
 using NuGet;
 using NUnit.Framework;

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hangfire;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
@@ -10,7 +8,7 @@ using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("filesystem")]
     public class ReindexPackagesJob : JobBase

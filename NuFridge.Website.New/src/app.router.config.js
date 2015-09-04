@@ -1,4 +1,4 @@
-import {AuthorizeStep} from 'aurelia-auth';
+import {AuthorizeStep} from 'paulvanbladel/aurelia-auth';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
@@ -19,6 +19,8 @@ configure() {
             { route: 'feeds', title: 'Feeds', moduleId: 'feeds', nav: true, auth: true },
             { route: 'feeds/view/:id', title: 'View Feed', moduleId: 'feedview', nav: false, auth: true },
             { route: 'feeds/view/:id/package/:packageid/:packageversion', title: 'View Package', moduleId: 'package', nav: false, auth: true },
+            { route: 'feeds/view/:id/import/:jobid', title: 'Importing Packages', moduleId: 'importpackages', nav: false, auth: true },
+            { route: 'feeds/view/:id/import', title: 'Import Packages', moduleId: 'importpackages', nav: false, auth: true },
             { route: 'profile', title: 'Profile', moduleId: 'profile', nav: false, auth: true },
             { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', auth: true },
             { route: 'feedgroup/create', title: 'Create Feed Group', moduleId: 'feedgroup', auth: true },

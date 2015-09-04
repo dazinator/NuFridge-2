@@ -1,7 +1,7 @@
 import {bindable } from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
-import {AuthService} from 'aurelia-auth';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {authUser} from './authuser';
 
 @inject(AuthService, authUser)
@@ -44,7 +44,7 @@ export class NavBar {
             function(message) {
                 if (message.statusCode === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
-                    self.auth.logout(loginRoute);
+                    self.auth.logout("#" + loginRoute);
                 }
             });
         }

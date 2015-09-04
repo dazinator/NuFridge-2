@@ -289,7 +289,10 @@
     <Compile Include="Database\Model\Interfaces\IFeedConfiguration.cs" />
     <Compile Include="Database\Model\Interfaces\IInternalPackage.cs" />
     <Compile Include="Database\Model\InternalPackage.cs" />
+    <Compile Include="Database\Model\Job.cs" />
     <Compile Include="Database\Model\PackageDownload.cs" />
+    <Compile Include="Database\Model\PackageImportJob.cs" />
+    <Compile Include="Database\Model\PackageImportJobItem.cs" />
     <Compile Include="Database\Model\PackageUpload.cs" />
     <Compile Include="Database\Model\Statistic.cs" />
     <Compile Include="Database\Model\User.cs" />
@@ -300,7 +303,11 @@
     <Compile Include="Database\Repository\FeedGroupRepository.cs" />
     <Compile Include="Database\Repository\FeedRepository.cs" />
     <Compile Include="Database\Repository\FrameworkRepository.cs" />
+    <Compile Include="Database\Repository\IJobTypeRepository.cs" />
+    <Compile Include="Database\Repository\JobRepository.cs" />
     <Compile Include="Database\Repository\PackageDownloadRepository.cs" />
+    <Compile Include="Database\Repository\PackageImportJobItemRepository.cs" />
+    <Compile Include="Database\Repository\PackageImportJobRepository.cs" />
     <Compile Include="Database\Repository\PackageRepository.cs" />
     <Compile Include="Database\Repository\StatisticRepository.cs" />
     <Compile Include="Database\Repository\UserRepository.cs" />
@@ -308,7 +315,9 @@
     <Compile Include="Database\Services\FeedGroupService.cs" />
     <Compile Include="Database\Services\FeedService.cs" />
     <Compile Include="Database\Services\FrameworkService.cs" />
+    <Compile Include="Database\Services\JobService.cs" />
     <Compile Include="Database\Services\PackageDownloadService.cs" />
+    <Compile Include="Database\Services\PackageImportJobItemService.cs" />
     <Compile Include="Database\Services\PackageService.cs" />
     <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
@@ -320,6 +329,7 @@
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
     <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
     <Compile Include="Exceptions\PackageConflictException.cs" />
+    <Compile Include="Exceptions\PackageNotFoundException.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -347,24 +357,25 @@
     <Compile Include="Server\NuGet\Symbols\SymbolSource.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolSourceMapper.cs" />
     <Compile Include="Server\NuGet\Symbols\SymbolTools.cs" />
-    <Compile Include="Server\Scheduler\AutofacContainerPerJobFilterAttribute.cs" />
-    <Compile Include="Server\Scheduler\AutofacPerLifetimeScopeJobActivator.cs" />
-    <Compile Include="Server\Scheduler\HangfirePerLifetimeScopeConfigurer.cs" />
-    <Compile Include="Server\Scheduler\JobContext.cs" />
+    <Compile Include="Server\Scheduler\Configuration\AutofacContainerPerJobFilterAttribute.cs" />
+    <Compile Include="Server\Scheduler\Configuration\AutofacPerLifetimeScopeJobActivator.cs" />
+    <Compile Include="Server\Scheduler\Configuration\HangfirePerLifetimeScopeConfigurer.cs" />
+    <Compile Include="Server\Scheduler\Jobs\JobContext.cs" />
+    <Compile Include="Server\Scheduler\Jobs\JobExecution.cs" />
     <Compile Include="Server\Scheduler\JobServerManager.cs" />
-    <Compile Include="Server\Scheduler\Jobs\CleanupExpiredImportPackagesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\CleanupTempFilesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\ReindexPackagesJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\CleanupExpiredImportPackagesJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\CleanupTempFilesJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\ImportPackagesForFeedJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\JobBase.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\ReindexPackagesForFeedJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\ReindexPackagesJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\RunPackageRetentionPoliciesJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedDownloadCountStatisticJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedPackageCountStatisticJob.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerBackground.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerDownload.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerFileSystem.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerInstance.cs" />
-    <Compile Include="Server\Scheduler\Jobs\ImportPackagesForFeedJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\JobBase.cs" />
-    <Compile Include="Server\Scheduler\Jobs\ReindexPackagesForFeedJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\RunPackageRetentionPoliciesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\UpdateFeedDownloadCountStatisticJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\UpdateFeedPackageCountStatisticJob.cs" />
     <Compile Include="Server\Modules\SchedulerModule.cs" />
     <Compile Include="Server\NuGet\FastZipPackage\FastZipPackage.cs" />
     <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageBase.cs" />
@@ -384,6 +395,7 @@
     <Compile Include="Server\Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetAccountAction.cs" />
+    <Compile Include="Server\Web\Actions\NuFridgeApi\GetBackgroundJobsAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetDashboardAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedConfigurationAction.cs" />

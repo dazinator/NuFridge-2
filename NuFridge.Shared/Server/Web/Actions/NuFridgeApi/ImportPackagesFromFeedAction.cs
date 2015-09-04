@@ -4,18 +4,21 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
+using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Server.NuGet.Import;
-using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
 using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 {
     class ImportPackagesFromFeedAction : IAction 
     {
+        private readonly IUserService _userService;
         private readonly ImportPackagesForFeedJob _importPackagesForFeedJob;
 
-        public ImportPackagesFromFeedAction(ImportPackagesForFeedJob importJob)
+        public ImportPackagesFromFeedAction(ImportPackagesForFeedJob importJob, IUserService userService)
         {
+            _userService = userService;
             _importPackagesForFeedJob = importJob;
         }
 
@@ -27,6 +30,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             PackageImportOptions options = module.Bind<PackageImportOptions>();
 
+            var userId = _userService.GetLoggedInUserId(module);
 
             string errorMessage;
             if (!options.IsValid(out errorMessage))
@@ -34,7 +38,7 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                 return new TextResponse(HttpStatusCode.BadRequest, errorMessage);
             }
 
-            string jobId = BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Execute(JobCancellationToken.Null, feedId, options));
+            string jobId = BackgroundJob.Enqueue(() => _importPackagesForFeedJob.Start(JobCancellationToken.Null, feedId, userId, options));
 
             return new TextResponse(HttpStatusCode.OK, jobId);
         }

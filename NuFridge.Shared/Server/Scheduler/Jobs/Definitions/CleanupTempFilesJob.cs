@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Hangfire;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.FileSystem;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("filesystem")]
     public class CleanupTempFilesJob : JobBase

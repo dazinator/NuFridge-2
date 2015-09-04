@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
-import {AuthService} from 'aurelia-auth';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {authUser} from './authuser';
 import {Claims} from './claims';
 

@@ -100,8 +100,8 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
             if (progress.HubContext != null)
             {
-                progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
-                    .updateImportStatus(new {progress.Summary});
+         //       progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
+             //       .updateImportStatus(new {progress.Summary});
             }
         }
 
@@ -111,8 +111,8 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
             if (progress.HubContext != null)
             {
-                progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
-                    .updateImportStatus(new {progress.Counters});
+              //  progress.HubContext.Clients.Group(ImportPackagesHub.GetGroup(progress.JobId))
+              //      .updateImportStatus(new {progress.Counters});
             }
         }
 
@@ -195,7 +195,7 @@ namespace NuFridge.Shared.Server.NuGet.Import
         {
             if (hubContext != null)
             {
-                hubContext.Clients.Group(ImportPackagesHub.GetGroup(jobId)).startFailure(message);
+               // hubContext.Clients.Group(ImportPackagesHub.GetGroup(jobId)).startFailure(message);
             }
         }
     }

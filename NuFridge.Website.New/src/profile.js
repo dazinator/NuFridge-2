@@ -1,6 +1,6 @@
 ﻿import {inject} from 'aurelia-framework';
 import {authUser} from './authuser';
-import {AuthService} from 'aurelia-auth';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {Claims} from './claims';
 import {HttpClient} from 'aurelia-http-client';
 import {Router} from 'aurelia-router';

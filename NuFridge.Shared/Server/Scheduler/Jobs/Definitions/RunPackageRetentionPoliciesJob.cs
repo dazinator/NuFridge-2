@@ -10,7 +10,7 @@ using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.Storage;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("filesystem")]
     public class RunPackageRetentionPoliciesJob : JobBase

@@ -3,7 +3,7 @@ using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Statistics;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("background")]
     public class UpdateFeedDownloadCountStatisticJob : JobBase

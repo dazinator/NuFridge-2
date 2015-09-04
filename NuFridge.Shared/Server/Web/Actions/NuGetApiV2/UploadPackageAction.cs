@@ -52,10 +52,14 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 return errorResponse;
             }
 
+            _log.Warn("before claim");
+
             if (module.Context.CurrentUser != null && module.Context.CurrentUser.IsAuthenticated())
             {
                 module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUploadPackages });
             }
+
+            _log.Warn("after claim");
 
             if (RequiresApiKeyCheck(feed))
             {
@@ -77,15 +81,19 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
                 }
                 else
                 {
-                    if (File.Exists(filePath))
+                    if (!IsValidNuGetApiKey(module, feed))
                     {
-                        File.Delete(filePath);
-                    }
+                        _log.Warn("Invalid API used to push package for feed " + feed.Name);
 
-                    _log.Warn("Invalid API used to push package for feed " + feed.Name);
-                    var errorResponse = module.Response.AsText("Invalid API key.");
-                    errorResponse.StatusCode = HttpStatusCode.Forbidden;
-                    return errorResponse;
+                        if (File.Exists(filePath))
+                        {
+                            File.Delete(filePath);
+                        }
+
+                        var errorResponse = module.Response.AsText("Invalid API key.");
+                        errorResponse.StatusCode = HttpStatusCode.Forbidden;
+                        return errorResponse;
+                    }
                 }
             }
 

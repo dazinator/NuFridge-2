@@ -13,11 +13,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
     {
         private readonly IPackageDownloadService _packageDownloadService;
         private readonly IPackageService _packageService;
+        private readonly IJobService _jobService;
 
-        public GetPackageAuditHistoryAction(IPackageDownloadService packageDownloadService, IPackageService packageService)
+        public GetPackageAuditHistoryAction(IPackageDownloadService packageDownloadService, IPackageService packageService, IJobService jobService)
         {
             _packageDownloadService = packageDownloadService;
             _packageService = packageService;
+            _jobService = jobService;
         }
 
         public dynamic Execute(dynamic parameters, INancyModule module)
@@ -30,6 +32,8 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
 
             IEnumerable<PackageDownload> downloads = _packageDownloadService.GetLatestDownloads(feedId);
             IEnumerable<PackageUpload> uploads = _packageService.GetLatestUploads(feedId);
+            IEnumerable<Job> jobs = _jobService.FindForFeed(feedId);
+
 
             foreach (var packageDownload in downloads)
             {
@@ -41,6 +45,13 @@ namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi
                     Description = "from " + packageDownload.IPAddress
                 });
             }
+
+            results.AddRange(jobs.Select(import => new AuditItem
+            {
+                Title = import.Name,
+                Date = import.CreatedAt,
+                Type = 2
+            }));
 
             results.AddRange(uploads.Select(packageUpload => new AuditItem
             {

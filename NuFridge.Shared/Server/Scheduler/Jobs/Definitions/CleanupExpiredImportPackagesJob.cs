@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Hangfire;
+﻿using Hangfire;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.NuGet;
 using NuFridge.Shared.Server.NuGet.Import;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("filesystem")]
     public class CleanupExpiredImportPackagesJob : JobBase

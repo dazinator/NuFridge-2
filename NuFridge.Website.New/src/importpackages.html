@@ -1,0 +1,51 @@
+﻿<template>
+    <h1>${showForm ? 'Import Packages' : 'Importing Packages'}</h1>
+    <div class="ui segment" if.bind="showForm">
+        <form class="ui form">
+            <div class="field">
+                <label>Feed URL</label>
+                <p>
+                    The feed URL to import packages from. Example: <a target="_blank" href="https://www.nuget.org/api/v2">https://www.nuget.org/api/v2</a>
+                </p>
+                <input type="text" name="feedUrl" value.bind="options.FeedUrl">
+            </div>
+            <div class="field">
+                <div class="inline field">
+                    <div class="ui toggle checkbox includePrerelease">
+                        <input type="checkbox" checked.bind="options.IncludePrerelease">
+                        <label style="font-size: .9285em; font-weight: 700;">Include pre-release packages</label>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="inline field">
+                    <div class="ui toggle checkbox checkLocalCache">
+                        <input type="checkbox" checked.bind="options.CheckLocalCache">
+                        <label style="font-size: .9285em; font-weight: 700;">Include local packages</label>
+                    </div>
+                </div>
+            </div>
+            <div class="ui buttons">
+                <button class="ui positive button" click.trigger="startImport()">Import Packages</button>
+            </div>
+        </form>
+    </div>
+    <div class="ui segment" if.bind="showProgress">
+        <h3>Overview</h3>
+        <p if.bind="job">${job.Processed} packages processed of ${job.Processed + job.Scheduled}</p>
+        <table class="ui compact table">
+            <thead>
+            <tr>
+                <th>Package Id</th>
+                <th>Version</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr repeat.for="item of items" class="${item.Success ? 'positive' : 'error'}">
+                <td>${item.PackageId}</td>
+                <td>${item.Version}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</template>

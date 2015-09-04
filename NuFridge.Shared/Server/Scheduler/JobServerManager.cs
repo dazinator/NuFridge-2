@@ -8,9 +8,12 @@ using Hangfire;
 using Hangfire.SqlServer;
 using Hangfire.States;
 using Hangfire.Storage;
+using Hangfire.Storage.Monitoring;
 using NCrontab;
 using NuFridge.Shared.Logging;
+using NuFridge.Shared.Server.Scheduler.Configuration;
 using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
 using NuFridge.Shared.Server.Scheduler.Servers;
 using NuFridge.Shared.Server.Storage;
 
@@ -88,33 +91,33 @@ namespace NuFridge.Shared.Server.Scheduler
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 
-            var processingJobs = monitorApi.ProcessingJobs(0, int.MaxValue);
+            //var processingJobs = monitorApi.ProcessingJobs(0, int.MaxValue);
 
-            if (processingJobs.Any())
-            {
-                foreach (var processingJob in processingJobs)
-                {
-                    var jobDetails = monitorApi.JobDetails(processingJob.Key);
-                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background" ))
-                    {
-                        BackgroundJob.Delete(processingJob.Key);
-                    }
-                }
-            }
+            //if (processingJobs.Any())
+            //{
+            //    foreach (KeyValuePair<string, ProcessingJobDto> processingJob in processingJobs)
+            //    {
+            //        var jobDetails = monitorApi.JobDetails(processingJob.Key);
+            //        if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background" ))
+            //        {
+            //            BackgroundJob.Delete(processingJob.Key);
+            //        }
+            //    }
+            //}
 
-            var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue).ToList();
+            //var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue).ToList();
 
-            if (scheduledJobs.Any())
-            {
-                foreach (var scheduledJob in scheduledJobs)
-                {
-                    var jobDetails = monitorApi.JobDetails(scheduledJob.Key);
-                    if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
-                    {
-                        BackgroundJob.Delete(scheduledJob.Key);
-                    }
-                }
-            }
+            //if (scheduledJobs.Any())
+            //{
+            //    foreach (var scheduledJob in scheduledJobs)
+            //    {
+            //        var jobDetails = monitorApi.JobDetails(scheduledJob.Key);
+            //        if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
+            //        {
+            //            BackgroundJob.Delete(scheduledJob.Key);
+            //        }
+            //    }
+            //}
 
             IEnumerable<JobServerInstance> jobServers = _container.Resolve<IEnumerable<JobServerInstance>>();
 

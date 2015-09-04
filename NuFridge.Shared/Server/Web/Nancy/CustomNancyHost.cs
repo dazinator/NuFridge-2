@@ -12,6 +12,7 @@ using Nancy.Bootstrapper;
 using Nancy.Hosting.Self;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Configuration;
+using NuFridge.Shared.Server.Web.SignalR;
 using Owin;
 
 namespace NuFridge.Shared.Server.Web.Nancy
@@ -61,7 +62,7 @@ namespace NuFridge.Shared.Server.Web.Nancy
                 };
 
                 builder.UseFileServer(fileServerOptions);
-                builder.MapSignalR("/signalr", new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = true, Resolver = GlobalHost.DependencyResolver });
+                builder.MapSignalR("/signalr", new HubConfiguration { EnableDetailedErrors = true, EnableJavaScriptProxies = true, Resolver = GlobalHost.DependencyResolver, EnableJSONP = false});
                 builder.UseNancy(options => options.Bootstrapper = _bootstrapper);
                 builder.UseCors(CorsOptions.AllowAll);
             });

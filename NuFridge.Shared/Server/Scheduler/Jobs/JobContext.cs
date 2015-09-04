@@ -1,7 +1,7 @@
 ﻿using System;
 using Hangfire.Server;
 
-namespace NuFridge.Shared.Server.Scheduler
+namespace NuFridge.Shared.Server.Scheduler.Jobs
 {
     public class JobContext : IServerFilter
     {

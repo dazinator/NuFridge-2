@@ -1,7 +1,7 @@
 ﻿using Hangfire.Common;
 using Hangfire.Server;
 
-namespace NuFridge.Shared.Server.Scheduler
+namespace NuFridge.Shared.Server.Scheduler.Configuration
 {
     public class AutofacContainerPerJobFilterAttribute : JobFilterAttribute, IServerFilter
     {

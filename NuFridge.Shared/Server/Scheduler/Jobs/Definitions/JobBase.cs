@@ -1,6 +1,6 @@
 ﻿using Hangfire;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     public abstract class JobBase
     {

@@ -208,12 +208,14 @@ export class FeedView {
         self.canViewPackages = self.authUser.hasClaim(Claims.CanViewPackages, Claims.SystemAdministrator);
         self.canViewFeedHistory = self.authUser.hasClaim(Claims.CanViewFeedHistory, Claims.SystemAdministrator);
         self.canUpdateFeed = self.authUser.hasClaim(Claims.CanUpdateFeed, Claims.SystemAdministrator);
+        self.canUploadPackages = self.authUser.hasClaim(Claims.CanUploadPackages, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
             self.http.get("/api/feeds/" + feedId).then(message => {
                 self.feed = JSON.parse(message.response);
                 self.refreshFeedName();
                 self.loadFeedPackageCount();
+                self.loadFeedJobs();
                 self.loadFeedConfig();
             },
                 function(message) {
@@ -225,11 +227,11 @@ export class FeedView {
         }
     }
 
-    loadFeedConfig() {
+    loadFeedJobs() {
         var self = this;
 
-        self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
-                self.feedconfig = JSON.parse(message.response);
+        self.http.get("/api/feeds/" + self.feed.Id + "/jobs").then(message => {
+                self.jobs = JSON.parse(message.response);
             },
             function(message) {
                 if (message.statusCode === 401) {
@@ -237,6 +239,32 @@ export class FeedView {
                     self.auth.logout(loginRoute);
                 }
             });
+    }
+
+    jobClick(job) {
+        var self = this;
+
+        self.router.navigate("feeds/view/" + self.feed.Id + "/import/" + job.Id);
+    }
+
+    loadFeedConfig() {
+        var self = this;
+
+        self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
+            self.feedconfig = JSON.parse(message.response);
+        },
+            function(message) {
+                if (message.statusCode === 401) {
+                    var loginRoute = self.auth.auth.getLoginRoute();
+                    self.auth.logout(loginRoute);
+                }
+            });
+    }
+
+    importPackagesClick() {
+        var self = this;
+
+        self.router.navigate("feeds/view/" + self.feed.Id + "/import");
     }
 
     previousPageClick() {

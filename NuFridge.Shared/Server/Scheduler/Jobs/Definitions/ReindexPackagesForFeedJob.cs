@@ -11,7 +11,7 @@ using NuFridge.Shared.Server.Storage;
 using NuFridge.Shared.Server.Web.Actions.NuGetApiV2;
 using NuGet;
 
-namespace NuFridge.Shared.Server.Scheduler.Jobs
+namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
     [Queue("filesystem")]
     public class ReindexPackagesForFeedJob : PackagesBase

@@ -11,7 +11,6 @@ using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet.Import
 {
-    [Queue("filesystem")]
     public class PackageImporter : IPackageImporter
     {
         private readonly IInternalPackageRepositoryFactory _factory;
@@ -25,82 +24,38 @@ namespace NuFridge.Shared.Server.NuGet.Import
             _factory = factory;
         }
 
-        [AutomaticRetry(Attempts = PackageImportProgressTracker.RetryCount)]
-        public void ImportPackage(string parentJobId, int feedId, string feedUrl, string packageId, string strVersion, bool useLocalPackages)
+
+        public void ImportPackage(int feedId, PackageImportOptions options, PackageImportJobItem item)
         {
-            SemanticVersion version = new SemanticVersion(strVersion);
-            strVersion = version.ToString();
+            SemanticVersion version = new SemanticVersion(item.Version);
 
-            try
+            IInternalPackageRepository localRepository = _factory.Create(feedId);
+
+            IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
+
+            DataServicePackage remotePackage =
+                remoteRepository.GetPackages()
+                    .Where(pk => pk.Id == item.PackageId)
+                    .ToList()
+                    .FirstOrDefault(pk => pk.Version == version) as DataServicePackage;
+
+            if (remotePackage == null)
             {
-                _log.Debug("Beginning import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
-
-                IInternalPackageRepository localRepository = _factory.Create(feedId);
-
-                IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(feedUrl);
-
-                DataServicePackage remotePackage =
-                    remoteRepository.GetPackages()
-                        .Where(pk => pk.Id == packageId)
-                        .ToList()
-                        .FirstOrDefault(pk => pk.Version == version) as DataServicePackage;
-
-                if (remotePackage == null)
-                {
-                    _log.Warn("This package was not found on the remote NuGet feed. Id = " + packageId + ", Version = " +
-                              version);
-                    throw new ImportPackageException("This package was not found on the remote NuGet feed.");
-                }
-
-                if (useLocalPackages)
-                {
-                    if (TryImportFromLocalFeed(parentJobId, feedId, packageId, remotePackage, localRepository, version))
-                        return;
-                }
-
-                localRepository.AddPackage(remotePackage);
-
-                _log.Info("Completed import of package " + packageId + " v" + strVersion + " to feed id " + feedId);
-
-                PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId,
-                    new PackageImportProgressAuditItem(packageId, version.ToString()));
+                throw new PackageNotFoundException();
             }
-            catch (PackageConflictException ex)
+
+            if (options.CheckLocalCache)
             {
-                _log.Info(ex.Message);
-
-                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
-
-                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
-                //Do not throw an exception as this will trigger a retry of the job
+                if (TryImportFromLocalFeed(remotePackage, localRepository, item))
+                    return;
             }
-            catch (InvalidPackageMetadataException ex)
-            {
-                _log.ErrorException(ex.Message, ex);
 
-                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
-
-                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
-                //Do not throw an exception as this will trigger a retry of the job
-            }
-            catch (Exception ex)
-            {
-                var message = "There was an error importing the " + packageId + " package v" + strVersion + " to the feed " + feedId + ".";
-
-                _log.ErrorException(message, ex);
-
-                var auditItem = new PackageImportProgressAuditItem(packageId, version.ToString(), ex.Message);
-
-                PackageImportProgressTracker.Instance.IncrementFailureCount(parentJobId, auditItem);
-
-                //Throw an exception so it will trigger a retry of the job
-                throw new ImportPackageException(ex.Message);
-            }
+            localRepository.AddPackage(remotePackage);
         }
 
-        private bool TryImportFromLocalFeed(string parentJobId, int feedId, string packageId, DataServicePackage remotePackage, IInternalPackageRepository localRepository, SemanticVersion version)
+        private bool TryImportFromLocalFeed(DataServicePackage remotePackage, IInternalPackageRepository localRepository, PackageImportJobItem item)
         {
-            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, packageId, version);
+            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, item.PackageId, SemanticVersion.Parse(item.Version));
 
             if (!string.IsNullOrWhiteSpace(localVersionOfPackage?.Hash))
             {
@@ -117,10 +72,6 @@ namespace NuFridge.Shared.Server.NuGet.Import
                         cachePackage.Listed = remotePackage.IsListed();
 
                         localRepository.AddPackage(cachePackage);
-
-                        _log.Info("Completed import of package " + packageId + " v" + version + " to feed id " + feedId + " using cached package from feed id " + localVersionOfPackage.FeedId);
-
-                        PackageImportProgressTracker.Instance.IncrementSuccessCount(parentJobId, new PackageImportProgressAuditItem(packageId, version.ToString()));
                         return true;
                     }
                 }
@@ -132,6 +83,6 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
     public interface IPackageImporter
     {
-        void ImportPackage(string parentJobId, int feedId, string feedUrl, string packageId, string strVersion, bool useLocalPackages);
+        void ImportPackage(int feedId, PackageImportOptions options, PackageImportJobItem item);
     }
 }

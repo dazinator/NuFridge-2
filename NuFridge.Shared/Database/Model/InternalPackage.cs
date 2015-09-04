@@ -139,7 +139,7 @@ namespace NuFridge.Shared.Database.Model
                 DevelopmentDependency = package.DevelopmentDependency
             };
 
-            if (package.MinClientVersion != new Version())
+            if (package.MinClientVersion != null)
             {
                 newPackage.MinClientVersion = package.MinClientVersion.ToString();
             }

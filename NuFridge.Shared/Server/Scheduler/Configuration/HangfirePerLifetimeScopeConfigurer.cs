@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Hangfire;
 
-namespace NuFridge.Shared.Server.Scheduler
+namespace NuFridge.Shared.Server.Scheduler.Configuration
 {
     public static class HangfirePerLifetimeScopeConfigurer
     {

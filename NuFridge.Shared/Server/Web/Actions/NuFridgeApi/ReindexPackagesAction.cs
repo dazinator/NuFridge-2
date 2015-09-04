@@ -6,7 +6,7 @@ using Nancy;
 using Nancy.Responses;
 using Nancy.Security;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
 using NuFridge.Shared.Server.Security;
 
 namespace NuFridge.Shared.Server.Web.Actions.NuFridgeApi

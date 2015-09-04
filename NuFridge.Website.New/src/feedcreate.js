@@ -3,7 +3,7 @@ import {HttpClient} from 'aurelia-http-client';
 import {Router} from 'aurelia-router';
 import {authUser} from './authuser';
 import {Claims} from './claims';
-import {AuthService} from 'aurelia-auth';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
 
