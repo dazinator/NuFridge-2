@@ -6,8 +6,9 @@ import {authUser} from './authuser';
 import {Claims} from './claims';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 
-@inject(HttpClient, Router, authUser, errorParser, ObserverLocator)
+@inject(HttpClient, Router, authUser, errorParser, ObserverLocator, AuthService)
 export class FeedView {
 
     feed = null;
@@ -35,10 +36,11 @@ export class FeedView {
     notificationmessage = "";
     notificationtype = notificationType.Info.value;
 
-    constructor(http, router, authUser, errorParser, observerLocator) {
+    constructor(http, router, authUser, errorParser, observerLocator, auth) {
         var self = this;
         this.http = http;
         this.router = router;
+        this.auth = auth;
         this.authUser = authUser;
         this.errorParser = errorParser;
 
@@ -91,7 +93,7 @@ export class FeedView {
         function(message) {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
+                self.auth.logout("#" + loginRoute);
             }else {
                 self.isUpdatingFeed = false;
                 var parsedError = self.errorParser.parseResponse(message);
@@ -109,7 +111,7 @@ export class FeedView {
         function(message) {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
+                self.auth.logout("#" + loginRoute);
             }else {
                 self.isUpdatingFeed = false;
                 var parsedError = self.errorParser.parseResponse(message);
@@ -140,7 +142,7 @@ export class FeedView {
             $('#deleteConfirmModal').modal("hide");
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
+                self.auth.logout("#" + loginRoute);
             }
         });
     }
@@ -154,7 +156,7 @@ export class FeedView {
         function(message) {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
+                self.auth.logout("#" + loginRoute);
             }
         });
     }
@@ -221,7 +223,7 @@ export class FeedView {
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
-                        self.auth.logout(loginRoute);
+                        self.auth.logout("#" + loginRoute);
                     }
                 });
         }
@@ -236,7 +238,7 @@ export class FeedView {
             function(message) {
                 if (message.statusCode === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
-                    self.auth.logout(loginRoute);
+                    self.auth.logout("#" + loginRoute);
                 }
             });
     }
@@ -256,7 +258,7 @@ export class FeedView {
             function(message) {
                 if (message.statusCode === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
-                    self.auth.logout(loginRoute);
+                    self.auth.logout("#" + loginRoute);
                 }
             });
     }
@@ -463,7 +465,7 @@ export class FeedView {
         function(message) {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
-                self.auth.logout(loginRoute);
+                self.auth.logout("#" + loginRoute);
             }
         });
     }

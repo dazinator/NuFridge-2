@@ -32,7 +32,7 @@ export class App {
                         resolve();
                     },
                     function(message) {
-                        reject();
+                        resolve();
                     });
             } else {
                 resolve();

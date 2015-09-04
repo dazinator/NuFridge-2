@@ -15,7 +15,9 @@ export class NavBar {
     }
 
     signOut() {
-        this.auth.logout("#/signin")
+        var self = this;
+        var loginRoute = self.auth.auth.getLoginRoute();
+        this.auth.logout("#" + loginRoute)
             .then(response => {
 
             })

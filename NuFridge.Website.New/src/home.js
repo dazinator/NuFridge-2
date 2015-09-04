@@ -1,13 +1,15 @@
 import 'chart'
 import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-http-client';
+import {AuthService} from 'paulvanbladel/aurelia-auth';
 
-@inject(HttpClient)
+@inject(HttpClient, AuthService)
 export class Home {
     heading = 'Dashboard';
     dashboard = null;
-    constructor(http) {
+    constructor(http, auth) {
         this.http = http;
+        this.auth = auth;
     }
 
     attached() {
@@ -79,8 +81,14 @@ export class Home {
 
     activate() {
         var self = this;
+
         this.http.get("/api/dashboard").then(message => {
             self.dashboard = JSON.parse(message.response);
+        }, function(message) {
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout("#" + loginRoute);
+            } 
         });
     }
 }

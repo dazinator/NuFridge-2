@@ -77,7 +77,7 @@ export class Package {
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
-                        self.auth.logout(loginRoute);
+                        self.auth.logout("#" + loginRoute);
                     }
                 });
         }
