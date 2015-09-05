@@ -49,7 +49,7 @@
 
             <div class="ui list" if.bind="jobs.length > 0">
                 <div class="item" repeat.for="job of jobs">
-                    <a class="ui label" click.trigger="$parent.jobClick(job)">
+                    <a class="ui label ${!job.CompletedAt ? '' : (!job.Success ? 'red' : (!job.HasWarnings ? 'green' : 'orange'))}" click.trigger="$parent.jobClick(job)">
                         ${job.Name}  <div class="detail">${job.CreatedAt | dateFormat} </div>
                     </a>
                 </div>

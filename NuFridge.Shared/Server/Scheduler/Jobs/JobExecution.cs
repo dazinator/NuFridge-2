@@ -100,6 +100,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
         private void AfterStart()
         {
             JobBase.CompletedAt = DateTime.UtcNow;
+            JobBase.Success = true;
 
             _jobService.Update(JobBase);
             _jobService.Update(Job);

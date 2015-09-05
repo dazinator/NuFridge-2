@@ -49,7 +49,7 @@ namespace NuFridge.Shared.Server.Web.Nancy
 
             _webApp = WebApp.Start(urls.First(), delegate (IAppBuilder builder)
             {
-                var fileSystem = new PhysicalFileSystem(_homeConfiguration.WebsiteDirectory);
+                var fileSystem = new FileServerSystem(_homeConfiguration.WebsiteDirectory);
                 
                 var fileServerOptions = new FileServerOptions
                 {

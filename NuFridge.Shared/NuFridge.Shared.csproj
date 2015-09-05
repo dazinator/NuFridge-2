@@ -441,6 +441,7 @@
     <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
     <Compile Include="Server\Web\Modules\SymbolsModule.cs" />
     <Compile Include="Server\Web\Nancy\CurrentRequest.cs" />
+    <Compile Include="Server\Web\Nancy\FileServerSystem.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
     <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
     <Compile Include="Server\Web\OData\ODataPackage.cs" />

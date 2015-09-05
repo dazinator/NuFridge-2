@@ -7,6 +7,7 @@ using Nancy.Bootstrappers.Autofac;
 using Nancy.Diagnostics;
 using Nancy.Owin;
 using Nancy.Responses;
+using Nancy.Security;
 using Nancy.Serialization.JsonNet;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.Web.Nancy;
@@ -59,6 +60,8 @@ namespace NuFridge.Shared.Server.Web
 
             DiagnosticsHook.Disable(pipelines);
             StaticConfiguration.DisableErrorTraces = false;
+
+            Csrf.Enable(pipelines);
         }
 
         private Response StopWatchStart(NancyContext ctx)
