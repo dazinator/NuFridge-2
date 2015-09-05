@@ -30,6 +30,11 @@ namespace NuFridge.Shared.Server.Statistics
                 feedPackageCount.Add(feed.Name, packageCount);
             }
 
+            if (feedPackageCount.Count > 10)
+            {
+                feedPackageCount = feedPackageCount.OrderByDescending(pc => pc.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
+            }
+
             return new FeedPackageCountStatisticItem(feedPackageCount);
         }
 

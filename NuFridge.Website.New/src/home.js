@@ -24,66 +24,62 @@ export class Home {
     loadGraphs() {
         var self = this;
 
+        var options = {
+            // Default mobile configuration
+            stackBars: true,
+            axisX: {
+                labelInterpolationFnc: function(value) {
+                    return value.split(/\s+/).map(function(word) {
+                        return word[0];
+                    }).join('');
+                }
+            },
+            axisY: {
+                offset: 20
+            },
+            height: '250px'
+        };
+
+        var overrides = [
+            // Options override for media > 400px
+            [
+                'screen and (min-width: 400px)', {
+                    reverseData: true,
+                    horizontalBars: true,
+                    axisX: {
+                        labelInterpolationFnc: self.chartist.noop
+                    },
+                    axisY: {
+                        offset: 60
+                    }
+                }
+            ],
+            // Options override for media > 800px
+            [
+                'screen and (min-width: 800px)', {
+                    stackBars: false,
+                    seriesBarDistance: 10
+                }
+            ],
+            // Options override for media > 1000px
+            [
+                'screen and (min-width: 1000px)', {
+                    reverseData: false,
+                    horizontalBars: false,
+                    seriesBarDistance: 15
+
+                }
+            ]
+        ];
+
         self.http.get("/api/stats/feedpackagecount").then(message => {
             self.feedpackagecount = JSON.parse(message.response);
-
-            var data = {
-                labels: ['abc11', 'hsdhdhggh', '444444444444444', 'def'],
-                series: [
-                    [5, 409, 308008, 7000041]
-                ]
-            };
-
-            var options = {
-                // Default mobile configuration
-                stackBars: true,
-                axisX: {
-                    labelInterpolationFnc: function(value) {
-                        return value.split(/\s+/).map(function(word) {
-                            return word[0];
-                        }).join('');
-                    }
-                },
-                axisY: {
-                    offset: 20
-                },
-                height: '250px'
-            };
-
-            var overrides = [
-                // Options override for media > 400px
-                [
-                    'screen and (min-width: 400px)', {
-                        reverseData: true,
-                        horizontalBars: true,
-                        axisX: {
-                            labelInterpolationFnc: self.chartist.noop
-                        },
-                        axisY: {
-                            offset: 60
-                        }
-                    }
-                ],
-                // Options override for media > 800px
-                [
-                    'screen and (min-width: 800px)', {
-                        stackBars: false,
-                        seriesBarDistance: 10
-                    }
-                ],
-                // Options override for media > 1000px
-                [
-                    'screen and (min-width: 1000px)', {
-                        reverseData: false,
-                        horizontalBars: false,
-                        seriesBarDistance: 15
-                        
-                    }
-                ]
-            ];
-
             self.chartist.Bar('.ct-chart.packagesChart', self.feedpackagecount, options, overrides);
-            self.chartist.Bar('.ct-chart.downloadsChart', self.feedpackagecount, options, overrides);
+        });
+
+        self.http.get("/api/stats/feeddownloadcount").then(message => {
+            self.feeddownloadcount = JSON.parse(message.response);
+            self.chartist.Bar('.ct-chart.downloadsChart', self.feeddownloadcount, options, overrides);
         });
     }
     

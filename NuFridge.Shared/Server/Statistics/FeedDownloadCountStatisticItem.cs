@@ -1,21 +1,30 @@
-﻿namespace NuFridge.Shared.Server.Statistics
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+
+namespace NuFridge.Shared.Server.Statistics
 {
     public class FeedDownloadCountStatisticItem
     {
-        public string FeedName { get; set; }
-        public int DownloadCount { get; set; }
-        public string Color { get; set; }
+        public FeedDownloadCountStatisticItem(Dictionary<string, long> feedPackageCount)
+        {
+            Series.Add(new List<long>());
+
+            foreach (var item in feedPackageCount)
+            {
+                Labels.Add(item.Key);
+                Series[0].Add(item.Value);
+            }
+        }
 
         public FeedDownloadCountStatisticItem()
         {
 
         }
 
-        public FeedDownloadCountStatisticItem(string feedName, int downloadCount, string color)
-        {
-            FeedName = feedName;
-            DownloadCount = downloadCount;
-            Color = color;
-        }
+        [JsonProperty("labels")]
+        public List<string> Labels = new List<string>();
+
+        [JsonProperty("series")]
+        public List<List<long>> Series = new List<List<long>>();
     }
 }

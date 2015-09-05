@@ -6,7 +6,7 @@ using NuFridge.Shared.Server.Statistics.Design;
 
 namespace NuFridge.Shared.Server.Statistics
 {
-    public class FeedDownloadCountStatistic : StatisticBase<List<FeedDownloadCountStatisticItem>>
+    public class FeedDownloadCountStatistic : StatisticBase<FeedDownloadCountStatisticItem>
     {
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
@@ -17,14 +17,11 @@ namespace NuFridge.Shared.Server.Statistics
             _packageService = packageService;
         }
 
-        protected override List<FeedDownloadCountStatisticItem> Update()
+        protected override FeedDownloadCountStatisticItem Update()
         {
-            var list = new List<FeedDownloadCountStatisticItem>();
-
-
             var feeds = _feedService.GetAll();
 
-            ColorGenerator generator = new ColorGenerator();
+            Dictionary<string, long> feedDownloadCount = new Dictionary<string, long>();
 
             foreach (var feed in feeds)
             {
@@ -32,18 +29,16 @@ namespace NuFridge.Shared.Server.Statistics
 
                 if (packages.Any(pk => pk.VersionDownloadCount > 0))
                 {
-                    list.Add(new FeedDownloadCountStatisticItem(feed.Name, packages.Sum(pk => pk.VersionDownloadCount), generator.NextColour()));
+                    feedDownloadCount.Add(feed.Name, packages.Sum(pk => pk.VersionDownloadCount));
                 }
             }
 
-            var orderedList = list.OrderByDescending(it => it.DownloadCount).ToList();
-            if (orderedList.Count() > 10)
+            if (feedDownloadCount.Count > 10)
             {
-                orderedList = orderedList.Take(10).ToList();
+                feedDownloadCount = feedDownloadCount.OrderByDescending(pc => pc.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
             }
 
-            return orderedList;
-
+            return new FeedDownloadCountStatisticItem(feedDownloadCount);
         }
 
         protected override string StatName => "FeedDownloadCount";
