@@ -19,6 +19,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public PackageImportJobItem Insert(PackageImportJobItem item)
         {
+            ThrowIfReadOnly();
+
             using (var connection = GetConnection())
             {
                 item.Id = connection.Insert<int>(item);
@@ -29,6 +31,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(PackageImportJobItem item)
         {
+            ThrowIfReadOnly();
+
             using (var connection = GetConnection())
             {
                 connection.Update(item);

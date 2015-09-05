@@ -19,6 +19,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Insert(Job job)
         {
+            ThrowIfReadOnly();
+
             using (var connection = GetConnection())
             {
                 var query =
@@ -29,6 +31,8 @@ namespace NuFridge.Shared.Database.Repository
 
         public void Update(Job job)
         {
+            ThrowIfReadOnly();
+
             using (var connection = GetConnection())
             {
                 connection.Update(job);
