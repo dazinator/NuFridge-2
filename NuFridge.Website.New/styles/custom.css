@@ -6,6 +6,10 @@ svg .ct-label {
     fill: rgba(255,255,255,.8);
 }
 
+svg .ct-series-a .ct-bar, svg .ct-series-a .ct-line, svg .ct-series-a .ct-point, svg .ct-series-a .ct-slice-donut {
+        stroke: #355DCA;
+}
+
 .cd-timeline-img i.icon {
   display: block;
   width: 24px;
