@@ -2,6 +2,10 @@
   .ui.container {
     margin-left: 0em !important; } }
 
+svg .ct-label {
+    fill: rgba(255,255,255,.8);
+}
+
 .cd-timeline-img i.icon {
   display: block;
   width: 24px;

@@ -17,6 +17,7 @@ System.config({
   buildCSS: false,
 
   map: {
+    "Globegitter/chartist-plugin-tooltip": "github:Globegitter/chartist-plugin-tooltip@0.0.11",
     "asual/jquery-address": "github:asual/jquery-address@master",
     "aurelia-animator-css": "github:aurelia/animator-css@0.15.0",
     "aurelia-binding": "github:aurelia/binding@0.8.6",
@@ -44,7 +45,7 @@ System.config({
     "babel": "npm:babel-core@5.8.22",
     "babel-runtime": "npm:babel-runtime@5.8.20",
     "bootstrap": "github:twbs/bootstrap@3.3.5",
-    "chart": "github:nnnick/Chart.js@1.0.2",
+    "chartist": "npm:chartist@0.9.4",
     "clean-css": "npm:clean-css@3.3.9",
     "core-js": "npm:core-js@0.9.18",
     "css": "github:systemjs/plugin-css@0.1.13",

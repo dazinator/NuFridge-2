@@ -5,7 +5,7 @@ using NuFridge.Shared.Server.Statistics.Design;
 
 namespace NuFridge.Shared.Server.Statistics
 {
-    public class FeedPackageCountStatistic : StatisticBase<List<FeedPackageCountStatisticItem>>
+    public class FeedPackageCountStatistic : StatisticBase<FeedPackageCountStatisticItem>
     {
         private readonly IFeedService _feedService;
         private readonly IPackageService _packageService;
@@ -16,33 +16,21 @@ namespace NuFridge.Shared.Server.Statistics
             _packageService = packageService;
         }
 
-        protected override List<FeedPackageCountStatisticItem> Update()
+        protected override FeedPackageCountStatisticItem Update()
         {
-            var list = new List<FeedPackageCountStatisticItem>();
-
             var feeds = _feedService.GetAll();
 
-            ColorGenerator generator = new ColorGenerator();
+            Dictionary<string, long> feedPackageCount = new Dictionary<string, long>();
 
 
             foreach (var feed in feeds)
             {
-                var packageCount = _packageService.GetUniquePackageIdCount(feed.Id);
+                long packageCount = _packageService.GetUniquePackageIdCount(feed.Id);
 
-                if (packageCount > 0)
-                {
-                    list.Add(new FeedPackageCountStatisticItem(feed.Name, packageCount, generator.NextColour()));
-                }
+                feedPackageCount.Add(feed.Name, packageCount);
             }
 
-
-            var orderedList = list.OrderByDescending(it => it.PackageCount).ToList();
-            if (orderedList.Count() > 10)
-            {
-                orderedList = orderedList.Take(10).ToList();
-            }
-
-            return orderedList;
+            return new FeedPackageCountStatisticItem(feedPackageCount);
         }
 
         protected override string StatName => "FeedPackageCount";

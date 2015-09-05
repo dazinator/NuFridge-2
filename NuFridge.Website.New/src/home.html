@@ -1,131 +1,41 @@
 <template>
-  <section class="au-animate">
-    <h1>${heading}</h1>
+    <require from="chartist/dist/chartist.min.css!"></require>
+    <section class="au-animate">
+        <h1>${heading}</h1>
 
-    <div class="ui grid">
-      <div class="doubling four column row">
-        <div class="column">
-          <div class="ui raised segment" style="background-color: #a992e2">
-            <div class="ui tiny statistic inverted" style="width:100%;">
-              <div class="value">
-                <i class="cubes icon"></i> ${dashboard.FeedCount}
-              </div>
-              <div class="label">
-                Feeds
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="ui raised segment" style="background-color: #55badf">
-            <div class="ui tiny statistic inverted" style="width:100%;">
-              <div class="value">
-                <i class="archive icon"></i> ${dashboard.PackageCount}
-              </div>
-              <div class="label">
-                Packages
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="ui raised segment" style="background-color: #ec6f5a ">
-            <div class="ui tiny statistic inverted" style="width:100%;">
-              <div class="value">
-                <i class="cloud download icon"></i> ${dashboard.DownloadCount}
-              </div>
-              <div class="label">
-                Package Downloads
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="ui raised segment" style="background-color: #f6bb42 ">
-            <div class="ui tiny statistic inverted" style="width:100%;">
-              <div class="value">
-                <i class="users icon"></i> ${dashboard.UserCount}
-              </div>
-              <div class="label">
-                Users
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ui grid computer only tablet only">
-      <div class="three column row">
-        <div class="column">
-          <div class="ui card" style="width:100%;">
-            <div class="content">
-              <div class="header">Feed Package Count</div>
-              <div class="meta">Last updated at: some date</div>
-              <div class="description">
-                Feeds which contain the most packages.
-              </div>
-            </div>
-            <div class="content" style="padding:0;">
-              <canvas id="feedPackageCountCanvas"></canvas>
-              <div id="feedPackageCountLegend" style="padding: 0px 0px 5px 10px;height:63px;">
-                <div>
-                  <span style="background-color: #4a89dc; width: 25px; height: 25px; display: inline-block;"></span>
-                  <span style="position: absolute; padding: 5px;"> All Packages</span>
+        <div class="ui segment">
+            <h2>Global Statistics</h2>
+            <div class="ui three statistics">
+                <div class="statistic">
+                    <div class="value">
+                        ${dashboard.FeedCount}
+                    </div>
+                    <div class="label">
+                        Feeds
+                    </div>
                 </div>
-                <div>
-                  <span style="background-color: #f6bb42; width: 25px; height: 25px; display: inline-block;"></span>
-                  <span style="position: absolute; padding: 5px;"> Unique Packages</span>
+                <div class="statistic">
+                    <div class="value">
+                        ${dashboard.PackageCount}
+                    </div>
+                    <div class="label">
+                        Packages
+                    </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="column">
-          <div class="ui card" style="width:100%;">
-            <div class="content">
-              <div class="header">Packages Downloaded</div>
-              <div class="meta">Last updated at: some date</div>
-              <div class="description">
-                Packages which have been downloaded in the last week.
-              </div>
-            </div>
-            <div class="content" style="padding:0;">
-              <canvas id="packageDownloadCanvas"></canvas>
-              <div id="packageDownloadLegend" style="padding: 0px 0px 5px 10px;height:63px;">
-                <div>
-                  <span style="background-color: #4a89dc; width: 25px; height: 25px; display: inline-block;"></span>
-                  <span style="position: absolute; padding: 5px;"> Package Downloads</span>
+                <div class="statistic">
+                    <div class="value">
+                        ${dashboard.DownloadCount}
+                    </div>
+                    <div class="label">
+                        Package Downloads
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
+
+            <h2>Total Packages per Feed</h2>
+            <div class="ct-chart packagesChart"></div>
+            <h2>Total Downloads per Feed</h2>
+            <div class="ct-chart downloadsChart"></div>
         </div>
-        <div class="column">
-          <div class="ui card" style="width:100%;">
-            <div class="content">
-              <div class="header">Packages Uploaded</div>
-              <div class="meta">Last updated at: some date</div>
-              <div class="description">
-                Packages which have been uploaded in the last week.
-              </div>
-            </div>
-            <div class="content" style="padding:0;">
-              <canvas id="packageUploadCanvas"></canvas>
-              <div id="packageUploadLegend" style="padding: 0px 0px 5px 10px;height:63px;">
-                <div>
-                  <span style="background-color: #4a89dc; width: 25px; height: 25px; display: inline-block;"></span>
-                  <span style="position: absolute; padding: 5px;"> Package Uploads</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-
-
-  </section>
+    </section>
 </template>

@@ -1,83 +1,92 @@
-import 'chart'
 import {inject} from 'aurelia-framework';
 import {HttpClient} from 'aurelia-http-client';
 import {AuthService} from 'paulvanbladel/aurelia-auth';
 
+
 @inject(HttpClient, AuthService)
 export class Home {
+
     heading = 'Dashboard';
     dashboard = null;
+    chartist = null;
+
+
     constructor(http, auth) {
         this.http = http;
         this.auth = auth;
     }
 
     attached() {
-        var randomScalingFactor = function () {
-            return Math.round(Math.random() * 100);
-        };
+        var self = this;
 
-        var ctx = document.getElementById("packageDownloadCanvas").getContext("2d");
-        var myBar = new Chart(ctx).Line({
-            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-            datasets: [
-              {
-                  label: 'Package Downloads',
-                  fillColor: "rgba(74, 137, 220,0.5)",
-                  strokeColor: "rgba(74, 137, 220,0.8)",
-                  highlightFill: "rgba(220,220,220,0.75)",
-                  highlightStroke: "rgba(220,220,220,1)",
-                  data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
-              }
-            ]
-        }, {
-            responsive: true
-        });
-
-        var ctx2 = document.getElementById("packageUploadCanvas").getContext("2d");
-        var myBar2 = new Chart(ctx2).Line({
-            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-            datasets: [
-              {
-                  label: 'Package Uploads',
-                  fillColor: "rgba(74, 137, 220,0.5)",
-                  strokeColor: "rgba(74, 137, 220,0.8)",
-                  highlightFill: "rgba(220,220,220,0.75)",
-                  highlightStroke: "rgba(220,220,220,1)",
-                  data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
-              }
-            ]
-        }, {
-            responsive: true
-        });
-
-        var ctx3 = document.getElementById("feedPackageCountCanvas").getContext("2d");
-        var myBar3 = new Chart(ctx3).Bar({
-            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-            datasets: [
-              {
-                  label: "All Packages",
-                  fillColor: "rgba(74, 137, 220,0.5)",
-                  strokeColor: "rgba(74, 137, 220,0.8)",
-                  highlightFill: "rgba(220,220,220,0.75)",
-                  highlightStroke: "rgba(220,220,220,1)",
-                  data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
-              },
-              {
-                  label: "Unique Packages",
-                  fillColor: "rgba(246, 187, 66, 0.5)",
-                  strokeColor: "rgba(246, 187, 66, 0.8)",
-                  highlightFill: "rgba(220,220,220,0.75)",
-                  highlightStroke: "rgba(220,220,220,1)",
-                  data: [randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor(), randomScalingFactor()]
-              }
-            ]
-        }, {
-            responsive: true
-        });
     }
 
-    ;
+    loadGraphs() {
+        var self = this;
+
+        self.http.get("/api/stats/feedpackagecount").then(message => {
+            self.feedpackagecount = JSON.parse(message.response);
+
+            var data = {
+                labels: ['abc11', 'hsdhdhggh', '444444444444444', 'def'],
+                series: [
+                    [5, 409, 308008, 7000041]
+                ]
+            };
+
+            var options = {
+                // Default mobile configuration
+                stackBars: true,
+                axisX: {
+                    labelInterpolationFnc: function(value) {
+                        return value.split(/\s+/).map(function(word) {
+                            return word[0];
+                        }).join('');
+                    }
+                },
+                axisY: {
+                    offset: 20
+                },
+                height: '250px'
+            };
+
+            var overrides = [
+                // Options override for media > 400px
+                [
+                    'screen and (min-width: 400px)', {
+                        reverseData: true,
+                        horizontalBars: true,
+                        axisX: {
+                            labelInterpolationFnc: self.chartist.noop
+                        },
+                        axisY: {
+                            offset: 60
+                        }
+                    }
+                ],
+                // Options override for media > 800px
+                [
+                    'screen and (min-width: 800px)', {
+                        stackBars: false,
+                        seriesBarDistance: 10
+                    }
+                ],
+                // Options override for media > 1000px
+                [
+                    'screen and (min-width: 1000px)', {
+                        reverseData: false,
+                        horizontalBars: false,
+                        seriesBarDistance: 15
+                        
+                    }
+                ]
+            ];
+
+            self.chartist.Bar('.ct-chart.packagesChart', self.feedpackagecount, options, overrides);
+            self.chartist.Bar('.ct-chart.downloadsChart', self.feedpackagecount, options, overrides);
+        });
+    }
+    
 
     activate() {
         var self = this;
@@ -90,5 +99,12 @@ export class Home {
                 self.auth.logout("#" + loginRoute);
             } 
         });
+
+        System.import('chartist').then((chartist) => {
+            self.chartist = chartist;
+            self.loadGraphs();
+        });
+
+
     }
 }
