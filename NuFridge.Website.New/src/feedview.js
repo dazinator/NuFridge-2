@@ -13,7 +13,11 @@ export class FeedView {
 
     feed = null;
     feedName = "Feed";
+
     isUpdatingFeed = false;
+    isLoadingFeed = true;
+    isLoadingFeedConfig = true;
+    isLoadingJobs = true;
 
     overviewPackageCount = 0;
     overviewUniquePackageCount = 0;
@@ -213,9 +217,11 @@ export class FeedView {
         self.canUploadPackages = self.authUser.hasClaim(Claims.CanUploadPackages, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            self.http.get("/api/feeds/" + feedId).then(message => {
+
+          self.http.get("/api/feeds/" + feedId).then(message => {
                 self.feed = JSON.parse(message.response);
                 self.refreshFeedName();
+                self.isLoadingFeed = false;
                 self.loadFeedPackageCount();
                 self.loadFeedJobs();
                 self.loadFeedConfig();
@@ -233,7 +239,8 @@ export class FeedView {
         var self = this;
 
         self.http.get("/api/feeds/" + self.feed.Id + "/jobs").then(message => {
-                self.jobs = JSON.parse(message.response);
+            self.jobs = JSON.parse(message.response);
+                self.isLoadingJobs = false;
             },
             function(message) {
                 if (message.statusCode === 401) {
@@ -254,7 +261,8 @@ export class FeedView {
 
         self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
             self.feedconfig = JSON.parse(message.response);
-        },
+                self.isLoadingFeedConfig = false;
+            },
             function(message) {
                 if (message.statusCode === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();

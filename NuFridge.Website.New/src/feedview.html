@@ -24,6 +24,10 @@
                 Statistics
             </h2>
 
+            <div class="ui inverted dimmer ${isLoadingFeed || isLoadingJobs ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading feed information</div>
+            </div>
+
             <div class="ui tiny horizontal statistics">
                 <div class="statistic">
                     <div class="value">
@@ -81,22 +85,25 @@
         <div data-tab="second" class="ui bottom tab segment">
             <table class="ui compact table">
                 <thead>
-                    <tr>
-                        <th>URL</th>
-                        <th>Usage</th>
-                    </tr>
+                <tr>
+                    <th>URL</th>
+                    <th>Usage</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
-                        <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
-                    </tr>
-                    <tr>
-                        <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
-                        <td>Use this to access the symbol server for this NuGet feed.</td>
-                    </tr>
+                <tr>
+                    <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
+                    <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
+                </tr>
+                <tr>
+                    <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
+                    <td>Use this to access the symbol server for this NuGet feed.</td>
+                </tr>
                 </tbody>
             </table>
+            <div class="ui inverted dimmer ${isLoadingFeed || isUpdatingFeed ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading endpoints</div>
+            </div>
         </div>
 
         <div data-tab="third" class="ui bottom tab segment" if.bind="canViewPackages">
