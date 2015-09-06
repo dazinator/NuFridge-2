@@ -64,6 +64,17 @@ export class ImportPackages {
         return a;
     };
 
+    parsePackageItem(pkg) {
+        pkg.Items = JSON.parse(pkg.JSON).Items;
+        pkg.JSON = undefined;
+        return pkg;
+    }
+
+    packageClick(pkg) {
+        var self = this;
+        pkg.IsExpanded = !pkg.IsExpanded;
+    }
+
     configureSignalRProxy() {
         var self = this;
 
@@ -72,7 +83,7 @@ export class ImportPackages {
         self.proxy = self.connection.createHubProxy('importPackagesHub');
 
         self.proxy.on('packageProcessed', function(message) {
-            self.items.push(message);
+            self.items.push(self.parsePackageItem(message));
         });
 
         self.proxy.on('jobUpdated', function(message) {
@@ -80,7 +91,11 @@ export class ImportPackages {
         });
 
         self.proxy.on('loadPackages', function(message) {
-            self.items = self.arrayUnique(self.items.concat(message));
+            var items = message;
+            $.each(items, function(index, element) {
+                self.parsePackageItem(element);
+            });
+            self.items = self.arrayUnique(self.items.concat(items));
         });
 
         self.connection.start({ jsonp: false })
@@ -124,6 +139,8 @@ export class ImportPackages {
     }
 
     attached() {
+    var self = this;
+
         $('.ui.checkbox.includePrerelease').checkbox({
             fireOnInit: false,
             onChecked: function () {

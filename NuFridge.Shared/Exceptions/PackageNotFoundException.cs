@@ -8,5 +8,9 @@ namespace NuFridge.Shared.Exceptions
 {
     public class PackageNotFoundException : Exception
     {
+        public PackageNotFoundException(string packageId, string version) : base($"The NuGet package was not found on the feed for {packageId} {version}")
+        {
+
+        }
     }
 }

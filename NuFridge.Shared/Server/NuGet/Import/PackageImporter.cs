@@ -33,6 +33,8 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
             IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
 
+            item.Log(LogLevel.Info, $"Searching for the package from {remoteRepository.Source}");
+
             DataServicePackage remotePackage =
                 remoteRepository.GetPackages()
                     .Where(pk => pk.Id == item.PackageId)
@@ -41,16 +43,27 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
             if (remotePackage == null)
             {
-                throw new PackageNotFoundException();
+                throw new PackageNotFoundException(item.PackageId, item.Version);
             }
 
             if (options.CheckLocalCache)
             {
+                item.Log(LogLevel.Debug,
+                    "Searching local feeds for a NuGet package with the same hash " + remotePackage.PackageHash);
+
                 if (TryImportFromLocalFeed(remotePackage, localRepository, item))
                     return;
+
+                item.Log(LogLevel.Debug, "No matching package was found locally. The package will be downloaded from the remote feed.");
+            }
+            else
+            {
+                item.Log(LogLevel.Info, "Downloading and indexing the package.");
             }
 
             localRepository.AddPackage(remotePackage);
+
+            item.Log(LogLevel.Info, "The package has been imported.");
         }
 
         private bool TryImportFromLocalFeed(DataServicePackage remotePackage, IInternalPackageRepository localRepository, PackageImportJobItem item)
@@ -67,6 +80,8 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
                     if (File.Exists(cachePackagePath))
                     {
+                        item.Log(LogLevel.Info, $"Found a matching package at {cachePackagePath}");
+
                         IFastZipPackage cachePackage = FastZipPackage.FastZipPackage.Open(cachePackagePath, new CryptoHashProvider());
 
                         cachePackage.Listed = remotePackage.IsListed();

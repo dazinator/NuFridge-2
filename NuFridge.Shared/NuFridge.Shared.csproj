@@ -348,7 +348,6 @@
     <Compile Include="Server\NuGet\Import\PackageImporter.cs" />
     <Compile Include="Server\NuGet\Import\PackageImportRepository.cs" />
     <Compile Include="Server\NuGet\Import\PackageImportOptions.cs" />
-    <Compile Include="Server\NuGet\Import\PackageImportProgressTracker.cs" />
     <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
     <Compile Include="Server\NuGet\NuGetFileSystem.cs" />
     <Compile Include="Server\NuGet\NuGetPackagePathResolver.cs" />
@@ -363,7 +362,6 @@
     <Compile Include="Server\Scheduler\Jobs\JobContext.cs" />
     <Compile Include="Server\Scheduler\Jobs\JobExecution.cs" />
     <Compile Include="Server\Scheduler\JobServerManager.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\CleanupExpiredImportPackagesJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\Definitions\CleanupTempFilesJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\Definitions\ImportPackagesForFeedJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\Definitions\JobBase.cs" />
@@ -372,6 +370,7 @@
     <Compile Include="Server\Scheduler\Jobs\Definitions\RunPackageRetentionPoliciesJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedDownloadCountStatisticJob.cs" />
     <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedPackageCountStatisticJob.cs" />
+    <Compile Include="Server\Scheduler\Jobs\JobExecutionLog.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerBackground.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerDownload.cs" />
     <Compile Include="Server\Scheduler\Servers\JobServerFileSystem.cs" />

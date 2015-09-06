@@ -33,19 +33,20 @@
     <div class="ui segment" if.bind="showProgress">
         <h3>Overview</h3>
         <p if.bind="job">${job.Processed} packages processed of ${job.Processed + job.Scheduled}</p>
-        <table class="ui compact table">
-            <thead>
-            <tr>
-                <th>Package Id</th>
-                <th>Version</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr repeat.for="item of items" class="${item.Success ? 'positive' : 'error'}">
-                <td>${item.PackageId}</td>
-                <td>${item.Version}</td>
-            </tr>
-            </tbody>
-        </table>
+
+        <div class="ui importList">
+            <div class="ui message importItem" repeat.for="item of items">
+                <div class="header">
+                    <i click.trigger="$parent.packageClick(item)" class="${item.IsExpanded ? 'minus square' : 'add square'} icon"></i>
+                    <span class="importTitle" click.trigger="$parent.packageClick(item)">${item.PackageId} ${item.Version}</span>
+                </div>
+
+                <div class="ui message" if.bind="item.IsExpanded">
+                    <div class="ui list">
+                        <div class="item" repeat.for="log of item.Items">${log.Level.toUpperCase()}: ${log.Message}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

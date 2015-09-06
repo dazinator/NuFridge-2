@@ -5,7 +5,6 @@ using System.Linq;
 using Hangfire;
 using Microsoft.AspNet.SignalR;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
@@ -82,7 +81,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 
             foreach (var packageImportJobItem in toProcess)
             {
-                if (stopwatch.Elapsed.TotalSeconds >= 10)
+                if (stopwatch.Elapsed.TotalSeconds >= 5)
                 {
                     stopwatch.Restart();
 
@@ -96,44 +95,40 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
                 try
                 {
                     packageImportJobItem.StartedAt = DateTime.UtcNow;
+
                     _packageImporter.ImportPackage(FeedId.Value, Options, packageImportJobItem);
+
                     packageImportJobItem.Success = true;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
-
-                    _log.Info("Successfully imported " + packageImportJobItem.PackageId + " " + packageImportJobItem.Version);
                 }
                 catch (PackageNotFoundException ex)
                 {
+                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
                     packageImportJobItem.Success = false;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
-
-                    _log.WarnException(ex.Message, ex);
                 }
                 catch (InvalidPackageMetadataException ex)
                 {
+                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
                     packageImportJobItem.Success = false;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
-
-                    _log.ErrorException(ex.Message, ex);
                 }
                 catch (PackageConflictException ex)
                 {
-                    packageImportJobItem.Success = false;
+                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
+                    packageImportJobItem.Success = true;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
-
-                    _log.WarnException(ex.Message, ex);
                 }
                 catch (Exception ex)
                 {
+                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
                     packageImportJobItem.Success = false;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
-
-                    _log.ErrorException(ex.Message, ex);
                 }
 
                 i++;

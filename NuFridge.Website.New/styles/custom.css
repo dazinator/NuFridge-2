@@ -189,3 +189,29 @@ h1.ui.header.breadcrumb {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none; }
+
+.ui.importList > .message.importItem {
+    padding-left: 10px;
+}
+
+.ui.importList > .message.importItem i {
+    font-size: 1em;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ui.importList > .message.importItem .importTitle {
+    font-weight: bold;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
