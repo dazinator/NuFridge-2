@@ -34,6 +34,12 @@ namespace NuFridge.Shared.Database.Services
             throw new NotSupportedException("No " + typeof(IJobTypeRepository<T>).Name + " implementation found for type " + typeof(T).Name);
         }
 
+
+        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows)
+        {
+            return _jobRepository.FindForFeed(feedId, pageNumber, rows);
+        }
+
         public IEnumerable<Job> FindForFeed(int feedId)
         {
             return _jobRepository.FindForFeed(feedId);
@@ -89,5 +95,6 @@ namespace NuFridge.Shared.Database.Services
         T Find<T>(int jobId) where T : class, IJobType, new();
         IEnumerable<Job> FindForFeed(int feedId);
         IEnumerable<T> FindForFeed<T>(int feedId) where T : class, IJobType, new();
+        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows);
     }
 }

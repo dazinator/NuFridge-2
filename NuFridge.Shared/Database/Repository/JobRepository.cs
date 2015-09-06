@@ -39,6 +39,11 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
+        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage)
+        {
+            return base.GetAllPaged(pageNumber, rowsPerPage, "WHERE [FeedId] = " + feedId, "CreatedAt DESC", true);
+        }
+
         public IEnumerable<Job> FindForFeed(int feedId)
         {
             return Query<Job>($"SELECT * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE [FeedId] = @feedId ORDER BY CreatedAt DESC",
@@ -52,5 +57,6 @@ namespace NuFridge.Shared.Database.Repository
         void Update(Job job);
         Job Find(int jobId);
         IEnumerable<Job> FindForFeed(int feedId);
+        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage);
     }
 }

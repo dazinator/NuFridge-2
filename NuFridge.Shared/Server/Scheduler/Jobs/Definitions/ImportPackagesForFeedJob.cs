@@ -119,7 +119,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
                 catch (PackageConflictException ex)
                 {
                     packageImportJobItem.Log(LogLevel.Error, ex.Message);
-                    packageImportJobItem.Success = true;
+                    packageImportJobItem.Success = false;
                     packageImportJobItem.CompletedAt = DateTime.UtcNow;
                     _jobItemService.Update(packageImportJobItem);
                 }

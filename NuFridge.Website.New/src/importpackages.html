@@ -1,12 +1,6 @@
 ﻿<template>
     <h1>${showForm ? 'Import Packages' : 'Importing Packages'}</h1>
 
-
-    <div class="ui pointing secondary menu importMenu">
-        <a class="item active" data-tab="first">Overview</a>
-        <a class="item" data-tab="second">Endpoints</a>
-    </div>
-
     <div class="ui segment" if.bind="showForm">
         <form class="ui form">
             <div class="field">
@@ -37,20 +31,46 @@
             </div>
         </form>
     </div>
-    <div class="ui segment" if.bind="showProgress">
-        <h3>Overview</h3>
-        <p if.bind="job">${job.Processed} packages processed of ${job.Processed + job.Scheduled}</p>
 
-        <div class="ui importList">
-            <div class="ui message importItem" repeat.for="item of items">
-                <div class="header">
-                    <i click.trigger="$parent.packageClick(item)" class="${item.IsExpanded ? 'minus square' : 'add square'} icon"></i>
-                    <span class="importTitle" click.trigger="$parent.packageClick(item)">${item.PackageId} ${item.Version}</span>
-                </div>
+    <div class="ui pointing secondary menu importMenu" show.bind="showProgress">
+        <a class="item active" data-tab="first">Overview</a>
+        <a class="item" data-tab="second">Packages</a>
+    </div>
 
-                <div class="ui message" if.bind="item.IsExpanded">
-                    <div class="ui list">
-                        <div class="item" repeat.for="log of item.Items"><a class="ui ${$parent.$parent.getLevelColour(log)} label">${log.Level.toUpperCase()}</a> ${log.Message}</div>
+    <div show.bind="showProgress">
+        <div data-tab="first" class="ui bottom tab segment active">
+            <table class="ui collapsing table">
+                <thead>
+                <tr>
+                    <th>Packages Imported</th>
+                    <th>Packages Failed</th>
+                    <th>Packages Remaining</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>${packagesImportedCount}</td>
+                    <td> ${packagesFailedCount}</td>
+                    <td> ${job.Scheduled}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div data-tab="second" class="ui bottom tab segment">
+            <div class="ui importList">
+                <div class="ui message importItem" repeat.for="item of items">
+                    <div class="header">
+                        <a class="ui red label" if.bind="item.Success === false && item.CompletedAt">Failed</a>
+                        <a class="ui green label" if.bind="item.Success === true && item.CompletedAt">Success</a>
+                        <i click.trigger="$parent.packageClick(item)" class="${item.IsExpanded ? 'minus square' : 'add square'} icon"></i>
+                        <span class="importTitle" click.trigger="$parent.packageClick(item)">${item.PackageId} ${item.Version}</span> 
+                    </div>
+
+                    <div class="ui message" if.bind="item.IsExpanded">
+                        <div class="ui list">
+                            <div class="item" repeat.for="log of item.Items"><a class="ui ${$parent.$parent.getLevelColour(log)} label">${log.Level.toUpperCase()}</a> ${log.Message}</div>
+                        </div>
                     </div>
                 </div>
             </div>

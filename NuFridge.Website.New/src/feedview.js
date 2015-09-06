@@ -17,7 +17,10 @@ export class FeedView {
     isUpdatingFeed = false;
     isLoadingFeed = true;
     isLoadingFeedConfig = true;
+
     isLoadingJobs = true;
+    jobPageNumber = 1;
+    jobPageSize = 10;
 
     overviewPackageCount = 0;
     overviewUniquePackageCount = 0;
@@ -238,7 +241,7 @@ export class FeedView {
     loadFeedJobs() {
         var self = this;
 
-        self.http.get("/api/feeds/" + self.feed.Id + "/jobs").then(message => {
+        self.http.get("/api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(message => {
             self.jobs = JSON.parse(message.response);
                 self.isLoadingJobs = false;
             },

@@ -125,7 +125,6 @@ namespace NuFridge.Shared.Database.Repository
         Feed Find(string feedName);
         void Delete(Feed feed);
         IEnumerable<Feed> Search(string name);
-        IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage);
         int GetCount(bool nolock);
         void Update(Feed feed);
         IEnumerable<Feed> FindByGroupId(int id);

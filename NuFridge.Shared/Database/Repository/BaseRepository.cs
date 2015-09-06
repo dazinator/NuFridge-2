@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Dapper;
 using Microsoft.AspNet.SignalR;
@@ -102,11 +103,11 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public virtual IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage)
+        public virtual IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage, string conditions = null, string orderBy = null, bool nolock = false)
         {
             using (var connection = GetConnection())
             {
-                return connection.GetListPaged<T>(pageNumber, rowsPerPage, null, null);
+                return connection.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderBy, null, null, nolock);
             }
         }
 

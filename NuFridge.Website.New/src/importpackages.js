@@ -19,7 +19,9 @@ export class ImportPackages {
     };
 
     job = null;
-    
+    packagesImportedCount = 0;
+    packagesFailedCount = 0;
+
     connection = $.hubConnection();
     proxy = null;
 
@@ -97,6 +99,11 @@ export class ImportPackages {
 
         self.proxy.on('packageProcessed', function(message) {
             self.items.push(self.parsePackageItem(message));
+            if (message.Success) {
+                self.packagesImportedCount++;
+            } else {
+                self.packagesFailedCount++;
+            }
         });
 
         self.proxy.on('jobUpdated', function(message) {
@@ -107,6 +114,11 @@ export class ImportPackages {
             var items = message;
             $.each(items, function(index, element) {
                 self.parsePackageItem(element);
+                if (element.Success) {
+                    self.packagesImportedCount++;
+                } else {
+                    self.packagesFailedCount++;
+                }
             });
             self.items = self.arrayUnique(self.items.concat(items));
         });
@@ -133,6 +145,14 @@ export class ImportPackages {
         this.errorParser = errorParser;
     }
 
+    getCountOfImportedPackages() {
+        var self = this;
+
+    return self.items.filter(function(el) {
+        return el.Success === true;
+    }).length;
+}
+
     activate(params, routeConfig) {
         var self = this;
         self.feedId = params.id;
@@ -153,6 +173,15 @@ export class ImportPackages {
 
     attached() {
         var self = this;
+
+        $(".importMenu .item").tab({
+            onFirstLoad: function(tabPath, parameterArray, historyEvent) {
+
+            },
+            onLoad: function(tabPath, parameterArray, historyEvent) {
+
+            }
+        });
 
         $('.ui.checkbox.includePrerelease').checkbox({
             fireOnInit: false,

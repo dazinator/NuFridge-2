@@ -63,17 +63,6 @@ namespace NuFridge.Shared.Database.Services
             return _feedRepository.GetAll();
         }
 
-        public IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey)
-        {
-            var feeds = _feedRepository.GetAllPaged(pageNumber, rowsPerPage).ToList();
-
-            foreach (var feed in feeds)
-            {
-                ConfigureFeedEntity(feed, includeApiKey);
-            }
-
-            return feeds;
-        }
 
         private void ConfigureFeedEntity(Feed feed, bool includeApiKey)
         {
@@ -164,7 +153,6 @@ namespace NuFridge.Shared.Database.Services
         void Insert(Feed feed);
         bool Exists(int feedId);
         IEnumerable<Feed> GetAll();
-        IEnumerable<Feed> GetAllPaged(int pageNumber, int rowsPerPage, bool includeApiKey);
         Feed Find(int feedId, bool includeApiKey);
         Feed Find(string feedName, bool includeApiKey);
         IEnumerable<Feed> Search(string name);
