@@ -73,11 +73,12 @@ namespace NuFridge.Shared.Server.Web
             {
                 EditLink = new Uri(baseAddress + entryId, UriKind.Absolute),
                 Id = baseAddress + entryId,
-                TypeName = "Package",
+                TypeName = typeof(ODataPackage).FullName,
                 MediaResource = new ODataStreamReferenceValue
                 {
                     ContentType = "application/zip",
-                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version), EditLink = new Uri("Packages(Id='" + package.Id + "',Version='" + package.Version + "')/$value", UriKind.Relative)
+                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version),
+                    EditLink = new Uri("Packages(Id='" + package.Id + "',Version='" + package.Version + "')/$value", UriKind.Relative)
                 },
                 Properties = GetProperties(package, properties)
             };
