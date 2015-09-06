@@ -25,6 +25,7 @@ namespace NuFridge.Shared.Server.Web
             {
                 writerSettings.SetMetadataDocumentUri(new Uri(baseAddress));
                 writerSettings.SetContentType(ODataFormat.VerboseJson);
+                
             }
             else
             {
@@ -33,9 +34,15 @@ namespace NuFridge.Shared.Server.Web
 
             var responseMessage = new MemoryResponseMessage();
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
-            
+
+            var feed = new ODataFeed {Id = baseAddress + "Packages", Count = total};
+
+            var atom = feed.Atom();
+            atom.Title = "Packages";
+            atom.SelfLink = new AtomLinkMetadata {Href = new Uri("Packages", UriKind.Relative), Title = "Packages"};
+
             var feedWriter = writer.CreateODataFeedWriter();
-            feedWriter.WriteStart(new ODataFeed { Id = baseAddress + "Packages", Count = total});
+            feedWriter.WriteStart(feed);
 
 
             var pks = packages.Select(pk => new ODataPackage(pk));
