@@ -56,10 +56,6 @@ namespace NuFridge.Shared.Server.Web.Actions.NuGetApiV2
             {
                 return module.Negotiate.WithStatusCode(HttpStatusCode.BadRequest).WithContentType("Unsupported media type requested.");
             }
-            else
-            {
-                writerSettings.SetContentType(ODataFormat.Atom);
-            }
 
             using (var msgWriter = new ODataMessageWriter(message, writerSettings, builder.Model))
             {

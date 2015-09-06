@@ -209,6 +209,10 @@
       <HintPath>..\packages\Palmer.0.1.4724.20297\lib\portable-win+net40+sl40+wp\Palmer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Simple.OData.Client.Net40, Version=4.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.4.10.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SimpleCrypto">
       <HintPath>..\packages\SimpleCrypto.0.3.30.26\lib\SimpleCrypto.dll</HintPath>
     </Reference>
@@ -524,7 +528,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Installation\ConfigurationForm.resx">

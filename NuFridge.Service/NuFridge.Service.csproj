@@ -229,8 +229,9 @@
       <HintPath>..\packages\Palmer.0.1.4724.20297\lib\portable-win+net40+sl40+wp\Palmer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Simple.OData.Client.Net40">
-      <HintPath>..\packages\Simple.OData.Client.4.6.1\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+    <Reference Include="Simple.OData.Client.Net40, Version=4.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.4.10.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
