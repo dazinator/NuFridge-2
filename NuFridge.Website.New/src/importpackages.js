@@ -75,6 +75,19 @@ export class ImportPackages {
         pkg.IsExpanded = !pkg.IsExpanded;
     }
 
+    getLevelColour(log) {
+        if (log.Level === 'Info') {
+            return "grey";
+        }
+        if (log.Level === 'Error') {
+            return "red";
+        }
+        if (log.Level === 'Warning') {
+            return "orange";
+        }
+        return "";
+    }
+
     configureSignalRProxy() {
         var self = this;
 
@@ -139,7 +152,7 @@ export class ImportPackages {
     }
 
     attached() {
-    var self = this;
+        var self = this;
 
         $('.ui.checkbox.includePrerelease').checkbox({
             fireOnInit: false,

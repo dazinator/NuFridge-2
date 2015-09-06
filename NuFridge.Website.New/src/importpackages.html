@@ -1,5 +1,12 @@
 ﻿<template>
     <h1>${showForm ? 'Import Packages' : 'Importing Packages'}</h1>
+
+
+    <div class="ui pointing secondary menu importMenu">
+        <a class="item active" data-tab="first">Overview</a>
+        <a class="item" data-tab="second">Endpoints</a>
+    </div>
+
     <div class="ui segment" if.bind="showForm">
         <form class="ui form">
             <div class="field">
@@ -43,7 +50,7 @@
 
                 <div class="ui message" if.bind="item.IsExpanded">
                     <div class="ui list">
-                        <div class="item" repeat.for="log of item.Items">${log.Level.toUpperCase()}: ${log.Message}</div>
+                        <div class="item" repeat.for="log of item.Items"><a class="ui ${$parent.$parent.getLevelColour(log)} label">${log.Level.toUpperCase()}</a> ${log.Message}</div>
                     </div>
                 </div>
             </div>
