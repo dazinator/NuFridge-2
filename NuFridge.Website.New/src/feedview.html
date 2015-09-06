@@ -25,7 +25,7 @@
             </h2>
 
             <div class="ui inverted dimmer ${isLoadingFeed || isLoadingJobs ? 'active' : ''}">
-                <div class="ui indeterminate large text loader">Loading feed information</div>
+                <div class="ui indeterminate large text loader">Loading feed</div>
             </div>
 
             <div class="ui tiny horizontal statistics">
@@ -227,8 +227,8 @@
             General Settings
             <div class="sub header">Manage your general feed settings.</div>
         </h2>
-        <div class="ui inverted dimmer ${isUpdatingFeed ? 'active' : ''}">
-            <div class="ui indeterminate large text loader">Saving Feed</div>
+        <div class="ui inverted dimmer ${isUpdatingFeed || isLoadingFeed || isLoadingFeedConfig ? 'active' : ''}">
+            <div class="ui indeterminate large text loader">${isUpdatingFeed ? 'Saving feed' : 'Loading settings'}</div>
         </div>
         <form class="ui form">
             <div class="ui segment">
