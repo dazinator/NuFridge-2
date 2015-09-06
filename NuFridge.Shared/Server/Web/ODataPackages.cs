@@ -35,7 +35,7 @@ namespace NuFridge.Shared.Server.Web
             var writer = new ODataMessageWriter(responseMessage, writerSettings);
             
             var feedWriter = writer.CreateODataFeedWriter();
-            feedWriter.WriteStart(new ODataFeed { Id = "Packages", Count = total});
+            feedWriter.WriteStart(new ODataFeed { Id = baseAddress + "Packages", Count = total});
 
 
             var pks = packages.Select(pk => new ODataPackage(pk));
@@ -70,7 +70,7 @@ namespace NuFridge.Shared.Server.Web
                 MediaResource = new ODataStreamReferenceValue
                 {
                     ContentType = "application/zip",
-                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version)
+                    ReadLink = new Uri(baseAddress + "package/" + package.Id + "/" + package.Version), EditLink = new Uri("Packages(Id='" + package.Id + "',Version='" + package.Version + "')/$value", UriKind.Relative)
                 },
                 Properties = GetProperties(package, properties)
             };
