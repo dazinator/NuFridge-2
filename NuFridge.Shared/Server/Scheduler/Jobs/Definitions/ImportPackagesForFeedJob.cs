@@ -131,7 +131,7 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
         {
             SaveJob();
 
-            _log.Debug($"{Job.Scheduled} packages left to import. {Job.Processed} have been processed. Feed Id {FeedId}");
+            _log.Debug($"{Job.Scheduled - Job.Processed} packages left to import. {Job.Processed} have been processed. Feed Id {FeedId}");
 
             hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).jobUpdated(Job);
         }
