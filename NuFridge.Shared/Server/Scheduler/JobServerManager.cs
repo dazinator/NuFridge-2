@@ -23,55 +23,32 @@ namespace NuFridge.Shared.Server.Scheduler
     {
         private readonly ILog _log = LogProvider.For<JobServerManager>();
         private readonly IStore _store;
+        private readonly IEnumerable<JobServerInstance> _jobServerInstances;
         private readonly IContainer _container;
 
-        public JobServerManager(IContainer container, IStore store)
+        public JobServerManager(IContainer container, IStore store, IEnumerable<JobServerInstance> jobServerInstances)
         {
             _container = container;
             _store = store;
+            _jobServerInstances = jobServerInstances;
         }
 
         public void Stop(Action<string> updateStatusAction)
         {
-            _log.Info("Shutting down the job server. Any jobs being processed will be terminated after 3 minutes.");
+            _log.Info("Shutting down the job server.");
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
-
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-
-            bool jobsRanForOver3Mins = false;
-
-            while (monitorApi.ProcessingCount() > 0 && !jobsRanForOver3Mins)
-            {
-                if (watch.Elapsed.TotalMinutes >= 3)
-                {
-                    jobsRanForOver3Mins = true;
-                }
-
-                var processingCount = monitorApi.ProcessingCount();
-
-                updateStatusAction("Waiting for " + processingCount + " jobs to complete to continue shutdown");
-
-                _log.Info("Waiting for " + processingCount + " jobs to complete.");
-
-                Thread.Sleep(5000);
-            }
-
-            watch.Stop();
 
             var processingJobs = monitorApi.ProcessingJobs(0, 10);
 
             foreach (var processingJob in processingJobs)
             {
-                _log.Warn("The " + processingJob.Value.Job.Type.Name + " job will be terminated as it execeeded the 3 minute timeout.");
+                _log.Warn("The " + processingJob.Value.Job.Type.Name + " job will be terminated due to the service shutting down. It will restart on the next service start.");
             }
 
-            updateStatusAction("Shutting down the job servers");
+            updateStatusAction("Shutting down the job server");
 
-            IEnumerable<JobServerInstance> jobServers = _container.Resolve<IEnumerable<JobServerInstance>>();
-
-            foreach (var jobServerInstance in jobServers)
+            foreach (var jobServerInstance in _jobServerInstances)
             {
                 jobServerInstance.Stop();
                 _log.Info("Successfully stopped job server for " + jobServerInstance.QueueName);
@@ -91,37 +68,7 @@ namespace NuFridge.Shared.Server.Scheduler
 
             var monitorApi = JobStorage.Current.GetMonitoringApi();
 
-            //var processingJobs = monitorApi.ProcessingJobs(0, int.MaxValue);
-
-            //if (processingJobs.Any())
-            //{
-            //    foreach (KeyValuePair<string, ProcessingJobDto> processingJob in processingJobs)
-            //    {
-            //        var jobDetails = monitorApi.JobDetails(processingJob.Key);
-            //        if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background" ))
-            //        {
-            //            BackgroundJob.Delete(processingJob.Key);
-            //        }
-            //    }
-            //}
-
-            //var scheduledJobs = monitorApi.ScheduledJobs(0, int.MaxValue).ToList();
-
-            //if (scheduledJobs.Any())
-            //{
-            //    foreach (var scheduledJob in scheduledJobs)
-            //    {
-            //        var jobDetails = monitorApi.JobDetails(scheduledJob.Key);
-            //        if (jobDetails.History.Any(hi => hi.Data.ContainsKey("Queue") && hi.Data["Queue"] == "background"))
-            //        {
-            //            BackgroundJob.Delete(scheduledJob.Key);
-            //        }
-            //    }
-            //}
-
-            IEnumerable<JobServerInstance> jobServers = _container.Resolve<IEnumerable<JobServerInstance>>();
-
-            foreach (var jobServerInstance in jobServers)
+            foreach (var jobServerInstance in _jobServerInstances)
             {
                 jobServerInstance.Start(monitorApi, updateStatusAction);
                 _log.Info("Successfully started job server for " + jobServerInstance.QueueName);

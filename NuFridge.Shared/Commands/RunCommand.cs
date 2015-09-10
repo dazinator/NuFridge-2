@@ -23,8 +23,8 @@ namespace NuFridge.Shared.Commands
 
         protected override void Stop()
         {
-            base.Stop();
             _engine.Value.Stop();
+            base.Stop();
         }
     }
 }

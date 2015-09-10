@@ -11,10 +11,10 @@ namespace NuFridge.Shared.Server
         private readonly Lazy<IWebServerInitializer> _webHostInitializer;
         private readonly Lazy<IStoreInitializer> _storeInitializer;
         private readonly Lazy<IStartupPageListener> _startupPageListener;
-        private readonly Lazy<IShutdownPageListener> _shutdownPageListener;
+        private readonly IShutdownPageListener _shutdownPageListener;
         private readonly Lazy<IJobServerManager> _jobServer; 
 
-        public ServerEngine(Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer, Lazy<IStartupPageListener> startupPageListener, Lazy<IJobServerManager> jobServer, Lazy<IShutdownPageListener> shutdownPageListener)
+        public ServerEngine(Lazy<IWebServerInitializer> webHostInitializer, Lazy<IStoreInitializer> storeInitializer, Lazy<IStartupPageListener> startupPageListener, Lazy<IJobServerManager> jobServer, IShutdownPageListener shutdownPageListener)
         {
             _webHostInitializer = webHostInitializer;
             _storeInitializer = storeInitializer;
@@ -45,15 +45,15 @@ namespace NuFridge.Shared.Server
         {
             _webHostInitializer.Value.Stop();
 
-            _shutdownPageListener.Value.Start();
+            _shutdownPageListener.Start();
 
-            _jobServer.Value.Stop(_shutdownPageListener.Value.UpdateStatus);
+            _jobServer.Value.Stop(_shutdownPageListener.UpdateStatus);
 
-            _shutdownPageListener.Value.UpdateStatus("Performing final cleanup before shutdown");
+            _shutdownPageListener.UpdateStatus("Performing final cleanup before shutdown");
 
             _webHostInitializer.Value.Dispose();
 
-            _shutdownPageListener.Value.Stop();
+            _shutdownPageListener.Stop();
         }
     }
 }

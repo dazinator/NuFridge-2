@@ -81,16 +81,6 @@ namespace NuFridge.Service
 
             LogManager.Configuration = config;
 
-            TaskScheduler.UnobservedTaskException += ((sender, args) =>
-            {
-                _log.ErrorException("Unhandled task exception occurred: {0}", args.Exception.UnpackFromContainers(), args.Exception.GetErrorSummary());
-                args.SetObserved();
-            });
-            AppDomain.CurrentDomain.UnhandledException += ((sender, args) =>
-            {
-                Exception error = args.ExceptionObject as Exception;
-                _log.FatalException("Unhandled AppDomain exception occurred: {0}", error, error?.Message ?? args.ExceptionObject);
-            });
             try
             {
                 _commandLineArguments = ProcessCommonOptions();
