@@ -111,9 +111,20 @@ namespace NuFridge.Shared.Server.NuGet
                 throw new PackageConflictException($"A package with the same ID and version already exists - {package.Id} v{package.Version}");
             }
 
+            string path = GetPackageFilePath(package);
+
             try
             {
-                base.AddPackage(package);
+                using (Stream stream = package.GetStream())
+                {
+                    if (FileSystem.FileExists(path))
+                    {
+                        _log.Debug($"Overwriting package file at {path}");
+                        FileSystem.DeleteFile(path);
+                    }
+
+                    FileSystem.AddFile(path, stream);
+                }
             }
             catch (IOException ex)
             {
@@ -133,9 +144,7 @@ namespace NuFridge.Shared.Server.NuGet
 
             var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
-
             _packageIndex.AddPackage(localPackage);
-
             _frameworkNamesManager.Add(localPackage.SupportedFrameworks);
         }
     }

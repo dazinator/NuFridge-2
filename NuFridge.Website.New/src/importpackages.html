@@ -26,6 +26,8 @@
                     </div>
                 </div>
             </div>
+
+            <p>Only listed packages will be imported.</p>
             <div class="ui buttons">
                 <button class="ui positive button" click.trigger="startImport()">Import Packages</button>
             </div>
@@ -42,16 +44,14 @@
             <table class="ui collapsing table">
                 <thead>
                 <tr>
-                    <th>Packages Imported</th>
-                    <th>Packages Failed</th>
+                    <th>Total Packages</th>
                     <th>Packages Remaining</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>${packagesImportedCount}</td>
-                    <td> ${packagesFailedCount}</td>
-                    <td> ${job.Scheduled}</td>
+                    <td>${job.Scheduled}</td>
+                    <td> ${job.Scheduled - job.Processed}</td>
                 </tr>
                 </tbody>
             </table>

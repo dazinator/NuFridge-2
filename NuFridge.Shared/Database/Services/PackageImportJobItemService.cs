@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Server.Web.OData;
 using NuGet;
 
 namespace NuFridge.Shared.Database.Services
@@ -15,7 +16,7 @@ namespace NuFridge.Shared.Database.Services
             _jobItemRepository = jobItemRepository;
         }
 
-        public PackageImportJobItem Insert(IPackage package, int jobId)
+        public PackageImportJobItem Insert(ODataPackage package, int jobId)
         {
             PackageImportJobItem jobItem = new PackageImportJobItem
             {
@@ -24,7 +25,7 @@ namespace NuFridge.Shared.Database.Services
                 StartedAt = null,
                 JobId = jobId,
                 PackageId = package.Id,
-                Version = package.Version.ToString(),
+                Version = package.Version,
                 Success = false
             };
 
@@ -44,7 +45,7 @@ namespace NuFridge.Shared.Database.Services
 
     public interface IPackageImportJobItemService
     {
-        PackageImportJobItem Insert(IPackage package, int jobId);
+        PackageImportJobItem Insert(ODataPackage package, int jobId);
         IEnumerable<PackageImportJobItem> FindForJob(int jobId);
         void Update(PackageImportJobItem item);
     }

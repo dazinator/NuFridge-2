@@ -9,8 +9,8 @@ using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.Import;
+using NuFridge.Shared.Server.Web.OData;
 using NuFridge.Shared.Server.Web.SignalR;
-using NuGet;
 
 namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 {
@@ -38,10 +38,10 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
             WithUserId(userId);
             WithCancellationToken(cancellationToken);
 
-            WithTaskName("Package Import");
+            WithTaskName("Package import from " + options.FeedUrl);
             Options = options;
 
-            base.Start();
+            Start();
         }
 
         protected override void Execute()
@@ -50,101 +50,85 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 
             _log.Info("Importing packages for feed id " + FeedId.Value);
 
-            List<PackageImportJobItem> packageImportItems = _jobItemService.FindForJob(jobId).ToList();
-
-            var remoteRepository = PackageRepositoryFactory.Default.CreateRepository(Options.FeedUrl);
-            List<IPackage> packages = _importRepository.GetPackages(remoteRepository, Options);
-
-            if (packages.Any())
-            {
-                foreach (var package in packages)
-                {
-                    if (!packageImportItems.Any(
-                            pi => pi.PackageId == package.Id && pi.Version == package.Version.ToString()))
-                    {
-                        var item = _jobItemService.Insert(package, jobId);
-                        packageImportItems.Add(item);
-                    }
-                }
-            }
-
-            List<PackageImportJobItem> toProcess = packageImportItems.Where(pi => !pi.StartedAt.HasValue).ToList();
-
             var hub = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
 
-            UpdateCounters(hub, jobId, toProcess.Count, packageImportItems.Count - toProcess.Count);
+            IEnumerable<PackageImportRepository.PackageImportResult> results = _importRepository.GetPackages(Options);
+
+            List<PackageImportJobItem> packageImportItems = _jobItemService.FindForJob(jobId).ToList();
 
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
 
-            int i = 0;
-
-            foreach (var packageImportJobItem in toProcess)
+            foreach (var result in results)
             {
-                if (stopwatch.Elapsed.TotalSeconds >= 5)
+                Job.Scheduled = result.TotalCount;
+
+                if (stopwatch.Elapsed.TotalSeconds >= 5 || !stopwatch.IsRunning)
                 {
                     stopwatch.Restart();
 
-                    if (i > 0)
+                    UpdateCounters(hub, jobId);
+                }
+
+                PackageImportJobItem item = packageImportItems.SingleOrDefault(pi => pi.PackageId == result.Package.Id && pi.Version == result.Package.Version);
+                if (item == null)
+                {
+                    item = _jobItemService.Insert(result.Package, jobId);
+                    packageImportItems.Add(item);
+                }
+
+                if (!item.CompletedAt.HasValue)
+                {
+                    try
                     {
-                        UpdateCounters(hub, jobId, Job.Scheduled - i, Job.Processed + i);
-                        i = 0;
+                        _packageImporter.ImportPackage(FeedId.Value, Options, result.Package, item);
+
+                        item.Success = true;
+                        item.CompletedAt = DateTime.UtcNow;
+                        _jobItemService.Update(item);
                     }
-                }
+                    catch (PackageNotFoundException ex)
+                    {
+                        item.Log(LogLevel.Error, ex.Message);
+                        item.Success = false;
+                        item.CompletedAt = DateTime.UtcNow;
+                        _jobItemService.Update(item);
+                    }
+                    catch (InvalidPackageMetadataException ex)
+                    {
+                        item.Log(LogLevel.Error, ex.Message);
+                        item.Success = false;
+                        item.CompletedAt = DateTime.UtcNow;
+                        _jobItemService.Update(item);
+                    }
+                    catch (PackageConflictException ex)
+                    {
+                        item.Log(LogLevel.Error, ex.Message);
+                        item.Success = false;
+                        item.CompletedAt = DateTime.UtcNow;
+                        _jobItemService.Update(item);
+                    }
+                    catch (Exception ex)
+                    {
+                        item.Log(LogLevel.Error, ex.Message);
+                        item.Success = false;
+                        item.CompletedAt = DateTime.UtcNow;
+                        _jobItemService.Update(item);
+                    }
 
-                try
-                {
-                    packageImportJobItem.StartedAt = DateTime.UtcNow;
-
-                    _packageImporter.ImportPackage(FeedId.Value, Options, packageImportJobItem);
-
-                    packageImportJobItem.Success = true;
-                    packageImportJobItem.CompletedAt = DateTime.UtcNow;
-                    _jobItemService.Update(packageImportJobItem);
+                    Job.Processed++;
+                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).packageProcessed(item);
                 }
-                catch (PackageNotFoundException ex)
-                {
-                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
-                    packageImportJobItem.Success = false;
-                    packageImportJobItem.CompletedAt = DateTime.UtcNow;
-                    _jobItemService.Update(packageImportJobItem);
-                }
-                catch (InvalidPackageMetadataException ex)
-                {
-                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
-                    packageImportJobItem.Success = false;
-                    packageImportJobItem.CompletedAt = DateTime.UtcNow;
-                    _jobItemService.Update(packageImportJobItem);
-                }
-                catch (PackageConflictException ex)
-                {
-                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
-                    packageImportJobItem.Success = false;
-                    packageImportJobItem.CompletedAt = DateTime.UtcNow;
-                    _jobItemService.Update(packageImportJobItem);
-                }
-                catch (Exception ex)
-                {
-                    packageImportJobItem.Log(LogLevel.Error, ex.Message);
-                    packageImportJobItem.Success = false;
-                    packageImportJobItem.CompletedAt = DateTime.UtcNow;
-                    _jobItemService.Update(packageImportJobItem);
-                }
-
-                i++;
-
-                hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).packageProcessed(packageImportJobItem);
             }
 
             stopwatch.Stop();
 
-            UpdateCounters(hub, jobId, Job.Scheduled - i, Job.Processed + i);
+            UpdateCounters(hub, jobId);
+
+            _log.Info($"Finished package import for feed id {FeedId}");
         }
 
-        private void UpdateCounters(IHubContext hub, int jobId, int scheduled, int processed)
+        private void UpdateCounters(IHubContext hub, int jobId)
         {
-            Job.Scheduled = scheduled;
-            Job.Processed = processed;
             SaveJob();
 
             _log.Debug($"{Job.Scheduled} packages left to import. {Job.Processed} have been processed. Feed Id {FeedId}");

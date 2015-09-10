@@ -50,11 +50,11 @@ namespace NuFridge.Shared.Server.Web.OData
             DevelopmentDependency = package.DevelopmentDependency;
         }
 
-        public string Id { get; }
+        public string Id { get; set; }
 
-        public string Version { get; }
+        public string Version { get; set; }
 
-        public string NormalizedVersion { get; }
+        public string NormalizedVersion { get; set; }
 
         public string Title { get; set; }
 

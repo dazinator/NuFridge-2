@@ -14,6 +14,8 @@ namespace NuFridge.Shared.Database.Model
         [Key]
         public int JobId { get; set; }
         public int Processed { get; set; }
+
+        //TODO Rename to Total
         public int Scheduled { get; set; }
         public string JSON { get; set; }
     }

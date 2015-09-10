@@ -21,7 +21,7 @@ namespace NuFridge.Shared.Server.Web.SignalR
             var jobService = GlobalHost.DependencyResolver.Resolve<IJobService>();
 
             Clients.Caller.jobUpdated(jobService.Find<PackageImportJob>(jobId));
-            Clients.Caller.loadPackages(jobItemService.FindForJob(jobId).ToList());
+            Clients.Caller.loadPackages(jobItemService.FindForJob(jobId).Where(j => j.CompletedAt.HasValue).ToList());
         }
 
         public async Task Unsubscribe(int jobId)

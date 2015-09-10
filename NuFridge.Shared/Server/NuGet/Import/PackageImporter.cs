@@ -7,6 +7,7 @@ using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.Server.NuGet.FastZipPackage;
+using NuFridge.Shared.Server.Web.OData;
 using NuGet;
 
 namespace NuFridge.Shared.Server.NuGet.Import
@@ -15,8 +16,6 @@ namespace NuFridge.Shared.Server.NuGet.Import
     {
         private readonly IInternalPackageRepositoryFactory _factory;
         private readonly IPackageService _packageService;
-        private readonly ILog _log = LogProvider.For<PackageImporter>();
-
 
         public PackageImporter(IPackageService packageService, IInternalPackageRepositoryFactory factory)
         {
@@ -24,26 +23,21 @@ namespace NuFridge.Shared.Server.NuGet.Import
             _factory = factory;
         }
 
-
-        public void ImportPackage(int feedId, PackageImportOptions options, PackageImportJobItem item)
+        public void ImportPackage(int feedId, PackageImportOptions options, ODataPackage package, PackageImportJobItem item)
         {
-            SemanticVersion version = new SemanticVersion(item.Version);
-
             IInternalPackageRepository localRepository = _factory.Create(feedId);
-
             IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
 
+            item.StartedAt = DateTime.Now;
             item.Log(LogLevel.Info, $"Searching for the package from {remoteRepository.Source}");
 
-            DataServicePackage remotePackage =
-                remoteRepository.GetPackages()
-                    .Where(pk => pk.Id == item.PackageId)
-                    .ToList()
-                    .FirstOrDefault(pk => pk.Version == version) as DataServicePackage;
+            var version = SemanticVersion.Parse(package.Version);
+
+            DataServicePackage remotePackage = remoteRepository.FindPackage(package.Id, version, options.IncludePrerelease, false) as DataServicePackage;
 
             if (remotePackage == null)
             {
-                throw new PackageNotFoundException(item.PackageId, item.Version);
+                throw new PackageNotFoundException(package.Id, package.Version);
             }
 
             if (options.CheckLocalCache)
@@ -98,6 +92,6 @@ namespace NuFridge.Shared.Server.NuGet.Import
 
     public interface IPackageImporter
     {
-        void ImportPackage(int feedId, PackageImportOptions options, PackageImportJobItem item);
+        void ImportPackage(int feedId, PackageImportOptions options, ODataPackage package, PackageImportJobItem item);
     }
 }

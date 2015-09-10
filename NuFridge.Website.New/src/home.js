@@ -18,7 +18,7 @@ export class Home {
 
     attached() {
         var self = this;
-
+        self.loadGraphs();
     }
 
     loadGraphs() {
@@ -96,11 +96,8 @@ export class Home {
             } 
         });
 
-        System.import('chartist').then((chartist) => {
+        return System.import('chartist').then((chartist) => {
             self.chartist = chartist;
-            self.loadGraphs();
         });
-
-
     }
 }
