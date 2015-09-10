@@ -60,6 +60,18 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs.Definitions
 
             foreach (var result in results)
             {
+                try
+                {
+                    CancellationToken.ThrowIfCancellationRequested();
+                }
+                catch (Exception)
+                {
+                    _log.Warn($"The package import for feed id {FeedId} has been cancelled.");
+                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).importCancelled();
+                    CancelJob();
+                    throw;
+                }
+
                 Job.Scheduled = result.TotalCount;
 
                 if (stopwatch.Elapsed.TotalSeconds >= 5 || !stopwatch.IsRunning)

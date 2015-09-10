@@ -31,6 +31,19 @@ export class ImportPackages {
     showForm = false;
     showProgress = false;
 
+    cancelImport() {
+        var self = this;
+
+        self.http.delete("/api/feeds/" + self.feedId + "/import/" + self.jobId).then(message => {
+
+        },
+            function(message) {
+                if (message.statusCode === 401) {
+
+                }
+            });
+    }
+
     startImport() {
         var self = this;
 
@@ -39,11 +52,11 @@ export class ImportPackages {
         }
 
         self.http.post("/api/feeds/" + self.feedId + "/import", self.options).then(message => {
-            var jobId = message.response;
+            self.jobId = message.response;
 
-            window.history.replaceState(null, null, "#feeds/view/" + self.feedId + "/import/" + jobId);
+            window.history.replaceState(null, null, "#feeds/view/" + self.feedId + "/import/" + self.jobId);
 
-            self.proxy.invoke('Subscribe', jobId);
+            self.proxy.invoke('Subscribe', self.jobId);
 
             self.showForm = false;
             self.showProgress = true;
@@ -103,9 +116,15 @@ export class ImportPackages {
             self.items = self.arrayUnique(self.items.concat([pkg]));
         });
 
-        self.proxy.on('jobUpdated', function(message) {
-            self.job = message;
+        self.proxy.on('jobUpdated', function(job) {
+            if (job) {
+                self.job = job;
+            }
         });
+
+    self.proxy.on('importCancelled', function() {
+  
+    });
 
         self.proxy.on('loadPackages', function(message) {
             var items = message;
@@ -119,11 +138,9 @@ export class ImportPackages {
 
         self.connection.start({ jsonp: false })
         .done(function() {
-            console.log('Now connected, connection ID=' + self.connection.id);
             d.resolve();
         })
         .fail(function() {
-            console.log('Could not connect');
             d.reject();
         });
 

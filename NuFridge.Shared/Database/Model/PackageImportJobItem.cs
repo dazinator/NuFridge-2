@@ -53,22 +53,22 @@ namespace NuFridge.Shared.Database.Model
             switch (level)
             {
                 case LogLevel.Trace:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
                 case LogLevel.Debug:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
                 case LogLevel.Info:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
                 case LogLevel.Warn:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
                 case LogLevel.Error:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
                 case LogLevel.Fatal:
-                    _log.Trace(message);
+                    _log.Trace(message + $" for {PackageId} {Version}");
                     break;
             }
 

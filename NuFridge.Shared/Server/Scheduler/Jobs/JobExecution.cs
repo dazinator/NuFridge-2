@@ -49,6 +49,15 @@ namespace NuFridge.Shared.Server.Scheduler.Jobs
             _jobService.Update(Job);
         }
 
+        protected void CancelJob()
+        {
+            JobBase.CompletedAt = DateTime.UtcNow;
+            JobBase.Success = false;
+
+            _jobService.Update(JobBase);
+            _jobService.Update(Job);
+        }
+
         protected void Start()
         {
             BeforeStart();

@@ -391,6 +391,7 @@
     <Compile Include="Server\Storage\Initializers\DefaultDataInitalizer.cs" />
     <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
     <Compile Include="Server\Web\Actions\IAction.cs" />
+    <Compile Include="Server\Web\Actions\NuFridgeApi\CancelImportPackagesFromFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
     <Compile Include="Server\Web\Actions\NuFridgeApi\FeedSearchAction.cs" />

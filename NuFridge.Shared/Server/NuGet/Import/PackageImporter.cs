@@ -48,16 +48,16 @@ namespace NuFridge.Shared.Server.NuGet.Import
                 if (TryImportFromLocalFeed(remotePackage, localRepository, item))
                     return;
 
-                item.Log(LogLevel.Debug, "No matching package was found locally. The package will be downloaded from the remote feed.");
+                item.Log(LogLevel.Debug, "No matching package was found locally. The package will be downloaded from the remote feed");
             }
             else
             {
-                item.Log(LogLevel.Info, "Downloading and indexing the package.");
+                item.Log(LogLevel.Info, "Downloading and indexing the package");
             }
 
             localRepository.AddPackage(remotePackage);
 
-            item.Log(LogLevel.Info, "The package has been imported.");
+            item.Log(LogLevel.Info, "The package has been imported");
         }
 
         private bool TryImportFromLocalFeed(DataServicePackage remotePackage, IInternalPackageRepository localRepository, PackageImportJobItem item)
