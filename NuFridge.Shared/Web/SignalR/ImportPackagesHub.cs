@@ -14,12 +14,10 @@ namespace NuFridge.Shared.Web.SignalR
         {
             await Groups.Add(Context.ConnectionId, GetGroup(jobId));
 
-            var jobItemService = GlobalHost.DependencyResolver.Resolve<IPackageImportJobItemService>();
             var jobService = GlobalHost.DependencyResolver.Resolve<IJobService>();
 
             Clients.Caller.loadJob(jobService.Find(jobId));
             Clients.Caller.loadDetailedJob(jobService.Find<PackageImportJob>(jobId));
-            Clients.Caller.loadPackages(jobItemService.FindForJob(jobId).Where(j => j.CompletedAt.HasValue).ToList());
         }
 
         public async Task Unsubscribe(int jobId)

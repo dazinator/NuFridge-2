@@ -30,10 +30,13 @@ export class ImportPackages {
     connection = $.hubConnection();
     proxy = null;
 
-    items = new Array();
-
     showForm = false;
     showProgress = false;
+
+    downloadReport() {
+        var self = this;
+        window.location.href = "/api/feeds/" + self.feedId + "/import/" + self.jobId + "/report";
+    }
 
     cancelImport() {
         var self = this;
@@ -72,24 +75,6 @@ export class ImportPackages {
         });
     }
 
-    arrayUnique(array) {
-        var a = array.concat();
-        for(var i=0; i<a.length; ++i) {
-            for(var j=i+1; j<a.length; ++j) {
-                if(a[i].Id === a[j].Id)
-                    a.splice(j--, 1);
-            }
-        }
-
-        return a;
-    };
-
-    parsePackageItem(pkg) {
-        pkg.Items = JSON.parse(pkg.JSON).Items;
-        pkg.JSON = undefined;
-        return pkg;
-    }
-
     packageClick(pkg) {
         var self = this;
         pkg.IsExpanded = !pkg.IsExpanded;
@@ -115,23 +100,10 @@ export class ImportPackages {
 
         self.proxy = self.connection.createHubProxy('importPackagesHub');
 
-        self.proxy.on('packageProcessed', function(message) {
-            var pkg = self.parsePackageItem(message);
-
-            var beforeCount = self.items.length;
-
-            self.items = self.arrayUnique(self.items.concat([pkg]));
-
-            var afterCount = self.items.length - beforeCount;
-
-            if (afterCount > 0) {
-                $('#importProgressBar').progress('increment', afterCount);
-            }
-        });
-
         self.proxy.on('loadDetailedJob', function(job) {
             if (job) {
-                var scheduled = self.detailedJob.Scheduled; 
+                var scheduled = self.detailedJob.Scheduled;
+                var processed = self.detailedJob.Processed;
 
                 self.detailedJob = job;
 
@@ -139,10 +111,14 @@ export class ImportPackages {
                     $('#importProgressBar').progress({
                         total: self.detailedJob.Scheduled,
                         text: {
-                            active  : 'Importing {value} of {total} packages',
-                            success : '{total} packages processed'
-                        }
+                            active: 'Processed {value} of {total} packages',
+                            success: '{total} packages processed'
+                        },
+                        value: self.detailedJob.Processed,
+                        showActivity: false
                     });
+                } else if (processed < self.detailedJob.Processed) {
+                    $('#importProgressBar').progress('increment', self.detailedJob.Processed - processed);
                 }
             }
         });
@@ -150,28 +126,6 @@ export class ImportPackages {
         self.proxy.on('loadJob', function(job) {
             if (job) {
                 self.job = job;
-            }
-        });
-
-        self.proxy.on('importCancelled', function() {
-
-        });
-
-        self.proxy.on('loadPackages', function(message) {
-            var items = message;
-
-            $.each(items, function(index, element) {
-                self.parsePackageItem(element);
-            });
-
-            var beforeCount = self.items.length;
-
-            self.items = self.arrayUnique(self.items.concat(items));
-
-            var afterCount = self.items.length - beforeCount;
-
-            if (afterCount > 0) {
-                $('#importProgressBar').progress('increment', afterCount);
             }
         });
 
@@ -212,6 +166,8 @@ export class ImportPackages {
             self.configureSignalRProxy();
         }
     }
+
+
 
     attached() {
         var self = this;

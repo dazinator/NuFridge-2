@@ -34,71 +34,31 @@
         </form>
     </div>
 
-    <div class="ui indicating progress ${job.CreatedAt && !job.CompletedAt && job.Success === false ? 'active' : ''}" id="importProgressBar" style="margin: 0;" show.bind="showProgress">
-        <div class="bar" style="transition-duration: 300ms;">
-            <div class="progress">0%</div>
-        </div>
-        <div class="label" show.bind="job.CreatedAt && !job.CompletedAt && job.Success === false"></div>
-    </div>
+
 
 
     <div class="ui pointing secondary menu importMenu" show.bind="showProgress">
         <a class="item active" data-tab="first">Overview</a>
-        <a class="item" data-tab="second">Packages</a>
     </div>
 
 
     <div show.bind="showProgress">
         <div data-tab="first" class="ui bottom tab segment active">
+            <div class="ui indicating progress ${job.CreatedAt && !job.CompletedAt && job.Success === false ? 'active' : ''}" id="importProgressBar">
+                <div class="bar" style="transition-duration: 300ms;">
+                    <div class="progress">0%</div>
+                </div>
+                <div class="label"></div>
+            </div>
 
-
-
-            <table class="ui collapsing table">
-                <thead>
-                <tr>
-                    <th>Total Packages</th>
-                    <th>Packages Remaining</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>${detailedJob.Scheduled}</td>
-                    <td> ${detailedJob.Scheduled - detailedJob.Processed}</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <div if.bind="job.CreatedAt && !job.CompletedAt && job.Success === false">
+            <div>
                 <h2 class="ui header">
                     Administrative Actions
                 </h2>
 
-                <div class="ui buttons">
-                    <button class="ui negative button" click.trigger="cancelImport()">Cancel Import</button>
-                </div>
-            </div>
-        </div>
+                    <button class="ui positive button" click.trigger="downloadReport()">Download Report</button> 
+                    <button class="ui negative button" click.trigger="cancelImport()" if.bind="job.CreatedAt && !job.CompletedAt && job.Success === false">Cancel Import</button>
 
-        <div data-tab="second" class="ui bottom tab segment">
-            <p if.bind="items.length === 0">
-                No packages have been imported yet.
-            </p>
-            <div class="ui importList" if.bind="items.length > 0">
-                <div class="ui message importItem" repeat.for="item of items">
-                    <div class="header">
-                        <a class="ui red label" if.bind="item.Success === false && item.CompletedAt">Failed</a>
-                        <a class="ui green label" if.bind="item.Success === true && item.CompletedAt">Success</a>
-                        <i click.trigger="$parent.packageClick(item)" class="${item.IsExpanded ? 'minus square' : 'add square'} icon"></i>
-                        <span class="importTitle" click.trigger="$parent.packageClick(item)">${item.PackageId} ${item.Version}</span> 
-                    </div>
-
-                    <div class="ui message" if.bind="item.IsExpanded">
-                        <div class="ui list">
-                            <div class="item" repeat.for="log of item.Items"><a class="ui ${$parent.$parent.getLevelColour(log)} label">${log.Level.toUpperCase()}</a> ${log.Message}
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

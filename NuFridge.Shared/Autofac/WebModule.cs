@@ -42,6 +42,7 @@ namespace NuFridge.Shared.Autofac
             builder.RegisterType<ImportPackagesFromFeedAction>().AsSelf();
             builder.RegisterType<CancelImportPackagesFromFeedAction>().AsSelf();
             builder.RegisterType<GetPackageAuditHistoryAction>().AsSelf();
+            builder.RegisterType<DownloadPackageImportReport>().AsSelf();
             builder.RegisterType<CheckIfPerformedFirstTimeSetupAction>().AsSelf();
             builder.RegisterType<SetupAction>().AsSelf();
             builder.RegisterType<UpdateAccountAction>().AsSelf();

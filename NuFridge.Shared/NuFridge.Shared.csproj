@@ -201,8 +201,8 @@
       <HintPath>..\packages\NuGet.Core.2.8.6\lib\net40-Client\NuGet.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="OpenXmlUtils, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenXmlUtils.1.0.0.5\lib\net45\OpenXmlUtils.dll</HintPath>
+    <Reference Include="OpenXmlUtils, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenXmlUtils.1.0.0.6\lib\net45\OpenXmlUtils.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -388,6 +388,7 @@
     <Compile Include="Web\Actions\NuFridgeApi\CancelImportPackagesFromFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\DownloadPackageImportReport.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetAccountAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetBackgroundJobsAction.cs" />
@@ -547,9 +548,7 @@
       <Name>NuFridge.Website</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Web\Actions\NuGetApiV1\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Database\Scripts\0000-Tables.sql" />
     <EmbeddedResource Include="Database\Scripts\0002-FeedConfigRetentionPolicy.sql" />

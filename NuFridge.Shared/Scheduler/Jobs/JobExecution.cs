@@ -10,7 +10,7 @@ namespace NuFridge.Shared.Scheduler.Jobs
     {
         private readonly IJobService _jobService;
         protected T Job { get; private set; }
-        private Job JobBase { get; set; }
+        protected Job JobBase { get; private set; }
 
         protected int? FeedId { get; private set; }
         protected int UserId { get; private set; } 

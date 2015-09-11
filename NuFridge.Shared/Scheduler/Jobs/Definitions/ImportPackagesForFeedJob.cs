@@ -51,6 +51,8 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
             var hub = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
 
+            hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).loadJob(JobBase);
+
             IEnumerable<RemoteRemotePackageRepository.PackageImportResult> results = _repository.GetPackages(Options);
 
             List<PackageImportJobItem> packageImportItems = _jobItemService.FindForJob(jobId).ToList();
@@ -66,14 +68,14 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                 catch (Exception)
                 {
                     _log.Warn($"The package import for feed id {FeedId} has been cancelled.");
-                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).importCancelled();
                     CancelJob();
+                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).loadJob(JobBase);
                     throw;
                 }
 
                 Job.Scheduled = result.TotalCount;
 
-                if (stopwatch.Elapsed.TotalSeconds >= 5 || !stopwatch.IsRunning)
+                if (stopwatch.Elapsed.TotalSeconds >= 3 || !stopwatch.IsRunning)
                 {
                     stopwatch.Restart();
 
@@ -127,7 +129,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                     }
 
                     Job.Processed++;
-                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).packageProcessed(item);
+                    SaveJob();
                 }
             }
 
@@ -140,8 +142,6 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
         private void UpdateCounters(IHubContext hub, int jobId)
         {
-            SaveJob();
-
             _log.Debug($"{Job.Scheduled - Job.Processed} packages left to import. {Job.Processed} have been processed. Feed Id {FeedId}");
 
             hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).loadDetailedJob(Job);
