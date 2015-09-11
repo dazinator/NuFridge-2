@@ -1,9 +1,7 @@
 ﻿using Autofac;
+using NuFridge.Shared.Autofac;
 using NuFridge.Shared.Commands;
 using NuFridge.Shared.Extensions;
-using NuFridge.Shared.Server;
-using NuFridge.Shared.Server.Application;
-using NuFridge.Shared.Server.Modules;
 
 namespace NuFridge.Service
 {

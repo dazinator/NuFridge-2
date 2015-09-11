@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NuFridge.Shared.Application;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Exceptions;
-using NuFridge.Shared.Server.Configuration;
 using SimpleCrypto;
 
 namespace NuFridge.Shared.Database.Services

@@ -178,6 +178,10 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.1.2.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
+    <Reference Include="Nancy.LightningCache, Version=0.1.3.7342, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.LightningCache.0.1.3\lib\net40\Nancy.LightningCache.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Nancy.Owin, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Owin.1.2.0\lib\net40\Nancy.Owin.dll</HintPath>
       <Private>True</Private>
@@ -297,7 +301,8 @@
     <Compile Include="Database\Model\Statistic.cs" />
     <Compile Include="Database\Model\User.cs" />
     <Compile Include="Database\Model\UserRole.cs" />
-    <Compile Include="Database\ReadOnlyException.cs" />
+    <Compile Include="Database\Scripts\_ScriptNamespaceMirgrator.cs" />
+    <Compile Include="Exceptions\ReadOnlyException.cs" />
     <Compile Include="Database\Repository\BaseRepository.cs" />
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
     <Compile Include="Database\Repository\FeedGroupRepository.cs" />
@@ -309,7 +314,6 @@
     <Compile Include="Database\Repository\PackageImportJobItemRepository.cs" />
     <Compile Include="Database\Repository\PackageImportJobRepository.cs" />
     <Compile Include="Database\Repository\PackageRepository.cs" />
-    <Compile Include="Database\Repository\StatisticRepository.cs" />
     <Compile Include="Database\Repository\UserRepository.cs" />
     <Compile Include="Database\Services\FeedConfigurationService.cs" />
     <Compile Include="Database\Services\FeedGroupService.cs" />
@@ -319,16 +323,11 @@
     <Compile Include="Database\Services\PackageDownloadService.cs" />
     <Compile Include="Database\Services\PackageImportJobItemService.cs" />
     <Compile Include="Database\Services\PackageService.cs" />
-    <Compile Include="Database\Services\StatisticService.cs" />
     <Compile Include="Database\Services\UserService.cs" />
-    <Compile Include="Database\SimpleCRUD.cs" />
+    <Compile Include="Database\Repository\SimpleCRUD.cs" />
     <Compile Include="Exceptions\FeedConflictException.cs" />
     <Compile Include="Exceptions\ImportPackageException.cs" />
     <Compile Include="Exceptions\InvalidPackageMetadataException.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledge.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBase.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBaseEntry.cs" />
-    <Compile Include="Exceptions\Kb\ExceptionKnowledgeBuilder.cs" />
     <Compile Include="Exceptions\PackageConflictException.cs" />
     <Compile Include="Exceptions\PackageNotFoundException.cs" />
     <Compile Include="Installation\ConfigurationForm.cs">
@@ -342,123 +341,120 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Server\Constants.cs" />
-    <Compile Include="Server\Modules\FullModule.cs" />
-    <Compile Include="Server\NuGet\FeedManager.cs" />
-    <Compile Include="Server\NuGet\FrameworkNamesManager.cs" />
-    <Compile Include="Server\NuGet\Import\PackageImporter.cs" />
-    <Compile Include="Server\NuGet\Import\PackageImportRepository.cs" />
-    <Compile Include="Server\NuGet\Import\PackageImportOptions.cs" />
-    <Compile Include="Server\NuGet\InternalPackageRepositoryFactory.cs" />
-    <Compile Include="Server\NuGet\NuGetFileSystem.cs" />
-    <Compile Include="Server\NuGet\NuGetPackagePathResolver.cs" />
-    <Compile Include="Server\NuGet\PackageDependencySetConverter.cs" />
-    <Compile Include="Server\NuGet\Symbols\ReadStream.cs" />
-    <Compile Include="Server\NuGet\Symbols\SymbolSource.cs" />
-    <Compile Include="Server\NuGet\Symbols\SymbolSourceMapper.cs" />
-    <Compile Include="Server\NuGet\Symbols\SymbolTools.cs" />
-    <Compile Include="Server\Scheduler\Configuration\AutofacContainerPerJobFilterAttribute.cs" />
-    <Compile Include="Server\Scheduler\Configuration\AutofacPerLifetimeScopeJobActivator.cs" />
-    <Compile Include="Server\Scheduler\Configuration\HangfirePerLifetimeScopeConfigurer.cs" />
-    <Compile Include="Server\Scheduler\Jobs\JobContext.cs" />
-    <Compile Include="Server\Scheduler\Jobs\JobExecution.cs" />
-    <Compile Include="Server\Scheduler\JobServerManager.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\CleanupTempFilesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\ImportPackagesForFeedJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\JobBase.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\ReindexPackagesForFeedJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\ReindexPackagesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\RunPackageRetentionPoliciesJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedDownloadCountStatisticJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\Definitions\UpdateFeedPackageCountStatisticJob.cs" />
-    <Compile Include="Server\Scheduler\Jobs\JobExecutionLog.cs" />
-    <Compile Include="Server\Scheduler\Servers\JobServerBackground.cs" />
-    <Compile Include="Server\Scheduler\Servers\JobServerDownload.cs" />
-    <Compile Include="Server\Scheduler\Servers\JobServerFileSystem.cs" />
-    <Compile Include="Server\Scheduler\Servers\JobServerInstance.cs" />
-    <Compile Include="Server\Modules\SchedulerModule.cs" />
-    <Compile Include="Server\NuGet\FastZipPackage\FastZipPackage.cs" />
-    <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageBase.cs" />
-    <Compile Include="Server\NuGet\FastZipPackage\FastZipPackageFile.cs" />
-    <Compile Include="Server\NuGet\FastZipPackage\IFastZipPackage.cs" />
-    <Compile Include="Server\Security\Claims.cs" />
-    <Compile Include="Server\Statistics\Design\ColorGenerator.cs" />
-    <Compile Include="Server\Statistics\FeedDownloadCountStatistic.cs" />
-    <Compile Include="Server\Statistics\FeedPackageCountStatistic.cs" />
-    <Compile Include="Server\Statistics\FeedDownloadCountStatisticItem.cs" />
-    <Compile Include="Server\Statistics\FeedPackageCountStatisticItem.cs" />
-    <Compile Include="Server\Statistics\StatisticBase.cs" />
-    <Compile Include="Server\Storage\Initializers\DefaultDataInitalizer.cs" />
-    <Compile Include="Server\Storage\Initializers\PackageHashAndSizeInitalizer.cs" />
-    <Compile Include="Server\Web\Actions\IAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\CancelImportPackagesFromFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetAccountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetBackgroundJobsAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetDashboardAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedConfigurationAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedDownloadCountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedPackageCountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetFeedsAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\GetPackageAuditHistoryAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\ImportPackagesFromFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\InsertFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\RegisterAccountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\ReindexPackagesAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\SaveFeedConfigurationAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\SetupAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\SignInAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\UpdateAccountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\UpdateFeedAction.cs" />
-    <Compile Include="Server\Web\Actions\NuFridgeApi\UploadPackageFromUrlAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\BatchAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\DeletePackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\DownloadPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetODataMetadataAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetODataPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetUpdatesCountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetODataPackagesCountAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetODataPackagesAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetODataRootAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\GetUpdatesAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\PackagesBase.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\RedirectToApiV2Action.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\RedirectToUploadPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\RedirectToDownloadPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageVersionsAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\TabCompletionPackageIdsAction.cs" />
-    <Compile Include="Server\Web\Actions\NuGetApiV2\UploadPackageAction.cs" />
-    <Compile Include="Server\Web\Actions\SymbolsApi\GetSourceFilesAction.cs" />
-    <Compile Include="Server\Web\Actions\SymbolsApi\GetSymbolFileAction.cs" />
-    <Compile Include="Server\Web\Actions\SymbolsApi\UploadSymbolPackageAction.cs" />
-    <Compile Include="Server\Web\Batch\HttpParserStreamExtensions.cs" />
-    <Compile Include="Server\Web\Batch\RequestLine.cs" />
-    <Compile Include="Server\Web\Batch\RequestLineParser.cs" />
-    <Compile Include="Server\Web\Modules\NuFridgeApiModule.cs" />
-    <Compile Include="Server\Web\Modules\NuGetV1ApiModule.cs" />
-    <Compile Include="Server\Web\Modules\NuGetV2ApiModule.cs" />
-    <Compile Include="Server\Web\Modules\SymbolsModule.cs" />
-    <Compile Include="Server\Web\Nancy\CurrentRequest.cs" />
-    <Compile Include="Server\Web\OData\NuGetODataModelBuilderODataPackage.cs" />
-    <Compile Include="Server\Web\OData\NuGetODataModelBuilderQueryable.cs" />
-    <Compile Include="Server\Web\OData\ODataPackage.cs" />
-    <Compile Include="Server\Web\Listeners\ShutdownPageListener.cs" />
-    <Compile Include="Server\Web\Listeners\StartupPageListener.cs" />
-    <Compile Include="Server\Web\SignalR\ImportPackagesHub.cs" />
-    <Compile Include="Server\Web\LocalUserIdentity.cs" />
-    <Compile Include="Server\Web\IWebPackage.cs" />
-    <Compile Include="Server\Web\MemoryResponseMessage.cs" />
-    <Compile Include="Server\Web\ODataPackages.cs" />
-    <Compile Include="Server\Configuration\HomeConfiguration.cs" />
-    <Compile Include="Server\Configuration\IHomeConfiguration.cs" />
-    <Compile Include="Server\Hosts\ConsoleHost.cs" />
-    <Compile Include="Server\Hosts\WindowsServiceAdapter.cs">
+    <Compile Include="Constants.cs" />
+    <Compile Include="Autofac\FullModule.cs" />
+    <Compile Include="NuGet\FeedManager.cs" />
+    <Compile Include="NuGet\FrameworkNamesManager.cs" />
+    <Compile Include="NuGet\Repository\RemotePackageImporter.cs" />
+    <Compile Include="NuGet\Repository\RemotePackageRepository.cs" />
+    <Compile Include="NuGet\Repository\RemotePackageImportOptions.cs" />
+    <Compile Include="NuGet\Repository\InternalPackageRepositoryFactory.cs" />
+    <Compile Include="FileSystem\NuGetFileSystem.cs" />
+    <Compile Include="FileSystem\NuGetPackagePathResolver.cs" />
+    <Compile Include="NuGet\Packaging\PackageDependencySetConverter.cs" />
+    <Compile Include="NuGet\Symbols\ReadStream.cs" />
+    <Compile Include="NuGet\Symbols\SymbolSource.cs" />
+    <Compile Include="NuGet\Symbols\SymbolSourceMapper.cs" />
+    <Compile Include="NuGet\Symbols\SymbolTools.cs" />
+    <Compile Include="Autofac\AutofacContainerPerJobFilterAttribute.cs" />
+    <Compile Include="Autofac\AutofacPerLifetimeScopeJobActivator.cs" />
+    <Compile Include="Autofac\HangfirePerLifetimeScopeConfigurer.cs" />
+    <Compile Include="Scheduler\Jobs\JobContext.cs" />
+    <Compile Include="Scheduler\Jobs\JobExecution.cs" />
+    <Compile Include="Scheduler\JobServerManager.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\CleanupTempFilesJob.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\ImportPackagesForFeedJob.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\JobBase.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\ReindexPackagesForFeedJob.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\ReindexPackagesJob.cs" />
+    <Compile Include="Scheduler\Jobs\Definitions\RunPackageRetentionPoliciesJob.cs" />
+    <Compile Include="Scheduler\Jobs\JobExecutionLog.cs" />
+    <Compile Include="Scheduler\Servers\JobServerBackground.cs" />
+    <Compile Include="Scheduler\Servers\JobServerDownload.cs" />
+    <Compile Include="Scheduler\Servers\JobServerFileSystem.cs" />
+    <Compile Include="Scheduler\Servers\JobServerInstance.cs" />
+    <Compile Include="Autofac\SchedulerModule.cs" />
+    <Compile Include="NuGet\Packaging\FastZipPackage.cs" />
+    <Compile Include="NuGet\Packaging\FastZipPackageBase.cs" />
+    <Compile Include="NuGet\Packaging\FastZipPackageFile.cs" />
+    <Compile Include="NuGet\Packaging\IFastZipPackage.cs" />
+    <Compile Include="Security\Claims.cs" />
+    <Compile Include="Reporting\FeedDownloadCountReport.cs" />
+    <Compile Include="Reporting\FeedPackageCountReport.cs" />
+    <Compile Include="Reporting\ReportGraph.cs" />
+    <Compile Include="Database\Initializers\DefaultDataInitalizer.cs" />
+    <Compile Include="Database\Initializers\PackageHashAndSizeInitalizer.cs" />
+    <Compile Include="Web\Actions\IAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\CancelImportPackagesFromFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetAccountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetBackgroundJobsAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetDashboardAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedConfigurationAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedDownloadCountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedPackageCountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedsAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetPackageAuditHistoryAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\ImportPackagesFromFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\InsertFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\RegisterAccountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\ReindexPackagesAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\SaveFeedConfigurationAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\SetupAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\SignInAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\UpdateAccountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\UpdateFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\UploadPackageFromUrlAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\BatchAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\DeletePackageAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\DownloadPackageAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetODataMetadataAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetODataPackageAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetUpdatesCountAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetODataPackagesCountAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetODataPackagesAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetODataRootAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\GetUpdatesAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\PackagesBase.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\RedirectToApiV2Action.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\RedirectToUploadPackageAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\RedirectToDownloadPackageAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\TabCompletionPackageVersionsAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\TabCompletionPackageIdsAction.cs" />
+    <Compile Include="Web\Actions\NuGetApiV2\UploadPackageAction.cs" />
+    <Compile Include="Web\Actions\SymbolsApi\GetSourceFilesAction.cs" />
+    <Compile Include="Web\Actions\SymbolsApi\GetSymbolFileAction.cs" />
+    <Compile Include="Web\Actions\SymbolsApi\UploadSymbolPackageAction.cs" />
+    <Compile Include="Web\Batch\HttpParserStreamExtensions.cs" />
+    <Compile Include="Web\Batch\RequestLine.cs" />
+    <Compile Include="Web\Batch\RequestLineParser.cs" />
+    <Compile Include="Web\Modules\NuFridgeApiModule.cs" />
+    <Compile Include="Web\Modules\NuGetV1ApiModule.cs" />
+    <Compile Include="Web\Modules\NuGetV2ApiModule.cs" />
+    <Compile Include="Web\Modules\SymbolsModule.cs" />
+    <Compile Include="Web\Nancy\MemoryCacheKeyGenerator.cs" />
+    <Compile Include="Web\Nancy\CurrentRequest.cs" />
+    <Compile Include="Web\Nancy\MemoryCacheStore.cs" />
+    <Compile Include="Web\OData\NuGetODataModelBuilderODataPackage.cs" />
+    <Compile Include="Web\OData\NuGetODataModelBuilderQueryable.cs" />
+    <Compile Include="Web\OData\ODataPackage.cs" />
+    <Compile Include="Web\Listeners\ShutdownPageListener.cs" />
+    <Compile Include="Web\Listeners\StartupPageListener.cs" />
+    <Compile Include="Web\SignalR\ImportPackagesHub.cs" />
+    <Compile Include="Web\LocalUserIdentity.cs" />
+    <Compile Include="Web\IWebPackage.cs" />
+    <Compile Include="Web\MemoryResponseMessage.cs" />
+    <Compile Include="Web\ODataPackages.cs" />
+    <Compile Include="Application\HomeConfiguration.cs" />
+    <Compile Include="Application\IHomeConfiguration.cs" />
+    <Compile Include="Hosts\ConsoleHost.cs" />
+    <Compile Include="Hosts\WindowsServiceAdapter.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Server\Hosts\WindowsServiceHost.cs" />
+    <Compile Include="Hosts\WindowsServiceHost.cs" />
     <Compile Include="Commands\Util\CommandLocator.cs" />
     <Compile Include="Commands\Util\CommandMetadata.cs" />
     <Compile Include="Commands\Modules\CommandModule.cs" />
@@ -470,7 +466,7 @@
     <Compile Include="Commands\Options\Option.cs" />
     <Compile Include="Commands\Options\OptionAction.cs" />
     <Compile Include="Commands\Options\OptionContext.cs" />
-    <Compile Include="Commands\Options\OptionException.cs" />
+    <Compile Include="Exceptions\OptionException.cs" />
     <Compile Include="Commands\Options\OptionSet.cs" />
     <Compile Include="Commands\Options\OptionValueCollection.cs" />
     <Compile Include="Commands\Options\OptionValueType.cs" />
@@ -481,51 +477,50 @@
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Logging\LibLog.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\Application\ApplicationInstanceRecord.cs" />
-    <Compile Include="Server\Application\ApplicationInstanceSelector.cs" />
-    <Compile Include="Server\Application\ApplicationInstanceStore.cs" />
-    <Compile Include="Server\FileSystem\DeletionOptions.cs" />
-    <Compile Include="Server\FileSystem\FileInfoAdapter.cs" />
-    <Compile Include="Server\FileSystem\IFileInfo.cs" />
-    <Compile Include="Server\IServerEngine.cs" />
-    <Compile Include="Server\Modules\AuthenticationModule.cs" />
-    <Compile Include="Server\Modules\ConfigurationModule.cs" />
-    <Compile Include="Server\Modules\FileSystemModule.cs" />
-    <Compile Include="Server\Modules\NuGetModule.cs" />
-    <Compile Include="Server\Modules\ServerConfigurationModule.cs" />
-    <Compile Include="Server\Modules\StorageModule.cs" />
-    <Compile Include="Server\Modules\WebModule.cs" />
-    <Compile Include="Server\NuGet\PackageIndex.cs" />
-    <Compile Include="Server\NuGet\InternalPackageRepository.cs" />
-    <Compile Include="Server\NuGet\IInternalPackageRepository.cs" />
-    <Compile Include="Server\Storage\DatabaseMigrator.cs" />
-    <Compile Include="Server\Storage\IDatabaseMigrator.cs" />
-    <Compile Include="Server\Storage\Initializers\MigrationInitializer.cs" />
-    <Compile Include="Server\Storage\IStoreInitializer.cs" />
-    <Compile Include="Server\Storage\IInitializeStore.cs" />
-    <Compile Include="Server\ServerEngine.cs" />
-    <Compile Include="Server\ServerState.cs" />
-    <Compile Include="Server\Storage\IStoreFactory.cs" />
-    <Compile Include="Server\FileSystem\ILocalFileSystem.cs" />
-    <Compile Include="Server\FileSystem\PhysicalFileSystem.cs" />
-    <Compile Include="Server\Storage\IStore.cs" />
-    <Compile Include="Server\Storage\Store.cs" />
-    <Compile Include="Server\Storage\StoreFactory.cs" />
-    <Compile Include="Server\Storage\StoreInitializer.cs" />
-    <Compile Include="Server\Application\IApplicationInstanceSelector.cs" />
-    <Compile Include="Server\Application\IApplicationInstanceStore.cs" />
-    <Compile Include="Server\Configuration\IWebPortalConfiguration.cs" />
-    <Compile Include="Server\Web\IPortalBootstrapper.cs" />
-    <Compile Include="Server\Web\IWebServerInitializer.cs" />
-    <Compile Include="Server\Configuration\WebPortalConfiguration.cs" />
-    <Compile Include="Server\Web\Nancy\NancyCompression.cs" />
-    <Compile Include="Server\Web\Nancy\CustomNancyHost.cs" />
-    <Compile Include="Server\Web\Responses\FeedSearchResponse.cs" />
-    <Compile Include="Server\Web\SignInRequest.cs" />
-    <Compile Include="Server\Web\UserDatabase.cs" />
-    <Compile Include="Server\Web\WebBootstrapper.cs" />
-    <Compile Include="Server\Web\RouteResolvers\LazyRouteResolver.cs" />
-    <Compile Include="Server\Web\WebServerInitializer.cs" />
+    <Compile Include="Application\ApplicationInstanceRecord.cs" />
+    <Compile Include="Application\ApplicationInstanceSelector.cs" />
+    <Compile Include="Application\ApplicationInstanceStore.cs" />
+    <Compile Include="FileSystem\DeletionOptions.cs" />
+    <Compile Include="FileSystem\FileInfoAdapter.cs" />
+    <Compile Include="FileSystem\IFileInfo.cs" />
+    <Compile Include="Application\IServerEngine.cs" />
+    <Compile Include="Autofac\AuthenticationModule.cs" />
+    <Compile Include="Autofac\ConfigurationModule.cs" />
+    <Compile Include="Autofac\FileSystemModule.cs" />
+    <Compile Include="Autofac\NuGetModule.cs" />
+    <Compile Include="Autofac\ServerConfigurationModule.cs" />
+    <Compile Include="Autofac\StorageModule.cs" />
+    <Compile Include="Autofac\WebModule.cs" />
+    <Compile Include="NuGet\Repository\InternalPackageIndex.cs" />
+    <Compile Include="NuGet\Repository\InternalPackageRepository.cs" />
+    <Compile Include="NuGet\Repository\IInternalPackageRepository.cs" />
+    <Compile Include="Database\DatabaseMigrator.cs" />
+    <Compile Include="Database\IDatabaseMigrator.cs" />
+    <Compile Include="Database\Initializers\MigrationInitializer.cs" />
+    <Compile Include="Database\IStoreInitializer.cs" />
+    <Compile Include="Database\IInitializeStore.cs" />
+    <Compile Include="Application\ServerEngine.cs" />
+    <Compile Include="Database\IStoreFactory.cs" />
+    <Compile Include="FileSystem\ILocalFileSystem.cs" />
+    <Compile Include="FileSystem\PhysicalFileSystem.cs" />
+    <Compile Include="Database\IStore.cs" />
+    <Compile Include="Database\Store.cs" />
+    <Compile Include="Database\StoreFactory.cs" />
+    <Compile Include="Database\StoreInitializer.cs" />
+    <Compile Include="Application\IApplicationInstanceSelector.cs" />
+    <Compile Include="Application\IApplicationInstanceStore.cs" />
+    <Compile Include="Application\IWebPortalConfiguration.cs" />
+    <Compile Include="Web\IPortalBootstrapper.cs" />
+    <Compile Include="Web\IWebServerInitializer.cs" />
+    <Compile Include="Application\WebPortalConfiguration.cs" />
+    <Compile Include="Web\Nancy\NancyCompression.cs" />
+    <Compile Include="Web\Nancy\CustomNancyHost.cs" />
+    <Compile Include="Web\Responses\FeedSearchResponse.cs" />
+    <Compile Include="Web\SignInRequest.cs" />
+    <Compile Include="Web\UserDatabase.cs" />
+    <Compile Include="Web\WebBootstrapper.cs" />
+    <Compile Include="Web\RouteResolvers\LazyRouteResolver.cs" />
+    <Compile Include="Web\WebServerInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -541,7 +536,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0000-Tables.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NuFridge.Website.New\NuFridge.Website.New.csproj">
@@ -554,61 +548,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0002-FeedConfigRetentionPolicy.sql" />
+    <Folder Include="Web\Actions\NuGetApiV1\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0003-FeedApiKey.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Close.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\logo.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\continue.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0004-PackageColumns.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0005-FeedPackageDirectoryName.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0006-PackageMaxLength.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0007-Indexes.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0008-RetentionPolicyChanges.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0010-CreateUsersTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0009-DropUsersTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Server\Web\Actions\NuGetApiV1\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0011-PackageTables.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0012-CreateFrameworkTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0013-CreateSinglePackageTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0014-FixPackageHashes.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0014-UpdateGetAllPackagesProc.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Server\Storage\Scripts\NuFridge.Shared.Server.Storage.Scripts.0015-UniquePackagesCountProc.sql" />
+    <EmbeddedResource Include="Database\Scripts\0000-Tables.sql" />
+    <EmbeddedResource Include="Database\Scripts\0002-FeedConfigRetentionPolicy.sql" />
+    <EmbeddedResource Include="Database\Scripts\0003-FeedApiKey.sql" />
+    <EmbeddedResource Include="Database\Scripts\0004-PackageColumns.sql" />
+    <EmbeddedResource Include="Database\Scripts\0005-FeedPackageDirectoryName.sql" />
+    <EmbeddedResource Include="Database\Scripts\0006-PackageMaxLength.sql" />
+    <EmbeddedResource Include="Database\Scripts\0007-Indexes.sql" />
+    <EmbeddedResource Include="Database\Scripts\0008-RetentionPolicyChanges.sql" />
+    <EmbeddedResource Include="Database\Scripts\0009-DropUsersTable.sql" />
+    <EmbeddedResource Include="Database\Scripts\0010-CreateUsersTable.sql" />
+    <EmbeddedResource Include="Database\Scripts\0011-PackageTables.sql" />
+    <EmbeddedResource Include="Database\Scripts\0012-CreateFrameworkTable.sql" />
+    <EmbeddedResource Include="Database\Scripts\0013-CreateSinglePackageTable.sql" />
+    <EmbeddedResource Include="Database\Scripts\0014-FixPackageHashes.sql" />
+    <EmbeddedResource Include="Database\Scripts\0014-UpdateGetAllPackagesProc.sql" />
+    <EmbeddedResource Include="Database\Scripts\0015-UniquePackagesCountProc.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

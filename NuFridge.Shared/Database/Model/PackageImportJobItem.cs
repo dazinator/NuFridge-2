@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
+using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Scheduler.Jobs;
+using NuFridge.Shared.Scheduler.Jobs;
 
 namespace NuFridge.Shared.Database.Model
 {

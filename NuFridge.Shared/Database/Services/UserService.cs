@@ -5,8 +5,8 @@ using Nancy;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
-using NuFridge.Shared.Server.Security;
-using NuFridge.Shared.Server.Web;
+using NuFridge.Shared.Security;
+using NuFridge.Shared.Web;
 using SimpleCrypto;
 
 namespace NuFridge.Shared.Database.Services

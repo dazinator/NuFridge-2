@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
+using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
-using NuFridge.Shared.Server.Modules;
-using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Scheduler.Jobs.Definitions;
-using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.NuGet.Repository;
+using NuFridge.Shared.Scheduler.Jobs.Definitions;
 using NuGet;
 using NUnit.Framework;
 

@@ -1,6 +1,4 @@
-﻿using NuFridge.Shared.Server;
-
-namespace NuFridge.Service
+﻿namespace NuFridge.Service
 {
     class Program
     {

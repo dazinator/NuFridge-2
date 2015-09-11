@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using NuFridge.Shared.Exceptions;
 
 namespace NuFridge.Shared.Commands.Options
 {

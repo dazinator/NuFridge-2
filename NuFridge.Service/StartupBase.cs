@@ -11,14 +11,14 @@ using Microsoft.AspNet.SignalR;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using NuFridge.Shared.Autofac;
 using NuFridge.Shared.Commands.Interfaces;
 using NuFridge.Shared.Commands.Modules;
 using NuFridge.Shared.Commands.Options;
 using NuFridge.Shared.Commands.Util;
 using NuFridge.Shared.Extensions;
+using NuFridge.Shared.Hosts;
 using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Hosts;
-using NuFridge.Shared.Server.Modules;
 using LogLevel = NLog.LogLevel;
 
 namespace NuFridge.Service

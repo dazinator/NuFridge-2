@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using NuFridge.Shared.Application;
 using NuFridge.Shared.Installation;
-using NuFridge.Shared.Server.Application;
 
 namespace NuFridge.Shared.Commands
 {

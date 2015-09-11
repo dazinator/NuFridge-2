@@ -2,7 +2,7 @@
 using System.Data.Entity;
 using System.Data.SqlClient;
 using Microsoft.AspNet.SignalR;
-using NuFridge.Shared.Server.Configuration;
+using NuFridge.Shared.Application;
 
 namespace NuFridge.Shared.Database.Model
 {

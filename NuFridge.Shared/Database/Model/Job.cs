@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Shared.Database.Model
 {
-    [Dapper.Table("Job", Schema = "NuFridge")]
+    [Table("Job", Schema = "NuFridge")]
     public class Job : IJob
     {
         [Key]

@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using Moq;
+using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
-using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.NuGet.Repository;
 using NuGet;
 using NUnit.Framework;
 
@@ -12,7 +12,7 @@ namespace NuFridge.Tests
     [TestFixture]
     public class PackageIndexTests
     {
-        protected TestPackageIndex Index;
+        protected TestInternalPackageIndex Index;
         protected Mock<IStore> Store;
         protected Mock<IInternalPackageRepositoryFactory> Factory;
 
@@ -21,7 +21,7 @@ namespace NuFridge.Tests
         {
             Store = new Mock<IStore>();
             Factory = new Mock<IInternalPackageRepositoryFactory>();
-            Index = new TestPackageIndex(1);
+            Index = new TestInternalPackageIndex(1);
         }
 
         //[Test]
@@ -42,7 +42,7 @@ namespace NuFridge.Tests
         [Test]
         public void DeletePackage()
         {
-            var package = TestPackageIndex.GetTestPackage("Test", "1.0.0");
+            var package = TestInternalPackageIndex.GetTestPackage("Test", "1.0.0");
 
             //Mock<ITransaction> transaction = new Mock<ITransaction>();
             //Store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
@@ -56,9 +56,9 @@ namespace NuFridge.Tests
 
 
 
-        public class TestPackageIndex : PackageIndex
+        public class TestInternalPackageIndex : InternalPackageIndex
         {
-            public TestPackageIndex(int feedId) : base(null,null, feedId)
+            public TestInternalPackageIndex(int feedId) : base(null,null, feedId)
             {
                 
             }

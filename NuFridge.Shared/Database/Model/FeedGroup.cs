@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Shared.Database.Model
 {

@@ -5,7 +5,7 @@ using Dapper;
 using NuFridge.Shared.Database.Model;
 using NuGet;
 using Palmer;
-using Constants = NuFridge.Shared.Server.Constants;
+using Constants = NuFridge.Shared.Constants;
 
 namespace NuFridge.Shared.Database.Repository
 {

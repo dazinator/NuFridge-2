@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using Dapper;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Server;
 using Palmer;
 
 namespace NuFridge.Shared.Database.Repository

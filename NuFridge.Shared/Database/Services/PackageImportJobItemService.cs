@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
-using NuFridge.Shared.Server.Web.OData;
+using NuFridge.Shared.Web.OData;
 using NuGet;
 
 namespace NuFridge.Shared.Database.Services

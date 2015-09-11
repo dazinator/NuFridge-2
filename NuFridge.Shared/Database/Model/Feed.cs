@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Dapper;
+using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Shared.Database.Model
 {
-    [Dapper.Table("Feed", Schema = "NuFridge")]
+    [Repository.Table("Feed", Schema = "NuFridge")]
     public class Feed : IFeed
     {
         [Key]

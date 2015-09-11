@@ -1,6 +1,5 @@
-﻿using NuFridge.Shared.Logging;
-using NuFridge.Shared.Server.Application;
-using NuFridge.Shared.Server.Configuration;
+﻿using NuFridge.Shared.Application;
+using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Commands
 {

@@ -1,6 +1,5 @@
 ﻿using System;
-using NuFridge.Shared.Server;
-using NuFridge.Shared.Server.Application;
+using NuFridge.Shared.Application;
 
 namespace NuFridge.Shared.Commands
 {

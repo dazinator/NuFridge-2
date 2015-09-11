@@ -8,8 +8,9 @@ using System.Reflection;
 using System.Text;
 using Dapper;
 using Microsoft.AspNet.SignalR;
+using NuFridge.Shared.Application;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Server.Configuration;
+using ReadOnlyException = NuFridge.Shared.Exceptions.ReadOnlyException;
 
 namespace NuFridge.Shared.Database.Repository
 {

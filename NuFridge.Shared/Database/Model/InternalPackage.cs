@@ -7,14 +7,14 @@ using System.Linq;
 using System.Runtime.Versioning;
 using Dapper;
 using NuFridge.Shared.Database.Model.Interfaces;
-using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.NuGet.FastZipPackage;
+using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.NuGet.Packaging;
 using NuGet;
 
 namespace NuFridge.Shared.Database.Model
 {
     [DebuggerDisplay("{Id}: {Version} ({Title})")]
-    [Dapper.Table("Package", Schema = "NuFridge")]
+    [Repository.Table("Package", Schema = "NuFridge")]
     //   [TrackChanges]
     public class InternalPackage : IInternalPackage
     {

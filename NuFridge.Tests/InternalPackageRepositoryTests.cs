@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using Moq;
-using NuFridge.Shared.Server.Configuration;
-using NuFridge.Shared.Server.Modules;
-using NuFridge.Shared.Server.NuGet;
-using NuFridge.Shared.Server.Storage;
+using NuFridge.Shared.Application;
+using NuFridge.Shared.Autofac;
+using NuFridge.Shared.Database;
+using NuFridge.Shared.NuGet.Repository;
 using NUnit.Framework;
 
 namespace NuFridge.Tests

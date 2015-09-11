@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dapper;
+using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Shared.Database.Model
 {

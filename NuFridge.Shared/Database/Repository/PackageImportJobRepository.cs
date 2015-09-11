@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using NuFridge.Shared.Database.Model;
-using NuFridge.Shared.Server.Scheduler.Jobs;
 
 namespace NuFridge.Shared.Database.Repository
 {
