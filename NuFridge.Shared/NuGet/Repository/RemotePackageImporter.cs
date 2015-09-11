@@ -26,7 +26,7 @@ namespace NuFridge.Shared.NuGet.Repository
             IInternalPackageRepository localRepository = _factory.Create(feedId);
             IPackageRepository remoteRepository = PackageRepositoryFactory.Default.CreateRepository(options.FeedUrl);
 
-            item.StartedAt = DateTime.Now;
+            item.StartedAt = DateTime.UtcNow;
             item.Log(LogLevel.Info, $"Searching for the package from {remoteRepository.Source}");
 
             var version = SemanticVersion.Parse(package.Version);

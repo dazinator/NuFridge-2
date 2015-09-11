@@ -21,7 +21,6 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
         private readonly ILog _log = LogProvider.For<ReindexPackagesJob>();
 
         public override string JobId => typeof(ReindexPackagesJob).Name;
-        public override bool TriggerOnRegister => false;
         public override string Cron => Hangfire.Cron.Weekly(DayOfWeek.Monday, 4, 0); //Every monday at 04:00
 
         public ReindexPackagesJob(IFeedService feedService, IInternalPackageRepositoryFactory packageRepositoryFactory, IStore store, IFeedConfigurationService feedConfigurationService, IPackageService packageService)

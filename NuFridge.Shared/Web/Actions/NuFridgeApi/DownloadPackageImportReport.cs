@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -44,7 +45,7 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             List<object> rows = new List<object>();
 
-            foreach (var packageImportJobItem in items)
+            foreach (var packageImportJobItem in items.Where(it => it.JSON != null))
             {
                 var executionLog = JsonConvert.DeserializeObject<JobExecutionLog>(packageImportJobItem.JSON);
 
@@ -53,6 +54,8 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
                     {"PackageId", packageImportJobItem.PackageId},
                     {"Version", packageImportJobItem.Version},
                     {"Result", packageImportJobItem.Success ? "Success" : "Failed"},
+                    {"StartedAt", packageImportJobItem.StartedAt?.ToString(CultureInfo.InvariantCulture) ?? ""},
+                    {"CompletedAt", packageImportJobItem.CompletedAt?.ToString(CultureInfo.InvariantCulture) ?? ""},
                     {"Message", executionLog.Items.Last().Message }
                 });
 
@@ -63,6 +66,8 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
                 new SpreadsheetField {Title = "Package Id", FieldName = "PackageId"},
                 new SpreadsheetField {Title = "Version", FieldName = "Version"},
                 new SpreadsheetField {Title = "Result", FieldName = "Result"},
+                new SpreadsheetField {Title = "Started At", FieldName = "StartedAt"},
+                new SpreadsheetField {Title = "Completed At", FieldName = "CompletedAt"},
                 new SpreadsheetField {Title = "Message", FieldName = "Message"}
             };
 

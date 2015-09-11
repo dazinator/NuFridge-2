@@ -31,14 +31,14 @@ namespace NuFridge.Shared.Application
             //Upgrade the database
             _storeInitializer.Value.Initialize(_startupPageListener.Value.UpdateStatus);
 
-            //Start the job server
-            _jobServer.Value.Start(_startupPageListener.Value.UpdateStatus);
-
             //Stop the loading page http listener
             _startupPageListener.Value.Stop();
 
             //Run the full web server http listener
             _webHostInitializer.Value.Start();
+
+            //Start the job server
+            _jobServer.Value.Start(_startupPageListener.Value.UpdateStatus);
         }
 
         public void Stop()

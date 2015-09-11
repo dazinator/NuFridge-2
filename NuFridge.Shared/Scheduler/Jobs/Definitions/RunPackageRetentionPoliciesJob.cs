@@ -24,7 +24,6 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
         public override string JobId => typeof(RunPackageRetentionPoliciesJob).Name;
 
-        public override bool TriggerOnRegister => false;
         public override string Cron => "0 0 * * *"; //Every day at 00:00
 
         public RunPackageRetentionPoliciesJob(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory, IFeedService feedService, IFeedConfigurationService feedConfigurationService, IPackageService packageService)
