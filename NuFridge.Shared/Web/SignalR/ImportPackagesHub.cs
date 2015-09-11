@@ -17,7 +17,8 @@ namespace NuFridge.Shared.Web.SignalR
             var jobItemService = GlobalHost.DependencyResolver.Resolve<IPackageImportJobItemService>();
             var jobService = GlobalHost.DependencyResolver.Resolve<IJobService>();
 
-            Clients.Caller.jobUpdated(jobService.Find<PackageImportJob>(jobId));
+            Clients.Caller.loadJob(jobService.Find(jobId));
+            Clients.Caller.loadDetailedJob(jobService.Find<PackageImportJob>(jobId));
             Clients.Caller.loadPackages(jobItemService.FindForJob(jobId).Where(j => j.CompletedAt.HasValue).ToList());
         }
 

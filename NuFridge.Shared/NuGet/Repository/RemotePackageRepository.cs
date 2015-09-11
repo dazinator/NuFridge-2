@@ -19,7 +19,7 @@ namespace NuFridge.Shared.NuGet.Repository
             int skip = 0;
             long count = 0;
 
-            while (count > skip + top || firstRun)
+            while (count > skip || firstRun)
             {
                 firstRun = false;
 

@@ -18,10 +18,14 @@ export class ImportPackages {
         CheckLocalCache: true
     };
 
-    job = {
+    detailedJob = {
         Scheduled: 0,
         Processed: 0
     };
+
+    job = {
+        Name: "Import Packages"
+    }
 
     connection = $.hubConnection();
     proxy = null;
@@ -113,18 +117,45 @@ export class ImportPackages {
 
         self.proxy.on('packageProcessed', function(message) {
             var pkg = self.parsePackageItem(message);
+
+            var beforeCount = self.items.length;
+
             self.items = self.arrayUnique(self.items.concat([pkg]));
+
+            var afterCount = self.items.length - beforeCount;
+
+            if (afterCount > 0) {
+                $('#importProgressBar').progress('increment', afterCount);
+            }
         });
 
-        self.proxy.on('jobUpdated', function(job) {
+        self.proxy.on('loadDetailedJob', function(job) {
+            if (job) {
+                var scheduled = self.detailedJob.Scheduled; 
+
+                self.detailedJob = job;
+
+                if (scheduled < self.detailedJob.Scheduled) {
+                    $('#importProgressBar').progress({
+                        total: self.detailedJob.Scheduled,
+                        text: {
+                            active  : 'Importing {value} of {total} packages',
+                            success : '{total} packages processed'
+                        }
+                    });
+                }
+            }
+        });
+
+        self.proxy.on('loadJob', function(job) {
             if (job) {
                 self.job = job;
             }
         });
 
-    self.proxy.on('importCancelled', function() {
-  
-    });
+        self.proxy.on('importCancelled', function() {
+
+        });
 
         self.proxy.on('loadPackages', function(message) {
             var items = message;
@@ -133,7 +164,15 @@ export class ImportPackages {
                 self.parsePackageItem(element);
             });
 
+            var beforeCount = self.items.length;
+
             self.items = self.arrayUnique(self.items.concat(items));
+
+            var afterCount = self.items.length - beforeCount;
+
+            if (afterCount > 0) {
+                $('#importProgressBar').progress('increment', afterCount);
+            }
         });
 
         self.connection.start({ jsonp: false })
@@ -203,6 +242,13 @@ export class ImportPackages {
             },
             onUnchecked: function () {
                 self.options.CheckLocalCache = false;
+            }
+        });
+
+        $('#importProgressBar').progress({
+            text: {
+                active  : 'Importing {value} of {total} packages',
+                success : '{total} packages processed'
             }
         });
     }

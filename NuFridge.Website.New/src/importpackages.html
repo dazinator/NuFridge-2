@@ -1,5 +1,5 @@
 ﻿<template>
-    <h1>${showForm ? 'Import Packages' : 'Importing Packages'}</h1>
+    <h1>${job.Name}</h1>
 
     <div class="ui segment" if.bind="showForm">
         <form class="ui form">
@@ -34,13 +34,25 @@
         </form>
     </div>
 
+    <div class="ui indicating progress ${job.CreatedAt && !job.CompletedAt && job.Success === false ? 'active' : ''}" id="importProgressBar" style="margin: 0;" show.bind="showProgress">
+        <div class="bar" style="transition-duration: 300ms;">
+            <div class="progress">0%</div>
+        </div>
+        <div class="label" show.bind="job.CreatedAt && !job.CompletedAt && job.Success === false"></div>
+    </div>
+
+
     <div class="ui pointing secondary menu importMenu" show.bind="showProgress">
         <a class="item active" data-tab="first">Overview</a>
         <a class="item" data-tab="second">Packages</a>
     </div>
 
+
     <div show.bind="showProgress">
         <div data-tab="first" class="ui bottom tab segment active">
+
+
+
             <table class="ui collapsing table">
                 <thead>
                 <tr>
@@ -50,14 +62,20 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>${job.Scheduled}</td>
-                    <td> ${job.Scheduled - job.Processed}</td>
+                    <td>${detailedJob.Scheduled}</td>
+                    <td> ${detailedJob.Scheduled - detailedJob.Processed}</td>
                 </tr>
                 </tbody>
             </table>
 
-            <div class="ui buttons">
-                <button class="ui negative button" click.trigger="cancelImport()">Cancel Import</button>
+            <div if.bind="job.CreatedAt && !job.CompletedAt && job.Success === false">
+                <h2 class="ui header">
+                    Administrative Actions
+                </h2>
+
+                <div class="ui buttons">
+                    <button class="ui negative button" click.trigger="cancelImport()">Cancel Import</button>
+                </div>
             </div>
         </div>
 
