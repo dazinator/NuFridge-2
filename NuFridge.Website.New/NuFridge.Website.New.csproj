@@ -416,7 +416,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="aurelia.protractor.js" />
-    <Content Include="Aureliafile.js" />
     <Content Include="build\args.js" />
     <Content Include="build\babel-options.js" />
     <Content Include="build\paths.js" />
