@@ -199,8 +199,8 @@
       <HintPath>..\packages\Nancy.Hosting.Self.1.2.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.LightningCache, Version=0.1.3.7342, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nancy.LightningCache.0.1.3\lib\net40\Nancy.LightningCache.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Nancy.LightningCache.dll</HintPath>
     </Reference>
     <Reference Include="Nancy.Owin, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Owin.1.2.0\lib\net40\Nancy.Owin.dll</HintPath>
