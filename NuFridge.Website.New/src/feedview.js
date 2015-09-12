@@ -20,7 +20,7 @@ export class FeedView {
 
     isLoadingJobs = true;
     jobPageNumber = 1;
-    jobPageSize = 10;
+    jobPageSize = 5;
 
     overviewPackageCount = 0;
     overviewUniquePackageCount = 0;
@@ -378,13 +378,13 @@ export class FeedView {
 
         var order = "$orderby=";
 
-        if (self.packagesSortOrder === 0) {
+        if (self.packagesSortOrder == 0) {
             order += "DownloadCount desc";
-        } else  if (self.packagesSortOrder === 1) {
+        } else  if (self.packagesSortOrder == 1) {
             order += "DownloadCount asc";
-        } else  if (self.packagesSortOrder === 2) {
+        } else  if (self.packagesSortOrder == 2) {
             order += "Id desc";
-        }  else  if (self.packagesSortOrder === 3) {
+        }  else  if (self.packagesSortOrder == 3) {
             order += "Id asc";
         }
 
