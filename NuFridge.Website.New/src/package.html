@@ -30,14 +30,14 @@
 
             <h4 if.bind="package.Owners.length > 0">Owners</h4>
             <div class="ui labels" if.bind="package.Owners.length > 0">
-                <span class="ui label" repeat.for="owner of package.Owners">
+                <span class="ui basic label" repeat.for="owner of package.Owners">
                     ${owner}
                 </span>
             </div>
 
             <h4 if.bind="package.Authors.length > 0">Authors</h4>
             <div class="ui labels" if.bind="package.Authors.length > 0">
-                <span class="ui label" repeat.for="author of package.Authors">
+                <span class="ui basic label" repeat.for="author of package.Authors">
                     ${author}
                 </span>
             </div>
@@ -47,14 +47,14 @@
 
             <h4 if.bind="package.Tags.length > 0">Tags</h4>
             <div if.bind="package.Tags.length > 0" class="ui labels">
-                <span class="ui label" repeat.for="tag of package.Tags">
+                <span class="ui basic label" repeat.for="tag of package.Tags">
                     ${tag}
                 </span>
             </div>
 
             <h4 if.bind="package.Dependencies.length > 0">Dependencies</h4>
             <div if.bind="package.Dependencies.length > 0" class="ui labels">
-                <span class="ui label" repeat.for="depend of package.Dependencies">
+                <span class="ui basic label" repeat.for="depend of package.Dependencies">
                     ${depend.Id} <div class="detail">${depend.Version} </div>
                 </span>
             </div>
