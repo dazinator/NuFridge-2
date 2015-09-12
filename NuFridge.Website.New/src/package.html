@@ -10,7 +10,7 @@
     <div if.bind="canViewPage">
         <h1 textcontent="${feed.Name}"></h1>
         <div class="ui segment">
-            <h3>${package.Id} ${package.NormalizedVersion}</h3>
+            <h3><img src="${package.IconUrl}" width="48" height="48" onerror="this.onerror = null; this.src = 'img/default.png';" style="vertical-align: middle; margin-right: 10px;"/><span>${package.Id} ${package.NormalizedVersion}</span></h3>
 
             <div class="ui inverted dimmer ${isLoadingPackage ? 'active' : ''}">
                 <div class="ui indeterminate large text loader">Loading package</div>
