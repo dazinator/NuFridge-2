@@ -41,6 +41,9 @@ export class Feeds {
                     xhr.setRequestHeader('Authorization', 'Token ' + self.auth.auth.getToken());
                 }
             },
+            onSelect: function(result, response) {
+                self.router.navigate(result.url);
+            },
             type: 'category'
         };
 

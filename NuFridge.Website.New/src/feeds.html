@@ -19,44 +19,27 @@
                     </div>
                 </div>
                 <div class="column">
-                    <button class="ui small button" click.trigger="addFeedGroup($event)" if.bind="canInsertFeedGroup">
-                        Add Feed Group
-                    </button>
                 </div>
             </div>
 
-            <div class="ui raised segment" repeat.for="group of feedGroups">
-
-                <h2 class="ui header" style="margin-bottom: 5px;">
-                    ${group.Name} Feeds
-                </h2>
-
-                <div class="ui" if.bind="group.Feeds.length === 0">
-                    <p>There are no feeds in this group.</p>
-                </div>
-
-                <div class="ui horizontal list" if.bind="group.Feeds.length > 0">
-                    <div class="item" repeat.for="feed of group.Feeds">
-                        <div class="content">
-                            <a class="ui blue large label" click.trigger="$parent.$parent.feedClick(feed)">
-                                ${feed.Name}
-                            </a>
+            <div class="ui divided items">
+                <div class="item" repeat.for="group of feedGroups">
+                    <div class="content">
+                        <a class="header" href="#/feedgroup/view/${group.Id}" if.bind="$parent.canUpdateFeedGroup">${group.Name}</a>
+                        <div class="header" if.bind="!$parent.canUpdateFeedGroup">${group.Name}</div>
+                        <div class="description">
+                            <p>
+                            </p>
+                        </div>
+                        <div class="extra">
+                            <a class="ui label" href="#feeds/view/${feed.Id}" repeat.for="feed of group.Feeds">${feed.Name}</a>
+                            <a class="ui blue label" href="#/feeds/create/${group.Id}" if.bind="$parent.canInsertFeed">Add Feed</a>
                         </div>
                     </div>
                 </div>
-
-                <h3 class="ui header" style="margin-top: 15px;" if.bind="$parent.canInsertFeed || $parent.canUpdateFeedGroup">
-                    Administrative Actions
-                </h3>
-
-                <button class="ui small button" click.trigger="$parent.addFeedClick(group)" if.bind="$parent.canInsertFeed">
-                    Add Feed
-                </button>
-
-                <button class="ui small button" click.trigger="$parent.groupClick(group)" if.bind="$parent.canUpdateFeedGroup">
-                    Edit Feed Group
-                </button>
             </div>
+
+            <a class="ui blue large label" href="#/feedgroup/create" if.bind="canInsertFeedGroup">Add Feed Group</a>
         </div>
     </div>
 </template>
