@@ -14,8 +14,6 @@ System.config({
     "npm:*": "jspm_packages/npm/*",
     "semanticui/*": "semantic/dist/*"
   },
-  buildCSS: false,
-
   map: {
     "Globegitter/chartist-plugin-tooltip": "github:Globegitter/chartist-plugin-tooltip@0.0.11",
     "asual/jquery-address": "github:asual/jquery-address@master",
