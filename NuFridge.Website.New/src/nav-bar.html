@@ -1,16 +1,9 @@
 <template>
   <div class="ui top attached stackable menu">
       <a repeat.for="row of router.navigation | authFilter: isAuthenticated" class="item ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
-      <div class="ui dropdown item" id="settingsMenuItem" if.bind="isAuthenticated">
-          Settings
-          <i class="dropdown icon"></i>
-          <div class="menu">
-              <a class="item" href="#settings/smtp">SMTP</a>
-          </div>
-      </div>
       <span class="item" if.bind="!isAuthenticated">NuFridge</span>
       <div class="right menu">
-          <a class="item" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
+          <a class="item ${router.currentInstruction.fragment === '/profile' ? 'active' : ''}" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
               <i class="ui large user icon"></i>
               <div class="content">
                   <div class="ui sub header" textcontent="${authUser.data.Username}"></div>

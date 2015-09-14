@@ -369,7 +369,6 @@
     <Compile Include="Scheduler\Jobs\Definitions\ReindexPackagesJob.cs" />
     <Compile Include="Scheduler\Jobs\Definitions\RunPackageRetentionPoliciesJob.cs" />
     <Compile Include="Scheduler\Jobs\JobExecutionLog.cs" />
-    <Compile Include="Scheduler\Servers\JobServerBackground.cs" />
     <Compile Include="Scheduler\Servers\JobServerDownload.cs" />
     <Compile Include="Scheduler\Servers\JobServerFileSystem.cs" />
     <Compile Include="Scheduler\Servers\JobServerInstance.cs" />

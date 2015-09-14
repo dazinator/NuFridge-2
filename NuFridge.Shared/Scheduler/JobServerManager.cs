@@ -59,7 +59,7 @@ namespace NuFridge.Shared.Scheduler
 
             _log.Info("Starting the job scheduler");
             var options = new SqlServerStorageOptions {PrepareSchemaIfNecessary = true};
-            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "background", "download");
+            GlobalConfiguration.Configuration.UseSqlServerStorage(_store.ConnectionString, options).UseMsmqQueues(@".\Private$\nufridge_{0}", "filesystem", "download");
             GlobalConfiguration.Configuration.UseAutofacActivator(_container);
             HangfirePerLifetimeScopeConfigurer.Configure(_container);
             GlobalConfiguration.Configuration.UseFilter(new JobContext());

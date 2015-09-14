@@ -72,6 +72,11 @@ namespace NuFridge.Shared.Database.Services
             return _jobRepository.Find(jobId);
         }
 
+        public IEnumerable<Job> Find(int pageNumber, int rows)
+        {
+            return _jobRepository.Find(pageNumber, rows);
+        }
+
         public void Update(Job job)
         {
             _jobRepository.Update(job);
@@ -95,5 +100,6 @@ namespace NuFridge.Shared.Database.Services
         IEnumerable<Job> FindForFeed(int feedId);
         IEnumerable<T> FindForFeed<T>(int feedId) where T : class, IJobType, new();
         IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows);
+        IEnumerable<Job> Find(int pageNumber, int rows);
     }
 }

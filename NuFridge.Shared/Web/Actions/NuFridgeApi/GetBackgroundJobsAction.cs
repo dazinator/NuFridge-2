@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Nancy;
+using Nancy.Extensions;
 using Nancy.Security;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Services;
@@ -20,12 +22,15 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
         {
             module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanViewFeeds });
 
-            int feedId = parameters.id;
+            int pageNumber = module.Request.Query["page"];
+            int size = module.Request.Query["size"];
 
-            var pageNumber = module.Request.Query["page"];
-            var size = module.Request.Query["size"];
 
-            IEnumerable<Job> jobs = _jobService.FindForFeed(feedId, pageNumber, size);
+            int? feedId = parameters.id.HasValue ? parameters.id : null;
+
+            var jobs = feedId.HasValue
+                ? _jobService.FindForFeed(feedId.Value, pageNumber, size)
+                : _jobService.Find(pageNumber, size);
 
             return module.Negotiate.WithModel(jobs).WithStatusCode(HttpStatusCode.OK);
         }

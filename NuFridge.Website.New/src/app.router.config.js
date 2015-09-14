@@ -28,7 +28,9 @@ configure() {
             { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
             { route: 'signout', title: 'Sign out',  moduleId: 'signout', nav: false, auth: true },
             { route: 'setup', title: 'Setup', nav: false, moduleId: 'setup', auth: false },
-            { route: 'profile', title: 'Profile', nav: false, moduleId: 'profile', auth: true }
+            { route: 'profile', title: 'Profile', nav: false, moduleId: 'profile', auth: true },
+            { route: 'jobs', title: 'Jobs', nav: true, moduleId: 'jobs', auth: true },
+            { route: 'users', title: 'Users', nav: true, moduleId: 'users', auth: true }
         ]);
     };
 

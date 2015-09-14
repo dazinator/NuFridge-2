@@ -6,6 +6,6 @@ namespace NuFridge.Shared.Scheduler.Servers
     {
         public override string QueueName => "download";
 
-        public override int WorkerCount => Math.Min(Environment.ProcessorCount * 2, 10);
+        public override int WorkerCount => Math.Min(Environment.ProcessorCount * 2, 6);
     }
 }

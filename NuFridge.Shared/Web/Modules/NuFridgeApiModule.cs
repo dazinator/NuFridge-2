@@ -23,7 +23,7 @@ namespace NuFridge.Shared.Web.Modules
             Delete["api/feeds/{id}/import/{jobid:int}"] = p => container.Resolve<CancelImportPackagesFromFeedAction>().Execute(p, this);
             Get["api/feeds/{id}/history"] = p => container.Resolve<GetPackageAuditHistoryAction>().Execute(p, this);
             Get["api/feeds/{id}/jobs"] = p => container.Resolve<GetBackgroundJobsAction>().Execute(p, this);
-
+            Get["api/jobs"] = p => container.Resolve<GetBackgroundJobsAction>().Execute(p, this);
             Post["api/account/register"] = p => container.Resolve<RegisterAccountAction>().Execute(p, this);
             Get["api/account/{username?}"] = p => container.Resolve<GetAccountAction>().Execute(p, this);
             Post["api/account/{username?}"] = p => container.Resolve<UpdateAccountAction>().Execute(p, this);

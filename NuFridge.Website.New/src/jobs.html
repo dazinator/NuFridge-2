@@ -1,0 +1,14 @@
+﻿<template>
+    <h1>Jobs</h1>
+
+    <div class="ui segment">
+        <div class="ui middle aligned divided list">
+            <div class="item" repeat.for="job of jobs">
+                <i class="plus icon"></i>
+                <div class="content">
+                    <a class="header">${job.Name}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,6 +1,6 @@
 ﻿<template>
     <require from='notifications' as="notification-message"></require>
-    <h1>${authUser.Username}</h1>
+    <h1>${authUser.data.Username}</h1>
     <div class="ui segment">
         <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
         <div class="ui inverted dimmer ${isUpdatingUser ? 'active' : ''}">

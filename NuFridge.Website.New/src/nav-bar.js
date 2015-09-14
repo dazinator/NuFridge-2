@@ -34,7 +34,7 @@ export class NavBar {
 
 
     attached() {
-        $("#settingsMenuItem").dropdown();
+      
     }
 
     get isAuthenticated() {
