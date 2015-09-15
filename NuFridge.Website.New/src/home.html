@@ -32,6 +32,10 @@
                 </div>
             </div>
 
+            <div class="ui inverted dimmer ${isLoadingDashboard || isLoadingCountChart || isLoadingDownloadChart ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading dashboard</div>
+            </div>
+
             <h2>Total Packages per Feed</h2>
             <div class="ct-chart packagesChart"></div>
             <h2>Total Downloads per Feed</h2>

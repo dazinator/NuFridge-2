@@ -21,7 +21,7 @@ export class Jobs {
         var self = this;
 
         self.http.get("/api/jobs?page=" + self.pageNumber + "&size=" + self.pageSize).then(message => {
-            self.jobs = JSON.parse(message.response);
+            self.data = JSON.parse(message.response);
         });
     }
 

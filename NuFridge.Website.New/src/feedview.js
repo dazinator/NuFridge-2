@@ -21,6 +21,7 @@ export class FeedView {
     isLoadingJobs = true;
     jobPageNumber = 1;
     jobPageSize = 5;
+    jobsTotalPages = new Array();
 
     overviewPackageCount = 0;
     overviewUniquePackageCount = 0;
@@ -241,9 +242,12 @@ export class FeedView {
     loadFeedJobs() {
         var self = this;
 
+        self.isLoadingJobs = true;
+
         self.http.get("/api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(message => {
-            self.jobs = JSON.parse(message.response);
-                self.isLoadingJobs = false;
+            self.jobData = JSON.parse(message.response);
+            self.jobsTotalPages = new Array(Math.ceil(self.jobData.Total / self.jobPageSize));
+            self.isLoadingJobs = false;
             },
             function(message) {
                 if (message.statusCode === 401) {
@@ -278,6 +282,38 @@ export class FeedView {
         var self = this;
 
         self.router.navigate("feeds/view/" + self.feed.Id + "/import");
+    }
+
+    jobsPreviousPageClick() {
+        var self = this;
+
+        if (self.jobPageNumber <= 1) {
+            return;
+        }
+
+        self.jobPageNumber--;
+
+        self.loadFeedJobs();
+    }
+
+    jobsGoToPageClick(page) {
+        var self = this;
+
+        self.jobPageNumber = page;
+        
+        self.loadFeedJobs();
+    }
+
+    jobsNextPageClick() {
+        var self = this;
+
+        if (self.jobPageNumber >= self.jobsTotalPages.length) {
+            return;
+        }
+
+        self.jobPageNumber++;
+
+        self.loadFeedJobs();
     }
 
     previousPageClick() {

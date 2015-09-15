@@ -10,6 +10,10 @@ export class Home {
     dashboard = null;
     chartist = null;
 
+    isLoadingDashboard = true;
+    isLoadingCountChart = true;
+    isLoadingDownloadChart = true;
+
 
     constructor(http, auth) {
         this.http = http;
@@ -75,11 +79,13 @@ export class Home {
         self.http.get("/api/stats/feedpackagecount").then(message => {
             self.feedpackagecount = JSON.parse(message.response);
             self.chartist.Bar('.ct-chart.packagesChart', self.feedpackagecount, options, overrides);
+            self.isLoadingCountChart = false;
         });
 
         self.http.get("/api/stats/feeddownloadcount").then(message => {
             self.feeddownloadcount = JSON.parse(message.response);
             self.chartist.Bar('.ct-chart.downloadsChart', self.feeddownloadcount, options, overrides);
+            self.isLoadingDownloadChart = false;
         });
     }
     
@@ -89,6 +95,7 @@ export class Home {
 
         this.http.get("/api/dashboard").then(message => {
             self.dashboard = JSON.parse(message.response);
+            self.isLoadingDashboard = false;
         }, function(message) {
             if (message.statusCode === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();

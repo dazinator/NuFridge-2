@@ -39,14 +39,14 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public IEnumerable<Job> Find(int pageNumber, int rowsPerPage)
+        public IEnumerable<Job> Find(int pageNumber, int rowsPerPage, out int totalResults)
         {
-            return GetAllPaged(pageNumber, rowsPerPage, null, "CreatedAt DESC", true);
+            return GetAllPaged(pageNumber, rowsPerPage, out totalResults, null, "CreatedAt DESC", true);
         }
 
-        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage)
+        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage, out int totalResults)
         {
-            return GetAllPaged(pageNumber, rowsPerPage, "WHERE [FeedId] = " + feedId, "CreatedAt DESC", true);
+            return GetAllPaged(pageNumber, rowsPerPage, out totalResults, "WHERE [FeedId] = " + feedId, "CreatedAt DESC", true);
         }
 
         public IEnumerable<Job> FindForFeed(int feedId)
@@ -60,9 +60,9 @@ namespace NuFridge.Shared.Database.Repository
     {
         void Insert(Job job);
         void Update(Job job);
-        IEnumerable<Job> Find(int pageNumber, int rowsPerPage);
+        IEnumerable<Job> Find(int pageNumber, int rowsPerPage, out int totalResults);
         Job Find(int jobId);
         IEnumerable<Job> FindForFeed(int feedId);
-        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage);
+        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rowsPerPage, out int totalResults);
     }
 }

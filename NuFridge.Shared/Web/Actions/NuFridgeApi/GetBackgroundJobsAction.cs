@@ -28,11 +28,17 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             int? feedId = parameters.id.HasValue ? parameters.id : null;
 
-            var jobs = feedId.HasValue
-                ? _jobService.FindForFeed(feedId.Value, pageNumber, size)
-                : _jobService.Find(pageNumber, size);
+            int totalResults;
 
-            return module.Negotiate.WithModel(jobs).WithStatusCode(HttpStatusCode.OK);
+            var jobs = feedId.HasValue
+                ? _jobService.FindForFeed(feedId.Value, pageNumber, size, out totalResults)
+                : _jobService.Find(pageNumber, size, out totalResults);
+
+            return module.Negotiate.WithModel(new
+            {
+                Jobs = jobs,
+                Total = totalResults
+            }).WithStatusCode(HttpStatusCode.OK);
         }
     }
 }

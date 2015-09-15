@@ -24,7 +24,7 @@
                 Statistics
             </h2>
 
-            <div class="ui inverted dimmer ${isLoadingFeed || isLoadingJobs ? 'active' : ''}">
+            <div class="ui inverted dimmer ${isLoadingFeed ? 'active' : ''}">
                 <div class="ui indeterminate large text loader">Loading feed</div>
             </div>
 
@@ -51,16 +51,41 @@
                 Background Jobs
             </h2>
 
-            <div class="ui list" if.bind="jobs.length > 0">
-                <div class="item" repeat.for="job of jobs">
+            <div class="ui list" if.bind="jobData.Jobs.length > 0">
+                <div class="item" repeat.for="job of jobData.Jobs">
                     <a class="ui label ${!job.CompletedAt ? '' : (!job.Success ? 'red' : (!job.HasWarnings ? 'green' : 'orange'))}" click.trigger="$parent.jobClick(job)">
-                        ${job.Name}  <div class="detail">${job.CreatedAt | dateFormat} </div>
+                        ${job.Name}
+                        <div class="detail">${job.CreatedAt | dateFormat} </div>
                     </a>
                 </div>
             </div>
 
+            <div if.bind="jobsTotalPages.length > 0" class="stackable ui grid ${jobsTotalPages.length > 1 ? 'two column' : 'one column'}">
+                <div class="column" style="width: 140px;">
 
-            <p if.bind="jobs.length === 0">No background jobs have been run against this feed.</p>
+                    <div class="ui floated small menu">
+                        <div class="item">
+                            Page ${jobPageNumber} of ${jobsTotalPages.length}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column" if.bind="jobsTotalPages.length > 1">
+                    <div class="ui pagination small menu">
+                        <a class="icon item ${jobPageNumber == 1 ? 'disabled' : ''}" click.trigger="jobsPreviousPageClick()">
+                            <i class="left chevron icon"></i>
+                        </a>
+                        <a class="item ${$index + 1 === $parent.jobPageNumber ? 'active' : ''}" repeat.for="page of jobsTotalPages" click.trigger="$parent.jobsGoToPageClick($index + 1)">
+                            ${$index + 1}
+                        </a>
+                        <a class="icon item ${jobPageNumber == jobsTotalPages.length ? 'disabled' : ''}" click.trigger="jobsNextPageClick()">
+                            <i class="right chevron icon"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <p if.bind="jobData.Jobs.length === 0">No background jobs have been run against this feed.</p>
 
             <h2 class="ui header" if.bind="canReindexPackages || canExecuteRetentionPolicy || canChangePackageDirectory">
                 Administrative Actions

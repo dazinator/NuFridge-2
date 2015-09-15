@@ -49,8 +49,8 @@ namespace NuFridge.Shared.Database.Repository
         {
             Type type = typeof(T);
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("Select count(1)");
-            stringBuilder.AppendFormat(" from {0}", (object)_tableName);
+            stringBuilder.Append("SELECT COUNT(1)");
+            stringBuilder.AppendFormat(" FROM [NuFridge].[{0}]", _tableName);
 
             if (noLock)
             {
@@ -104,10 +104,11 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public virtual IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage, string conditions = null, string orderBy = null, bool nolock = false)
+        public virtual IEnumerable<T> GetAllPaged(int pageNumber, int rowsPerPage, out int totalCount, string conditions = null, string orderBy = null, bool nolock = false)
         {
             using (var connection = GetConnection())
             {
+                totalCount = RecordCount(nolock, conditions);
                 return connection.GetListPaged<T>(pageNumber, rowsPerPage, conditions, orderBy, null, null, nolock);
             }
         }

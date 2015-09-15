@@ -34,9 +34,9 @@ namespace NuFridge.Shared.Database.Services
         }
 
 
-        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows)
+        public IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows, out int totalResults)
         {
-            return _jobRepository.FindForFeed(feedId, pageNumber, rows);
+            return _jobRepository.FindForFeed(feedId, pageNumber, rows, out totalResults);
         }
 
         public IEnumerable<Job> FindForFeed(int feedId)
@@ -72,9 +72,9 @@ namespace NuFridge.Shared.Database.Services
             return _jobRepository.Find(jobId);
         }
 
-        public IEnumerable<Job> Find(int pageNumber, int rows)
+        public IEnumerable<Job> Find(int pageNumber, int rows, out int totalResults)
         {
-            return _jobRepository.Find(pageNumber, rows);
+            return _jobRepository.Find(pageNumber, rows, out totalResults);
         }
 
         public void Update(Job job)
@@ -99,7 +99,7 @@ namespace NuFridge.Shared.Database.Services
         T Find<T>(int jobId) where T : class, IJobType, new();
         IEnumerable<Job> FindForFeed(int feedId);
         IEnumerable<T> FindForFeed<T>(int feedId) where T : class, IJobType, new();
-        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows);
-        IEnumerable<Job> Find(int pageNumber, int rows);
+        IEnumerable<Job> FindForFeed(int feedId, int pageNumber, int rows, out int totalResults);
+        IEnumerable<Job> Find(int pageNumber, int rows, out int totalResults);
     }
 }
