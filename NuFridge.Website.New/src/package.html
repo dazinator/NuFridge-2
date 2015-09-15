@@ -1,6 +1,7 @@
 ﻿<template>
     <require from='notifications' as="notification-message"></require>
     <require from="./date-format"></require>
+    <require from="breadcrumb"></require>
     <div class="ui warning message" if.bind="!canViewPage">
         <div class="header">
             You are not authorized to view packages.
@@ -8,7 +9,7 @@
         Contact your System Administrator to request this permission.
     </div>
     <div if.bind="canViewPage">
-        <h1 textcontent="${feed.Name}"></h1>
+        <breadcrumb currentpage="${package.Id + ' ' + package.NormalizedVersion}" previouspage="${feed.Name}"></breadcrumb>
         <div class="ui segment">
             <h3><img src="${package.IconUrl ? package.IconUrl : 'img/default.png'}" width="48" height="48" onerror="this.onerror = null; this.src = 'img/default.png';" style="vertical-align: middle; margin-right: 10px;"/><span>${package.Id} ${package.NormalizedVersion}</span></h3>
 
@@ -23,7 +24,8 @@
             <div class="ui message">
                 ${package.InstallCommand}
             </div>
-            <p>Or <a target="_blank" href.bind="package.DownloadUrl"><strong>Download </strong>${package.Id}-${package.NormalizedVersion}.nupkg</a></p>
+            <p>Or <a target="_blank" href.bind="package.DownloadUrl"><strong>Download </strong>${package.Id}-${package.NormalizedVersion}.nupkg</a>
+            </p>
 
             <h4 if.bind="package.ReleaseNotes">Release Notes</h4>
             <p if.bind="package.ReleaseNotes">${package.ReleaseNotes}</p>

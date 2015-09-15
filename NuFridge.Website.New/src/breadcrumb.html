@@ -1,0 +1,11 @@
+﻿<template>
+    <div class="ui massive breadcrumb">
+        <template repeat.for="item of router.currentInstruction.config.breadcrumb">
+            <a class="section" href.bind="$parent.router.generate(item.routename, $parent.getParams(item))">
+                ${$last && $parent.previouspage ? $parent.previouspage : item.title}
+            </a>
+            <i class="right chevron icon divider"></i>
+        </template>
+        <div class="active section">${currentpage}</div>
+    </div>
+</template>

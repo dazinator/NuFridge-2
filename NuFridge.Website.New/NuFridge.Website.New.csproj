@@ -647,6 +647,8 @@
     <Content Include="src\app.router.config.js" />
     <Content Include="src\authConfig.js" />
     <Content Include="src\authUser.js" />
+    <Content Include="src\breadcrumb.html" />
+    <Content Include="src\breadcrumb.js" />
     <Content Include="src\claims.js" />
     <Content Include="src\date-format.js" />
     <Content Include="src\enum.js" />

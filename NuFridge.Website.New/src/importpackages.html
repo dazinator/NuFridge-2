@@ -1,5 +1,7 @@
 ﻿<template>
-    <h1>${job.Name}</h1>
+    <require from="breadcrumb"></require>
+    <breadcrumb currentpage="${job.Name}" previouspage="${feed.Name}"></breadcrumb>
+
 
     <div class="ui segment" if.bind="showForm">
         <form class="ui form">

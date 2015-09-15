@@ -61,13 +61,14 @@ export class ImportPackages {
         self.http.post("/api/feeds/" + self.feedId + "/import", self.options).then(message => {
             self.jobId = message.response;
 
-            window.history.replaceState(null, null, "#feeds/view/" + self.feedId + "/import/" + self.jobId);
 
-            self.proxy.invoke('Subscribe', self.jobId);
+                var url = self.router.generate("importpackages", {
+                    id: self.feedId,
+                    jobid: self.jobId
+                });
 
-            self.showForm = false;
-            self.showProgress = true;
-        },
+                self.router.navigate(url);
+            },
         function(message) {
             if (message.statusCode === 401) {
 
@@ -151,8 +152,13 @@ export class ImportPackages {
 
     activate(params, routeConfig) {
         var self = this;
+
         self.feedId = params.id;
         self.jobId = params.jobid;
+
+        self.http.get("/api/feeds/" + self.feedId).then(message => {
+            self.feed = JSON.parse(message.response);
+        });
 
         if (self.jobId) {
             self.showForm = false;

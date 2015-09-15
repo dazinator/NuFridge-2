@@ -33,54 +33,62 @@ export class Package {
         self.canViewPage = self.authUser.hasClaim(Claims.CanViewPackages, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            self.http.get("/api/feeds/" + feedId).then(message => {
-                    self.feed = JSON.parse(message.response);
-
-                    self.http.get("/feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
-                        var pkg = JSON.parse(message.response).d;
-                        pkg.Tags = pkg.Tags ? pkg.Tags.replace(/^\s+|\s+$/g, '').split(" ") : new Array();
-                        pkg.Owners = pkg.Owners ? pkg.Owners.replace(/^\s+|\s+$/g, '').split(",") : new Array();
-                        pkg.Authors = pkg.Authors ? pkg.Authors.replace(/^\s+|\s+$/g, '').split(",") : new Array();
-                        pkg.DownloadUrl = "/feeds/" + self.feed.Name + "/packages/" + pkg.Id + "/" + pkg.NormalizedVersion;
-                        pkg.Dependencies = pkg.Dependencies ? pkg.Dependencies.split("|").map(function(value) {
-                            var versionIndex = value.indexOf(":");
-                            var version = value.substr(versionIndex + 1, value.length - versionIndex - 2);
-                            var id = value.substr(0, versionIndex);
-                            return {
-                                Id: id,
-                                Version: version
-                            }
-                        }) : new Array();
-                        pkg.InstallCommand = "Install-Package " + pkg.Id;
-
-                        if (pkg.IsLatestVersion) {
-                            //Do nothing
-                        }
-                        else if (pkg.IsAbsoluteLatestVersion && !pkg.IsLatestVersion) {
-                            pkg.InstallCommand += " -Pre";
-                        }
-                        else {
-                            pkg.InstallCommand += " -Version " + pkg.NormalizedVersion;
-                            if (pkg.IsPrerelease) {
-                                pkg.InstallCommand += " -Pre";
-                            }
-                        }
-
-                        self.package = pkg;
-                        self.isLoadingPackage = false;
-                    });
-
-                    self.http.get("/feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
-                        self.versionsOfPackage = JSON.parse(message.response).d.results;
-                    });
-                },
-                function(message) {
-                    if (message.statusCode === 401) {
-                        var loginRoute = self.auth.auth.getLoginRoute();
-                        self.auth.logout("#" + loginRoute);
-                    }
-                });
+            self.loadPackage(feedId, packageId, packageVersion);
         }
+    }
+
+    loadPackage(feedId, packageId, packageVersion) {
+        var self = this;
+
+        self.isLoadingPackage = true;
+
+        self.http.get("/api/feeds/" + feedId).then(message => {
+            self.feed = JSON.parse(message.response);
+
+            self.http.get("/feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
+                var pkg = JSON.parse(message.response).d;
+                pkg.Tags = pkg.Tags ? pkg.Tags.replace(/^\s+|\s+$/g, '').split(" ") : new Array();
+                pkg.Owners = pkg.Owners ? pkg.Owners.replace(/^\s+|\s+$/g, '').split(",") : new Array();
+                pkg.Authors = pkg.Authors ? pkg.Authors.replace(/^\s+|\s+$/g, '').split(",") : new Array();
+                pkg.DownloadUrl = "/feeds/" + self.feed.Name + "/packages/" + pkg.Id + "/" + pkg.NormalizedVersion;
+                pkg.Dependencies = pkg.Dependencies ? pkg.Dependencies.split("|").map(function(value) {
+                    var versionIndex = value.indexOf(":");
+                    var version = value.substr(versionIndex + 1, value.length - versionIndex - 2);
+                    var id = value.substr(0, versionIndex);
+                    return {
+                        Id: id,
+                        Version: version
+                    }
+                }) : new Array();
+                pkg.InstallCommand = "Install-Package " + pkg.Id;
+
+                if (pkg.IsLatestVersion) {
+                    //Do nothing
+                }
+                else if (pkg.IsAbsoluteLatestVersion && !pkg.IsLatestVersion) {
+                    pkg.InstallCommand += " -Pre";
+                }
+                else {
+                    pkg.InstallCommand += " -Version " + pkg.NormalizedVersion;
+                    if (pkg.IsPrerelease) {
+                        pkg.InstallCommand += " -Pre";
+                    }
+                }
+
+                self.package = pkg;
+                self.isLoadingPackage = false;
+            });
+
+            self.http.get("/feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
+                self.versionsOfPackage = JSON.parse(message.response).d.results;
+            });
+        },
+    function(message) {
+        if (message.statusCode === 401) {
+            var loginRoute = self.auth.auth.getLoginRoute();
+            self.auth.logout("#" + loginRoute);
+        }
+    });
     }
 
     packageHistoryVersionClick(pkg) {
@@ -89,9 +97,11 @@ export class Package {
             return;
         }
 
-        self.isLoadingPackage = true;
+        var hash = "#feeds/view/" + self.feed.Id + "/package/" + pkg.Id + "/" + pkg.Version;
 
-        self.router.navigate("feeds/view/" + self.feed.Id + "/package/" + pkg.Id + "/" + pkg.Version);
+        window.history.replaceState(null, null, hash);
+
+        self.loadPackage(self.feed.Id, pkg.Id, pkg.Version);
     }
 
     attached() {
