@@ -18,7 +18,8 @@
                 <td>${job.Name}</td>
                 <td>${job.CreatedAt | dateFormat}</td>
                 <td>${job.CompletedAt | dateFormat}</td>
-                <td><i if.bind="job.CompletedAt != null" class="${job.Success ? 'check' : 'remove'} circle icon"></i></td>
+                <td><i if.bind="job.CompletedAt != null" class="${job.Success ? 'green check' : 'red remove'} large circle icon"></i>
+                    <div class="ui active inline small loader" if.bind="job.CompletedAt == null"></div></td>
             </tr>
             </tbody>
         </table>

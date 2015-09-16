@@ -12,6 +12,7 @@ gulp.task('serve', ['build'], function(done) {
         target: "http://localhost:8080",
         ws: true
     },
-	notify: true
+	notify: true,
+	ghostMode: false
   }, done);
 });
