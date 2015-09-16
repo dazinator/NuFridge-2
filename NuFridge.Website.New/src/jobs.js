@@ -27,6 +27,12 @@ export class Jobs {
         });
     }
 
+    jobClick(job) {
+        var self = this;
+        var route = self.router.generate("importpackages", {id: job.FeedId, jobid: job.Id});
+        self.router.navigate(route);
+    }
+
     loadJobs(paginationMessage) {
         var self = this;
         self.http.get("/api/jobs?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
