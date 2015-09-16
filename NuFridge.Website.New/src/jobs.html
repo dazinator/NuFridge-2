@@ -1,25 +1,28 @@
 ﻿<template>
     <require from="breadcrumb"></require>
+    <require from="pagination"></require>
     <require from="./date-format"></require>
     <breadcrumb currentpage="Jobs"></breadcrumb>
     <div class="ui segment">
         <table class="ui celled selectable table">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Started At</th>
-                    <th>Completed At</th>
-                    <th>Status</th>
-                </tr>
+            <tr>
+                <th>Name</th>
+                <th>Started At</th>
+                <th>Completed At</th>
+                <th>Status</th>
+            </tr>
             </thead>
             <tbody>
-                <tr repeat.for="job of data.Jobs" style="cursor: pointer;" click.trigger="$parent.jobClick(job)">
-                    <td>${job.Name}</td>
-                    <td>${job.CreatedAt | dateFormat}</td>
-                    <td>${job.CompletedAt | dateFormat}</td>
-                    <td><i if.bind="job.CompletedAt != null" class="${job.Success ? 'check' : 'remove'} circle icon"></i></td>
-                </tr>
+            <tr repeat.for="job of jobs" style="cursor: pointer;" click.trigger="$parent.jobClick(job)">
+                <td>${job.Name}</td>
+                <td>${job.CreatedAt | dateFormat}</td>
+                <td>${job.CompletedAt | dateFormat}</td>
+                <td><i if.bind="job.CompletedAt != null" class="${job.Success ? 'check' : 'remove'} circle icon"></i></td>
+            </tr>
             </tbody>
         </table>
+
+        <pagination pagesize="10" totalresults.bind="totalResults"></pagination>
     </div>
 </template>

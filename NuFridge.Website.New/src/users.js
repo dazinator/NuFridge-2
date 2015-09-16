@@ -27,7 +27,7 @@ export class Users {
         var self = this;
         self.http.get("/api/accounts?page=" + self.pageNumber + "&size=" + self.pageSize).then(message => {
             self.accountData = JSON.parse(message.response);
-            self.totalPages = new Array(self.accountData.Total);
+            self.totalPages =  new Array(Math.ceil(self.accountData.Total / self.pageSize));
         });
     }
 

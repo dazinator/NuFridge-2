@@ -34,6 +34,6 @@ export class Breadcrumb {
     }
 
     attached() {
-        var t = 1;
+
     }
 }
