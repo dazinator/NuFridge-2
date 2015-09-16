@@ -16,6 +16,7 @@ namespace NuFridge.Shared.Scheduler.Jobs
         protected int UserId { get; private set; } 
         protected string TaskName { get; private set; }
         protected IJobCancellationToken CancellationToken { get; private set; }
+        protected int JobId { get; private set; }
 
         protected void WithFeedId(int feedId)
         {
@@ -44,6 +45,11 @@ namespace NuFridge.Shared.Scheduler.Jobs
 
         protected abstract void Execute();
 
+        protected virtual void FinalClientUpdate()
+        {
+            
+        }
+
         protected void SaveJob()
         {
             _jobService.Update(Job);
@@ -60,11 +66,15 @@ namespace NuFridge.Shared.Scheduler.Jobs
 
         protected void Start()
         {
+            JobId = int.Parse(JobContext.JobId);
+
             BeforeStart();
 
             Execute();
 
             AfterStart();
+
+            FinalClientUpdate();
         }
 
         private void BeforeStart()

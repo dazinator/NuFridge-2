@@ -43,19 +43,29 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
             Start();
         }
 
+        protected override void FinalClientUpdate()
+        {
+            var hub = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
+            hub.Clients.Group(ImportPackagesHub.GetGroup(JobId)).loadJob(JobBase);
+
+            UpdateCounters(hub, JobId);
+
+            _log.Info($"Finished package import for feed id {FeedId}");
+        }
+
         protected override void Execute()
         {
-            int jobId = int.Parse(JobContext.JobId);
+
 
             _log.Info("Importing packages for feed id " + FeedId.Value);
 
             var hub = GlobalHost.ConnectionManager.GetHubContext<ImportPackagesHub>();
 
-            hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).loadJob(JobBase);
+            hub.Clients.Group(ImportPackagesHub.GetGroup(JobId)).loadJob(JobBase);
 
             IEnumerable<RemoteRemotePackageRepository.PackageImportResult> results = _repository.GetPackages(Options);
 
-            List<PackageImportJobItem> packageImportItems = _jobItemService.FindForJob(jobId).ToList();
+            List<PackageImportJobItem> packageImportItems = _jobItemService.FindForJob(JobId).ToList();
 
             Stopwatch stopwatch = new Stopwatch();
 
@@ -69,7 +79,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                 {
                     _log.Warn($"The package import for feed id {FeedId} has been cancelled.");
                     CancelJob();
-                    hub.Clients.Group(ImportPackagesHub.GetGroup(jobId)).loadJob(JobBase);
+                    hub.Clients.Group(ImportPackagesHub.GetGroup(JobId)).loadJob(JobBase);
                     throw;
                 }
 
@@ -79,13 +89,13 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                 {
                     stopwatch.Restart();
 
-                    UpdateCounters(hub, jobId);
+                    UpdateCounters(hub, JobId);
                 }
 
                 PackageImportJobItem item = packageImportItems.SingleOrDefault(pi => pi.PackageId == result.Package.Id && pi.Version == result.Package.Version);
                 if (item == null)
                 {
-                    item = _jobItemService.Insert(result.Package, jobId);
+                    item = _jobItemService.Insert(result.Package, JobId);
                     packageImportItems.Add(item);
                 }
 
@@ -134,10 +144,6 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
             }
 
             stopwatch.Stop();
-
-            UpdateCounters(hub, jobId);
-
-            _log.Info($"Finished package import for feed id {FeedId}");
         }
 
         private void UpdateCounters(IHubContext hub, int jobId)

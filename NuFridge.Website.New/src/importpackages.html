@@ -59,7 +59,7 @@
                 </h2>
 
                     <button class="ui positive button" click.trigger="downloadReport()">Download Report</button> 
-                    <button class="ui negative button" click.trigger="cancelImport()" if.bind="job.CreatedAt && !job.CompletedAt && job.Success === false">Cancel Import</button>
+                    <button class="ui negative button" click.trigger="cancelImport()" if.bind="job.CreatedAt != null && job.CompletedAt == null && job.Success === false">Cancel Import</button>
 
             </div>
         </div>
