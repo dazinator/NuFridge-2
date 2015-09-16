@@ -8,7 +8,10 @@ gulp.task('serve', ['build'], function(done) {
   browserSync({
     open: false,
     port: 8081,
-	proxy: "localhost:8080",
+	proxy: {
+        target: "http://localhost:8080",
+        ws: true
+    },
 	notify: true
   }, done);
 });

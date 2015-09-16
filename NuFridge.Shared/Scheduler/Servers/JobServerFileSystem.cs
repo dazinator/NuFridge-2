@@ -15,6 +15,7 @@ namespace NuFridge.Shared.Scheduler.Servers
             RecurringJob.RemoveIfExists("UpdateSystemInformationJob");
             RecurringJob.RemoveIfExists("UpdateFeedDownloadCountStatisticJob");
             RecurringJob.RemoveIfExists("UpdateFeedPackageCountStatisticJob");
+            RecurringJob.RemoveIfExists("CleanupExpiredImportPackagesJob");
         }
     }
 }
