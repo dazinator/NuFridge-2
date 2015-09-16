@@ -1,5 +1,6 @@
 <template>
     <require from="./date-format"></require>
+    <require from="pagination"></require>
     <require from="breadcrumb"></require>
     <breadcrumb currentpage="Users"></breadcrumb>
     <div class="ui segment">
@@ -22,16 +23,6 @@
             </tbody>
         </table>
 
-        <div class="ui pagination small menu" if.bind="totalPages.length > 1">
-            <a class="icon item ${pageNumber == 1 ? 'disabled' : ''}" click.trigger="previousPageClick()">
-                <i class="left chevron icon"></i>
-            </a>
-            <a class="item ${$index + 1 === $parent.pageNumber ? 'active' : ''}" repeat.for="page of totalPages" click.trigger="$parent.goToPageClick($index + 1)">
-                ${$index + 1}
-            </a>
-            <a class="icon item ${pageNumber == totalPages.length ? 'disabled' : ''}" click.trigger="nextPageClick()">
-                <i class="right chevron icon"></i>
-            </a>
-        </div>
+        <pagination pagesize="10" totalresults.bind="totalResults"></pagination>
     </div>
 </template>

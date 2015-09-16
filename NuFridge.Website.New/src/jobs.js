@@ -40,36 +40,4 @@ export class Jobs {
     attached() {
 
     }
-
-    previousPageClick() {
-        var self = this;
-
-        if (self.pageNumber <= 1) {
-            return;
-        }
-
-        self.pageNumber--;
-
-        self.loadJobs();
-    }
-
-    goToPageClick(page) {
-        var self = this;
-
-        self.pageNumber = page;
-        
-        self.loadJobs();
-    }
-
-    nextPageClick() {
-        var self = this;
-
-        if (self.pageNumber >= self.totalPages.length) {
-            return;
-        }
-
-        self.pageNumber++;
-
-        self.loadJobs();
-    }
 }

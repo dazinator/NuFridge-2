@@ -3,31 +3,36 @@ import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
 import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {authUser} from './authuser';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {PaginationMessage} from './paginationmessage';
 
-@inject(Router, HttpClient, AuthService, authUser)
+@inject(Router, HttpClient, AuthService, authUser, EventAggregator)
 export class Users {
 
-    pageNumber = 1;
-    pageSize = 10;
-    totalPages = new Array();
+    totalResults = 0;
 
-    constructor(router, http, auth, authUser) {
+    constructor(router, http, auth, authUser, eventAggregator) {
         this.router = router;
         this.http = http;
         this.auth = auth;
         this.authUser = authUser;
+        this.eventAggregator = eventAggregator;
     }
 
     activate() {
         var self = this;
-        self.loadUsers();
+
+        self.eventAggregator.subscribe(PaginationMessage, paginationMessage => {
+            self.loadUsers(paginationMessage);
+        });
     }
 
-    loadUsers() {
+    loadUsers(paginationMessage) {
         var self = this;
-        self.http.get("/api/accounts?page=" + self.pageNumber + "&size=" + self.pageSize).then(message => {
+        self.http.get("/api/accounts?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
             self.accountData = JSON.parse(message.response);
-            self.totalPages =  new Array(Math.ceil(self.accountData.Total / self.pageSize));
+            self.totalResults = self.accountData.Total;
+            paginationMessage.resolve();
         });
     }
 
@@ -39,37 +44,5 @@ export class Users {
 
     attached() {
 
-    }
-
-    previousPageClick() {
-        var self = this;
-
-        if (self.pageNumber <= 1) {
-            return;
-        }
-
-        self.pageNumber--;
-
-        self.loadUsers();
-    }
-
-    goToPageClick(page) {
-        var self = this;
-
-        self.pageNumber = page;
-        
-        self.loadUsers();
-    }
-
-    nextPageClick() {
-        var self = this;
-
-        if (self.pageNumber >= self.totalPages.length) {
-            return;
-        }
-
-        self.pageNumber++;
-
-        self.loadUsers();
     }
 }
