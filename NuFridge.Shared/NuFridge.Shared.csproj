@@ -390,6 +390,7 @@
     <Compile Include="Web\Actions\NuFridgeApi\DownloadPackageImportReport.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\FeedSearchAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetAccountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetAccountsAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetBackgroundJobsAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetDashboardAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedAction.cs" />

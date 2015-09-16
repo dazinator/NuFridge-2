@@ -93,9 +93,14 @@ export default class{
                 { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
                 { route: 'signout', title: 'Sign out', moduleId: 'signout', nav: false, auth: true },
                 { route: 'setup', title: 'Setup', nav: false, moduleId: 'setup', auth: false },
-                { route: 'profile', title: 'Profile', nav: false, moduleId: 'profile', auth: true },
+                { route: 'profile', title: 'Profile', nav: false, moduleId: 'profile', auth: true, name: 'profile' },
+                { route: 'users/view/:id', title: 'User', nav: false, moduleId: 'profile', auth: true, name: 'userview', breadcrumb: [
+                {
+                    routename: 'users',
+                    title: 'Users'
+                }] },
                 { route: 'jobs', title: 'Jobs', nav: true, moduleId: 'jobs', auth: true },
-                { route: 'users', title: 'Users', nav: true, moduleId: 'users', auth: true }
+                { route: 'users', title: 'Users', nav: true, moduleId: 'users', auth: true, name: 'users' }
             ]);
         };
 

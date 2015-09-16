@@ -9,7 +9,7 @@ namespace NuFridge.Shared.Database.Model
     public class User : IUser
     {
         [Key]
-        public int Id { get; protected set; }
+        public int Id { get; set; }
 
         public string Username { get; set; }
         public string DisplayName { get; set; }

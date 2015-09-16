@@ -61,30 +61,20 @@
         </div>
     </div>
 
-    <div if.bind="jobsTotalPages.length > 0" class="stackable ui grid ${jobsTotalPages.length > 1 ? 'two column' : 'one column'}">
-        <div class="column" style="width: 140px;">
 
-            <div class="ui floated small menu">
-                <div class="item">
-                    Page ${jobPageNumber} of ${jobsTotalPages.length}
-                </div>
-            </div>
-
-        </div>
-        <div class="column" if.bind="jobsTotalPages.length > 1">
-            <div class="ui pagination small menu">
-                <a class="icon item ${jobPageNumber == 1 ? 'disabled' : ''}" click.trigger="jobsPreviousPageClick()">
-                    <i class="left chevron icon"></i>
-                </a>
-                <a class="item ${$index + 1 === $parent.jobPageNumber ? 'active' : ''}" repeat.for="page of jobsTotalPages" click.trigger="$parent.jobsGoToPageClick($index + 1)">
-                    ${$index + 1}
-                </a>
-                <a class="icon item ${jobPageNumber == jobsTotalPages.length ? 'disabled' : ''}" click.trigger="jobsNextPageClick()">
-                    <i class="right chevron icon"></i>
-                </a>
-            </div>
-        </div>
+    <div class="ui pagination small menu" if.bind="jobsTotalPages.length > 1">
+        <a class="icon item ${jobPageNumber == 1 ? 'disabled' : ''}" click.trigger="jobsPreviousPageClick()">
+            <i class="left chevron icon"></i>
+        </a>
+        <a class="item ${$index + 1 === $parent.jobPageNumber ? 'active' : ''}" repeat.for="page of jobsTotalPages" click.trigger="$parent.jobsGoToPageClick($index + 1)">
+            ${$index + 1}
+        </a>
+        <a class="icon item ${jobPageNumber == jobsTotalPages.length ? 'disabled' : ''}" click.trigger="jobsNextPageClick()">
+            <i class="right chevron icon"></i>
+        </a>
     </div>
+
+
 
     <p if.bind="jobData.Jobs.length === 0">No background jobs have been run against this feed.</p>
 

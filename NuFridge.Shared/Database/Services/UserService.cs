@@ -153,6 +153,21 @@ namespace NuFridge.Shared.Database.Services
             return 0;
         }
 
+        public IEnumerable<User> GetAll(int pageNumber, int rows, out int totalResults, bool includePassword)
+        {
+            var users = _userRepository.GetAll(pageNumber, rows, out totalResults);
+
+            if (!includePassword)
+            {
+                foreach (var user in users)
+                {
+                    ConfigureUserEntity(user, false);
+                }
+            }
+
+            return users;
+        }
+
         public void Insert(User user)
         {
             if (!string.IsNullOrWhiteSpace(user.Password))
@@ -174,5 +189,6 @@ namespace NuFridge.Shared.Database.Services
         void Update(User user);
         IUserIdentity ValidateSignInRequest(SignInRequest signInRequest);
         int GetLoggedInUserId(INancyModule module);
+        IEnumerable<User> GetAll(int pageNumber, int rows, out int totalResults, bool includePassword);
     }
 }

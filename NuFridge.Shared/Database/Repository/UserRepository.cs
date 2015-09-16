@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
@@ -67,6 +68,11 @@ namespace NuFridge.Shared.Database.Repository
                     }
                 });
         }
+
+        public IEnumerable<User> GetAll(int pageNumber, int rowsPerPage, out int totalResults)
+        {
+            return GetAllPaged(pageNumber, rowsPerPage, out totalResults, "WHERE [IsService] = 0", null, true);
+        }
     }
 
     public interface IUserRepository
@@ -77,5 +83,6 @@ namespace NuFridge.Shared.Database.Repository
         User Find(string username);
         User Find(int userId);
         void Update(User user);
+        IEnumerable<User> GetAll(int pageNumber, int rows, out int totalResults);
     }
 }

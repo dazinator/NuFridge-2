@@ -24,9 +24,18 @@ export class Profile {
         this.router = router;
     }
 
-    activate() {
+    activate(params) {
         var self = this;
         self.canUpdateUsers = self.authUser.hasClaim(Claims.CanUpdateUsers, Claims.SystemAdministrator);
+
+        var userId = params.id;
+        if (userId) {
+            self.http.get("/api/account/" + userId).then(message => {
+                self.user = JSON.parse(message.response);
+            });
+        } else {
+            self.user = self.authUser.data;
+        }
     }
 
     attached()
@@ -80,9 +89,13 @@ export class Profile {
 
         var startDate = new Date();
 
-        this.http.post("/api/account/", self.authUser.data).then(message => {
+        this.http.post("/api/account/" + self.user.Id, self.user).then(message => {
 
             var endDate = new Date();
+
+            if (self.user.Id === self.authUser.data.Id) {
+                self.authUser.SetDisplayName(self.user.DisplayName);
+            }
 
             var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
 

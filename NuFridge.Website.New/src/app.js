@@ -33,9 +33,13 @@ export class App {
                     },
                     function(message) {
                         resolve();
+                        var loginRoute = self.auth.auth.getLoginRoute();
+                        self.auth.logout("#" + loginRoute);
                     });
             } else {
                 resolve();
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.router.navigate("#" + loginRoute);
             }
         });
     }

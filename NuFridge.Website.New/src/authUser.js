@@ -17,6 +17,11 @@
         return false;
     }
 
+    SetDisplayName(displayName) {
+        var self = this;
+        self.data.DisplayName = displayName;
+    }
+
     set(profile) {
         var self = this;
         self.data = profile;

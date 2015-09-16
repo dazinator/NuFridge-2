@@ -25,8 +25,9 @@ namespace NuFridge.Shared.Web.Modules
             Get["api/feeds/{id}/jobs"] = p => container.Resolve<GetBackgroundJobsAction>().Execute(p, this);
             Get["api/jobs"] = p => container.Resolve<GetBackgroundJobsAction>().Execute(p, this);
             Post["api/account/register"] = p => container.Resolve<RegisterAccountAction>().Execute(p, this);
-            Get["api/account/{username?}"] = p => container.Resolve<GetAccountAction>().Execute(p, this);
-            Post["api/account/{username?}"] = p => container.Resolve<UpdateAccountAction>().Execute(p, this);
+            Get["api/account/{userid?}"] = p => container.Resolve<GetAccountAction>().Execute(p, this);
+            Get["api/accounts"] = p => container.Resolve<GetAccountsAction>().Execute(p, this);
+            Post["api/account/{userid:int}"] = p => container.Resolve<UpdateAccountAction>().Execute(p, this);
             Post["api/signin"] = p => container.Resolve<SignInAction>().Execute(p, this);
 
             Get["api/dashboard"] = p => container.Resolve<GetDashboardAction>().Execute(p, this);

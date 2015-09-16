@@ -1,8 +1,26 @@
 <template>
+    <require from="./date-format"></require>
     <require from="breadcrumb"></require>
     <breadcrumb currentpage="Users"></breadcrumb>
     <div class="ui segment">
-
+        <table class="ui celled selectable table">
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email Address</th>
+                <th>Active</th>
+                <th>Last Updated</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr repeat.for="user of accountData.Users" style="cursor: pointer;" click.trigger="$parent.userClick(user)">
+                <td>${user.Username}</td>
+                <td>${user.EmailAddress}</td>
+                <td><i class="${user.IsActive ? 'check' : 'remove'} circle icon"></i></td>
+                <td>${user.LastUpdated | dateFormat}</td>
+            </tr>
+            </tbody>
+        </table>
 
     </div>
 </template>

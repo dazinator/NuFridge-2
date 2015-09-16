@@ -26,7 +26,7 @@ export class errorParser{
                         return self.returnMessage("There was an error processing the request.", errorText);
                     } else {
                         var message = responseMessage.response;
-                        if (responseMessage.responseType === "json") {
+                        if (responseMessage.responseType === "json" && message) {
                             message = JSON.parse(message);
                         }
                         return self.returnMessage("There was an error processing the request.", message);
@@ -40,7 +40,7 @@ export class errorParser{
                 return self.returnMessage("The server does not accept requests on " + responseMessage.requestMessage.url + ". Check the server logs for more information or raise this as an issue on GitHub.");
             }  else if (responseMessage.statusCode === 400) {
                 var responseText = responseMessage.response;
-                if (responseMessage.responseType === "json") {
+                if (responseMessage.responseType === "json" && responseText) {
                     responseText = JSON.parse(responseText);
                 }
                 return self.returnMessage("The server has rejected the request. Check the server logs for more information or raise this as an issue on GitHub.", responseText);

@@ -22,11 +22,23 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
         public dynamic Execute(dynamic parameters, INancyModule module)
         {
+            int userId = parameters.userid;
+
             module.RequiresAuthentication();
+
+            if (userId <= 0)
+            {
+                return new Response { StatusCode = HttpStatusCode.BadRequest };
+            }
 
             try
             {
                 User user = module.Bind<User>();
+
+                if (user.Id != userId)
+                {
+                    return new Response { StatusCode = HttpStatusCode.BadRequest };
+                }
 
                 if (user.Username == module.Context.CurrentUser.UserName)
                 {
@@ -35,6 +47,7 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
 
                 module.RequiresAnyClaim(new List<string> { Claims.SystemAdministrator, Claims.CanUpdateUsers });
+
                 return UpdateUser(user);
             }
             catch (Exception ex)

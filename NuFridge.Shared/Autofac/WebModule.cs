@@ -47,6 +47,7 @@ namespace NuFridge.Shared.Autofac
             builder.RegisterType<SetupAction>().AsSelf();
             builder.RegisterType<UpdateAccountAction>().AsSelf();
             builder.RegisterType<GetBackgroundJobsAction>().AsSelf();
+            builder.RegisterType<GetAccountsAction>().AsSelf();
 
             //NuGet api v2 module
             builder.RegisterType<BatchAction>().AsSelf();

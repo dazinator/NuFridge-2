@@ -6,7 +6,7 @@
           <a class="item ${router.currentInstruction.fragment === '/profile' ? 'active' : ''}" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
               <i class="ui large user icon"></i>
               <div class="content">
-                  <div class="ui sub header" textcontent="${authUser.data.Username}"></div>
+                  <div class="ui sub header" textcontent="${authUser.data.DisplayName}"></div>
                   System Administrator
               </div>
           </a>
