@@ -2,6 +2,9 @@
 
 export class DateFormatValueConverter {
     toView(value) {
-        return moment(value).format('MMMM Do YYYY HH:mm:ss');
+        if (value) {
+            return moment(value).format('MMMM Do YYYY HH:mm:ss');
+        }
+        return "";
     }
 }

@@ -9,6 +9,7 @@ export class Users {
 
     pageNumber = 1;
     pageSize = 10;
+    totalPages = new Array();
 
     constructor(router, http, auth, authUser) {
         this.router = router;
@@ -19,9 +20,14 @@ export class Users {
 
     activate() {
         var self = this;
+        self.loadUsers();
+    }
 
+    loadUsers() {
+        var self = this;
         self.http.get("/api/accounts?page=" + self.pageNumber + "&size=" + self.pageSize).then(message => {
             self.accountData = JSON.parse(message.response);
+            self.totalPages = new Array(self.accountData.Total);
         });
     }
 
@@ -33,5 +39,37 @@ export class Users {
 
     attached() {
 
+    }
+
+    previousPageClick() {
+        var self = this;
+
+        if (self.pageNumber <= 1) {
+            return;
+        }
+
+        self.pageNumber--;
+
+        self.loadUsers();
+    }
+
+    goToPageClick(page) {
+        var self = this;
+
+        self.pageNumber = page;
+        
+        self.loadUsers();
+    }
+
+    nextPageClick() {
+        var self = this;
+
+        if (self.pageNumber >= self.totalPages.length) {
+            return;
+        }
+
+        self.pageNumber++;
+
+        self.loadUsers();
     }
 }
