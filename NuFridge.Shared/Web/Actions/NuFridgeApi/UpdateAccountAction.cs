@@ -64,6 +64,7 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             existingUser.DisplayName = user.DisplayName;
             existingUser.EmailAddress = user.EmailAddress;
+            existingUser.IsActive = user.IsActive;
 
             _userService.Update(existingUser);
 

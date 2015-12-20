@@ -3,7 +3,7 @@
     <h1>Add Feed</h1>
     <div class="ui segment">
         <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
-        <form class="ui form segment" if.bind="hasRequiredClaims">
+        <form class="ui form" if.bind="hasRequiredClaims">
             <h2 class="ui header">
                 General Settings
                 <div class="sub header">Manage your general feed settings.</div>
@@ -37,10 +37,12 @@
                 </div>
             </div>
         </form>
-        <div class="ui buttons" if.bind="hasRequiredClaims">
-            <button class="ui button">Cancel</button>
-            <div class="or"></div>
-            <button class="ui positive button" click.trigger="insertFeed()">Create</button>
+        <div style="padding-top: 15px;">
+            <div class="ui buttons" if.bind="hasRequiredClaims">
+                <button class="ui button">Cancel</button>
+                <div class="or"></div>
+                <button class="ui positive button" click.trigger="insertFeed()">Create</button>
+            </div>
         </div>
     </div>
 </template>

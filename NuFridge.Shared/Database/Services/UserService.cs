@@ -118,6 +118,11 @@ namespace NuFridge.Shared.Database.Services
                 return null;
             }
 
+            if (!user.IsActive || user.IsService)
+            {
+                return null;
+            }
+
             ICryptoService cryptoService = new PBKDF2();
 
             string signInAttemptPassword = cryptoService.Compute(signInRequest.Password, user.PasswordSalt);
