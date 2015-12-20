@@ -20,26 +20,22 @@ namespace NuFridge.Shared.Reporting
         {
             var feeds = _feedService.GetAll();
 
-            Dictionary<string, long> feedDownloadCount = new Dictionary<string, long>();
+            Dictionary<string, long> feedPackageCount = new Dictionary<string, long>();
+
 
             foreach (var feed in feeds)
             {
-                IEnumerable<IInternalPackage> packages = _packageService.GetAllPackagesForFeed(feed.Id).ToList();
+                long packageCount = _packageService.GetPackageDownloadCount(feed.Id);
 
-                if (packages.Any(pk => pk.VersionDownloadCount > 0))
-                {
-                    feedDownloadCount.Add(feed.Name, packages.Sum(pk => pk.VersionDownloadCount));
-                }
+                feedPackageCount.Add(feed.Name, packageCount);
             }
 
-            if (feedDownloadCount.Count > 10)
+            if (feedPackageCount.Count > 10)
             {
-                feedDownloadCount = feedDownloadCount.OrderByDescending(pc => pc.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
+                feedPackageCount = feedPackageCount.OrderByDescending(pc => pc.Value).Take(10).ToDictionary(x => x.Key, x => x.Value);
             }
 
-            return new ReportGraph(feedDownloadCount);
+            return new ReportGraph(feedPackageCount);
         }
-
-        //protected override string StatName => "FeedDownloadCount";
     }
 }

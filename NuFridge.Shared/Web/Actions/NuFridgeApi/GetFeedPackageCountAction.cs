@@ -31,5 +31,7 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
                     .WithStatusCode(HttpStatusCode.OK)
                     .AsCacheable(DateTime.Now.AddMinutes(30));
         }
+
+
     }
 }

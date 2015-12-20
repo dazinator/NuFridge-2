@@ -204,3 +204,13 @@ GO
 
 DROP TABLE [NuFridge].[Statistic]
 GO
+
+CREATE PROCEDURE [NuFridge].[GetPackageDownloadCount]
+@feedId int
+AS
+
+SELECT DISTINCT COUNT(pd.Id) FROM [NuFridge].[PackageDownload] as pd
+INNER JOIN [NuFridge].[Package] as pkg on pkg.IdHash = pd.PackageIdHash AND pkg.FeedId = pd.FeedId
+INNER JOIN [NuFridge].[Feed] as fd on fd.Id = pd.FeedId
+WHERE pd.FeedId = @feedId
+GO

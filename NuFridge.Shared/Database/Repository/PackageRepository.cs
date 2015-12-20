@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Reporting;
 using NuGet;
 using Palmer;
 using Constants = NuFridge.Shared.Constants;
@@ -16,6 +17,7 @@ namespace NuFridge.Shared.Database.Repository
         private const string GetAllPackagesStoredProcCommand = "NuFridge.GetAllPackages @feedId";
         private const string GetLatestPackagesStoredProcCommand = "NuFridge.GetLatestPackages @feedId, @includePrerelease, @partialId";
         private const string GetUniquePackageCountStoredProcCommand = "NuFridge.GetUniquePackageCount @feedId";
+        private const string GetPackageDownloadCountStoredProcCommand = "NuFridge.GetPackageDownloadCount @feedId";
         private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId, @includePrerelease, @packageId";
         private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId, @packageId, @versionMajor, @versionMinor, @versionBuild, @versionRevision, @versionSpecial";
 
@@ -35,6 +37,11 @@ namespace NuFridge.Shared.Database.Repository
                 Query<PackageUpload>(
                     $"SELECT TOP(50) [Id], [Version], [Published] FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE FeedId = @feedId ORDER BY Published DESC",
                     new { feedId });
+        }
+
+        public int GetPackageDownloadCount(int feedId)
+        {
+            return Query<int>(GetPackageDownloadCountStoredProcCommand, new { feedId }).Single();
         }
 
 
@@ -133,5 +140,6 @@ namespace NuFridge.Shared.Database.Repository
         InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
+        int GetPackageDownloadCount(int feedId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Reporting;
 using NuGet;
 using IPackageRepository = NuFridge.Shared.Database.Repository.IPackageRepository;
 
@@ -32,6 +33,11 @@ namespace NuFridge.Shared.Database.Services
         public int GetCount()
         {
             return _packageRepository.GetCount(true);
+        }
+
+        public long GetPackageDownloadCount(int feedId)
+        {
+            return _packageRepository.GetPackageDownloadCount(feedId);
         }
 
         public long GetUniquePackageIdCount(int feedId)
@@ -95,5 +101,6 @@ namespace NuFridge.Shared.Database.Services
         void Update(InternalPackage package);
         InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
+        long GetPackageDownloadCount(int feedId);
     }
 }
