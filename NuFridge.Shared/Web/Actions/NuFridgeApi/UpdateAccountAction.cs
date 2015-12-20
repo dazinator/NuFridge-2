@@ -66,6 +66,11 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
             existingUser.EmailAddress = user.EmailAddress;
             existingUser.IsActive = user.IsActive;
 
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                existingUser.Password = user.Password;
+            }
+
             _userService.Update(existingUser);
 
             return new Response { StatusCode = HttpStatusCode.OK };

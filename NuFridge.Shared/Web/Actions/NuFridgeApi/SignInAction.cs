@@ -71,6 +71,8 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             var token = _tokenizer.Tokenize(user, module.Context);
 
+            _log.Info("User '" + signInRequest.Email + "' signed in from IP address " + module.Request.UserHostAddress);
+
             return new
             {
                 token,

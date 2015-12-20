@@ -30,7 +30,11 @@
                 Security
             </h2>
             <div class="ui segment">
-                <div class="field">
+                <div class="field" show.bind="canUpdateUsers || user.Id === authUser.data.Id">
+                    <label>Password</label>
+                    <input type="password" name="password" value.bind="user.Password" readonly.bind="!canUpdateUsers">
+                </div>
+                <div class="field" show.bind="canUpdateUsers">
                     <div class="ui toggle checkbox activeUserCheckbox">
                         <input type="checkbox" checked.bind="user.IsActive">
                         <label style="font-size: .9285em; font-weight: 700;">Active</label>
