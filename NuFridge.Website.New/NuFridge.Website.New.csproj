@@ -647,10 +647,12 @@
     <Content Include="src\app.router.config.js" />
     <Content Include="src\authConfig.js" />
     <Content Include="src\authUser.js" />
+    <Content Include="src\ellipsis-text.html" />
     <Content Include="src\breadcrumb.html" />
     <Content Include="src\breadcrumb.js" />
     <Content Include="src\claims.js" />
     <Content Include="src\date-format.js" />
+    <Content Include="src\ellipsis-text.js" />
     <Content Include="src\enum.js" />
     <Content Include="src\errorparser.js" />
     <Content Include="src\feedcreate.html" />
@@ -659,6 +661,7 @@
     <Content Include="src\importpackages.js" />
     <Content Include="src\jobs.html" />
     <Content Include="src\jobs.js" />
+    <Content Include="src\dotdotdot.js" />
     <Content Include="src\notifications.html" />
     <Content Include="src\notifications.js" />
     <Content Include="src\package.html" />

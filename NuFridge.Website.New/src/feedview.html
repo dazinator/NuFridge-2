@@ -1,6 +1,7 @@
 <template>
     <require from='notifications' as="notification-message"></require>
     <require from="./date-format"></require>
+    <require from="ellipsis-text"></require>
     <require from="/styles/timeline.css!"></require>
     <require from="breadcrumb"></require>
     <div class="ui warning message" if.bind="!canViewPage">
@@ -9,338 +10,338 @@
         </div>
         Contact your System Administrator to request this permission.
     </div>
-<div if.bind="canViewPage">
-<breadcrumb currentpage="${feedName}"></breadcrumb>
+    <div if.bind="canViewPage">
+        <breadcrumb currentpage="${feedName}"></breadcrumb>
 
-<div class="ui pointing secondary menu feedMenu">
-    <a class="item active" data-tab="first">Overview</a>
-    <a class="item" data-tab="second">Endpoints</a>
-    <a class="item" data-tab="third" if.bind="canViewPackages">Packages</a>
-    <a class="item" data-tab="fourth" if.bind="canViewFeedHistory">History</a>
-    <a class="item settingTab" data-tab="fifth" if.bind="canUpdateFeed">Settings</a>
-</div>
+        <div class="ui pointing secondary menu feedMenu">
+            <a class="item active" data-tab="first">Overview</a>
+            <a class="item" data-tab="second">Endpoints</a>
+            <a class="item" data-tab="third" if.bind="canViewPackages">Packages</a>
+            <a class="item" data-tab="fourth" if.bind="canViewFeedHistory">History</a>
+            <a class="item settingTab" data-tab="fifth" if.bind="canUpdateFeed">Settings</a>
+        </div>
 
-<div data-tab="first" class="ui bottom tab segment active">
-    <h2 class="ui header">
-        Statistics
-    </h2>
+        <div data-tab="first" class="ui bottom tab segment active">
+            <h2 class="ui header">
+                Statistics
+            </h2>
 
-    <div class="ui inverted dimmer ${isLoadingFeed ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">Loading feed</div>
-    </div>
-
-    <div class="ui tiny horizontal statistics">
-        <div class="statistic">
-            <div class="value">
-                ${overviewPackageCount}
+            <div class="ui inverted dimmer ${isLoadingFeed ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading feed</div>
             </div>
-            <div class="label">
-                Total Packages
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="value">
-                ${overviewUniquePackageCount}
-            </div>
-            <div class="label">
-                Unique Packages
-            </div>
-        </div>
-    </div>
 
-    <h2 class="ui header">
-        Background Jobs
-    </h2>
-
-    <div class="ui list" if.bind="jobData.Jobs.length > 0">
-        <div class="item" repeat.for="job of jobData.Jobs">
-            <a class="ui label ${!job.CompletedAt ? '' : (!job.Success ? 'red' : (!job.HasWarnings ? 'green' : 'orange'))}" click.trigger="$parent.jobClick(job)">
-                ${job.Name}
-                <div class="detail">${job.CreatedAt | dateFormat} </div>
-            </a>
-        </div>
-    </div>
-
-
-    <div class="ui pagination small menu" if.bind="jobsTotalPages.length > 1">
-        <a class="icon item ${jobPageNumber == 1 ? 'disabled' : ''}" click.trigger="jobsPreviousPageClick()">
-            <i class="left chevron icon"></i>
-        </a>
-        <a class="item ${$index + 1 === $parent.jobPageNumber ? 'active' : ''}" repeat.for="page of jobsTotalPages" click.trigger="$parent.jobsGoToPageClick($index + 1)">
-            ${$index + 1}
-        </a>
-        <a class="icon item ${jobPageNumber == jobsTotalPages.length ? 'disabled' : ''}" click.trigger="jobsNextPageClick()">
-            <i class="right chevron icon"></i>
-        </a>
-    </div>
-
-
-
-    <p if.bind="jobData.Jobs.length === 0">No background jobs have been run against this feed.</p>
-
-    <h2 class="ui header" if.bind="canReindexPackages || canExecuteRetentionPolicy || canChangePackageDirectory">
-        Administrative Actions
-    </h2>
-
-    <button class="ui button" style="margin-bottom: 0.75em" click.trigger="reindexPackagesClick()" if.bind="canReindexPackages">
-        Reindex Packages
-    </button>
-    <button class="ui button" style="margin-bottom: 0.75em" click.trigger="importPackagesClick()" if.bind="canUploadPackages">
-        Import Packages
-    </button>
-    <button class="ui button" style="margin-bottom: 0.75em" if.bind="canExecuteRetentionPolicy">
-        Execute Package Retention Policy
-    </button>
-    <button class="ui button" style="margin-bottom: 0.75em" if.bind="canChangePackageDirectory">
-        Change Package Directory
-    </button>
-
-</div>
-
-
-<div data-tab="second" class="ui bottom tab segment">
-    <table class="ui compact table">
-        <thead>
-        <tr>
-            <th>URL</th>
-            <th>Usage</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
-            <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
-        </tr>
-        <tr>
-            <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
-            <td>Use this for pushing symbol packages or as a symbol server for this NuGet feed.</td>
-        </tr>
-        </tbody>
-    </table>
-    <div class="ui inverted dimmer ${isLoadingFeed || isUpdatingFeed ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">Loading endpoints</div>
-    </div>
-</div>
-
-<div data-tab="third" class="ui bottom tab segment" if.bind="canViewPackages">
-    <div class="stackable four column ui grid">
-        <div class="column">
-            <button class="ui basic button labeled icon" style="width: 100%" click.trigger="resetPackageListingClick()">
-                <i class="undo icon"></i>
-                Reset
-            </button>
-        </div>
-        <div class="column">
-            <select class="ui fluid dropdown pageSizeDropdown" style="width: 100%">
-                <option value="10">10 packages per page</option>
-                <option value="20">20 packages per page</option>
-                <option value="30">30 packages per page</option>
-                <option value="40">40 packages per page</option>
-                <option value="50">50 packages per page</option>
-            </select>
-        </div>
-        <div class="column">
-            <select class="ui fluid dropdown pageOrderDropdown" style="width: 100%">
-                <option value="0">Downloads descending</option>
-                <option value="1">Downloads ascending</option>
-                <option value="2">Package Id descending</option>
-                <option value="3">Package Id ascending</option>
-            </select>
-        </div>
-        <div class="column">
-            <div class="ui search" style="width: 100%">
-                <input class="prompt" type="text" placeholder="Search..." style="width: 100%" value.bind="packagesSearchText">
-
-                <div class="results"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="ui inverted dimmer ${isLoadingPackages ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">Searching for packages</div>
-    </div>
-
-    <div class="one column ui grid" if.bind="packagesTotalMatchingQuery == 0">
-        <div class="column">
-            <div class="ui message">
-                <p>No packages found.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="stackable two column ui grid" if.bind="packagesTotalMatchingQuery > 0">
-        <div class="column" style="width: 140px;">
-
-            <div class="ui floated menu">
-                <div class="item">
-                    Page ${packagesCurrentPage} of ${packagesTotalPages.length}
+            <div class="ui tiny horizontal statistics">
+                <div class="statistic">
+                    <div class="value">
+                        ${overviewPackageCount}
+                    </div>
+                    <div class="label">
+                        Total Packages
+                    </div>
                 </div>
-            </div>
-
-        </div>
-        <div class="column">
-
-            <div class="ui floated pagination menu">
-                <a class="icon item ${packagesCurrentPage == 1 ? 'disabled' : ''}" click.trigger="previousPageClick()">
-                    <i class="left chevron icon"></i>
-                </a>
-                <a repeat.for="page of packagesTotalPages" click.trigger="$parent.goToPageClick($index + 1)" class="item ${$parent.packagesCurrentPage == ($index + 1) ? 'active' : ''}">${$index + 1}</a>
-                <a class="icon item ${packagesCurrentPage == packagesTotalPages.length ? 'disabled' : ''}" click.trigger="nextPageClick()">
-                    <i class="right chevron icon"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <table class="ui basic selectable table" if.bind="packagesTotalMatchingQuery > 0">
-        <tbody>
-        <tr repeat.for="package of packagesRecords" style="cursor: pointer;" click.trigger="$parent.viewPackageClick(package)">
-            <td><img src="${package.IconUrl}" width="48" height="48" onerror="this.onerror = null; this.src = 'img/default.png';"/></td>
-            <td><strong>${package.Title}</strong></td>
-            <td>
-                <div class="ui labels">
-                    <a class="ui basic label" repeat.for="author of package.Authors">
-                        ${author}
-                    </a>
-                </div>
-            </td>
-            <td>
-                v${package.NormalizedVersion}
-            </td>
-            <td>${package.Description}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
-
-<div data-tab="fourth" class="ui bottom tab segment" css="${isLoadingHistory ? 'min-height:150px;' : ''}" if.bind="canViewFeedHistory">
-    <div class="ui inverted dimmer ${isLoadingHistory ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">Loading history</div>
-    </div>
-    <div class="ui" if.bind="isLoadingHistory === false && historyRecords.length === 0">
-        <p>No events have been recorded for this feed yet.</p>
-    </div>
-    <section id="cd-timeline" class="cd-container" if.bind="historyRecords.length > 0">
-        <div class="cd-timeline-block" repeat.for="item of historyRecords">
-            <div class="cd-timeline-img ${item.Type === 0 ? 'cd-green' : (item.Type === 1 ? 'cd-blue' : 'cd-silver')}">
-                <i class="inverted big cube icon"></i>
-            </div>
-
-            <div class="cd-timeline-content">
-                <h3 class="ui header" style="margin: 0;">
-                    ${item.Title}
-                    <div class="sub header">${item.Description}</div>
-                </h3>
-                <span class="cd-date">${item.Date | dateFormat}</span>
-            </div>
-        </div>
-    </section>
-</div>
-
-<div data-tab="fifth" class="ui bottom tab segment settingTab" if.bind="canUpdateFeed">
-    <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
-    <h2 class="ui header">
-        General Settings
-        <div class="sub header">Manage your general feed settings.</div>
-    </h2>
-    <div class="ui inverted dimmer ${isUpdatingFeed || isLoadingFeed || isLoadingFeedConfig ? 'active' : ''}">
-        <div class="ui indeterminate large text loader">${isUpdatingFeed ? 'Saving feed' : 'Loading settings'}</div>
-    </div>
-    <form class="ui form">
-        <div class="ui segment">
-            <div class="field">
-                <label>Feed Name</label>
-
-                <p>
-                    The feed name is used to generate the feed URL. Changing it will break any applications that access this
-                    feed.
-                </p>
-                <input type="text" name="feedname" value.bind="feed.Name">
-            </div>
-        </div>
-
-        <h2 class="ui header">
-            Security Settings
-            <div class="sub header">Manage your security settings for accessing this feed.</div>
-        </h2>
-
-        <div class="ui segment">
-            <div class="field">
-                <label>API Key</label>
-                <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
-                <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
-                    <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
-                    <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
-                        Clear
-                    </button>
-                </div>
-            </div>
-        </div>
-        <h2 class="ui header">
-            Package Retention Policy Settings
-            <div class="sub header">Manage your package retention settings for this feed.</div>
-        </h2>
-        <div class="ui segment">
-            <div class="field" css="${!feedconfig.RetentionPolicyEnabled ? 'margin:0;' : ''}">
-                <div class="inline field">
-                    <div class="ui toggle checkbox retentionPolicyEnabled">
-                        <input type="checkbox" checked.bind="feedconfig.RetentionPolicyEnabled">
-                        <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
+                <div class="statistic">
+                    <div class="value">
+                        ${overviewUniquePackageCount}
+                    </div>
+                    <div class="label">
+                        Unique Packages
                     </div>
                 </div>
             </div>
-            <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
-                <label>Maximum Amount of Release Packages to Keep</label>
 
-                <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
-                <input type="text" value.bind="feedconfig.MaxReleasePackages" name="maxreleasepackages">
+            <h2 class="ui header">
+                Background Jobs
+            </h2>
+
+            <div class="ui list" if.bind="jobData.Jobs.length > 0">
+                <div class="item" repeat.for="job of jobData.Jobs">
+                    <a class="ui label ${!job.CompletedAt ? '' : (!job.Success ? 'red' : (!job.HasWarnings ? 'green' : 'orange'))}" click.trigger="$parent.jobClick(job)">
+                        ${job.Name}
+                        <div class="detail">${job.CreatedAt | dateFormat} </div>
+                    </a>
+                </div>
             </div>
-            <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
-                <label>Maximum Amount of Pre-release Packages to Keep</label>
 
-                <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
 
-                <p>
-                    A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
-                    identifiers immediately following the patch version.
-                </p>
-                <input type="text" value.bind="feedconfig.MaxPrereleasePackages" name="maxprereleasepackages">
+            <div class="ui pagination small menu" if.bind="jobsTotalPages.length > 1">
+                <a class="icon item ${jobPageNumber == 1 ? 'disabled' : ''}" click.trigger="jobsPreviousPageClick()">
+                    <i class="left chevron icon"></i>
+                </a>
+                <a class="item ${$index + 1 === $parent.jobPageNumber ? 'active' : ''}" repeat.for="page of jobsTotalPages" click.trigger="$parent.jobsGoToPageClick($index + 1)">
+                    ${$index + 1}
+                </a>
+                <a class="icon item ${jobPageNumber == jobsTotalPages.length ? 'disabled' : ''}" click.trigger="jobsNextPageClick()">
+                    <i class="right chevron icon"></i>
+                </a>
             </div>
-            <div class="ui warning message" css="${feedconfig.RetentionPolicyEnabled && feedconfig.MaxPrereleasePackages == 0 && feedconfig.MaxReleasePackages == 0 ? 'display:block;' : 'display:none;'}">
-                <p>All packages will be removed when the package retention policy is enforced. Either disable the package retention policy or increase the amount of packages to keep.</p>
+
+
+
+            <p if.bind="jobData.Jobs.length === 0">No background jobs have been run against this feed.</p>
+
+            <h2 class="ui header" if.bind="canReindexPackages || canExecuteRetentionPolicy || canChangePackageDirectory">
+                Administrative Actions
+            </h2>
+
+            <button class="ui button" style="margin-bottom: 0.75em" click.trigger="reindexPackagesClick()" if.bind="canReindexPackages">
+                Reindex Packages
+            </button>
+            <button class="ui button" style="margin-bottom: 0.75em" click.trigger="importPackagesClick()" if.bind="canUploadPackages">
+                Import Packages
+            </button>
+            <button class="ui button" style="margin-bottom: 0.75em" if.bind="canExecuteRetentionPolicy">
+                Execute Package Retention Policy
+            </button>
+            <button class="ui button" style="margin-bottom: 0.75em" if.bind="canChangePackageDirectory">
+                Change Package Directory
+            </button>
+
+        </div>
+
+
+        <div data-tab="second" class="ui bottom tab segment">
+            <table class="ui compact table">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a target="_blank" href="${feed.RootUrl}/api/v2">${feed.RootUrl}/api/v2</a></td>
+                        <td>Use this for pushing NuGet packages or querying this NuGet feed.</td>
+                    </tr>
+                    <tr>
+                        <td><a target="_blank" href="${feed.RootUrl}/api/symbols">${feed.RootUrl}/api/symbols</a></td>
+                        <td>Use this for pushing symbol packages or as a symbol server for this NuGet feed.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="ui inverted dimmer ${isLoadingFeed || isUpdatingFeed ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading endpoints</div>
             </div>
         </div>
 
-    </form>
-    <div style="padding-top: 15px;">
-        <div class="ui buttons">
-            <button class="ui positive button" click.trigger="updateFeed()">Save</button>
+        <div data-tab="third" class="ui bottom tab segment" if.bind="canViewPackages">
+            <div class="stackable four column ui grid">
+                <div class="column">
+                    <button class="ui basic button labeled icon" style="width: 100%" click.trigger="resetPackageListingClick()">
+                        <i class="undo icon"></i>
+                        Reset
+                    </button>
+                </div>
+                <div class="column">
+                    <select class="ui fluid dropdown pageSizeDropdown" style="width: 100%">
+                        <option value="10">10 packages per page</option>
+                        <option value="20">20 packages per page</option>
+                        <option value="30">30 packages per page</option>
+                        <option value="40">40 packages per page</option>
+                        <option value="50">50 packages per page</option>
+                    </select>
+                </div>
+                <div class="column">
+                    <select class="ui fluid dropdown pageOrderDropdown" style="width: 100%">
+                        <option value="0">Downloads descending</option>
+                        <option value="1">Downloads ascending</option>
+                        <option value="2">Package Id descending</option>
+                        <option value="3">Package Id ascending</option>
+                    </select>
+                </div>
+                <div class="column">
+                    <div class="ui search" style="width: 100%">
+                        <input class="prompt" type="text" placeholder="Search..." style="width: 100%" value.bind="packagesSearchText">
+
+                        <div class="results"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui inverted dimmer ${isLoadingPackages ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Searching for packages</div>
+            </div>
+
+            <div class="one column ui grid" if.bind="packagesTotalMatchingQuery == 0">
+                <div class="column">
+                    <div class="ui message">
+                        <p>No packages found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stackable two column ui grid" if.bind="packagesTotalMatchingQuery > 0">
+                <div class="column" style="width: 140px;">
+
+                    <div class="ui floated menu">
+                        <div class="item">
+                            Page ${packagesCurrentPage} of ${packagesTotalPages.length}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="column">
+
+                    <div class="ui floated pagination menu">
+                        <a class="icon item ${packagesCurrentPage == 1 ? 'disabled' : ''}" click.trigger="previousPageClick()">
+                            <i class="left chevron icon"></i>
+                        </a>
+                        <a repeat.for="page of packagesTotalPages" click.trigger="$parent.goToPageClick($index + 1)" class="item ${$parent.packagesCurrentPage == ($index + 1) ? 'active' : ''}">${$index + 1}</a>
+                        <a class="icon item ${packagesCurrentPage == packagesTotalPages.length ? 'disabled' : ''}" click.trigger="nextPageClick()">
+                            <i class="right chevron icon"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <table class="ui basic selectable table" if.bind="packagesTotalMatchingQuery > 0">
+                <tbody>
+                    <tr repeat.for="package of packagesRecords" style="cursor: pointer;" click.trigger="$parent.viewPackageClick(package)">
+                        <td><img src="${package.IconUrl}" width="48" height="48" onerror="this.onerror = null; this.src = 'img/default.png';" /></td>
+                        <td><strong>${package.Title}</strong></td>
+                        <td>
+                            <div class="ui labels">
+                                <a class="ui basic label" repeat.for="author of package.Authors">
+                                    ${author}
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            v${package.NormalizedVersion}
+                        </td>
+                        <td style="width:50%"><ellipsistext contenttext="${package.Description}" classname="${'packageDescription-' + package.Id}"></ellipsistext></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="ui buttons floatRight">
-            <button class="ui red button" click.trigger="deleteFeedClick()">Delete</button>
+        <div data-tab="fourth" class="ui bottom tab segment" css="${isLoadingHistory ? 'min-height:150px;' : ''}" if.bind="canViewFeedHistory">
+            <div class="ui inverted dimmer ${isLoadingHistory ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">Loading history</div>
+            </div>
+            <div class="ui" if.bind="isLoadingHistory === false && historyRecords.length === 0">
+                <p>No events have been recorded for this feed yet.</p>
+            </div>
+            <section id="cd-timeline" class="cd-container" if.bind="historyRecords.length > 0">
+                <div class="cd-timeline-block" repeat.for="item of historyRecords">
+                    <div class="cd-timeline-img ${item.Type === 0 ? 'cd-green' : (item.Type === 1 ? 'cd-blue' : 'cd-silver')}">
+                        <i class="inverted big cube icon"></i>
+                    </div>
+
+                    <div class="cd-timeline-content">
+                        <h3 class="ui header" style="margin: 0;">
+                            ${item.Title}
+                            <div class="sub header">${item.Description}</div>
+                        </h3>
+                        <span class="cd-date">${item.Date | dateFormat}</span>
+                    </div>
+                </div>
+            </section>
         </div>
-    </div>
-</div>
+
+        <div data-tab="fifth" class="ui bottom tab segment settingTab" if.bind="canUpdateFeed">
+            <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
+            <h2 class="ui header">
+                General Settings
+                <div class="sub header">Manage your general feed settings.</div>
+            </h2>
+            <div class="ui inverted dimmer ${isUpdatingFeed || isLoadingFeed || isLoadingFeedConfig ? 'active' : ''}">
+                <div class="ui indeterminate large text loader">${isUpdatingFeed ? 'Saving feed' : 'Loading settings'}</div>
+            </div>
+            <form class="ui form">
+                <div class="ui segment">
+                    <div class="field">
+                        <label>Feed Name</label>
+
+                        <p>
+                            The feed name is used to generate the feed URL. Changing it will break any applications that access this
+                            feed.
+                        </p>
+                        <input type="text" name="feedname" value.bind="feed.Name">
+                    </div>
+                </div>
+
+                <h2 class="ui header">
+                    Security Settings
+                    <div class="sub header">Manage your security settings for accessing this feed.</div>
+                </h2>
+
+                <div class="ui segment">
+                    <div class="field">
+                        <label>API Key</label>
+                        <p>When using an API Key you will need to provide it when pushing packages to the feed.</p>
+                        <div class="ui input ${feed.HasApiKey === true ? 'action' : ''}">
+                            <input type="text" class="apiKeyTextBox" value.bind="feed.ApiKey" placeholder.bind="feed.HasApiKey === true ? 'An API Key has already been set.' : ''" disabled.bind="feed.HasApiKey === true">
+                            <button class="ui gray right labeled button" if.bind="feed.HasApiKey === true" click.trigger="clearApiKey()">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <h2 class="ui header">
+                    Package Retention Policy Settings
+                    <div class="sub header">Manage your package retention settings for this feed.</div>
+                </h2>
+                <div class="ui segment">
+                    <div class="field" css="${!feedconfig.RetentionPolicyEnabled ? 'margin:0;' : ''}">
+                        <div class="inline field">
+                            <div class="ui toggle checkbox retentionPolicyEnabled">
+                                <input type="checkbox" checked.bind="feedconfig.RetentionPolicyEnabled">
+                                <label style="font-size: .9285em; font-weight: 700;">Enable Package Retention Policy</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
+                        <label>Maximum Amount of Release Packages to Keep</label>
+
+                        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+                        <input type="text" value.bind="feedconfig.MaxReleasePackages" name="maxreleasepackages">
+                    </div>
+                    <div class="field" css="${feedconfig.RetentionPolicyEnabled ? 'display:block;' : 'display:none;'}">
+                        <label>Maximum Amount of Pre-release Packages to Keep</label>
+
+                        <p>This defines the amount of versions to keep of each package before deleting the older versions.</p>
+
+                        <p>
+                            A package is determined to be a pre-release package by appending a hyphen and a series of dot separated
+                            identifiers immediately following the patch version.
+                        </p>
+                        <input type="text" value.bind="feedconfig.MaxPrereleasePackages" name="maxprereleasepackages">
+                    </div>
+                    <div class="ui warning message" css="${feedconfig.RetentionPolicyEnabled && feedconfig.MaxPrereleasePackages == 0 && feedconfig.MaxReleasePackages == 0 ? 'display:block;' : 'display:none;'}">
+                        <p>All packages will be removed when the package retention policy is enforced. Either disable the package retention policy or increase the amount of packages to keep.</p>
+                    </div>
+                </div>
+
+            </form>
+            <div style="padding-top: 15px;">
+                <div class="ui buttons">
+                    <button class="ui positive button" click.trigger="updateFeed()">Save</button>
+                </div>
+
+                <div class="ui buttons floatRight">
+                    <button class="ui red button" click.trigger="deleteFeedClick()">Delete</button>
+                </div>
+            </div>
+        </div>
 
 
-<div class="ui small modal transition hidden" id="deleteConfirmModal">
-    <div class="ui icon header">
-        <i class="cube icon"></i>
-        <span>Delete the '${feedName}' feed?</span>
-    </div>
-    <div class="content">
-        <p style="text-align: center;">Are you sure you want to delete this feed? All packages will be deleted permanently.</p>
-    </div>
-    <div class="actions">
-        <div class="ui black deny button">
-            No
+        <div class="ui small modal transition hidden" id="deleteConfirmModal">
+            <div class="ui icon header">
+                <i class="cube icon"></i>
+                <span>Delete the '${feedName}' feed?</span>
+            </div>
+            <div class="content">
+                <p style="text-align: center;">Are you sure you want to delete this feed? All packages will be deleted permanently.</p>
+            </div>
+            <div class="actions">
+                <div class="ui black deny button">
+                    No
+                </div>
+                <div class="ui positive right labeled icon button">
+                    Yes
+                    <i class="checkmark icon"></i>
+                </div>
+            </div>
         </div>
-        <div class="ui positive right labeled icon button">
-            Yes
-            <i class="checkmark icon"></i>
-        </div>
     </div>
-</div>
-</div>
 </template>

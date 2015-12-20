@@ -1,7 +1,6 @@
 import {inject,ObserverLocator} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
-import moment from 'moment';
 import {authUser} from './authuser';
 import {Claims} from './claims';
 import {notificationType} from 'notifications';
