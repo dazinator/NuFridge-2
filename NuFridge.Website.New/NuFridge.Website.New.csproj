@@ -47,6 +47,8 @@
     <Content Include=".gitignore" />
     <Content Include=".jshintrc" />
     <Content Include=".npmignore" />
+    <Content Include="build\tasks\bundle.js" />
+    <Content Include="build\tasks\unbundle.js" />
     <Content Include="CONTRIBUTING.md" />
     <Content Include="doc\api.json" />
     <Content Include="doc\CHANGELOG.md" />

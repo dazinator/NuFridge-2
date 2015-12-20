@@ -21,13 +21,7 @@ var config = {
         'aurelia-bootstrapper',
         'aurelia-fetch-client',
         'aurelia-router',
-        'aurelia-animator-css',
-        'github:aurelia/templating-binding',
-        'github:aurelia/templating-resources',
-        'github:aurelia/templating-router',
-        'github:aurelia/loader-default',
-        'github:aurelia/history-browser',
-        'github:aurelia/logging-console'
+        'aurelia-animator-css'
       ],
       options: {
         inject: true,

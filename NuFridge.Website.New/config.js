@@ -29,9 +29,12 @@ System.config({
     "aurelia-history-browser": "npm:aurelia-history-browser@1.0.0-beta.1.0.1",
     "aurelia-http-client": "npm:aurelia-http-client@1.0.0-beta.1",
     "aurelia-loader": "npm:aurelia-loader@1.0.0-beta.1",
-    "aurelia-loader-default": "github:aurelia/loader-default@0.10.0",
+    "aurelia-loader-default": "npm:aurelia-loader-default@1.0.0-beta.1.0.1",
     "aurelia-logging": "npm:aurelia-logging@1.0.0-beta.1",
+    "aurelia-logging-console": "npm:aurelia-logging-console@1.0.0-beta.1",
     "aurelia-metadata": "npm:aurelia-metadata@1.0.0-beta.1",
+    "aurelia-pal": "npm:aurelia-pal@1.0.0-beta.1.0.1",
+    "aurelia-pal-browser": "npm:aurelia-pal-browser@1.0.0-beta.1.0.1",
     "aurelia-path": "npm:aurelia-path@1.0.0-beta.1",
     "aurelia-route-recognizer": "npm:aurelia-route-recognizer@1.0.0-beta.1",
     "aurelia-router": "npm:aurelia-router@1.0.0-beta.1",
@@ -56,19 +59,6 @@ System.config({
     "ms-signalr-client": "npm:ms-signalr-client@2.2.2",
     "paulvanbladel/aurelia-auth": "github:paulvanbladel/aurelia-auth@0.11.5",
     "text": "github:systemjs/plugin-text@0.0.2",
-    "github:aurelia/loader-default@0.10.0": {
-      "aurelia-loader": "github:aurelia/loader@0.9.0",
-      "aurelia-metadata": "github:aurelia/metadata@0.8.0"
-    },
-    "github:aurelia/loader@0.9.0": {
-      "aurelia-html-template-element": "github:aurelia/html-template-element@0.3.0",
-      "aurelia-metadata": "github:aurelia/metadata@0.8.0",
-      "aurelia-path": "github:aurelia/path@0.9.0",
-      "core-js": "github:zloirock/core-js@0.8.4"
-    },
-    "github:aurelia/metadata@0.8.0": {
-      "core-js": "npm:core-js@0.9.18"
-    },
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
     },
