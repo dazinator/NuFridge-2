@@ -321,6 +321,7 @@
     <Compile Include="Database\Model\User.cs" />
     <Compile Include="Database\Model\UserRole.cs" />
     <Compile Include="Database\Scripts\_ScriptNamespaceMirgrator.cs" />
+    <Compile Include="Exceptions\FeedGroupConflictException.cs" />
     <Compile Include="Exceptions\ReadOnlyException.cs" />
     <Compile Include="Database\Repository\BaseRepository.cs" />
     <Compile Include="Database\Repository\FeedConfigurationRepository.cs" />
@@ -420,6 +421,7 @@
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedsAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetPackageAuditHistoryAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\ImportPackagesFromFeedAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\InsertFeedGroupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\InsertFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\RegisterAccountAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\ReindexPackagesAction.cs" />

@@ -46,6 +46,31 @@ namespace NuFridge.Shared.Database.Repository
             MemoryCache.Default.Set(cacheKey, feedGroup, policy);
         }
 
+        public FeedGroup Find(string feedGroupName)
+        {
+            FeedGroup group;
+
+            using (var connection = GetConnection())
+            {
+                group =
+                    connection.Query<FeedGroup>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Name = @name",
+                        new {name = feedGroupName }).FirstOrDefault();
+                if (group != null)
+                {
+                    group.Feeds = _feedRepository.FindByGroupId(group.Id);
+                }
+            }
+
+            if (group != null)
+            {
+                var cacheKey = GetCacheKey(group.Id);
+                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(6)};
+                MemoryCache.Default.Set(cacheKey, group, policy);
+            }
+
+            return group;
+        }
+
         public void Update(FeedGroup feedGroup)
         {
             ThrowIfReadOnly();
@@ -120,5 +145,6 @@ namespace NuFridge.Shared.Database.Repository
         int GetCount(bool nolock);
         void Update(FeedGroup feedGroup);
         void Insert(FeedGroup feedGroup);
+        FeedGroup Find(string name);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
+using NuFridge.Shared.Exceptions;
 
 namespace NuFridge.Shared.Database.Services
 {
@@ -33,6 +34,17 @@ namespace NuFridge.Shared.Database.Services
             _feedGroupRepository.Insert(feedGroup);
         }
 
+        public bool Exists(string name)
+        {
+            var existingGroup = _feedGroupRepository.Find(name);
+            if (existingGroup != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public int GetCount()
         {
             return _feedGroupRepository.GetCount(true);
@@ -46,5 +58,6 @@ namespace NuFridge.Shared.Database.Services
         FeedGroup Find(int id);
         void Update(FeedGroup feedGroup);
         void Insert(FeedGroup feedGroup);
+        bool Exists(string name);
     }
 }

@@ -22,7 +22,15 @@ export class Feedgroup {
         var self = this;
 
         if (self.isNew) {
-
+            self.http.post("/api/feedgroups", self.feedGroup).then(message => {
+                    self.router.navigate("feeds");
+                },
+                function(message) {
+                    if (message.statusCode === 401) {
+                        var loginRoute = self.auth.auth.getLoginRoute();
+                        self.auth.logout("#" + loginRoute);
+                    }
+                });
         } else {
             self.http.put("/api/feedgroups/" + self.GroupId, self.feedGroup).then(message => {
                     self.router.navigate("feeds");
