@@ -71,25 +71,46 @@
                     <th>
                         Downloads
                     </th>
-                    <th>
+                    <th colspan="2">
                         Last Updated
                     </th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr repeat.for="versionOfPackage of versionsOfPackage" click.trigger="$parent.packageHistoryVersionClick(versionOfPackage)" class="${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? 'active' : ''}" css="${versionOfPackage.IsLatestVersion ? 'font-weight:bold;' : ''} ${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? '' : 'cursor:pointer;'}">
-                    <td>
+                <tr repeat.for="versionOfPackage of versionsOfPackage"  class="${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? 'active' : ''}" css="${versionOfPackage.IsLatestVersion ? 'font-weight:bold;' : ''} ${versionOfPackage.NormalizedVersion === $parent.package.NormalizedVersion ? '' : 'cursor:pointer;'}">
+                    <td click.trigger="$parent.packageHistoryVersionClick(versionOfPackage)">
                         ${versionOfPackage.Id} ${versionOfPackage.NormalizedVersion}
                     </td>
-                    <td>
+                    <td click.trigger="$parent.packageHistoryVersionClick(versionOfPackage)">
                         ${versionOfPackage.VersionDownloadCount}
                     </td>
-                    <td>
+                    <td click.trigger="$parent.packageHistoryVersionClick(versionOfPackage)">
                         ${versionOfPackage.LastUpdated | dateFormat}
+                    </td>
+                    <td if.bind="canDeletePackages" style="cursor:default">
+                        <a class="ui red small label" click.trigger="unlistPackageClick(versionOfPackage)">Unlist Package</a>
                     </td>
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="ui small modal transition hidden" id="deleteConfirmModal">
+            <div class="ui icon header">
+                <i class="cube icon"></i>
+                <span>Unlist ${packageToUnlist.Id} v${packageToUnlist.NormalizedVersion}?</span>
+            </div>
+            <div class="content">
+                <p style="text-align: center;">Are you sure you want to unlist this package?</p>
+            </div>
+            <div class="actions">
+                <div class="ui black deny button">
+                    No
+                </div>
+                <div class="ui positive right labeled icon button">
+                    Yes
+                    <i class="checkmark icon"></i>
+                </div>
+            </div>
         </div>
     </div>
 </template>

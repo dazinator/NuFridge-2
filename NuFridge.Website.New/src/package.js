@@ -31,6 +31,7 @@ export class Package {
         var packageVersion = params.packageversion;
 
         self.canViewPage = self.authUser.hasClaim(Claims.CanViewPackages, Claims.SystemAdministrator);
+        self.canDeletePackages = self.authUser.hasClaim(Claims.CanDeletePackages, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
             self.loadPackage(feedId, packageId, packageVersion);
@@ -104,7 +105,39 @@ export class Package {
         self.loadPackage(self.feed.Id, pkg.Id, pkg.Version);
     }
 
-    attached() {
+    deletePackage(pkg) {
+        var self = this;
 
+        self.http.delete("/feeds/" + self.feed.Name + "/api/v2/package/" + pkg.Id + "/" + pkg.Version).then(message => {
+            $('#deleteConfirmModal').modal("hide");
+            self.packageToUnlist = null;
+        }, message => {
+            $('#deleteConfirmModal').modal("hide");
+            self.packageToUnlist = null;
+            if (message.statusCode === 401) {
+                var loginRoute = self.auth.auth.getLoginRoute();
+                self.auth.logout("#" + loginRoute);
+            }
+        });
+    }
+
+    unlistPackageClick(pkg) {
+        var self = this;
+        self.packageToUnlist = pkg;
+
+        var options = {
+            closable: false,
+            onApprove: function (sender) {
+                var modal = this;
+                $(modal).find(".ui.button.deny").addClass("disabled");
+                $(sender).addClass("loading").addClass("disabled");
+                self.deletePackage(pkg);
+                return false;
+            },
+            transition: 'horizontal flip',
+            detachable: false
+        };
+
+        $('#deleteConfirmModal').modal(options).modal('show');
     }
 }
