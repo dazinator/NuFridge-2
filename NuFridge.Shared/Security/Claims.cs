@@ -20,5 +20,6 @@
         public const string CanChangePackageDirectory = "CanChangePackageDirectory";
         public const string CanUpdateUsers = "CanUpdateUsers";
         public const string CanInsertFeedGroup = "CanInsertFeedGroup";
+        public const string CanDeleteFeedGroup = "CanDeleteFeedGroup";
     }
 }

@@ -13,6 +13,7 @@ namespace NuFridge.Shared.Web.Modules
             Get["api/feeds/{id}"] = p => container.Resolve<GetFeedAction>().Execute(p, this);
             Get["api/feedgroups/{id}"] = p => container.Resolve<GetFeedGroupAction>().Execute(p, this);
             Put["api/feedgroups/{id}"] = p => container.Resolve<UpdateFeedGroupAction>().Execute(p, this);
+            Delete["api/feedgroups/{id}"] = p => container.Resolve<DeleteFeedGroupAction>().Execute(p, this);
             Post["api/feedgroups"] = p => container.Resolve<InsertFeedGroupAction>().Execute(p, this);
             Get["api/feeds/{id}/config"] = p => container.Resolve<GetFeedConfigurationAction>().Execute(p, this);
             Put["api/feeds/{id}/config"] = p => container.Resolve<SaveFeedConfigurationAction>().Execute(p, this);

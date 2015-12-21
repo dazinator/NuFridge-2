@@ -142,7 +142,7 @@ export class FeedView {
     deleteFeed() {
         var self = this;
 
-        this.http.delete("/api/feeds/" + self.feed.Id).then(message => {
+        self.http.delete("/api/feeds/" + self.feed.Id).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.router.navigate("feeds");
         }, message => {

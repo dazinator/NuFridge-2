@@ -146,5 +146,6 @@ namespace NuFridge.Shared.Database.Repository
         void Update(FeedGroup feedGroup);
         void Insert(FeedGroup feedGroup);
         FeedGroup Find(string name);
+        void Delete(FeedGroup feedGroup);
     }
 }

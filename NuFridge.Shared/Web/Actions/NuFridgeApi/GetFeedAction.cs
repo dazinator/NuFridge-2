@@ -21,7 +21,14 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             int feedId = int.Parse(parameters.id);
 
-            return module.Negotiate.WithModel(_feedService.Find(feedId, false));
+            var feed = _feedService.Find(feedId, false);
+
+            if (feed == null)
+            {
+                return module.Negotiate.WithStatusCode(HttpStatusCode.NotFound).WithModel("The requested feed was not found.");
+            }
+
+            return module.Negotiate.WithModel(feed);
         }
     }
 }

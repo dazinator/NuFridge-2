@@ -30,6 +30,7 @@ namespace NuFridge.Shared.Autofac
 
             //Feed api module
             builder.RegisterType<InsertFeedGroupAction>().AsSelf();
+            builder.RegisterType<DeleteFeedGroupAction>().AsSelf();
             builder.RegisterType<UpdateFeedGroupAction>().AsSelf();
             builder.RegisterType<GetFeedGroupAction>().AsSelf();
             builder.RegisterType<DeleteFeedAction>().AsSelf();

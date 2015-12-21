@@ -406,6 +406,7 @@
     <Compile Include="Web\Actions\IAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\CancelImportPackagesFromFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\CheckIfPerformedFirstTimeSetupAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\DeleteFeedGroupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\DeleteFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\DownloadPackageImportReport.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\FeedSearchAction.cs" />

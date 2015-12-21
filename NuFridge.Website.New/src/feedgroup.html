@@ -1,12 +1,16 @@
 <template>
     <require from="breadcrumb"></require>
+    <require from='notifications' as="notification-message"></require>
     <breadcrumb currentpage="${pageTitle}"></breadcrumb>
 
     <div class="ui segment">
+        <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
         <h2 class="ui header">
             General Settings
         </h2>
-
+        <div class="ui inverted dimmer ${isUpdatingFeedGroup || isLoadingFeedGroup ? 'active' : ''}">
+            <div class="ui indeterminate large text loader">${isUpdatingFeedGroup ? 'Saving feed group' : 'Loading feed group'}</div>
+        </div>
         <form class="ui form segment">
             <div class="field">
                 <label>Group Name</label>
@@ -27,5 +31,24 @@
             <button class="ui red button" click.trigger="deleteClick()">Delete</button>
         </div>
 
+    </div>
+
+    <div class="ui small modal transition hidden" id="deleteConfirmModal">
+        <div class="ui icon header">
+            <i class="cube icon"></i>
+            <span>Delete the '${feedGroup.Name}' feed group?</span>
+        </div>
+        <div class="content">
+            <p style="text-align: center;">Are you sure you want to delete this feed group?</p>
+        </div>
+        <div class="actions">
+            <div class="ui black deny button">
+                No
+            </div>
+            <div class="ui positive right labeled icon button">
+                Yes
+                <i class="checkmark icon"></i>
+            </div>
+        </div>
     </div>
 </template>

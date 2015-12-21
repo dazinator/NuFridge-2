@@ -24,6 +24,11 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
 
             FeedGroup feedGroup = _feedGroupService.Find(groupId);
 
+            if (feedGroup == null)
+            {
+                return module.Negotiate.WithStatusCode(HttpStatusCode.NotFound).WithModel("The requested feed group was not found.");
+            }
+
             return module.Negotiate.WithModel(feedGroup);
         }
     }

@@ -45,6 +45,22 @@ namespace NuFridge.Shared.Database.Services
             return false;
         }
 
+        public bool Exists(int groupId)
+        {
+            var existingGroup = _feedGroupRepository.Find(groupId);
+            if (existingGroup != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Delete(FeedGroup feedGroup)
+        {
+            _feedGroupRepository.Delete(feedGroup);
+        }
+
         public int GetCount()
         {
             return _feedGroupRepository.GetCount(true);
@@ -59,5 +75,7 @@ namespace NuFridge.Shared.Database.Services
         void Update(FeedGroup feedGroup);
         void Insert(FeedGroup feedGroup);
         bool Exists(string name);
+        bool Exists(int groupId);
+        void Delete(FeedGroup feedGroup);
     }
 }
