@@ -15,5 +15,6 @@ export class notifications{
 
 export const notificationType = new Enum({
     Info: {value: ''},
-    Warning: {value: 'warning'}
+    Warning: {value: 'warning'},
+    Error: {value: 'error'}
 });

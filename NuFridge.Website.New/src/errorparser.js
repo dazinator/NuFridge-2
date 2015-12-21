@@ -59,6 +59,13 @@ export class errorParser{
                     return self.returnMessage("There was an error processing the request. The resource does not exist."); 
                 }
             }
+            else if (responseMessage.statusCode === 401) {
+                    if (responseMessage.responseType === "json" && responseMessage.response) {
+                        return self.returnMessage(JSON.parse(responseMessage.response));
+                    } else {
+                        return self.returnMessage("There was an error processing the request. The resource does not exist."); 
+                    }
+            }
             else {
                 return self.returnMessage("There was an error processing the request. Check the server logs for more information.");
             }

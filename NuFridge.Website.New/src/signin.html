@@ -1,12 +1,15 @@
 <template>
-    <h1>Sign in</h1>
+    <require from="breadcrumb"></require>
+    <require from='notifications' as="notification-message"></require>
+    <breadcrumb currentpage="Sign In"></breadcrumb>
 
     <div class="ui segment">
-        <div class="ui inverted dimmer ${isSigningIn ? 'active' : ''}">
+      <div class="ui inverted dimmer ${isSigningIn ? 'active' : ''}">
             <div class="ui indeterminate large text loader">Signing in</div>
         </div>
         <div class="ui two column middle aligned stackable grid">
             <div class="column">
+                <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
                 <form role="form" class="ui form" submit.delegate="login()">
                     <div class="field">
                         <label>Username</label>

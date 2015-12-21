@@ -33,18 +33,10 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
             catch (Exception ex)
             {
                 _log.WarnException("There was a server error trying to sign in.", ex);
-                return new Response
-                {
-                    StatusCode = HttpStatusCode.InternalServerError,
-                    Contents =
-                        delegate(Stream stream)
-                        {
-                            var byteData =
-                                Encoding.UTF8.GetBytes(
-                                    "There was a server error trying to sign in. See the server logs for more information.");
-                            stream.Write(byteData, 0, byteData.Length);
-                        }
-                };
+
+                return
+                    module.Negotiate.WithStatusCode(HttpStatusCode.InternalServerError)
+                        .WithModel("There was a server error trying to sign in.");
             }
 
 
@@ -55,29 +47,20 @@ namespace NuFridge.Shared.Web.Actions.NuFridgeApi
                 _log.Warn("Failed sign in for user '" + signInRequest.Email + "' from IP address " +
                           module.Request.UserHostAddress);
 
-                var response = new Response
-                {
-                    StatusCode = HttpStatusCode.Unauthorized,
-                    Contents =
-                        delegate(Stream stream)
-                        {
-                            var byteData = Encoding.UTF8.GetBytes("The provided credentials are incorrect. Please try again.");
-                            stream.Write(byteData, 0, byteData.Length);
-                        }
-                };
-
-                return response;
+                return
+                    module.Negotiate.WithStatusCode(HttpStatusCode.Unauthorized)
+                        .WithModel("Incorrect username or password.");
             }
 
             var token = _tokenizer.Tokenize(user, module.Context);
 
             _log.Info("User '" + signInRequest.Email + "' signed in from IP address " + module.Request.UserHostAddress);
 
-            return new
+            return module.Negotiate.WithStatusCode(HttpStatusCode.OK).WithModel(new
             {
                 token,
                 roles = user.Claims
-            };
+            });
         }
     }
 }
