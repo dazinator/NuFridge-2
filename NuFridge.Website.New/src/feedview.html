@@ -258,6 +258,15 @@
                         </p>
                         <input type="text" name="feedname" value.bind="feed.Name">
                     </div>
+
+                    <div class="field" css="${!feedconfig.AllowPackageOverwrite ? 'margin:0;' : ''}">
+                        <div class="inline field">
+                            <div class="ui toggle checkbox allowPackageOverwrite">
+                                <input type="checkbox" checked.bind="feedconfig.AllowPackageOverwrite">
+                                <label style="font-size: .9285em; font-weight: 700;">Allow Package Overwrite</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <h2 class="ui header">

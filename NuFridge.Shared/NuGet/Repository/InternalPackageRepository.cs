@@ -91,9 +91,11 @@ namespace NuFridge.Shared.NuGet.Repository
 
         public void IndexPackage(IPackage package)
         {
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(FeedId);
+
             var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
-            _internalPackageIndex.AddPackage(localPackage);
+            _internalPackageIndex.AddPackage(localPackage, config.AllowPackageOverwrite);
 
             _frameworkNamesManager.Add(localPackage.SupportedFrameworks);
         }
@@ -105,11 +107,16 @@ namespace NuFridge.Shared.NuGet.Repository
                 throw new InvalidPackageMetadataException("The package being added does not have a valid Id or Version");
             }
 
-            IInternalPackage existingPackage = GetPackage(package.Id, package.Version);
+            IFeedConfiguration config = _feedConfigurationService.FindByFeedId(FeedId);
 
-            if (existingPackage != null)
+            if (!config.AllowPackageOverwrite)
             {
-                throw new PackageConflictException($"A package with the same ID and version already exists - {package.Id} v{package.Version}");
+                IInternalPackage existingPackage = GetPackage(package.Id, package.Version);
+
+                if (existingPackage != null)
+                {
+                    throw new PackageConflictException("This feed does not allow existing packages to be overwritten.");
+                }
             }
 
             string path = GetPackageFilePath(package);
@@ -145,7 +152,7 @@ namespace NuFridge.Shared.NuGet.Repository
 
             var localPackage = InternalPackage.Create(FeedId, package, GetPackageFilePath);
 
-            _internalPackageIndex.AddPackage(localPackage);
+            _internalPackageIndex.AddPackage(localPackage, config.AllowPackageOverwrite);
             _frameworkNamesManager.Add(localPackage.SupportedFrameworks);
         }
     }

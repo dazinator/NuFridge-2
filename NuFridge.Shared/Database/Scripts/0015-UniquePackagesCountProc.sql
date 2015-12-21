@@ -204,6 +204,10 @@ GO
 DROP TABLE [NuFridge].[Statistic]
 GO
 
+ALTER TABLE [NuFridge].[FeedConfiguration]
+ADD [AllowPackageOverwrite] BIT NOT NULL DEFAULT 0
+GO
+
 CREATE PROCEDURE [NuFridge].[GetPackageDownloadCount]
 @feedId int
 AS

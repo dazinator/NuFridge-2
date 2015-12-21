@@ -27,18 +27,27 @@ namespace NuFridge.Shared.NuGet.Repository
             }
         }
 
-        public void AddPackage(IInternalPackage package)
+        public void AddPackage(IInternalPackage package, bool allowOverwrite)
         {
             lock (_sync)
             {
-                var existingPackage = GetPackage(package.Id, package.GetSemanticVersion());
+                IInternalPackage existingPackage = GetPackage(package.Id, package.GetSemanticVersion());
 
                 if (existingPackage != null)
                 {
-                    throw new PackageConflictException($"A package with the same ID and version already exists - {package.Id} v{package.Version}");
-                }
+                    if (!allowOverwrite)
+                    {
+                        throw new PackageConflictException("This feed does not allow existing packages to be overwritten.");
+                    }
 
-                _packageService.Insert((InternalPackage) package);
+                    package.PrimaryId = package.PrimaryId;
+
+                    _packageService.Update((InternalPackage)package);
+                }
+                else
+                {
+                    _packageService.Insert((InternalPackage)package);
+                }
             }
         }
 

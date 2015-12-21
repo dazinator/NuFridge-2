@@ -629,6 +629,16 @@ export class FeedView {
             }
         });
 
+        $('.ui.checkbox.allowPackageOverwrite').checkbox({
+            fireOnInit: false,
+            onChecked: function () {
+                self.feedconfig.AllowPackageOverwrite = true;
+            },
+            onUnchecked: function () {
+                self.feedconfig.AllowPackageOverwrite = false;
+            }
+        });
+
         $('.ui.checkbox.retentionPolicyEnabled').checkbox({
             fireOnInit: false,
             onChecked: function () {

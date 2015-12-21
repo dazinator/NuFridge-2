@@ -18,6 +18,8 @@ namespace NuFridge.Shared.Database.Model
         public int MaxPrereleasePackages { get; set; }
         public int MaxReleasePackages { get; set; }
 
+        public bool AllowPackageOverwrite { get; set; }
+
         [Editable(false)]
         public string PackagesDirectory => Path.Combine(Directory, "Packages");
         [Editable(false)]

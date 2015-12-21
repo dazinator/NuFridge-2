@@ -63,7 +63,10 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
                 return response;
             }
 
-            packageRepository.RemovePackage(package);
+            if (package.Listed)
+            {
+                packageRepository.RemovePackage(package);
+            }
 
             return new Response { StatusCode = HttpStatusCode.OK };
         }
