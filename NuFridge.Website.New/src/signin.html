@@ -7,7 +7,7 @@
         </div>
         <div class="ui two column middle aligned stackable grid">
             <div class="column">
-                <div class="ui form">
+                <form role="form" class="ui form" submit.delegate="login()">
                     <div class="field">
                         <label>Username</label>
                         <div class="ui left icon input">
@@ -22,9 +22,9 @@
                             <i class="lock icon"></i>
                         </div>
                     </div>
-                    <div class="ui blue submit button" click.delegate="login()">Sign in</div>
+                    <button type="submit" class="ui blue submit button">Sign in</button>
                     <div class="ui blue submit button" if.bind="false" click.delegate="authenticate('google')">Google</div>
-                </div>
+                </form>
             </div>
             <div class="ui vertical divider">
                 Or
