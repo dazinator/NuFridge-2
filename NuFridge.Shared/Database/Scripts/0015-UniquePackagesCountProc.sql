@@ -10,10 +10,9 @@ FROM  [NuFridge].[Package] as pk WITH(NOLOCK)
 WHERE pk.FeedId = @feedId
 )
 
-SELECT COUNT(DISTINCT Id) FROM CTE as ctee
+SELECT COUNT_BIG(DISTINCT Id) FROM CTE as ctee
 WHERE (rn = 1 OR (SELECT TOP(1) rn FROM cte where IsPrerelease = 0 AND ctee.Id = Id AND Listed = 1) = rn) AND Listed = 1
 GO
-
 
 CREATE PROCEDURE [NuFridge].[GetLatestPackages]
 	@feedId int,
@@ -209,8 +208,8 @@ CREATE PROCEDURE [NuFridge].[GetPackageDownloadCount]
 @feedId int
 AS
 
-SELECT DISTINCT COUNT(pd.Id) FROM [NuFridge].[PackageDownload] as pd
-INNER JOIN [NuFridge].[Package] as pkg on pkg.IdHash = pd.PackageIdHash AND pkg.FeedId = pd.FeedId
-INNER JOIN [NuFridge].[Feed] as fd on fd.Id = pd.FeedId
+SELECT DISTINCT COUNT_BIG(pd.Id) FROM [NuFridge].[PackageDownload] as pd  WITH(NOLOCK)
+INNER JOIN [NuFridge].[Package] as pkg  WITH(NOLOCK) on pkg.IdHash = pd.PackageIdHash AND pkg.FeedId = pd.FeedId
+INNER JOIN [NuFridge].[Feed] as fd  WITH(NOLOCK) on fd.Id = pd.FeedId
 WHERE pd.FeedId = @feedId
 GO

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
@@ -39,9 +40,9 @@ namespace NuFridge.Shared.Database.Repository
                     new { feedId });
         }
 
-        public int GetPackageDownloadCount(int feedId)
+        public long GetPackageDownloadCount(int feedId)
         {
-            return Query<int>(GetPackageDownloadCountStoredProcCommand, new { feedId }).Single();
+            return Query<long>(GetPackageDownloadCountStoredProcCommand, new { feedId }).Single();
         }
 
 
@@ -57,9 +58,9 @@ namespace NuFridge.Shared.Database.Repository
             return RecordCount(true, $"WHERE FeedId = {feedId}");
         }
 
-        public int GetUniquePackageIdCount(int feedId)
+        public long GetUniquePackageIdCount(int feedId)
         {
-            return Query<int>(GetUniquePackageCountStoredProcCommand, new { feedId }).Single();
+            return Query<long>(GetUniquePackageCountStoredProcCommand, new { feedId }).Single();
         }
 
         public IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
@@ -131,7 +132,7 @@ namespace NuFridge.Shared.Database.Repository
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
         int GetCount(bool noLock);
-        int GetUniquePackageIdCount(int feedId);
+        long GetUniquePackageIdCount(int feedId);
         IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
         IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
         void Insert(InternalPackage package);
@@ -140,6 +141,6 @@ namespace NuFridge.Shared.Database.Repository
         InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
-        int GetPackageDownloadCount(int feedId);
+        long GetPackageDownloadCount(int feedId);
     }
 }
