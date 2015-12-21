@@ -63,7 +63,7 @@ export class errorParser{
                     if (responseMessage.responseType === "json" && responseMessage.response) {
                         return self.returnMessage(JSON.parse(responseMessage.response));
                     } else {
-                        return self.returnMessage("There was an error processing the request. The resource does not exist."); 
+                        return self.returnMessage("There was an error processing the request. You are unauthorized."); 
                     }
             }
             else {
