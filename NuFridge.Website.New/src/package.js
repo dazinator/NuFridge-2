@@ -108,7 +108,7 @@ export class Package {
     deletePackage(pkg) {
         var self = this;
 
-        self.http.delete("/feeds/" + self.feed.Name + "/api/v2/package/" + pkg.Id + "/" + pkg.Version).then(message => {
+        self.http.delete("feeds/" + self.feed.Name + "/api/v2/package/" + pkg.Id + "/" + pkg.Version).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.packageToUnlist = null;
         }, message => {

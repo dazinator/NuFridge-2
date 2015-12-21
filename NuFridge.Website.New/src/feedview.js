@@ -359,13 +359,13 @@ export class FeedView {
     loadFeedPackageCount() {
         var self = this;
 
-        var request = self.http.createRequest("/Feeds/" + self.feed.Name + "/api/v2/Search()/$count").asGet().withHeader("Accept", "application/text");
+        var request = self.http.createRequest("Feeds/" + self.feed.Name + "/api/v2/Search()/$count").asGet().withHeader("Accept", "application/text");
 
         request.send().then(message => {
             self.overviewPackageCount = message.response;
         });
 
-        var uniqueRequest = self.http.createRequest("/Feeds/" + self.feed.Name + "/api/v2/Search()/$count?$filter=IsAbsoluteLatestVersion").asGet().withHeader("Accept", "application/text");
+        var uniqueRequest = self.http.createRequest("Feeds/" + self.feed.Name + "/api/v2/Search()/$count?$filter=IsAbsoluteLatestVersion").asGet().withHeader("Accept", "application/text");
 
         uniqueRequest.send().then(message => {
             self.overviewUniquePackageCount = message.response;
@@ -429,7 +429,7 @@ export class FeedView {
             search = "&searchTerm=" + self.packagesSearchText;
         }
 
-        var url = "/Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
+        var url = "Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
                   "$skip=" + skip + "&$top=" + take + "&" + filter + "&" + order + search;
 
         var request = self.http.createRequest(url).asGet().withHeader("Accept", "application/xml");
