@@ -26,6 +26,9 @@ namespace NuFridge.Shared.Autofac
             builder.RegisterType<FeedService>().As<IFeedService>();
             builder.RegisterType<FeedRepository>().As<IFeedRepository>();
 
+            builder.RegisterType<FeedGroupService>().As<IFeedGroupService>();
+            builder.RegisterType<FeedGroupRepository>().As<IFeedGroupRepository>();
+
             builder.RegisterType<PackageService>().As<IPackageService>();
             builder.RegisterType<PackageRepository>().As<IPackageRepository>();
 

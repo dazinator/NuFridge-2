@@ -415,6 +415,7 @@
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedConfigurationAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedDownloadCountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\GetFeedGroupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedPackageCountAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetFeedsAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\GetPackageAuditHistoryAction.cs" />
