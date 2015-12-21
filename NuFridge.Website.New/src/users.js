@@ -29,7 +29,7 @@ export class Users {
 
     loadUsers(paginationMessage) {
         var self = this;
-        self.http.get("/api/accounts?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
+        self.http.get("api/accounts?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
             self.accountData = JSON.parse(message.response);
             self.totalResults = self.accountData.Total;
             paginationMessage.resolve();

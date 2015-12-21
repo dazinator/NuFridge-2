@@ -55,7 +55,7 @@ export class Feedgroup {
     deleteGroup() {
         var self = this;
 
-        self.http.delete("/api/feedgroups/" + self.GroupId).then(message => {
+        self.http.delete("api/feedgroups/" + self.GroupId).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.router.navigate("feeds");
         }, message => {
@@ -83,7 +83,7 @@ export class Feedgroup {
         self.shownotification = false;
 
         if (self.isNew) {
-            self.http.post("/api/feedgroups", self.feedGroup).then(message => {
+            self.http.post("api/feedgroups", self.feedGroup).then(message => {
                     self.router.navigate("feeds");
                 },
                 function(message) {
@@ -105,7 +105,7 @@ export class Feedgroup {
                     }
                 });
         } else {
-            self.http.put("/api/feedgroups/" + self.GroupId, self.feedGroup).then(message => {
+            self.http.put("api/feedgroups/" + self.GroupId, self.feedGroup).then(message => {
                     self.router.navigate("feeds");
                 },
                 function(message) {
@@ -135,7 +135,7 @@ export class Feedgroup {
             self.isLoadingFeedGroup = false;
         } else {
             self.isNew = false;
-            self.http.get("/api/feedgroups/" + self.GroupId).then(message => {
+            self.http.get("api/feedgroups/" + self.GroupId).then(message => {
                     self.feedGroup = JSON.parse(message.response);
                     self.pageTitle = self.feedGroup.Name;
                     self.isLoadingFeedGroup = false;

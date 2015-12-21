@@ -30,7 +30,7 @@ export class Profile {
 
         var userId = params.id;
         if (userId) {
-            self.http.get("/api/account/" + userId).then(message => {
+            self.http.get("api/account/" + userId).then(message => {
                 self.user = JSON.parse(message.response);
             });
         } else {
@@ -89,7 +89,7 @@ export class Profile {
 
         var startDate = new Date();
 
-        this.http.post("/api/account/" + self.user.Id, self.user).then(message => {
+        this.http.post("api/account/" + self.user.Id, self.user).then(message => {
 
             var endDate = new Date();
 

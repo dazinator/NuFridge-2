@@ -43,15 +43,15 @@ export class Package {
 
         self.isLoadingPackage = true;
 
-        self.http.get("/api/feeds/" + feedId).then(message => {
+        self.http.get("api/feeds/" + feedId).then(message => {
             self.feed = JSON.parse(message.response);
 
-            self.http.get("/feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
+            self.http.get("feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
                 var pkg = JSON.parse(message.response).d;
                 pkg.Tags = pkg.Tags ? pkg.Tags.replace(/^\s+|\s+$/g, '').split(" ") : new Array();
                 pkg.Owners = pkg.Owners ? pkg.Owners.replace(/^\s+|\s+$/g, '').split(",") : new Array();
                 pkg.Authors = pkg.Authors ? pkg.Authors.replace(/^\s+|\s+$/g, '').split(",") : new Array();
-                pkg.DownloadUrl = "/feeds/" + self.feed.Name + "/packages/" + pkg.Id + "/" + pkg.NormalizedVersion;
+                pkg.DownloadUrl = "feeds/" + self.feed.Name + "/packages/" + pkg.Id + "/" + pkg.NormalizedVersion;
                 pkg.Dependencies = pkg.Dependencies ? pkg.Dependencies.split("|").map(function(value) {
                     var versionIndex = value.indexOf(":");
                     var version = value.substr(versionIndex + 1, value.length - versionIndex - 2);
@@ -80,7 +80,7 @@ export class Package {
                 self.isLoadingPackage = false;
             });
 
-            self.http.get("/feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
+            self.http.get("feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
                 self.versionsOfPackage = JSON.parse(message.response).d.results;
             });
         },

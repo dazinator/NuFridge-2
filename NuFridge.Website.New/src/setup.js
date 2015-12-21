@@ -23,7 +23,7 @@ export class Setup {
     activate() {
         var self = this;
 
-        this.http.get("/api/setup").then(message => {
+        this.http.get("api/setup").then(message => {
             self.isSetup = JSON.parse(message.response);
 
             if (self.isSetup === true) {
@@ -43,7 +43,7 @@ export class Setup {
 
         self.isCreatingUser = true;
 
-        this.http.post("/api/setup", self.request).then(message => {
+        this.http.post("api/setup", self.request).then(message => {
             if (message.statusCode === 201) {
                 self.router.navigate("signin");
             } else {

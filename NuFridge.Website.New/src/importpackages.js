@@ -35,13 +35,13 @@ export class ImportPackages {
 
     downloadReport() {
         var self = this;
-        window.location.href = "/api/feeds/" + self.feedId + "/import/" + self.jobId + "/report";
+        window.location.href = "api/feeds/" + self.feedId + "/import/" + self.jobId + "/report";
     }
 
     cancelImport() {
         var self = this;
 
-        self.http.delete("/api/feeds/" + self.feedId + "/import/" + self.jobId).then(message => {
+        self.http.delete("api/feeds/" + self.feedId + "/import/" + self.jobId).then(message => {
 
         },
             function(message) {
@@ -58,7 +58,7 @@ export class ImportPackages {
             return;
         }
 
-        self.http.post("/api/feeds/" + self.feedId + "/import", self.options).then(message => {
+        self.http.post("api/feeds/" + self.feedId + "/import", self.options).then(message => {
             self.jobId = message.response;
 
 
@@ -156,7 +156,7 @@ export class ImportPackages {
         self.feedId = params.id;
         self.jobId = params.jobid;
 
-        self.http.get("/api/feeds/" + self.feedId).then(message => {
+        self.http.get("api/feeds/" + self.feedId).then(message => {
             self.feed = JSON.parse(message.response);
         });
 

@@ -36,7 +36,7 @@ export class Feeds {
 
         var searchOptions = {
             apiSettings: {
-                url: '/api/feeds/search/?name={query}',
+                url: 'api/feeds/search/?name={query}',
                 beforeXHR: function (xhr) {
                     xhr.setRequestHeader('Authorization', 'Token ' + self.auth.auth.getToken());
                 }
@@ -60,7 +60,7 @@ export class Feeds {
         self.canInsertFeedGroup = self.authUser.hasClaim(Claims.CanInsertFeedGroup, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            this.http.get("/api/feeds").then(message => {
+            this.http.get("api/feeds").then(message => {
                     self.feedGroups = JSON.parse(message.response);
                 },
                 function(message) {

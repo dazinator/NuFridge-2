@@ -14,7 +14,7 @@ export default class{
             config.addPipelineStep('authorize', AuthorizeStep);
 
             config.map([
-                { route: '', title: 'Dashboard', moduleId: 'home', nav: true, auth: true },
+                { route: ['', 'dashboard'], title: 'Dashboard', moduleId: 'home', nav: true, auth: true },
                 { route: 'feeds', name: 'feeds', title: 'Feeds', moduleId: 'feeds', nav: true, auth: true },
                 {
                     route: 'feeds/view/:id',

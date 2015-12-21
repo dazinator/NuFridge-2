@@ -52,7 +52,7 @@ export class FeedCreate {
 
         var startDate = new Date();
 
-        this.http.post("/api/feeds/", self.feed).then(message => {
+        this.http.post("api/feeds/", self.feed).then(message => {
             self.feed = JSON.parse(message.response);
 
             var endDate = new Date();
@@ -98,7 +98,7 @@ export class FeedCreate {
             self.notificationtype = notificationType.Warning.value;
             self.shownotification = true;
         } else {
-            self.http.get("/api/feedgroups/" + groupId).then(message => {
+            self.http.get("api/feedgroups/" + groupId).then(message => {
                     self.feedGroup = JSON.parse(message.response);
                     self.previousPageName = self.feedGroup.Name;
                 },

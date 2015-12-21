@@ -76,13 +76,13 @@ export class Home {
             ]
         ];
 
-        self.http.get("/api/stats/feedpackagecount").then(message => {
+        self.http.get("api/stats/feedpackagecount").then(message => {
             self.feedpackagecount = JSON.parse(message.response);
             self.chartist.Bar('.ct-chart.packagesChart', self.feedpackagecount, options, overrides);
             self.isLoadingCountChart = false;
         });
 
-        self.http.get("/api/stats/feeddownloadcount").then(message => {
+        self.http.get("api/stats/feeddownloadcount").then(message => {
             self.feeddownloadcount = JSON.parse(message.response);
             self.chartist.Bar('.ct-chart.downloadsChart', self.feeddownloadcount, options, overrides);
             self.isLoadingDownloadChart = false;
@@ -93,7 +93,7 @@ export class Home {
     activate() {
         var self = this;
 
-        this.http.get("/api/dashboard").then(message => {
+        this.http.get("api/dashboard").then(message => {
             self.dashboard = JSON.parse(message.response);
             self.isLoadingDashboard = false;
         }, function(message) {

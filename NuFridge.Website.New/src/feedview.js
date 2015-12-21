@@ -80,11 +80,11 @@ export class FeedView {
 
         var startDate = new Date();
 
-        this.http.put("/api/feeds/" + self.feed.Id, self.feed).then(message => {
+        this.http.put("api/feeds/" + self.feed.Id, self.feed).then(message => {
             self.feed = JSON.parse(message.response);
             self.refreshFeedName();
 
-            this.http.put("/api/feeds/" + self.feed.Id + "/config", self.feedconfig).then(message => {
+            this.http.put("api/feeds/" + self.feed.Id + "/config", self.feedconfig).then(message => {
                 var endDate = new Date();
 
                 var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
@@ -142,7 +142,7 @@ export class FeedView {
     deleteFeed() {
         var self = this;
 
-        self.http.delete("/api/feeds/" + self.feed.Id).then(message => {
+        self.http.delete("api/feeds/" + self.feed.Id).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.router.navigate("feeds");
         }, message => {
@@ -157,7 +157,7 @@ export class FeedView {
     reindexPackagesClick() {
         var self = this;
 
-        this.http.post("/api/feeds/" + self.feed.Id + "/reindex").then(function() {
+        this.http.post("api/feeds/" + self.feed.Id + "/reindex").then(function() {
             
         },
         function(message) {
@@ -221,7 +221,7 @@ export class FeedView {
 
         if (self.canViewPage) {
 
-          self.http.get("/api/feeds/" + feedId).then(message => {
+          self.http.get("api/feeds/" + feedId).then(message => {
                 self.feed = JSON.parse(message.response);
                 self.refreshFeedName();
                 self.isLoadingFeed = false;
@@ -243,7 +243,7 @@ export class FeedView {
 
         self.isLoadingJobs = true;
 
-        self.http.get("/api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(message => {
+        self.http.get("api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(message => {
             self.jobData = JSON.parse(message.response);
             self.jobsTotalPages = new Array(Math.ceil(self.jobData.Total / self.jobPageSize));
             self.isLoadingJobs = false;
@@ -265,7 +265,7 @@ export class FeedView {
     loadFeedConfig() {
         var self = this;
 
-        self.http.get("/api/feeds/" + self.feed.Id + "/config").then(message => {
+        self.http.get("api/feeds/" + self.feed.Id + "/config").then(message => {
             self.feedconfig = JSON.parse(message.response);
                 self.isLoadingFeedConfig = false;
             },
@@ -492,7 +492,7 @@ export class FeedView {
 
         var startDate = new Date();
 
-        self.http.get("/api/feeds/" + self.feed.Id + "/history").then(message => {
+        self.http.get("api/feeds/" + self.feed.Id + "/history").then(message => {
             var func = function() {
                 self.isLoadingHistory = false;
                 self.historyRecords = JSON.parse(message.response).Results;

@@ -35,7 +35,7 @@ export class Jobs {
 
     loadJobs(paginationMessage) {
         var self = this;
-        self.http.get("/api/jobs?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
+        self.http.get("api/jobs?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
             var data = JSON.parse(message.response);
             self.jobs = data.Jobs;
             self.totalResults = data.Total;
