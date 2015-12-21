@@ -23,6 +23,16 @@ namespace NuFridge.Shared.Database.Services
             return _feedGroupRepository.Find(id);
         }
 
+        public void Update(FeedGroup feedGroup)
+        {
+            _feedGroupRepository.Update(feedGroup);
+        }
+
+        public void Insert(FeedGroup feedGroup)
+        {
+            _feedGroupRepository.Insert(feedGroup);
+        }
+
         public int GetCount()
         {
             return _feedGroupRepository.GetCount(true);
@@ -34,5 +44,7 @@ namespace NuFridge.Shared.Database.Services
         IEnumerable<FeedGroup> GetAll();
         int GetCount();
         FeedGroup Find(int id);
+        void Update(FeedGroup feedGroup);
+        void Insert(FeedGroup feedGroup);
     }
 }

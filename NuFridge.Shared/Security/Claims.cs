@@ -5,6 +5,7 @@
         public const string SystemAdministrator = "SystemAdministrator";
         public const string CanInsertFeed = "CanInsertFeed";
         public const string CanUpdateFeed = "CanUpdateFeed";
+        public const string CanUpdateFeedGroup = "CanUpdateFeedGroup";
         public const string CanViewUsers = "CanViewUsers";
         public const string CanDeleteFeed = "CanDeleteFeed";
         public const string CanViewFeeds = "CanViewFeeds";

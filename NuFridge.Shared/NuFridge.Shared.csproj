@@ -427,6 +427,7 @@
     <Compile Include="Web\Actions\NuFridgeApi\SetupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\SignInAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\UpdateAccountAction.cs" />
+    <Compile Include="Web\Actions\NuFridgeApi\UpdateFeedGroupAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\UpdateFeedAction.cs" />
     <Compile Include="Web\Actions\NuFridgeApi\UploadPackageFromUrlAction.cs" />
     <Compile Include="Web\Actions\NuGetApiV2\BatchAction.cs" />

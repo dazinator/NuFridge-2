@@ -20,7 +20,7 @@
         <div class="ui buttons">
             <button class="ui button">Cancel</button>
             <div class="or"></div>
-            <button class="ui positive button">${isNew ? 'Create' : 'Save'}</button>
+            <button class="ui positive button" click.trigger="createSaveClick()">${isNew ? 'Create' : 'Save'}</button>
         </div>
 
         <div class="ui buttons floatRight" if.bind="!isNew">
