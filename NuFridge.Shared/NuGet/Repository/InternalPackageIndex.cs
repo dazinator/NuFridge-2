@@ -40,7 +40,7 @@ namespace NuFridge.Shared.NuGet.Repository
                         throw new PackageConflictException("This feed does not allow existing packages to be overwritten.");
                     }
 
-                    package.PrimaryId = package.PrimaryId;
+                    package.PrimaryId = existingPackage.PrimaryId;
 
                     _packageService.Update((InternalPackage)package);
                 }
