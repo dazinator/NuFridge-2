@@ -22,10 +22,9 @@ namespace NuFridge.Shared.NuGet
         public FrameworkNamesManager(IFrameworkService frameworkService)
         {
             _frameworkService = frameworkService;
-            LoadRecordsFromDatabase();
         }
 
-        private void LoadRecordsFromDatabase()
+        protected virtual void LoadRecordsFromDatabase()
         {
             _log.Info("Loading framework names from the database into memory.");
 
@@ -96,6 +95,8 @@ namespace NuFridge.Shared.NuGet
                 return;
             }
 
+            LoadData();
+
             var split =
                 frameworkNames.Split(new[] {"|"}, StringSplitOptions.RemoveEmptyEntries)
                     .Select(VersionUtility.ParseFrameworkName)
@@ -120,8 +121,24 @@ namespace NuFridge.Shared.NuGet
             }
         }
 
+        private void LoadData()
+        {
+            bool loadRecords = false;
+            lock (_sync)
+            {
+                loadRecords = !_foundFrameworkNames.Any();
+            }
+
+            if (loadRecords)
+            {
+                LoadRecordsFromDatabase();
+            }
+        }
+
         public ISet<FrameworkName> Get()
         {
+            LoadData();
+
             return _foundFrameworkNames;
         }
     }

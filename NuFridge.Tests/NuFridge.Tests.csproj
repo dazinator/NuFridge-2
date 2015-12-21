@@ -42,6 +42,14 @@
       <HintPath>..\packages\dbup.3.3.0\lib\net35\DbUp.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
       <Private>True</Private>
@@ -70,6 +78,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
@@ -89,10 +98,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application\TestApplicationInstanceStore.cs" />
+    <Compile Include="Application\TestHomeConfiguration.cs" />
+    <Compile Include="Autofac\TestableConfigurationModule.cs" />
+    <Compile Include="Autofac\TestableDatabaseModule.cs" />
+    <Compile Include="Database\Repository\TestFeedConfigurationRepository.cs" />
     <Compile Include="InternalPackageRepositoryFactoryTests.cs" />
     <Compile Include="InternalPackageRepositoryTests.cs" />
-    <Compile Include="ModelMappingTests.cs" />
-    <Compile Include="PackageIndexTests.cs" />
+    <Compile Include="NuGet\TestFrameworkNamesManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunPackageRetentionPoliciesTaskTests.cs" />
   </ItemGroup>

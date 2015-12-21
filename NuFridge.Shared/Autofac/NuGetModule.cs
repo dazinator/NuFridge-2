@@ -15,28 +15,30 @@ namespace NuFridge.Shared.Autofac
 {
     public class NuGetModule : Module
     {
-        protected override void Load(ContainerBuilder builder)
+        protected virtual void LoadLocalRepository(ContainerBuilder builder)
         {
-            base.Load(builder);
-
-            builder.RegisterType<PackageImportJobItemService>().As<IPackageImportJobItemService>();
-            builder.RegisterType<JobRepository>().As<IJobRepository>();
-            builder.RegisterType<JobService>().As<IJobService>();
-            builder.RegisterType<PackageImportJobItemRepository>().As<IPackageImportJobItemRepository>();
-
             builder.RegisterType<InternalPackageIndex>().AsSelf().InstancePerDependency();
-            builder.RegisterType<Feed>().As<IFeed>();
-            builder.RegisterType<FeedConfiguration>().As<IFeedConfiguration>();
-            builder.RegisterType<InternalPackage>().As<IInternalPackage>();
             builder.RegisterType<InternalPackageRepository>().As<IInternalPackageRepository>().InstancePerDependency();
-            builder.RegisterType<Statistic>().As<IStatistic>();
-            builder.RegisterType<Framework>().As<IFramework>();
-            builder.RegisterType<RemoteRemotePackageImporter>().As<IRemotePackageImporter>().AsSelf();
-            builder.RegisterType<RemoteRemotePackageRepository>().As<IRemotePackageRepository>().AsSelf();
+
             builder.Register<Func<int, InternalPackageIndex>>(c => feedId =>
                 new InternalPackageIndex(c.Resolve<IPackageService>(), c.Resolve<IPackageDownloadService>(), feedId)
                 ).InstancePerDependency();
+        }
 
+        protected virtual void LoadRemoteRepository(ContainerBuilder builder)
+        {
+            builder.RegisterType<RemoteRemotePackageImporter>().As<IRemotePackageImporter>().AsSelf();
+            builder.RegisterType<RemoteRemotePackageRepository>().As<IRemotePackageRepository>().AsSelf();
+        }
+
+        protected virtual void LoadSourceSymbols(ContainerBuilder builder)
+        {
+            builder.RegisterType<SymbolSource>().AsSelf().SingleInstance();
+            builder.Register(c => new SymbolTools(c.Resolve<IHomeConfiguration>().WindowsDebuggingToolsPath)).AsSelf();
+        }
+
+        protected virtual void LoadFileSystems(ContainerBuilder builder)
+        {
             builder.Register<Func<int, IPackagePathResolver>>(c =>
                 feedId => new NuGetPackagePathResolver(c.Resolve<IFeedConfigurationService>(), feedId)
                 ).InstancePerDependency();
@@ -44,24 +46,34 @@ namespace NuFridge.Shared.Autofac
             builder.Register<Func<int, IFileSystem>>(c =>
                 feedId => new NuGetFileSystem(c.Resolve<IFeedConfigurationService>(), feedId)
                 ).InstancePerDependency();
+        }
 
-            builder.RegisterType<FrameworkNamesManager>().As<IFrameworkNamesManager>().SingleInstance();
-
-            builder.RegisterType<SymbolSource>().AsSelf().SingleInstance();
-            builder.Register(c => new SymbolTools(c.Resolve<IHomeConfiguration>().WindowsDebuggingToolsPath)).AsSelf();
-
-            builder.RegisterType<InternalPackageRepositoryFactory>().As<IInternalPackageRepositoryFactory>().SingleInstance();
-
-            builder.RegisterType<PackageImportJobRepository>().As<IJobTypeRepository<IJobType>>();
-
+        protected virtual void LoadFactory(ContainerBuilder builder)
+        {
             builder.Register<Func<int, IInternalPackageRepositoryFactory>>(
                 c =>
                     (feedId =>
                         new InternalPackageRepositoryFactory(i => new InternalPackageRepository(
-                    c.Resolve<Func<int, InternalPackageIndex>>(),
-                    c.Resolve<Func<int, IPackagePathResolver>>(),
-                    c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(),
-                    c.Resolve<IFrameworkNamesManager>(), c.Resolve<IFeedConfigurationService>(), i)))).InstancePerDependency();
+                            c.Resolve<Func<int, InternalPackageIndex>>(),
+                            c.Resolve<Func<int, IPackagePathResolver>>(),
+                            c.Resolve<Func<int, IFileSystem>>(), c.Resolve<SymbolSource>(),
+                            c.Resolve<IFrameworkNamesManager>(), c.Resolve<IFeedConfigurationService>(), i))))
+                .InstancePerDependency();
+
+            builder.RegisterType<InternalPackageRepositoryFactory>().As<IInternalPackageRepositoryFactory>().SingleInstance();
+        }
+
+
+
+        protected override void Load(ContainerBuilder builder)
+        {
+            base.Load(builder);
+
+            LoadLocalRepository(builder);
+            LoadRemoteRepository(builder);
+            LoadFactory(builder);
+            LoadSourceSymbols(builder);
+            LoadFileSystems(builder);
         }
     }
 }

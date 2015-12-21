@@ -20,11 +20,11 @@ namespace NuFridge.Shared.Database.Repository
         private readonly string _connectionString;
         protected bool ReadOnly { get; set; }
 
-        protected BaseRepository(string tableName)
+        protected BaseRepository(DatabaseContext dbContext, string tableName)
         {
             _tableName = tableName;
-            _connectionString = new SqlConnectionStringBuilder(DatabaseContext.ConnectionString.Value) { AsynchronousProcessing = true }.ToString();
-            ReadOnly = GlobalHost.DependencyResolver.Resolve<IHomeConfiguration>().DatabaseReadOnly;
+            _connectionString = new SqlConnectionStringBuilder(dbContext.GetConnectionString()) { AsynchronousProcessing = true }.ToString();
+            ReadOnly = dbContext.GetReadOnly();
         }
 
         protected void ThrowIfReadOnly()

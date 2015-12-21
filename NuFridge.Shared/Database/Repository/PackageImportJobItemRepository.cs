@@ -12,7 +12,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         private const string TableName = "Job_PackageImportItem";
 
-        public PackageImportJobItemRepository() : base(TableName)
+        public PackageImportJobItemRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
             
         }

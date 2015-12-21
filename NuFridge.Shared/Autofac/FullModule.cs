@@ -8,12 +8,13 @@ namespace NuFridge.Shared.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ServerEngine>().As<IServerEngine>().SingleInstance();
+            builder.RegisterModule(new AuthenticationModule());
             builder.RegisterModule(new ConfigurationModule());
-            builder.RegisterModule(new ServerConfigurationModule());
+            builder.RegisterModule(new PortalModule());
             builder.RegisterModule(new FileSystemModule());
-            builder.RegisterModule(new StorageModule());
             builder.RegisterModule(new WebModule());
             builder.RegisterModule(new NuGetModule());
+            builder.RegisterModule(new DatabaseModule());
         }
     }
 }

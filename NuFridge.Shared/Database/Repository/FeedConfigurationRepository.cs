@@ -19,11 +19,11 @@ namespace NuFridge.Shared.Database.Repository
             return string.Format(CacheKey, feedId);
         }
 
-        public FeedConfigurationRepository() : base(TableName)
+        public FeedConfigurationRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
         }
 
-        public void Insert(FeedConfiguration feedConfiguration)
+        public virtual void Insert(FeedConfiguration feedConfiguration)
         {
             ThrowIfReadOnly();
 
@@ -44,7 +44,7 @@ namespace NuFridge.Shared.Database.Repository
             MemoryCache.Default.Set(cacheKey, feedConfiguration, policy);
         }
 
-        public override void Delete(FeedConfiguration feedConfiguration)
+        public  override void Delete(FeedConfiguration feedConfiguration)
         {
             ThrowIfReadOnly();
 
@@ -55,7 +55,7 @@ namespace NuFridge.Shared.Database.Repository
             base.Delete(feedConfiguration);
         }
 
-        public FeedConfiguration FindByFeedId(int feedId)
+        public virtual FeedConfiguration FindByFeedId(int feedId)
         {
             var cacheKey = GetCacheKey(feedId);
 
@@ -77,7 +77,7 @@ namespace NuFridge.Shared.Database.Repository
             return feedConfig;
         }
 
-        public void Update(FeedConfiguration feedConfiguration)
+        public virtual void Update(FeedConfiguration feedConfiguration)
         {
             ThrowIfReadOnly();
 

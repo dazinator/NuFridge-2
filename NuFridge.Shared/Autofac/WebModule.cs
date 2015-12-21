@@ -12,12 +12,6 @@ namespace NuFridge.Shared.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<WebBootstrapper>().As<IPortalBootstrapper>().SingleInstance();
-            builder.RegisterModule(new AuthenticationModule());
-            builder.RegisterType<WebServerInitializer>().As<IWebServerInitializer>().SingleInstance();
-            builder.RegisterType<StartupPageListener>().As<IStartupPageListener>();
-            builder.RegisterType<ShutdownPageListener>().As<IShutdownPageListener>();
-
             //Account api module
             builder.RegisterType<GetAccountAction>().AsSelf();
             builder.RegisterType<RegisterAccountAction>().AsSelf();

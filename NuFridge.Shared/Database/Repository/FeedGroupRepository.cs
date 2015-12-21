@@ -20,7 +20,7 @@ namespace NuFridge.Shared.Database.Repository
             return string.Format(CacheKey, groupId);
         }
 
-        public FeedGroupRepository(IFeedRepository feedRepository) : base(TableName)
+        public FeedGroupRepository(IFeedRepository feedRepository, DatabaseContext dbContext) : base(dbContext, TableName)
         {
             _feedRepository = feedRepository;
         }

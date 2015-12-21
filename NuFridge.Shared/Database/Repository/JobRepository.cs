@@ -12,7 +12,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         internal const string TableName = "Job";
 
-        public JobRepository() : base(TableName)
+        public JobRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
             
         }

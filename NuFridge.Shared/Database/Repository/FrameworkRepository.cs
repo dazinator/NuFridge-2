@@ -10,7 +10,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         private const string TableName = "Framework";
 
-        public FrameworkRepository() : base(TableName)
+        public FrameworkRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
 
         }

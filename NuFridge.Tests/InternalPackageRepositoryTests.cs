@@ -8,7 +8,9 @@ using Moq;
 using NuFridge.Shared.Application;
 using NuFridge.Shared.Autofac;
 using NuFridge.Shared.Database;
+using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.NuGet.Repository;
+using NuFridge.Tests.Autofac;
 using NUnit.Framework;
 
 namespace NuFridge.Tests
@@ -32,40 +34,22 @@ namespace NuFridge.Tests
             Assert.AreEqual(2, packageRepo2.FeedId);
         }
 
-        private void MockStore(ContainerBuilder builder) 
-        {
-            Mock<IStore> store = new Mock<IStore>();
-            builder.RegisterInstance(store.Object);
-
-            //Mock<ITransaction> transaction = new Mock<ITransaction>();
-            //store.Setup(st => st.BeginTransaction()).Returns(transaction.Object);
-
-            //Mock<IQueryBuilder<IFeedConfiguration>> queryMock = new Mock<IQueryBuilder<IFeedConfiguration>>();
-            //transaction.Setup(tr => tr.Query<IFeedConfiguration>()).Returns(queryMock.Object);
-            //queryMock.Setup(qu => qu.Where(It.IsAny<string>())).Returns(queryMock.Object);
-            //queryMock.Setup(qu => qu.Parameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            //queryMock.Setup(qu => qu.LikeParameter(It.IsAny<string>(), It.IsAny<object>())).Returns(queryMock.Object);
-            //queryMock.Setup(qu => qu.OrderBy(It.IsAny<string>())).Returns(queryMock.Object);
-
-            //Mock<IFeedConfiguration> mock = new Mock<IFeedConfiguration>();
-
-            //mock.SetupProperty(fc => fc.Directory, "TestDirectory");
-            //mock.SetupProperty(fc => fc.Id, 1);
-            //mock.SetupProperty(fc => fc.FeedId, 1);
-
-            //queryMock.Setup(qu => qu.ToList()).Returns(new List<IFeedConfiguration> {mock.Object});
-            //queryMock.Setup(qu => qu.First()).Returns(mock.Object);
-            //queryMock.Setup(qu => qu.Count()).Returns(1);
-        }
-
         [SetUp]
         public void Setup()
         {
             var builder = new ContainerBuilder();
-
+            builder.RegisterType<ServerEngine>().As<IServerEngine>().SingleInstance();
+            builder.RegisterModule(new AuthenticationModule());
+            builder.RegisterModule(new TestableConfigurationModule());
+            builder.RegisterModule(new PortalModule());
+            builder.RegisterModule(new FileSystemModule());
+            builder.RegisterModule(new WebModule());
             builder.RegisterModule(new NuGetModule());
-            MockStore(builder);
-            builder.RegisterInstance(new Mock<IHomeConfiguration>().Object);
+            builder.RegisterModule(new TestableDatabaseModule().WithFeedConfigurations(new List<FeedConfiguration>
+            {
+                new FeedConfiguration {FeedId = 1, Directory = ""},
+                new FeedConfiguration {FeedId = 2, Directory = ""}
+            }));
             _container = builder.Build();
         }
     }

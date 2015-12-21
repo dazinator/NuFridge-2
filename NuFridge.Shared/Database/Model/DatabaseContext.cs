@@ -8,16 +8,22 @@ namespace NuFridge.Shared.Database.Model
 {
     public class DatabaseContext : DbContext
     {
-        public static readonly Lazy<string> ConnectionString = new Lazy<string>(GetConnectionString);
+        private readonly IHomeConfiguration _homeConfiguration;
 
-        public DatabaseContext() : base(ConnectionString.Value)
+        public DatabaseContext(IHomeConfiguration homeConfiguration)
         {
+            _homeConfiguration = homeConfiguration;
             Configuration.AutoDetectChangesEnabled = false;
         }
 
-        private static string GetConnectionString()
+        public bool GetReadOnly()
         {
-            var conn =  GlobalHost.DependencyResolver.Resolve<IHomeConfiguration>().ConnectionString;
+            return _homeConfiguration.DatabaseReadOnly;
+        }
+
+        public string GetConnectionString()
+        {
+            var conn = _homeConfiguration.ConnectionString;
 
             var connectionStringBuilder = new SqlConnectionStringBuilder(conn)
             {

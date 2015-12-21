@@ -22,7 +22,7 @@ namespace NuFridge.Shared.Database.Repository
         private const string GetVersionsOfPackageStoredProcCommand = "NuFridge.GetVersionsOfPackage @feedId, @includePrerelease, @packageId";
         private const string GetPackageStoredProcCommand = "NuFridge.GetPackage @feedId, @packageId, @versionMajor, @versionMinor, @versionBuild, @versionRevision, @versionSpecial";
 
-        public PackageRepository() : base(TableName)
+        public PackageRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
 
         }

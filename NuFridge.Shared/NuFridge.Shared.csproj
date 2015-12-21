@@ -299,6 +299,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autofac\DatabaseModule.cs" />
+    <Compile Include="Autofac\ModelModule.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AbstractStandardCommand.cs" />
     <Compile Include="Commands\ConfigureCommand.cs" />
@@ -513,8 +515,7 @@
     <Compile Include="Autofac\ConfigurationModule.cs" />
     <Compile Include="Autofac\FileSystemModule.cs" />
     <Compile Include="Autofac\NuGetModule.cs" />
-    <Compile Include="Autofac\ServerConfigurationModule.cs" />
-    <Compile Include="Autofac\StorageModule.cs" />
+    <Compile Include="Autofac\PortalModule.cs" />
     <Compile Include="Autofac\WebModule.cs" />
     <Compile Include="NuGet\Repository\InternalPackageIndex.cs" />
     <Compile Include="NuGet\Repository\InternalPackageRepository.cs" />

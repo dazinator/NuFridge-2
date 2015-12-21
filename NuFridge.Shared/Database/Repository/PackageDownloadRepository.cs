@@ -10,7 +10,7 @@ namespace NuFridge.Shared.Database.Repository
     {
         private const string TableName = "PackageDownload";
 
-        public PackageDownloadRepository() : base(TableName)
+        public PackageDownloadRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
             
         }

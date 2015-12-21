@@ -19,7 +19,7 @@ namespace NuFridge.Shared.Database.Repository
             return string.Format(CacheKey, feedName);
         }
 
-        public FeedRepository() : base(TableName)
+        public FeedRepository(DatabaseContext dbContext) : base(dbContext, TableName)
         {
 
         }
