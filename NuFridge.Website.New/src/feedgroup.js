@@ -18,6 +18,9 @@ export class Feedgroup {
         var self = this;
         self.GroupId = params.id;
     }
+    deleteClick() {
+        var self = this;
+    }
     createSaveClick() {
         var self = this;
 

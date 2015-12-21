@@ -87,7 +87,7 @@ export default class{
                     ]
                 },
                 { route: 'profile', title: 'Profile', moduleId: 'profile', nav: false, auth: true },
-                { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', auth: true, breadcrumb: [
+                { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', name: 'feedgroup', auth: true, breadcrumb: [
                 {
                     routename: 'feeds',
                     title: 'Feed Groups'
@@ -98,7 +98,16 @@ export default class{
                         title: 'Feed Groups'
                     }
                 ] },
-                { route: 'feeds/create/:id', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true },
+                { route: 'feeds/create/:id', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true, breadcrumb: [
+                {
+                    routename: 'feeds',
+                    title: 'Feed Groups'
+                },
+                {
+                    routename: 'feedgroup',
+                    title: 'Feed Group',
+                    parameters: ['id']
+                }]},
                 { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
                 { route: 'signout', title: 'Sign out', moduleId: 'signout', nav: false, auth: true },
                 { route: 'setup', title: 'Setup', nav: false, moduleId: 'setup', auth: false },

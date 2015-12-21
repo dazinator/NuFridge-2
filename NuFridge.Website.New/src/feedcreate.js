@@ -18,6 +18,8 @@ export class FeedCreate {
         Description: ""
     };
 
+    previousPageName = "Feed Group";
+
     isCreatingFeed = false;
     feedName = "";
 
@@ -92,6 +94,17 @@ export class FeedCreate {
             self.notificationmessage = "You are not authorized to create feeds.";
             self.notificationtype = notificationType.Warning.value;
             self.shownotification = true;
+        } else {
+            self.http.get("/api/feedgroups/" + groupId).then(message => {
+                    self.feedGroup = JSON.parse(message.response);
+                    self.previousPageName = self.feedGroup.Name;
+                },
+                function(message) {
+                    if (message.statusCode === 401) {
+                        var loginRoute = self.auth.auth.getLoginRoute();
+                        self.auth.logout("#" + loginRoute);
+                    }
+                });
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿<template>
+    <require from="breadcrumb"></require>
     <require from='notifications' as="notification-message"></require>
-    <h1>Add Feed</h1>
+    <breadcrumb previouspage="${previousPageName}" currentpage="Add Feed"></breadcrumb>
     <div class="ui segment">
         <notification-message notificationvisible="${shownotification}" notificationtext="${notificationmessage}" notificationtype="${notificationtype}"></notification-message>
         <form class="ui form" if.bind="hasRequiredClaims">
