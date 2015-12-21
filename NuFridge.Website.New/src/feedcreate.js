@@ -34,7 +34,10 @@ export class FeedCreate {
         this.authUser = authUser;
         this.errorParser = errorParser;
     }
-
+    cancelClick() {
+        var self = this;
+        self.router.navigateBack();
+    }
     insertFeed() {
         var self = this;
 

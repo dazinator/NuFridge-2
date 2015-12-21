@@ -40,7 +40,7 @@
         </form>
         <div style="padding-top: 15px;">
             <div class="ui buttons" if.bind="hasRequiredClaims">
-                <button class="ui button">Cancel</button>
+                <button class="ui button" click.trigger="cancelClick()">Cancel</button>
                 <div class="or"></div>
                 <button class="ui positive button" click.trigger="insertFeed()">Create</button>
             </div>

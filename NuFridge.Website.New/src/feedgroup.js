@@ -48,7 +48,10 @@ export class Feedgroup {
 
         $('#deleteConfirmModal').modal(options).modal('show');
     }
-
+    cancelClick() {
+        var self = this;
+        self.router.navigateBack();
+    }
     deleteGroup() {
         var self = this;
 
