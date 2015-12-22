@@ -35,15 +35,7 @@ namespace NuFridge.Shared.Database.Repository
             }
         }
 
-        public virtual void Delete(T entity)
-        {
-            ThrowIfReadOnly();
 
-            using (var connection = GetConnection())
-            {
-                connection.Delete(entity);
-            }
-        }
 
         public int RecordCount(bool noLock, string conditions = "")
         {

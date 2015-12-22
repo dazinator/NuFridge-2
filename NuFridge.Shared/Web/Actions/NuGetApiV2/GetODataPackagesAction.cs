@@ -13,6 +13,7 @@ using Nancy.Security;
 using NuFridge.Shared.Application;
 using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Extensions;
 using NuFridge.Shared.NuGet;
@@ -76,7 +77,7 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
             bool enableStableOrdering;
             var ds = CreateQuery(queryDictionary, feed, out enableStableOrdering);
 
-            ds = ExecuteQuery(context, request, ds, enableStableOrdering);
+            ds = ExecuteQuery(context, request, ds.Cast<InternalPackage>(), enableStableOrdering);
 
             return ProcessResponse(module, request, feed, ds, selectValue);
         }
@@ -104,7 +105,7 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
             return url;
         }
 
-        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<InternalPackage> ds, string selectFields)
+        protected virtual dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectFields)
         {
             long? total = request.ODataProperties().TotalCount;
 
@@ -141,7 +142,7 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
             };
         }
 
-        private static IQueryable<InternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<InternalPackage> ds, bool enableStableOrdering)
+        private static IQueryable<IInternalPackage> ExecuteQuery(ODataQueryContext context, HttpRequestMessage request, IQueryable<InternalPackage> ds, bool enableStableOrdering)
         {
             ODataQueryOptions options = new ODataQueryOptions(context, request);
 
@@ -164,11 +165,11 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
 
 
 
-        protected virtual IQueryable<InternalPackage> CreateQuery(IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
+        protected virtual IQueryable<IInternalPackage> CreateQuery(IDictionary<string, object> queryDictionary, IFeed feed, out bool enableStableOrdering)
         {
             enableStableOrdering = true;
 
-            IQueryable<InternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
+            IQueryable<IInternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
 
             ds = ds.Where(pk => pk.Listed);
 

@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Reporting;
 using NuGet;
 using Palmer;
@@ -11,7 +12,7 @@ using Constants = NuFridge.Shared.Constants;
 
 namespace NuFridge.Shared.Database.Repository
 {
-    public class PackageRepository : BaseRepository<InternalPackage>, IPackageRepository
+    public class PackageRepository : BaseRepository<IInternalPackage>, IPackageRepository
     {
         private const string TableName = "Package";
 
@@ -27,9 +28,19 @@ namespace NuFridge.Shared.Database.Repository
 
         }
 
-        public IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId)
+        public IEnumerable<IInternalPackage> GetAllPackagesForFeed(int feedId)
         {
             return Query<InternalPackage>(GetAllPackagesStoredProcCommand, new { feedId });
+        }
+
+        public virtual void Delete(IInternalPackage entity)
+        {
+            ThrowIfReadOnly();
+
+            using (var connection = GetConnection())
+            {
+                connection.Delete((InternalPackage)entity);
+            }
         }
 
         public IEnumerable<PackageUpload> GetLatestUploads(int feedId)
@@ -63,17 +74,17 @@ namespace NuFridge.Shared.Database.Repository
             return Query<long>(GetUniquePackageCountStoredProcCommand, new { feedId }).Single();
         }
 
-        public IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
+        public IEnumerable<IInternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
         {
             return Query<InternalPackage>(GetLatestPackagesStoredProcCommand, new { feedId, includePrerelease, partialId });
         }
 
-        public IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId)
+        public IEnumerable<IInternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId)
         {
             return Query<InternalPackage>(GetVersionsOfPackageStoredProcCommand, new { feedId, includePrerelease, packageId });
         }
 
-        public void Insert(InternalPackage package)
+        public void Insert(IInternalPackage package)
         {
             ThrowIfReadOnly();
 
@@ -84,12 +95,12 @@ namespace NuFridge.Shared.Database.Repository
             {
                 using (var connection = GetConnection())
                 {
-                    package.PrimaryId = connection.Insert<int>(package);
+                    package.PrimaryId = connection.Insert<int>((InternalPackage)package);
                 }
             });
         }
 
-        public void Update(InternalPackage package)
+        public void Update(IInternalPackage package)
         {
             ThrowIfReadOnly();
 
@@ -100,12 +111,12 @@ namespace NuFridge.Shared.Database.Repository
                 {
                     using (var connection = GetConnection())
                     {
-                        connection.Update(package);
+                        connection.Update((InternalPackage)package);
                     }
                 });
         }
 
-        public InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
+        public IInternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
         {
             return Query<InternalPackage>(GetPackageStoredProcCommand,
                 new
@@ -120,7 +131,7 @@ namespace NuFridge.Shared.Database.Repository
                 }).FirstOrDefault();
         }
 
-        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize()
+        public IEnumerable<IInternalPackage> GetAllPackagesWithoutAHashOrSize()
         {
             return Query<InternalPackage>($"SELECT * FROM [NuFridge].[{TableName}] WITH(NOLOCK) WHERE Hash = '' OR PackageSize = 0");
         }
@@ -128,18 +139,18 @@ namespace NuFridge.Shared.Database.Repository
 
     public interface IPackageRepository
     {
-        IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
+        IEnumerable<IInternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
         int GetCount(int feedId);
         int GetCount(bool noLock);
         long GetUniquePackageIdCount(int feedId);
-        IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
-        IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
-        void Insert(InternalPackage package);
-        void Update(InternalPackage package);
-        void Delete(InternalPackage package);
-        InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
-        IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize();
+        IEnumerable<IInternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
+        IEnumerable<IInternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
+        void Insert(IInternalPackage package);
+        void Update(IInternalPackage package);
+        void Delete(IInternalPackage package);
+        IInternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
+        IEnumerable<IInternalPackage> GetAllPackagesWithoutAHashOrSize();
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
         long GetPackageDownloadCount(int feedId);
     }

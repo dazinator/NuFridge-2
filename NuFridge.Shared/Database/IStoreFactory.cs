@@ -2,6 +2,6 @@
 {
     public interface IStoreFactory
     {
-       Store Store { get; }
+       IStore Store { get; }
     }
 }

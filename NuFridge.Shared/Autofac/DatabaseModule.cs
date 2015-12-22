@@ -68,7 +68,6 @@ namespace NuFridge.Shared.Autofac
 
         protected virtual void LoadStore(ContainerBuilder builder)
         {
-            builder.RegisterType<DatabaseContext>().AsSelf();
             builder.Register((c => new StoreFactory(c.Resolve<IHomeConfiguration>()))).As<IStoreFactory>().SingleInstance();
             builder.Register((c => c.Resolve<IStoreFactory>().Store)).As<IStore>().SingleInstance();
         }
@@ -76,6 +75,8 @@ namespace NuFridge.Shared.Autofac
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
+
+            builder.RegisterType<DatabaseContext>().AsSelf();
 
             LoadStore(builder);
             LoadRepositorys(builder);

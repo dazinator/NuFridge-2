@@ -7,6 +7,7 @@ using Nancy.Responses;
 using NuFridge.Shared.Application;
 using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.NuGet;
 
@@ -29,7 +30,7 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
             }
         }
 
-        protected override dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<InternalPackage> ds, string selectValue)
+        protected override dynamic ProcessResponse(INancyModule module, HttpRequestMessage request, IFeed feed, IQueryable<IInternalPackage> ds, string selectValue)
         {
             long? total = request.ODataProperties().TotalCount;
 

@@ -24,7 +24,7 @@ namespace NuFridge.Shared.Database.Repository
 
         }
 
-        public override void Delete(Feed feed)
+        public void Delete(Feed feed)
         {
             ThrowIfReadOnly();
 
@@ -32,7 +32,10 @@ namespace NuFridge.Shared.Database.Repository
 
             MemoryCache.Default.Remove(cacheKey);
 
-            base.Delete(feed);
+            using (var connection = GetConnection())
+            {
+                connection.Delete(feed);
+            }
         }
 
         public void Insert(Feed feed)

@@ -71,6 +71,16 @@ namespace NuFridge.Shared.Database.Repository
             return group;
         }
 
+        public void Delete(FeedGroup feedGroup)
+        {
+            ThrowIfReadOnly();
+
+            using (var connection = GetConnection())
+            {
+                connection.Delete(feedGroup);
+            }
+        }
+
         public void Update(FeedGroup feedGroup)
         {
             ThrowIfReadOnly();

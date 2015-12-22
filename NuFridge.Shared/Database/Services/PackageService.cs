@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Reporting;
 using NuGet;
 using IPackageRepository = NuFridge.Shared.Database.Repository.IPackageRepository;
@@ -15,12 +16,12 @@ namespace NuFridge.Shared.Database.Services
             _packageRepository = packageRepository;
         }
 
-        public IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId)
+        public IEnumerable<IInternalPackage> GetAllPackagesForFeed(int feedId)
         {
             return _packageRepository.GetAllPackagesForFeed(feedId);
         }
 
-        public void Delete(InternalPackage package)
+        public void Delete(IInternalPackage package)
         {
             _packageRepository.Delete(package);
         }
@@ -45,32 +46,32 @@ namespace NuFridge.Shared.Database.Services
             return _packageRepository.GetUniquePackageIdCount(feedId);
         }
 
-        public IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
+        public IEnumerable<IInternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId)
         {
             return _packageRepository.GetLatestPackagesForFeed(feedId, includePrerelease, partialId);
         }
 
-        public IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId)
+        public IEnumerable<IInternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId)
         {
             return _packageRepository.GetVersionsOfPackage(feedId, includePrerelease, packageId);
         }
 
-        public IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize()
+        public IEnumerable<IInternalPackage> GetAllPackagesWithoutAHashOrSize()
         {
             return _packageRepository.GetAllPackagesWithoutAHashOrSize();
         }
 
-        public void Insert(InternalPackage package)
+        public void Insert(IInternalPackage package)
         {
             _packageRepository.Insert(package);
         }
 
-        public void Update(InternalPackage package)
+        public void Update(IInternalPackage package)
         {
             _packageRepository.Update(package);
         }
 
-        public InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
+        public IInternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version)
         {
             return _packageRepository.GetPackage(feedId, packageId, version);
         }
@@ -88,18 +89,18 @@ namespace NuFridge.Shared.Database.Services
 
     public interface IPackageService
     {
-        IEnumerable<InternalPackage> GetAllPackagesForFeed(int feedId);
+        IEnumerable<IInternalPackage> GetAllPackagesForFeed(int feedId);
         void Delete(IEnumerable<int> ids);
-        void Delete(InternalPackage package);
+        void Delete(IInternalPackage package);
         int GetCount(int feedId);
         long GetUniquePackageIdCount(int feedId);
-        IEnumerable<InternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
-        IEnumerable<InternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
-        IEnumerable<InternalPackage> GetAllPackagesWithoutAHashOrSize(); 
-        void Insert(InternalPackage package);
+        IEnumerable<IInternalPackage> GetLatestPackagesForFeed(int feedId, bool includePrerelease, string partialId);
+        IEnumerable<IInternalPackage> GetVersionsOfPackage(int? feedId, bool includePrerelease, string packageId);
+        IEnumerable<IInternalPackage> GetAllPackagesWithoutAHashOrSize(); 
+        void Insert(IInternalPackage package);
         int GetCount();
-        void Update(InternalPackage package);
-        InternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
+        void Update(IInternalPackage package);
+        IInternalPackage GetPackage(int? feedId, string packageId, SemanticVersion version);
         IEnumerable<PackageUpload> GetLatestUploads(int feedId);
         long GetPackageDownloadCount(int feedId);
     }

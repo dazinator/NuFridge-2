@@ -4,12 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
+using Hangfire;
 using Moq;
+using NuFridge.Shared.Application;
+using NuFridge.Shared.Autofac;
 using NuFridge.Shared.Database;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.NuGet.Repository;
 using NuFridge.Shared.Scheduler.Jobs.Definitions;
+using NuFridge.Tests.Autofac;
+using NuFridge.Tests.Scheduler.Jobs.Definitions;
 using NuGet;
 using NUnit.Framework;
 
@@ -24,13 +29,12 @@ namespace NuFridge.Tests
         protected List<IFeed> InMemoryFeeds;
         protected List<IFeedConfiguration> InMemoryFeedConfigurations;
 
+        private IContainer _container;
+
         [SetUp]
         public void Setup()
         {
-            Store = new Mock<IStore>();
-            PackageRepoFactory = new Mock<IInternalPackageRepositoryFactory>();
-            PackageRepo = new Mock<IInternalPackageRepository>();
-            PackageRepoFactory.Setup(fc => fc.Create(It.IsAny<Int32>())).Returns(PackageRepo.Object);
+
         }
 
         [Test]
@@ -56,7 +60,7 @@ namespace NuFridge.Tests
 
             SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> {mock, mock2}, false);
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            RunPackageRetentionPoliciesJob task = _container.Resolve<RunPackageRetentionPoliciesJob>();
 
             //task.Execute();
 
@@ -69,7 +73,7 @@ namespace NuFridge.Tests
         {
             SetupMockObjects(1, 1, new List<Mock<IInternalPackage>>(), true);
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            RunPackageRetentionPoliciesJob task = _container.Resolve<RunPackageRetentionPoliciesJob>();
 
             //task.Execute();
 
@@ -84,39 +88,65 @@ namespace NuFridge.Tests
 
             mock.SetupProperty(fc => fc.Title, "Test Package");
             mock.SetupProperty(fc => fc.PrimaryId, 1);
-      
+            mock.SetupProperty(fc => fc.FeedId, 1);
             mock.SetupProperty(fc => fc.Id, "TestPackage");
             mock.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.0-alpha"));
             mock.SetupProperty(fc => fc.Version, "1.0.0-alpha");
+            mock.SetupProperty(fc => fc.IsPrerelease, true);
 
             Mock<IInternalPackage> mock2 = new Mock<IInternalPackage>();
 
             mock2.SetupProperty(fc => fc.Title, "Test Package");
             mock2.SetupProperty(fc => fc.PrimaryId, 1);
-
+            mock2.SetupProperty(fc => fc.FeedId, 1);
             mock2.SetupProperty(fc => fc.Id, "TestPackage");
             mock2.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.1-alpha"));
             mock2.SetupProperty(fc => fc.Version, "1.0.1-alpha");
+            mock2.SetupProperty(fc => fc.IsPrerelease, true);
 
             Mock<IInternalPackage> mock3 = new Mock<IInternalPackage>();
 
             mock3.SetupProperty(fc => fc.Title, "Test Package");
             mock3.SetupProperty(fc => fc.PrimaryId, 1);
-
+            mock3.SetupProperty(fc => fc.FeedId, 1);
             mock3.SetupProperty(fc => fc.Id, "TestPackage");
             mock3.Setup(fc => fc.GetSemanticVersion()).Returns(SemanticVersion.Parse("1.0.2-alpha"));
             mock3.SetupProperty(fc => fc.Version, "1.0.2-alpha");
+            mock3.SetupProperty(fc => fc.IsPrerelease, true);
 
-            SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock, mock2, mock3 }, true);
+            var builder = new ContainerBuilder();
+            builder.RegisterType<ServerEngine>().As<IServerEngine>().SingleInstance();
+            builder.RegisterModule(new AuthenticationModule());
+            builder.RegisterModule(new TestableConfigurationModule());
+            builder.RegisterModule(new PortalModule());
+            builder.RegisterModule(new FileSystemModule());
+            builder.RegisterModule(new WebModule());
+            builder.RegisterModule(new TestableSchedulerModule());
+            builder.RegisterModule(new NuGetModule());
+            builder.RegisterModule(
+                new TestableDatabaseModule()
+                    .WithFeeds(new List<Feed>
+                    {
+                        new Feed {Id = 1, Name = "Test", GroupId = 1}
+                    })
+                    .WithFeedConfigurations(new List<FeedConfiguration>
+                    {
+                        new FeedConfiguration {FeedId = 1, Directory = "", RetentionPolicyEnabled = true, MaxPrereleasePackages = 2}
+                    })
+                    .WithPackages(new List<IInternalPackage>
+                    {
+                        mock.Object, mock2.Object, mock3.Object
+                    }));
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            _container = builder.Build();
 
-            //task.Execute();
+            TestRunPackageRetentionPoliciesJob task = _container.Resolve<TestRunPackageRetentionPoliciesJob>();
 
-            PackageRepoFactory.Verify(fc => fc.Create(It.IsAny<Int32>()), Times.Once);
-            PackageRepo.Verify(pr => pr.RemovePackage(mock.Object), Times.Once);
-            PackageRepo.Verify(pr => pr.RemovePackage(mock2.Object), Times.Once);
-            PackageRepo.Verify(pr => pr.RemovePackage(mock3.Object), Times.Never);
+            task.Execute(new JobCancellationToken(false));
+
+            var repo = _container.Resolve<Shared.Database.Repository.IPackageRepository>();
+
+            Assert.AreEqual(2, repo.GetCount(mock.Object.FeedId));
         }
 
         [Test]
@@ -142,7 +172,7 @@ namespace NuFridge.Tests
 
             SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock, mock2 }, true);
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            RunPackageRetentionPoliciesJob task = _container.Resolve<RunPackageRetentionPoliciesJob>();
 
             //task.Execute();
 
@@ -165,7 +195,7 @@ namespace NuFridge.Tests
 
             SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock }, true);
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            RunPackageRetentionPoliciesJob task = _container.Resolve<RunPackageRetentionPoliciesJob>();
 
             //task.Execute();
 
@@ -187,7 +217,7 @@ namespace NuFridge.Tests
 
             SetupMockObjects(1, 1, new List<Mock<IInternalPackage>> { mock }, true);
 
-            TestableRunPackageRetentionPoliciesTask task = new TestableRunPackageRetentionPoliciesTask(Store.Object, PackageRepoFactory.Object);
+            RunPackageRetentionPoliciesJob task = _container.Resolve<RunPackageRetentionPoliciesJob>();
 
             //task.Execute();
 
@@ -228,20 +258,6 @@ namespace NuFridge.Tests
             //queryMock.Setup(qu => qu.ToList()).Returns(packageMocks.Select(pm => pm.Object).ToList());
             //queryMock.Setup(qu => qu.First()).Returns(packageMocks.FirstOrDefault() != null ? packageMocks.First().Object : null);
             //queryMock.Setup(qu => qu.Count()).Returns(packageMocks.Count());
-        }
-
-        public class TestableRunPackageRetentionPoliciesTask : RunPackageRetentionPoliciesJob
-        {
-            public TestableRunPackageRetentionPoliciesTask(IStore store, IInternalPackageRepositoryFactory packageRepositoryFactory)
-                : base(store, null, null, null, null)
-            {
-
-            }
-
-            protected override bool IsPackageDirectoryValid(string path)
-            {
-                return true;
-            }
         }
     }
 }

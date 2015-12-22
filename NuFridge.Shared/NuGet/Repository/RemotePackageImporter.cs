@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Exceptions;
 using NuFridge.Shared.Logging;
@@ -60,7 +61,7 @@ namespace NuFridge.Shared.NuGet.Repository
 
         private bool TryImportFromLocalFeed(DataServicePackage remotePackage, IInternalPackageRepository localRepository, PackageImportJobItem item)
         {
-            InternalPackage localVersionOfPackage = _packageService.GetPackage(null, item.PackageId, SemanticVersion.Parse(item.Version));
+            IInternalPackage localVersionOfPackage = _packageService.GetPackage(null, item.PackageId, SemanticVersion.Parse(item.Version));
 
             if (!string.IsNullOrWhiteSpace(localVersionOfPackage?.Hash))
             {

@@ -174,7 +174,7 @@ namespace NuFridge.Shared.Web.Actions.NuGetApiV2
 
         protected IQueryable<IInternalPackage> CreateQuery(IDictionary<string, object> queryDictionary, IFeed feed)
         {
-            IQueryable<InternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
+            IQueryable<IInternalPackage> ds = _packageService.GetAllPackagesForFeed(feed.Id).AsQueryable();
 
             ds = ds.Where(pk => pk.Listed);
 

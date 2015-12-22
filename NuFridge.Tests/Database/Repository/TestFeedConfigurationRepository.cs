@@ -8,22 +8,38 @@ using NuFridge.Shared.Database.Repository;
 
 namespace NuFridge.Tests.Database.Repository
 {
-    public class TestFeedConfigurationRepository : FeedConfigurationRepository
+    public class TestFeedConfigurationRepository : IFeedConfigurationRepository
     {
-        public List<FeedConfiguration> FeedConfigurations = new List<FeedConfiguration>(); 
+        private List<FeedConfiguration> _feedConfigurations = new List<FeedConfiguration>(); 
 
-        public TestFeedConfigurationRepository(DatabaseContext dbContext) : base(dbContext)
+        public void Insert(FeedConfiguration feedConfiguration)
         {
+           _feedConfigurations.Add(feedConfiguration);
         }
 
-        public override FeedConfiguration FindByFeedId(int feedId)
+        public void Delete(FeedConfiguration feedConfiguration)
         {
-            return FeedConfigurations.FirstOrDefault(fc => fc.FeedId == feedId);
+            _feedConfigurations.Remove(feedConfiguration);
+        }
+
+        public FeedConfiguration FindByFeedId(int feedId)
+        {
+            return _feedConfigurations.FirstOrDefault(fc => fc.FeedId == feedId);
+        }
+
+        public void Update(FeedConfiguration feedConfig)
+        {
+            _feedConfigurations[_feedConfigurations.FindIndex(fd => fd.Id == feedConfig.Id)] = feedConfig;
+        }
+
+        public IEnumerable<FeedConfiguration> GetAll()
+        {
+            return _feedConfigurations;
         }
 
         public void WithFeedConfigurations(List<FeedConfiguration> feedConfigurations)
         {
-            FeedConfigurations = feedConfigurations;
+            _feedConfigurations = feedConfigurations;
         }
     }
 }

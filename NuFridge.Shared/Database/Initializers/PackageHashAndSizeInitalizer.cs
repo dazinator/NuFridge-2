@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using NuFridge.Shared.Database.Model;
+using NuFridge.Shared.Database.Model.Interfaces;
 using NuFridge.Shared.Database.Services;
 using NuFridge.Shared.Logging;
 using NuFridge.Shared.NuGet.Packaging;
@@ -28,7 +29,7 @@ namespace NuFridge.Shared.Database.Initializers
 
         public void Initialize(IStore store, Action<string> updateStatusAction)
         {
-            IEnumerable<InternalPackage> packages = _packageService.GetAllPackagesWithoutAHashOrSize().ToList();
+            IEnumerable<IInternalPackage> packages = _packageService.GetAllPackagesWithoutAHashOrSize().ToList();
 
             if (!packages.Any())
             {

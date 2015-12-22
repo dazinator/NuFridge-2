@@ -44,7 +44,7 @@ namespace NuFridge.Shared.Database.Repository
             MemoryCache.Default.Set(cacheKey, feedConfiguration, policy);
         }
 
-        public  override void Delete(FeedConfiguration feedConfiguration)
+        public void Delete(FeedConfiguration feedConfiguration)
         {
             ThrowIfReadOnly();
 
@@ -52,7 +52,10 @@ namespace NuFridge.Shared.Database.Repository
 
             MemoryCache.Default.Remove(cacheKey);
 
-            base.Delete(feedConfiguration);
+            using (var connection = GetConnection())
+            {
+                connection.Delete(feedConfiguration);
+            }
         }
 
         public virtual FeedConfiguration FindByFeedId(int feedId)

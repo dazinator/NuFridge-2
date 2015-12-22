@@ -111,9 +111,9 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<InternalPackage> packages = _packageService.GetAllPackagesForFeed(feed.Id).ToList();
+            List<IInternalPackage> packages = _packageService.GetAllPackagesForFeed(feed.Id).ToList();
 
-            Dictionary<string, List<InternalPackage>> packagesGroupedById = packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());
+            Dictionary<string, List<IInternalPackage>> packagesGroupedById = packages.GroupBy(x => x.Id).ToDictionary(x => x.Key, x => x.ToList());
 
             int releasePackagesDeleted = 0;
             int prereleasePackagesDeleted = 0;
@@ -137,7 +137,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                 $"Finished package retention policy for '{feed.Name}'. {releasePackagesDeleted} release packages deleted. {prereleasePackagesDeleted} prerelease packages deleted.");
         }
 
-        private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<InternalPackage> packages, IJobCancellationToken cancellationToken)
+        private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages, IJobCancellationToken cancellationToken)
         {
             packages.Sort((a, b) => b.GetSemanticVersion().CompareTo(a.GetSemanticVersion()));
 
@@ -183,7 +183,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
        
 
-        private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<InternalPackage> packages, IJobCancellationToken cancellationToken)
+        private int FindAndRemoveOldPrereleasePackages(IFeedConfiguration config, List<IInternalPackage> packages, IJobCancellationToken cancellationToken)
         {
             packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 

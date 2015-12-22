@@ -42,11 +42,11 @@ namespace NuFridge.Shared.NuGet.Repository
 
                     package.PrimaryId = existingPackage.PrimaryId;
 
-                    _packageService.Update((InternalPackage)package);
+                    _packageService.Update(package);
                 }
                 else
                 {
-                    _packageService.Insert((InternalPackage)package);
+                    _packageService.Insert(package);
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace NuFridge.Shared.NuGet.Repository
 
             lock (_sync)
             {
-                _packageService.Update((InternalPackage) package);
+                _packageService.Update(package);
             }
         }
 
@@ -65,7 +65,7 @@ namespace NuFridge.Shared.NuGet.Repository
         {
             lock (_sync)
             {
-                _packageService.Delete((InternalPackage) package);
+                _packageService.Delete(package);
             }
         }
 
