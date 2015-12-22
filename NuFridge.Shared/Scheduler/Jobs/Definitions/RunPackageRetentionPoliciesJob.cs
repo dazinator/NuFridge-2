@@ -139,19 +139,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
 
         private int FindAndRemoveOldReleasePackages(IFeedConfiguration config, List<IInternalPackage> packages, IJobCancellationToken cancellationToken)
         {
-            packages.Sort((a, b) => b.GetSemanticVersion().CompareTo(a.GetSemanticVersion()));
-
-            var packageCount = packages.Count();
-            for (int i = packageCount; i-- > 0; )
-            {
-                var package = packages[i];
-
-                //We never want to remove the latest version unless 0 is specified as the max
-                if (package.IsLatestVersion && config.MaxReleasePackages > 0)
-                {
-                    packages.RemoveAt(i);
-                }
-            }
+            packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 
             int toDeleteCount = packages.Count() - config.MaxReleasePackages;
 
@@ -160,7 +148,7 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
                 _log.Info($"Deleting {toDeleteCount} release versions of the '{packages.First().Id}' package.");
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
-                var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
+                var toDeletePackages = packages.Take(toDeleteCount);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -188,25 +176,15 @@ namespace NuFridge.Shared.Scheduler.Jobs.Definitions
             packages.Sort((a, b) => a.GetSemanticVersion().CompareTo(b.GetSemanticVersion()));
 
             var packageCount = packages.Count();
-            for (int i = packageCount; i-- > 0; )
-            {
-                var package = packages[i];
 
-                //We never want to remove the latest absolute version unless 0 is specified as the max
-                if (package.IsAbsoluteLatestVersion && config.MaxPrereleasePackages > 0)
-                {
-                    packages.RemoveAt(i);
-                }
-            }
-
-            int toDeleteCount = packages.Count() - config.MaxPrereleasePackages;
+            int toDeleteCount = packageCount - config.MaxPrereleasePackages;
 
             if (toDeleteCount > 0)
             {
                 _log.Info($"Deleting {toDeleteCount} prerelease versions of the '{packages.First().Id}' package.");
                 var packageRepo = PackageRepositoryFactory.Create(config.FeedId);
 
-                var toDeletePackages = Enumerable.Reverse(packages).Take(toDeleteCount);
+                var toDeletePackages = packages.Take(toDeleteCount);
 
                 cancellationToken.ThrowIfCancellationRequested();
 

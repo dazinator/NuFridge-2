@@ -7,8 +7,8 @@ namespace NuFridge.Shared.Database.Model.Interfaces
 {
     public interface IInternalPackage
     {
-        bool IsLatestVersion { get; }
-        bool IsAbsoluteLatestVersion { get; }
+        bool IsLatestVersion { get; set; }
+        bool IsAbsoluteLatestVersion { get; set; }
 
         int PrimaryId { get; set; }
         string Id { get; set; }
