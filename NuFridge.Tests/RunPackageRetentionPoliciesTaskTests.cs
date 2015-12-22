@@ -23,13 +23,6 @@ namespace NuFridge.Tests
 {
     public class RunPackageRetentionPoliciesTaskTests
     {
-        protected Mock<IStore> Store;
-        protected Mock<IInternalPackageRepositoryFactory> PackageRepoFactory;
-        protected Mock<IInternalPackageRepository> PackageRepo;
-
-        protected List<IFeed> InMemoryFeeds;
-        protected List<IFeedConfiguration> InMemoryFeedConfigurations;
-
         private IContainer _container;
 
         [SetUp]
