@@ -11,7 +11,7 @@
         Contact your System Administrator to request this permission.
     </div>
     <div if.bind="canViewPage">
-        <breadcrumb currentpage="${feedName}"></breadcrumb>
+        <breadcrumb previouspage="${previousPageName}" currentpage="${feedName}"></breadcrumb>
 
         <div class="ui pointing secondary menu feedMenu">
             <a class="item active" data-tab="first">Overview</a>

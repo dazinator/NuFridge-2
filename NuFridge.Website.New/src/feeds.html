@@ -9,38 +9,35 @@
             Contact your System Administrator to request this permission.
         </div>
         <div if.bind="canViewPage">
-            <div class="two column ui grid">
-                <div class="column">
-                    <div class="ui fluid category search feedSearch">
-                        <div class="ui icon input" style="width: 100%;">
-                            <input class="prompt" type="text" placeholder="Search feeds...">
-                            <i class="search icon"></i>
-                        </div>
-                        <div class="results"></div>
-                    </div>
-                </div>
-                <div class="column">
-                </div>
-            </div>
+
+
 
             <div class="ui divided items">
                 <div class="item" repeat.for="group of feedGroups">
                     <div class="content">
-                        <a class="header" href="#/feedgroup/view/${group.Id}" if.bind="$parent.canUpdateFeedGroup">${group.Name}</a>
-                        <div class="header" if.bind="!$parent.canUpdateFeedGroup">${group.Name}</div>
+                        <div class="header">
+                            <span style="padding-right: 10px;vertical-align: middle;">${group.Name}</span>
+                            <div class="ui tiny basic icon buttons">
+                                <button if.bind="$parent.canUpdateFeedGroup" class="ui button actionButton" click.trigger="editGroupClick(group)" data-content="Edit Group"><i class="edit icon"></i></button>
+                                <button if.bind="$parent.canInsertFeed" class="ui button actionButton" click.trigger="addFeedClick(group)" data-content="Add Feed"><i class="add icon"></i></button>
+                            </div>
+                        </div>
+                     
+                       
                         <div class="description">
                             <p>
                             </p>
                         </div>
                         <div class="extra">
-                            <a class="ui label" href="#feeds/view/${feed.Id}" repeat.for="feed of group.Feeds">${feed.Name}</a>
-                            <a class="ui blue label" href="#/feeds/create/${group.Id}" if.bind="$parent.canInsertFeed">Add Feed</a>
+                            <a class="ui label" href="#feeds/view/${feed.GroupId}/${feed.Id}" repeat.for="feed of group.Feeds">${feed.Name}</a>
+                            <span if.bind="group.Feeds == 0">This group contains no feeds.</span>
+                            <a class="ui blue label" href="#/feeds/create/${group.Id}" if.bind="$parent.canInsertFeed && false">Add Feed</a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <a class="ui blue large label" href="#/feedgroup/create" if.bind="canInsertFeedGroup">Add Feed Group</a>
+            <a class="ui blue large label" href="#/feedgroup/create" if.bind="canInsertFeedGroup && false">Add Feed Group</a>
         </div>
     </div>
 </template>

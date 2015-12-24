@@ -88,7 +88,7 @@ export class FeedCreate {
     activate(params, routeConfig) {
         var self = this;
 
-        var groupId = params.id;
+        var groupId = params.groupid;
         self.feed.GroupId = groupId;
 
         self.hasRequiredClaims = self.authUser.hasClaim(Claims.CanInsertFeed, Claims.SystemAdministrator);

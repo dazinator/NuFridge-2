@@ -13,6 +13,8 @@ export class FeedView {
     feed = null;
     feedName = "Feed";
 
+    previousPageName = "Feed Group";
+
     isUpdatingFeed = false;
     isLoadingFeed = true;
     isLoadingFeedConfig = true;
@@ -203,7 +205,6 @@ export class FeedView {
 
         self.loadFeedPackages();
     }
-
     activate(params, routeConfig) {
         var self = this;
         self.routeConfig = routeConfig;
@@ -220,15 +221,15 @@ export class FeedView {
         self.canUploadPackages = self.authUser.hasClaim(Claims.CanUploadPackages, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-
-          self.http.get("api/feeds/" + feedId).then(message => {
-                self.feed = JSON.parse(message.response);
-                self.refreshFeedName();
-                self.isLoadingFeed = false;
-                self.loadFeedPackageCount();
-                self.loadFeedJobs();
-                self.loadFeedConfig();
-            },
+            self.loadGroup(params);
+            self.http.get("api/feeds/" + feedId).then(message => {
+                    self.feed = JSON.parse(message.response);
+                    self.refreshFeedName();
+                    self.loadFeedPackageCount();
+                    self.loadFeedJobs();
+                    self.loadFeedConfig();
+                    self.isLoadingFeed = false;
+                },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
@@ -237,7 +238,20 @@ export class FeedView {
                 });
         }
     }
+    loadGroup(params) {
+        var self = this;
 
+        self.http.get("api/feedgroups/" + params.groupid).then(message => {
+                self.feedGroup = JSON.parse(message.response);
+                self.previousPageName = self.feedGroup.Name;
+            },
+            function(message) {
+                if (message.statusCode === 401) {
+                    var loginRoute = self.auth.auth.getLoginRoute();
+                    self.auth.logout("#" + loginRoute);
+                }
+            });
+    }
     loadFeedJobs() {
         var self = this;
 

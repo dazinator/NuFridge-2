@@ -17,7 +17,7 @@ export default class{
                 { route: ['', 'dashboard'], title: 'Dashboard', moduleId: 'home', nav: true, auth: true },
                 { route: 'feeds', name: 'feeds', title: 'Feeds', moduleId: 'feeds', nav: true, auth: true },
                 {
-                    route: 'feeds/view/:id',
+                    route: 'feeds/view/:groupid/:id',
                     title: 'View Feed',
                     moduleId: 'feedview',
                     name: 'feedview',
@@ -27,11 +27,16 @@ export default class{
                         {
                             routename: 'feeds',
                             title: 'Feeds'
+                        },
+                        {
+                            routename: 'feedgroup',
+                            title: 'Feed Group',
+                            parameters: ['groupid']
                         }
                     ]
                 },
                 {
-                    route: 'feeds/view/:id/package/:packageid/:packageversion',
+                    route: 'feeds/view/:groupid/:id/package/:packageid/:packageversion',
                     title: 'View Package',
                     moduleId: 'package',
                     name: 'package',
@@ -50,7 +55,7 @@ export default class{
                     ]
                 },
                 {
-                    route: 'feeds/view/:id/import/:jobid',
+                    route: 'feeds/view/:groupid/:id/import/:jobid',
                     title: 'Importing Packages',
                     moduleId: 'importpackages',
                     name: 'importpackages',
@@ -69,7 +74,7 @@ export default class{
                     ]
                 },
                 {
-                    route: 'feeds/view/:id/import',
+                    route: 'feeds/view/:groupid/:id/import',
                     title: 'Import Packages',
                     moduleId: 'importpackages',
                     nav: false,
@@ -87,26 +92,33 @@ export default class{
                     ]
                 },
                 { route: 'profile', title: 'Profile', moduleId: 'profile', nav: false, auth: true },
-                { route: 'feedgroup/view/:id', title: 'View Feed Group', moduleId: 'feedgroup', name: 'feedgroup', auth: true, breadcrumb: [
+                { route: 'feedgroup/view/:groupid', title: 'View Feed Group', moduleId: 'feedgroup', name: 'feedgroup', auth: true, breadcrumb: [
                 {
                     routename: 'feeds',
+                    title: 'Feeds'
+                },
+                {
+                    routename: '',
                     title: 'Feed Groups'
                 }] },
                 { route: 'feedgroup/create', title: 'Create Feed Group', moduleId: 'feedgroup', auth: true, breadcrumb: [
-                    {
-                        routename: 'feeds',
-                        title: 'Feed Groups'
-                    }
-                ] },
-                { route: 'feeds/create/:id', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true, breadcrumb: [
                 {
                     routename: 'feeds',
+                    title: 'Feeds'
+                },
+                {
+                    routename: '',
                     title: 'Feed Groups'
+                }] },
+                { route: 'feeds/create/:groupid', title: 'Create Feed', moduleId: 'feedcreate', nav: false, auth: true, breadcrumb: [
+                {
+                    routename: 'feeds',
+                    title: 'Feeds'
                 },
                 {
                     routename: 'feedgroup',
                     title: 'Feed Group',
-                    parameters: ['id']
+                    parameters: ['groupid']
                 }]},
                 { route: 'signin', title: 'Sign in', moduleId: 'signin', nav: false },
                 { route: 'signout', title: 'Sign out', moduleId: 'signout', nav: false, auth: true },

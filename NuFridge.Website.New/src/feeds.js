@@ -23,31 +23,21 @@ export class Feeds {
         this.router.navigate("feeds/create/" + group.Id);
     }
 
-    groupClick(group) {
+    editGroupClick(group) {
         this.router.navigate("feedgroup/view/" + group.Id);
     }
 
-    feedClick(feed) {
-        this.router.navigate("feeds/view/" + feed.Id);
-    }
-
     attached() {
-        var self = this;
-
-        var searchOptions = {
-            apiSettings: {
-                url: 'api/feeds/search/?name={query}',
-                beforeXHR: function (xhr) {
-                    xhr.setRequestHeader('Authorization', 'Token ' + self.auth.auth.getToken());
+        $('.ui.button.actionButton')
+            .popup({
+                inline: true,
+                hoverable: true,
+                position: 'bottom left',
+                delay: {
+                    show: 50,
+                    hide: 80
                 }
-            },
-            onSelect: function(result, response) {
-                self.router.navigate(result.url);
-            },
-            type: 'category'
-        };
-
-        $('.ui.search.feedSearch').search(searchOptions);
+            });
     }
 
     activate() {

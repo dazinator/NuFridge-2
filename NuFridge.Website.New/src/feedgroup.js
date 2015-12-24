@@ -26,7 +26,7 @@ export class Feedgroup {
     }
     activate(params) {
         var self = this;
-        self.GroupId = params.id;
+        self.GroupId = params.groupid;
     }
     deleteClick() {
         var self = this;
