@@ -1,18 +1,19 @@
 <template>
-  <div class="ui top attached stackable menu">
-      <a repeat.for="row of router.navigation | authFilter: isAuthenticated" class="item ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
-      <span class="item" if.bind="!isAuthenticated">NuFridge</span>
-      <div class="right menu">
-          <a class="item ${router.currentInstruction.fragment === '/profile' ? 'active' : ''}" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
-              <i class="ui large user icon"></i>
-              <div class="content">
-                  <div class="ui sub header" textcontent="${authUser.data.DisplayName}"></div>
-                  System Administrator
-              </div>
-          </a>
-          <a class="ui item" if.bind="isAuthenticated" click.delegate="signOut()">
-              Sign out
-          </a>
-      </div>
-  </div>
+    <div class="ui top attached stackable menu">
+        <span style="font-weight: bold;" class="item">NuFridge</span>
+        <a repeat.for="row of router.navigation | authFilter: isAuthenticated" class="item ${row.isActive ? 'active' : ''}" href.bind="row.href">${row.title}</a>
+        <span class="item" if.bind="!isAuthenticated">NuFridge</span>
+        <div class="right menu">
+            <a class="item ${router.currentInstruction.fragment === '/profile' ? 'active' : ''}" if.bind="isAuthenticated" click.trigger="viewMyProfile()">
+                <i class="ui large user icon"></i>
+                <div class="content">
+                    <div class="ui sub header" textcontent="${authUser.data.DisplayName}"></div>
+                    System Administrator
+                </div>
+            </a>
+            <a class="ui item" if.bind="isAuthenticated" click.delegate="signOut()">
+                Sign out
+            </a>
+        </div>
+    </div>
 </template>
