@@ -14,9 +14,9 @@
                     <div class="content">
                         <div class="header">
                             <span style="padding-right: 10px;vertical-align: middle;">${group.Name}</span>
-                            <div class="ui tiny basic icon buttons">
-                                <button if.bind="$parent.canUpdateFeedGroup" class="ui button actionButton" click.trigger="editGroupClick(group)" data-content="Edit Group"><i class="edit icon"></i></button>
-                                <button if.bind="$parent.canInsertFeed" class="ui button actionButton" click.trigger="addFeedClick(group)" data-content="Add Feed"><i class="add icon"></i></button>
+                            <div class="ui tiny icon buttons">
+                                <button if.bind="$parent.canUpdateFeedGroup" class="ui button blue actionButton" click.trigger="editGroupClick(group)" data-content="Edit Group"><i class="write icon"></i></button>
+                                <button if.bind="$parent.canInsertFeed" class="ui button green actionButton" click.trigger="addFeedClick(group)" data-content="Add Feed"><i class="add icon"></i></button>
                             </div>
                         </div>
                      
