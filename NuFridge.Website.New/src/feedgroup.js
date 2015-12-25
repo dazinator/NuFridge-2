@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-framework';
+import {ObserverLocator, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {HttpClient} from 'aurelia-http-client';
 import {notificationType} from 'notifications';
@@ -6,7 +6,7 @@ import {AuthService} from 'paulvanbladel/aurelia-auth';
 import {errorParser} from 'errorparser';
 import {authUser} from './authuser';
 
-@inject(Router, HttpClient, AuthService, authUser, errorParser)
+@inject(Router, HttpClient, AuthService, authUser, errorParser, ObserverLocator)
 export class Feedgroup {
 
     isUpdatingFeedGroup = false;
@@ -16,13 +16,35 @@ export class Feedgroup {
     notificationmessage = "";
     notificationtype = notificationType.Info.value;
 
-    constructor(router, http, auth, authUser, errorParser) {
+    constructor(router, http, auth, authUser, errorParser, observerLocator) {
         this.router = router;
+        this.observerLocator = observerLocator;
         this.http = http;
         this.auth = auth;
         this.authUser = authUser;
         this.isNew = true;
         this.errorParser = errorParser;
+    }
+    populateGroupFeedDropdown() {
+        var self = this;
+
+        $('.search.dropdown.feedGroups')
+            .dropdown({
+                maxSelections: false,
+                allowAdditions: false,
+                fireOnInit: true,
+                allowCategorySelection: false
+            });
+
+        var checkExist = setInterval(function() {
+            if ($('.search.dropdown.feedGroups input.search').length) {
+                for (var i = 0; i < self.feedGroup.Feeds.length; i++) {
+                    $('.search.dropdown.feedGroups').dropdown("set selected", "option-" + self.feedGroup.Feeds[i].Id);
+                }
+                clearInterval(checkExist);
+                self.isLoadingFeedGroup = false;
+            }
+        }, 100);
     }
     activate(params) {
         var self = this;
@@ -84,8 +106,8 @@ export class Feedgroup {
 
         if (self.isNew) {
             self.http.post("api/feedgroups", self.feedGroup).then(message => {
-                    self.router.navigate("feeds");
-                },
+                self.router.navigate("feeds");
+            },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
@@ -106,8 +128,8 @@ export class Feedgroup {
                 });
         } else {
             self.http.put("api/feedgroups/" + self.GroupId, self.feedGroup).then(message => {
-                    self.router.navigate("feeds");
-                },
+                self.router.navigate("feeds");
+            },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
@@ -135,11 +157,12 @@ export class Feedgroup {
             self.isLoadingFeedGroup = false;
         } else {
             self.isNew = false;
+
             self.http.get("api/feedgroups/" + self.GroupId).then(message => {
-                    self.feedGroup = JSON.parse(message.response);
-                    self.pageTitle = self.feedGroup.Name;
-                    self.isLoadingFeedGroup = false;
-                },
+                self.feedGroup = JSON.parse(message.response);
+                self.populateGroupFeedDropdown();
+                self.pageTitle = self.feedGroup.Name;
+            },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();

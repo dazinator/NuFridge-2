@@ -9,9 +9,6 @@
             Contact your System Administrator to request this permission.
         </div>
         <div if.bind="canViewPage">
-
-
-
             <div class="ui divided items">
                 <div class="item" repeat.for="group of feedGroups">
                     <div class="content">
@@ -31,7 +28,6 @@
                         <div class="extra">
                             <a class="ui label" href="#feeds/view/${feed.GroupId}/${feed.Id}" repeat.for="feed of group.Feeds">${feed.Name}</a>
                             <span if.bind="group.Feeds == 0">This group contains no feeds.</span>
-                            <a class="ui blue label" href="#/feeds/create/${group.Id}" if.bind="$parent.canInsertFeed && false">Add Feed</a>
                         </div>
                     </div>
                 </div>

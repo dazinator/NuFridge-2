@@ -16,6 +16,13 @@
                 <label>Group Name</label>
                 <input type="text" value.bind="feedGroup.Name">
             </div>
+            <div class="field" if.bind="!isNew">
+                <label>Feeds</label>
+                <select class="ui fluid search dropdown feedGroups" multiple="">
+                    <option value="">No feeds selected</option>
+                    <option repeat.for="feed of feedGroup.Feeds" value="option-${feed.Id}" selected>${feed.Name}</option>
+                </select>
+            </div>
         </form>
 
 
