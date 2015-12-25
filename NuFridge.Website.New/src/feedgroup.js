@@ -28,21 +28,40 @@ export class Feedgroup {
     populateGroupFeedDropdown() {
         var self = this;
 
+        var hasLoadedDropdown = false;
+
         $('.search.dropdown.feedGroups')
             .dropdown({
                 maxSelections: false,
                 allowAdditions: false,
-                fireOnInit: true,
-                allowCategorySelection: false
+                fireOnInit: false,
+                allowCategorySelection: false,
+                onChange: function(value, text, choice) {
+                    if (!hasLoadedDropdown)
+                        return false;
+
+                    if (typeof choice === 'string') {
+                        self.feedGroup.Feeds.push({Id: text, Name: choice, GroupId: self.GroupId});
+                    } else {
+                        var id = choice.attr('data-value');
+                        for(var i = self.feedGroup.Feeds.length - 1; i >= 0; i--) {
+                            if(self.feedGroup.Feeds[i].Id == id) {
+                                self.feedGroup.Feeds.splice(i, 1);
+                                return false;
+                            }
+                        }
+                    }
+                }
             });
 
         var checkExist = setInterval(function() {
             if ($('.search.dropdown.feedGroups input.search').length) {
                 for (var i = 0; i < self.feedGroup.Feeds.length; i++) {
-                    $('.search.dropdown.feedGroups').dropdown("set selected", "option-" + self.feedGroup.Feeds[i].Id);
+                    $('.search.dropdown.feedGroups').dropdown("set selected", self.feedGroup.Feeds[i].Id);
                 }
                 clearInterval(checkExist);
                 self.isLoadingFeedGroup = false;
+                hasLoadedDropdown = true;
             }
         }, 100);
     }
@@ -158,11 +177,24 @@ export class Feedgroup {
         } else {
             self.isNew = false;
 
-            self.http.get("api/feedgroups/" + self.GroupId).then(message => {
-                self.feedGroup = JSON.parse(message.response);
-                self.populateGroupFeedDropdown();
-                self.pageTitle = self.feedGroup.Name;
-            },
+            self.http.get("api/feeds").then(message => {
+                    var feedGroups = JSON.parse(message.response);
+
+                    self.feeds = [];
+
+                    for (var i = 0; i < feedGroups.length; i++) {
+                        if (feedGroups[i].Id == self.GroupId) {
+                            self.feedGroup = feedGroups[i];
+                            self.pageTitle = self.feedGroup.Name;
+                        }
+                        for (var j = 0; j < feedGroups[i].Feeds.length; j++) {
+                            feedGroups[i].Feeds[j].GroupName = feedGroups[i].Name;
+                        }
+                        self.feeds = self.feeds.concat(feedGroups[i].Feeds);
+                    }
+
+                    self.populateGroupFeedDropdown();
+                },
                 function(message) {
                     if (message.statusCode === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
@@ -170,7 +202,7 @@ export class Feedgroup {
                     } else {
                         self.isLoadingFeedGroup = false;
                         var parsedError = self.errorParser.parseResponse(message);
-                        self.notificationmessage =  parsedError.Message;
+                        self.notificationmessage = parsedError.Message;
 
                         if (parsedError.StackTrace) {
                             self.notificationmessage += "<br><br>Detailed Error:<br>" + parsedError.StackTrace;

@@ -113,6 +113,27 @@ namespace NuFridge.Shared.Database.Repository
             return Query<Feed>($"SELECT * FROM [NuFridge].[{TableName}] WHERE GroupId = @id", new {id});
         }
 
+        public void ChangeFeedGroup(Feed feed, int groupId)
+        {
+            ThrowIfReadOnly();
+
+            Retry.On<SqlException>(
+                handle => (handle.Context.LastException as SqlException).Number == Constants.SqlExceptionDeadLockNumber)
+                .For(5)
+                .With(context =>
+                {
+                    using (var connection = GetConnection())
+                    {
+                        connection.Execute($"UPDATE [NuFridge].[{TableName}] SET GroupId = @groupId WHERE Id = @id", new {id = feed.Id, groupId = groupId});
+                    }
+                });
+
+            var cacheKey = GetCacheKey(feed.Name);
+
+            //Invalidate the cache entry as it will contain the wrong group id. When the feed is next retrieved it will be cached again
+            MemoryCache.Default.Remove(cacheKey);
+        }
+
         public IEnumerable<Feed> Search(string name)
         {
             return Query<Feed>($"SELECT * FROM [NuFridge].[{TableName}] WHERE Name LIKE '%' + @name + '%'", new {name});
@@ -130,5 +151,6 @@ namespace NuFridge.Shared.Database.Repository
         int GetCount(bool nolock);
         void Update(Feed feed);
         IEnumerable<Feed> FindByGroupId(int id);
+        void ChangeFeedGroup(Feed feed, int groupId);
     }
 }

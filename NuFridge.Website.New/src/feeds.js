@@ -50,7 +50,7 @@ export class Feeds {
         self.canInsertFeedGroup = self.authUser.hasClaim(Claims.CanInsertFeedGroup, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            this.http.get("api/feeds").then(message => {
+            self.http.get("api/feeds").then(message => {
                     self.feedGroups = JSON.parse(message.response);
                 },
                 function(message) {

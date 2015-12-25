@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NuFridge.Shared.Database.Model;
 using NuFridge.Shared.Database.Repository;
 using NuFridge.Shared.Exceptions;
@@ -8,10 +9,14 @@ namespace NuFridge.Shared.Database.Services
     public class FeedGroupService : IFeedGroupService
     {
         private readonly IFeedGroupRepository _feedGroupRepository;
+        private readonly IFeedRepository _feedRepository;
 
-        public FeedGroupService(IFeedGroupRepository feedGroupRepository)
+        private const string UnassignedFeedsGroupName = "Unassigned Feeds";
+
+        public FeedGroupService(IFeedGroupRepository feedGroupRepository, IFeedRepository feedRepository)
         {
             _feedGroupRepository = feedGroupRepository;
+            _feedRepository = feedRepository;
         }
 
         public IEnumerable<FeedGroup> GetAll()
@@ -24,8 +29,42 @@ namespace NuFridge.Shared.Database.Services
             return _feedGroupRepository.Find(id);
         }
 
+        public FeedGroup Find(string groupName)
+        {
+            return _feedGroupRepository.Find(groupName);
+        }
+
         public void Update(FeedGroup feedGroup)
         {
+            FeedGroup oldFeedGroup = _feedGroupRepository.Find(feedGroup.Id);
+            IEnumerable<int> oldFeedGroupIds = oldFeedGroup.Feeds.Select(oldfd => oldfd.Id);
+            IEnumerable<int> newFeedGroupIds = feedGroup.Feeds.Select(fd => fd.Id);
+
+            IEnumerable<Feed> feedsToAddToGroup = feedGroup.Feeds.Where(fd => !oldFeedGroupIds.Contains(fd.Id)).ToList();
+            IEnumerable<Feed> feedsToRemoveFromGroup = oldFeedGroup.Feeds.Where(fd => !newFeedGroupIds.Contains(fd.Id)).ToList();
+
+            //TODO handle this scenario better... or change where to store the group id
+            if (feedsToRemoveFromGroup.Any())
+            {
+                FeedGroup unassignedGroup = Find(UnassignedFeedsGroupName);
+
+                if (unassignedGroup == null)
+                {
+                    unassignedGroup = new FeedGroup {Name = UnassignedFeedsGroupName};
+                    Insert(unassignedGroup);
+                }
+
+                foreach (var feed in feedsToRemoveFromGroup)
+                {
+                    _feedRepository.ChangeFeedGroup(feed, unassignedGroup.Id);
+                }
+            }
+
+            foreach (var feed in feedsToAddToGroup)
+            {
+                _feedRepository.ChangeFeedGroup(feed, feedGroup.Id);
+            }
+
             _feedGroupRepository.Update(feedGroup);
         }
 

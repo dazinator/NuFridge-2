@@ -46,6 +46,11 @@ namespace NuFridge.Shared.Database.Repository
             MemoryCache.Default.Set(cacheKey, feedGroup, policy);
         }
 
+        private List<Feed> GetGroupFeeds(int groupId)
+        {
+            return _feedRepository.FindByGroupId(groupId).ToList();
+        }
+
         public FeedGroup Find(string feedGroupName)
         {
             FeedGroup group;
@@ -54,17 +59,17 @@ namespace NuFridge.Shared.Database.Repository
             {
                 group =
                     connection.Query<FeedGroup>($"SELECT TOP(1) * FROM [NuFridge].[{TableName}] WHERE Name = @name",
-                        new {name = feedGroupName }).FirstOrDefault();
+                        new { name = feedGroupName }).FirstOrDefault();
                 if (group != null)
                 {
-                    group.Feeds = _feedRepository.FindByGroupId(group.Id);
+                    group.Feeds = GetGroupFeeds(group.Id);
                 }
             }
 
             if (group != null)
             {
                 var cacheKey = GetCacheKey(group.Id);
-                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(6)};
+                CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
                 MemoryCache.Default.Set(cacheKey, group, policy);
             }
 
@@ -110,7 +115,7 @@ namespace NuFridge.Shared.Database.Repository
 
             if (cachedRecord != null)
             {
-                return (FeedGroup) cachedRecord;
+                return (FeedGroup)cachedRecord;
             }
 
             FeedGroup group;
@@ -120,13 +125,13 @@ namespace NuFridge.Shared.Database.Repository
                 group = connection.Get<FeedGroup>(id);
                 if (group != null)
                 {
-                    group.Feeds = _feedRepository.FindByGroupId(id);
+                    group.Feeds = GetGroupFeeds(group.Id);
                 }
             }
 
             if (group != null)
             {
-                CacheItemPolicy policy = new CacheItemPolicy {SlidingExpiration = TimeSpan.FromHours(6)};
+                CacheItemPolicy policy = new CacheItemPolicy { SlidingExpiration = TimeSpan.FromHours(6) };
                 MemoryCache.Default.Set(cacheKey, group, policy);
             }
 
@@ -140,7 +145,7 @@ namespace NuFridge.Shared.Database.Repository
                 IEnumerable<FeedGroup> groups = connection.GetList<FeedGroup>().ToList();
                 foreach (var group in groups)
                 {
-                    group.Feeds = _feedRepository.FindByGroupId(group.Id);
+                    group.Feeds = GetGroupFeeds(group.Id);
                 }
 
                 return groups;

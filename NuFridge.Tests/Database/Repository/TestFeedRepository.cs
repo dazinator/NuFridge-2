@@ -61,5 +61,10 @@ namespace NuFridge.Tests.Database.Repository
         {
             return _feeds.Where(fd => fd.GroupId == id);
         }
+
+        public void ChangeFeedGroup(Feed feed, int groupId)
+        {
+            
+        }
     }
 }
