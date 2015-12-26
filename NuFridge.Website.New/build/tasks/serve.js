@@ -5,14 +5,15 @@ var browserSync = require('browser-sync');
 // to create a dev server instance
 // at http://localhost:8081
 gulp.task('serve', ['build'], function(done) {
-  browserSync({
-    open: false,
-    port: 8081,
-	proxy: {
-        target: "http://localhost:8080",
-        ws: true
-    },
-	notify: true,
-	ghostMode: false
-  }, done);
+    browserSync({
+        online: false,
+        open: false,
+        port: 8081,
+        proxy: {
+            target: "http://localhost:8080",
+            ws: true
+        },
+        notify: true,
+        ghostMode: false
+    }, done);
 });

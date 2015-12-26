@@ -48,7 +48,6 @@
     <Content Include=".jshintrc" />
     <Content Include=".npmignore" />
     <Content Include="build\tasks\bundle.js" />
-    <Content Include="build\tasks\unbundle.js" />
     <Content Include="CONTRIBUTING.md" />
     <Content Include="doc\api.json" />
     <Content Include="doc\CHANGELOG.md" />
@@ -409,6 +408,8 @@
     <Content Include="semantic\tasks\config\admin\templates\package.json" />
     <Content Include="semantic\tasks\config\admin\templates\README.md" />
     <Content Include="semantic\tasks\README.md" />
+    <Content Include="build\bundles.json" />
+    <Content Include="build\export.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -424,7 +425,6 @@
     <Content Include="build\tasks\build.js" />
     <Content Include="build\tasks\clean.js" />
     <Content Include="build\tasks\dev.js" />
-    <Content Include="build\tasks\doc.js" />
     <Content Include="build\tasks\e2e.js" />
     <Content Include="build\tasks\lint.js" />
     <Content Include="build\tasks\prepare-release.js" />
@@ -690,8 +690,8 @@
     <Content Include="src\signin.js" />
     <Content Include="src\users.html" />
     <Content Include="src\users.js" />
-    <Content Include="styles\custom.css" />
-    <Content Include="styles\timeline.css" />
+    <Content Include="src\styles\custom.css" />
+    <Content Include="src\styles\timeline.css" />
     <Content Include="test\e2e\dist\demo.spec.js" />
     <Content Include="test\e2e\dist\skeleton.po.js" />
     <Content Include="test\e2e\dist\welcome.po.js" />
