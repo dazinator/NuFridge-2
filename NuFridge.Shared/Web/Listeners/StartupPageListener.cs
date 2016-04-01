@@ -3,9 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using NuFridge.Shared.Application;
+using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Logging;
 
 namespace NuFridge.Shared.Web.Listeners
@@ -46,8 +48,14 @@ namespace NuFridge.Shared.Web.Listeners
             }
 
             _listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-
-            _listener.Start();
+            try
+            {
+                _listener.Start();
+            }
+            catch (HttpListenerException httpex)
+            {
+                throw new Exception(ExceptionExtensions.SuggestUrlReservations(listenPrefixes));
+            }
 
             ShowStartupPage = true;
 
@@ -152,8 +160,8 @@ namespace NuFridge.Shared.Web.Listeners
             context.Response.ContentLength64 = data.Length;
             var output = context.Response.OutputStream;
             output.Write(data, 0, data.Length);
-     
-   
+
+
 
             context.Response.StatusCode = 200;
             context.Response.Close();

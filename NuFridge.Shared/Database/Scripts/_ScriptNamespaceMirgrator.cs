@@ -12,26 +12,32 @@ namespace NuFridge.Shared.Database.Scripts
         private const string OldNamespace = "NuFridge.Shared.Server.Storage.Scripts.NuFridge.Shared.Server.Storage.Scripts.";
         private const string IdParamName = "id";
         private const string ScriptNameParamName = "scriptName";
-        private const string TableNameWithSchema = "[NuFridge].[Version]";
+        private const string SchemaName = "NuFridge";
+        private static readonly string TableNameWithSchema = $"[{SchemaName}].[Version]";
         private const string ScriptNameColumn = "ScriptName";
         private const string IdColumn = "Id";
 
         public string ProvideScript(Func<IDbCommand> commandFactory)
         {
-            using (IDbCommand readCommand = commandFactory())
+            try
             {
-                readCommand.CommandText = $"SELECT [{IdColumn}], [{ScriptNameColumn}] FROM {TableNameWithSchema}";
-                using (IDataReader reader = readCommand.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        int id = int.Parse(reader[IdColumn].ToString());
-                        string scriptName = reader[ScriptNameColumn].ToString();
+                // Ensure the schema exists in the database.
+                EnsureSchema(commandFactory, SchemaName);
 
-                        if (scriptName.StartsWith(OldNamespace))
+                using (IDbCommand readCommand = commandFactory())
+                {
+                    readCommand.CommandText = $"SELECT [{IdColumn}], [{ScriptNameColumn}] FROM {TableNameWithSchema}";
+                    using (IDataReader reader = readCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
-                            using (IDbCommand writeCommand = commandFactory())
+                            int id = int.Parse(reader[IdColumn].ToString());
+                            string scriptName = reader[ScriptNameColumn].ToString();
+
+                            if (scriptName.StartsWith(OldNamespace))
                             {
+                                using (IDbCommand writeCommand = commandFactory())
+                                {
                                     string scriptIdentifier = scriptName.Substring(OldNamespace.Length);
                                     string updatedScriptName = $"{GetType().Namespace}.{scriptIdentifier}";
 
@@ -51,13 +57,36 @@ namespace NuFridge.Shared.Database.Scripts
                                     writeCommand.Parameters.Add(scriptNameParam);
 
                                     writeCommand.ExecuteNonQuery();
+                                }
                             }
                         }
                     }
                 }
             }
-
+            catch (System.Data.SqlClient.SqlException e)
+            {
+                // table probablydoesn't exist.
+                return "";
+            }
             return "";
+        }
+
+        private void EnsureSchema(Func<IDbCommand> commandFactory, string schemaName)
+        {
+            using (IDbCommand ensureSchemaCommand = commandFactory())
+            {
+                var sql =
+                $"IF NOT EXISTS(SELECT schema_name FROM information_schema.schemata WHERE schema_name = '{schemaName}') " +
+                $"BEGIN " +
+                $"EXEC sp_executesql N'CREATE SCHEMA {schemaName}' " +
+                $"END";
+
+                ensureSchemaCommand.CommandText = sql;
+                ensureSchemaCommand.ExecuteNonQuery();
+            }
+
+
+
         }
     }
 }

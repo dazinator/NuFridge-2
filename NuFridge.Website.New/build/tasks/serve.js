@@ -10,7 +10,7 @@ gulp.task('serve', ['build'], function(done) {
         open: false,
         port: 8081,
         proxy: {
-            target: "http://localhost:8080",
+            target: "http://localhost:61222",
             ws: true
         },
         notify: true,
