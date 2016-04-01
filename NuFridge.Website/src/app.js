@@ -1,18 +1,17 @@
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import AppRouterConfig from 'app.router.config';
-import HttpClientConfig from 'paulvanbladel/aurelia-auth/app.httpClient.config';
 import 'jquery';
 import 'semanticui/semantic';
 import {authUser} from './authuser';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService, FetchConfig} from 'aurelia-auth';
 
-@inject(Router,HttpClientConfig,AppRouterConfig, authUser, AuthService)
+@inject(Router,AppRouterConfig, FetchConfig, authUser, AuthService)
 export class App {
 
-    constructor(router, httpClientConfig, appRouterConfig, authUser, auth){
+    constructor(router, appRouterConfig, fetchConfig, authUser, auth){
         this.router = router;
-        this.httpClientConfig = httpClientConfig;
+        this.fetchConfig = fetchConfig;
         this.appRouterConfig = appRouterConfig;
         this.authUser = authUser;
         this.auth = auth;
@@ -21,8 +20,8 @@ export class App {
     activate() {
         var self = this;
 
-        self.httpClientConfig.configure();
         self.appRouterConfig.configure();
+        this.fetchConfig.configure();
 
         return new Promise((resolve, reject) => {
 

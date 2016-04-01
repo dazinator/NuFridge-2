@@ -1,6 +1,6 @@
 ﻿import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import moment from 'moment';
 import {authUser} from './authuser';
 import {Claims} from './claims';
@@ -43,11 +43,11 @@ export class Package {
 
         self.isLoadingPackage = true;
 
-        self.http.get("api/feeds/" + feedId).then(message => {
-            self.feed = JSON.parse(message.response);
+        self.http.fetch("api/feeds/" + feedId).then(response => response.json()).then(message => {
+            self.feed = message;
 
-            self.http.get("feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(message => {
-                var pkg = JSON.parse(message.response).d;
+            self.http.fetch("feeds/" + self.feed.Name + "/api/v2/Packages(Id='" + packageId + "',Version='" + packageVersion + "')").then(response => response.json()).then(message => {
+                var pkg = message.d;
                 pkg.Tags = pkg.Tags ? pkg.Tags.replace(/^\s+|\s+$/g, '').split(" ") : new Array();
                 pkg.Owners = pkg.Owners ? pkg.Owners.replace(/^\s+|\s+$/g, '').split(",") : new Array();
                 pkg.Authors = pkg.Authors ? pkg.Authors.replace(/^\s+|\s+$/g, '').split(",") : new Array();
@@ -80,12 +80,12 @@ export class Package {
                 self.isLoadingPackage = false;
             });
 
-            self.http.get("feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(message => {
-                self.versionsOfPackage = JSON.parse(message.response).d.results;
+            self.http.fetch("feeds/" + self.feed.Name + "/api/v2/FindPackagesById()?$top=100&id='" + packageId + "'").then(response => response.json()).then(message => {
+                self.versionsOfPackage = message.d.results;
             });
         },
     function(message) {
-        if (message.statusCode === 401) {
+        if (message.status === 401) {
             var loginRoute = self.auth.auth.getLoginRoute();
             self.auth.logout("#" + loginRoute);
         }
@@ -108,13 +108,13 @@ export class Package {
     deletePackage(pkg) {
         var self = this;
 
-        self.http.delete("feeds/" + self.feed.Name + "/api/v2/package/" + pkg.Id + "/" + pkg.Version).then(message => {
+        self.http.fetch("feeds/" + self.feed.Name + "/api/v2/package/" + pkg.Id + "/" + pkg.Version, {method: 'delete'}).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.packageToUnlist = null;
         }, message => {
             $('#deleteConfirmModal').modal("hide");
             self.packageToUnlist = null;
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }

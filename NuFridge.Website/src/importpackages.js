@@ -1,6 +1,6 @@
 ﻿import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import moment from 'moment';
 import {authUser} from './authuser';
 import {Claims} from './claims';
@@ -41,11 +41,13 @@ export class ImportPackages {
     cancelImport() {
         var self = this;
 
-        self.http.delete("api/feeds/" + self.feedId + "/import/" + self.jobId).then(message => {
+    self.http.fetch("api/feeds/" + self.feedId + "/import/" + self.jobId, {
+        method: 'delete'
+}).then(message => {
 
         },
             function(message) {
-                if (message.statusCode === 401) {
+                if (message.status === 401) {
 
                 }
             });
@@ -58,8 +60,8 @@ export class ImportPackages {
             return;
         }
 
-        self.http.post("api/feeds/" + self.feedId + "/import", self.options).then(message => {
-            self.jobId = message.response;
+        self.http.fetch("api/feeds/" + self.feedId + "/import", {method: 'post', body: json(self.options)}).then(response => response.json()).then(message => {
+            self.jobId = message;
 
 
                 var url = self.router.generate("importpackages", {
@@ -70,7 +72,7 @@ export class ImportPackages {
                 self.router.navigate(url);
             },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
 
             }
         });
@@ -156,8 +158,8 @@ export class ImportPackages {
         self.feedId = params.id;
         self.jobId = params.jobid;
 
-        self.http.get("api/feeds/" + self.feedId).then(message => {
-            self.feed = JSON.parse(message.response);
+        self.http.fetch("api/feeds/" + self.feedId).then(response => response.json()).then(message => {
+            self.feed = message;
         });
 
         if (self.jobId) {

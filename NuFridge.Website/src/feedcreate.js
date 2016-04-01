@@ -1,9 +1,9 @@
 ﻿import {inject} from 'aurelia-framework';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import {Router} from 'aurelia-router';
 import {authUser} from './authuser';
 import {Claims} from './claims';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService} from 'aurelia-auth';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
 
@@ -52,8 +52,10 @@ export class FeedCreate {
 
         var startDate = new Date();
 
-        this.http.post("api/feeds/", self.feed).then(message => {
-            self.feed = JSON.parse(message.response);
+    this.http.fetch("api/feeds/", {
+        method: 'post', body: json(self.feed)
+    }).then(response => response.json()).then(message => {
+            self.feed = message;
 
             var endDate = new Date();
 
@@ -66,7 +68,7 @@ export class FeedCreate {
             }
         },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             } else {
@@ -98,12 +100,12 @@ export class FeedCreate {
             self.notificationtype = notificationType.Warning.value;
             self.shownotification = true;
         } else {
-            self.http.get("api/feedgroups/" + groupId).then(message => {
-                    self.feedGroup = JSON.parse(message.response);
+            self.http.fetch("api/feedgroups/" + groupId).then(response => response.json()).then(message => {
+                    self.feedGroup = message;
                     self.previousPageName = self.feedGroup.Name;
                 },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     }

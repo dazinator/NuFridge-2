@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {HttpClient, json} from 'aurelia-fetch-client';
+import {AuthService} from 'aurelia-auth';
 import {authUser} from './authuser';
 import {Claims} from './claims';
 
@@ -50,11 +50,11 @@ export class Feeds {
         self.canInsertFeedGroup = self.authUser.hasClaim(Claims.CanInsertFeedGroup, Claims.SystemAdministrator);
 
         if (self.canViewPage) {
-            self.http.get("api/feeds").then(message => {
-                    self.feedGroups = JSON.parse(message.response);
+            self.http.fetch("api/feeds").then(response => response.json()).then(message => {
+                    self.feedGroups = message;
                 },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     }

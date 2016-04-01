@@ -1,7 +1,7 @@
 ﻿import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {HttpClient, json} from 'aurelia-fetch-client';
+import {AuthService} from 'aurelia-auth';
 import {authUser} from './authuser';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {PaginationMessage} from './paginationmessage';
@@ -35,8 +35,8 @@ export class Jobs {
 
     loadJobs(paginationMessage) {
         var self = this;
-        self.http.get("api/jobs?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
-            var data = JSON.parse(message.response);
+        self.http.fetch("api/jobs?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(response => response.json()).then(message => {
+            var data = message;
             self.jobs = data.Jobs;
             self.totalResults = data.Total;
             paginationMessage.resolve();

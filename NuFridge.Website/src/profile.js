@@ -1,8 +1,8 @@
 ﻿import {inject} from 'aurelia-framework';
 import {authUser} from './authuser';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService} from 'aurelia-auth';
 import {Claims} from './claims';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import {Router} from 'aurelia-router';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
@@ -30,8 +30,8 @@ export class Profile {
 
         var userId = params.id;
         if (userId) {
-            self.http.get("api/account/" + userId).then(message => {
-                self.user = JSON.parse(message.response);
+            self.http.fetch("api/account/" + userId).then(response => response.json()).then(message => {
+                self.user = message;
             });
         } else {
             self.user = self.authUser.data;
@@ -89,7 +89,7 @@ export class Profile {
 
         var startDate = new Date();
 
-        this.http.post("api/account/" + self.user.Id, self.user).then(message => {
+        this.http.fetch("api/account/" + self.user.Id, {method: 'post', body: json(self.user)}).then(message => {
 
             var endDate = new Date();
 
@@ -108,7 +108,7 @@ export class Profile {
             }
         },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             } else {

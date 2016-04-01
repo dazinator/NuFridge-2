@@ -1,8 +1,8 @@
 import {ObserverLocator, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import {notificationType} from 'notifications';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService} from 'aurelia-auth';
 import {errorParser} from 'errorparser';
 import {authUser} from './authuser';
 
@@ -96,12 +96,12 @@ export class Feedgroup {
     deleteGroup() {
         var self = this;
 
-        self.http.delete("api/feedgroups/" + self.GroupId).then(message => {
+        self.http.fetch("api/feedgroups/" + self.GroupId, {method: 'delete'}).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.router.navigate("feeds");
         }, message => {
             $('#deleteConfirmModal').modal("hide");
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             } else {
@@ -124,11 +124,11 @@ export class Feedgroup {
         self.shownotification = false;
 
         if (self.isNew) {
-            self.http.post("api/feedgroups", self.feedGroup).then(message => {
+            self.http.fetch("api/feedgroups", {method: 'post', body: json(self.feedGroup)}).then(message => {
                 self.router.navigate("feeds");
             },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     }
@@ -146,11 +146,11 @@ export class Feedgroup {
                     }
                 });
         } else {
-            self.http.put("api/feedgroups/" + self.GroupId, self.feedGroup).then(message => {
+            self.http.fetch("api/feedgroups/" + self.GroupId, {method: 'put', body: json(self.feedGroup)}).then(message => {
                 self.router.navigate("feeds");
             },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     }
@@ -177,8 +177,8 @@ export class Feedgroup {
         } else {
             self.isNew = false;
 
-            self.http.get("api/feeds").then(message => {
-                    var feedGroups = JSON.parse(message.response);
+            self.http.fetch("api/feeds").then(response => response.json()).then(message => {
+                    var feedGroups = message;
 
                     self.feeds = [];
 
@@ -196,7 +196,7 @@ export class Feedgroup {
                     self.populateGroupFeedDropdown();
                 },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     } else {

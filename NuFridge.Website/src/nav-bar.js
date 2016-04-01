@@ -1,7 +1,7 @@
 import {bindable } from 'aurelia-framework';
 import {inject} from 'aurelia-framework';
 import {computedFrom} from 'aurelia-framework';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService} from 'aurelia-auth';
 import {authUser} from './authuser';
 
 @inject(AuthService, authUser)

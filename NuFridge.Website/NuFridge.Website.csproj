@@ -408,7 +408,7 @@
     <Content Include="semantic\tasks\config\admin\templates\package.json" />
     <Content Include="semantic\tasks\config\admin\templates\README.md" />
     <Content Include="semantic\tasks\README.md" />
-    <Content Include="build\bundles.json" />
+    <Content Include="build\bundles.js" />
     <Content Include="build\export.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

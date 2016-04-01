@@ -9,8 +9,8 @@ export class errorParser{
     parseResponse(responseMessage) {
         var self = this;
 
-        if (responseMessage.statusCode) {
-            if (responseMessage.statusCode === 500) {
+        if (responseMessage.status) {
+            if (responseMessage.status === 500) {
                 if (responseMessage.response) {
                     if (responseMessage.response.indexOf('<!DOCTYPE html PUBLIC') === 0) {
                         var elements = $(responseMessage.response);
@@ -36,30 +36,30 @@ export class errorParser{
                 } else {
                     return self.returnMessage("There was an error processing the request. Check the server logs for more information.");
                 }
-            } else if (responseMessage.statusCode === 405) {
+            } else if (responseMessage.status === 405) {
                 return self.returnMessage("The server does not accept requests on " + responseMessage.requestMessage.url + ". Check the server logs for more information or raise this as an issue on GitHub.");
-            }  else if (responseMessage.statusCode === 400) {
+            }  else if (responseMessage.status === 400) {
                 var responseText = responseMessage.response;
                 if (responseMessage.responseType === "json" && responseText) {
                     responseText = JSON.parse(responseText);
                 }
                 return self.returnMessage("The server has rejected the request. Check the server logs for more information or raise this as an issue on GitHub.", responseText);
             }
-            else if (responseMessage.statusCode === 409) {
+            else if (responseMessage.status === 409) {
                 if (responseMessage.responseType === "json" && responseMessage.response) {
                     return self.returnMessage(JSON.parse(responseMessage.response));
                 } else {
                      return self.returnMessage("There was an error processing the request. The resource already exists."); 
                 }
             }
-            else if (responseMessage.statusCode === 404) {
+            else if (responseMessage.status === 404) {
                 if (responseMessage.responseType === "json" && responseMessage.response) {
                     return self.returnMessage(JSON.parse(responseMessage.response));
                 } else {
                     return self.returnMessage("There was an error processing the request. The resource does not exist."); 
                 }
             }
-            else if (responseMessage.statusCode === 401) {
+            else if (responseMessage.status === 401) {
                     if (responseMessage.responseType === "json" && responseMessage.response) {
                         return self.returnMessage(JSON.parse(responseMessage.response));
                     } else {

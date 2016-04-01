@@ -4,7 +4,7 @@ export function configure(aurelia) {
     .standardConfiguration()
     .developmentLogging()
     .plugin('aurelia-animator-css')
-    .plugin('paulvanbladel/aurelia-auth', (baseConfig)=>{
+    .plugin('aurelia-auth', (baseConfig)=>{
       baseConfig.configure(config);
     });
 

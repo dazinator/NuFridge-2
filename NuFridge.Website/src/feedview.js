@@ -1,11 +1,11 @@
 import {inject,ObserverLocator} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 import {authUser} from './authuser';
 import {Claims} from './claims';
 import {notificationType} from 'notifications';
 import {errorParser} from 'errorparser';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {AuthService} from 'aurelia-auth';
 
 @inject(HttpClient, Router, authUser, errorParser, ObserverLocator, AuthService)
 export class FeedView {
@@ -82,11 +82,11 @@ export class FeedView {
 
         var startDate = new Date();
 
-        this.http.put("api/feeds/" + self.feed.Id, self.feed).then(message => {
-            self.feed = JSON.parse(message.response);
+        this.http.fetch("api/feeds/" + self.feed.Id, {method: 'put', body: json(self.feed)}).then(response => response.json()).then(message => {
+            self.feed = response;
             self.refreshFeedName();
 
-            this.http.put("api/feeds/" + self.feed.Id + "/config", self.feedconfig).then(message => {
+            this.http.fetch("api/feeds/" + self.feed.Id + "/config", {method: 'put', body: json(self.feedconfig)}).then(message => {
                 var endDate = new Date();
 
                 var secondsDifference = Math.abs((startDate.getTime() - endDate.getTime()) / 1000);
@@ -100,7 +100,7 @@ export class FeedView {
                 }
             },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }else {
@@ -118,7 +118,7 @@ export class FeedView {
         });
         },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }else {
@@ -144,12 +144,12 @@ export class FeedView {
     deleteFeed() {
         var self = this;
 
-        self.http.delete("api/feeds/" + self.feed.Id).then(message => {
+        self.http.fetch("api/feeds/" + self.feed.Id, {method: 'delete'}).then(message => {
             $('#deleteConfirmModal').modal("hide");
             self.router.navigate("feeds");
         }, message => {
             $('#deleteConfirmModal').modal("hide");
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }
@@ -159,11 +159,11 @@ export class FeedView {
     reindexPackagesClick() {
         var self = this;
 
-        this.http.post("api/feeds/" + self.feed.Id + "/reindex").then(function() {
+        this.http.fetch("api/feeds/" + self.feed.Id + "/reindex", {method: 'post'}).then(function() {
             
         },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }
@@ -222,7 +222,7 @@ export class FeedView {
 
         if (self.canViewPage) {
             self.loadGroup(params);
-            self.http.get("api/feeds/" + feedId).then(message => {
+            self.http.fetch("api/feeds/" + feedId).then(message => {
                     self.feed = JSON.parse(message.response);
                     self.refreshFeedName();
                     self.loadFeedPackageCount();
@@ -231,7 +231,7 @@ export class FeedView {
                     self.isLoadingFeed = false;
                 },
                 function(message) {
-                    if (message.statusCode === 401) {
+                    if (message.status === 401) {
                         var loginRoute = self.auth.auth.getLoginRoute();
                         self.auth.logout("#" + loginRoute);
                     }
@@ -241,12 +241,12 @@ export class FeedView {
     loadGroup(params) {
         var self = this;
 
-        self.http.get("api/feedgroups/" + params.groupid).then(message => {
-                self.feedGroup = JSON.parse(message.response);
+        self.http.fetch("api/feedgroups/" + params.groupid).then(response => response.json()).then(message => {
+                self.feedGroup = message;
                 self.previousPageName = self.feedGroup.Name;
             },
             function(message) {
-                if (message.statusCode === 401) {
+                if (message.status === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
                     self.auth.logout("#" + loginRoute);
                 }
@@ -257,13 +257,13 @@ export class FeedView {
 
         self.isLoadingJobs = true;
 
-        self.http.get("api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(message => {
-            self.jobData = JSON.parse(message.response);
+        self.http.fetch("api/feeds/" + self.feed.Id + "/jobs" + "?size=" + self.jobPageSize + "&page=" + self.jobPageNumber).then(response => response.json()).then(message => {
+            self.jobData = message;
             self.jobsTotalPages = new Array(Math.ceil(self.jobData.Total / self.jobPageSize));
             self.isLoadingJobs = false;
             },
             function(message) {
-                if (message.statusCode === 401) {
+                if (message.status === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
                     self.auth.logout("#" + loginRoute);
                 }
@@ -279,12 +279,12 @@ export class FeedView {
     loadFeedConfig() {
         var self = this;
 
-        self.http.get("api/feeds/" + self.feed.Id + "/config").then(message => {
-            self.feedconfig = JSON.parse(message.response);
+        self.http.fetch("api/feeds/" + self.feed.Id + "/config").then(response => response.json()).then(message => {
+            self.feedconfig = message;
                 self.isLoadingFeedConfig = false;
             },
             function(message) {
-                if (message.statusCode === 401) {
+                if (message.status === 401) {
                     var loginRoute = self.auth.auth.getLoginRoute();
                     self.auth.logout("#" + loginRoute);
                 }
@@ -373,19 +373,13 @@ export class FeedView {
     loadFeedPackageCount() {
         var self = this;
 
-        var request = self.http.createRequest("Feeds/" + self.feed.Name + "/api/v2/Search()/$count").asGet().withHeader("Accept", "application/text");
-
-        request.send().then(message => {
-            self.overviewPackageCount = message.response;
+        self.http.fetch("Feeds/" + self.feed.Name + "/api/v2/Search()/$count").then(response => response.json()).then(message => {
+            self.overviewPackageCount = message;
         });
 
-        var uniqueRequest = self.http.createRequest("Feeds/" + self.feed.Name + "/api/v2/Search()/$count?$filter=IsAbsoluteLatestVersion").asGet().withHeader("Accept", "application/text");
-
-        uniqueRequest.send().then(message => {
-            self.overviewUniquePackageCount = message.response;
+        self.http.fetch("Feeds/" + self.feed.Name + "/api/v2/Search()/$count?$filter=IsAbsoluteLatestVersion").then(response => response.json()).then(message => {
+            self.overviewUniquePackageCount = message;
         });
-
-        
     }
 
     viewPackageClick(pkg) {
@@ -446,10 +440,8 @@ export class FeedView {
         var url = "Feeds/" + self.feed.Name + "/api/v2/Search()?$inlinecount=allpages" + "&" +
                   "$skip=" + skip + "&$top=" + take + "&" + filter + "&" + order + search;
 
-        var request = self.http.createRequest(url).asGet().withHeader("Accept", "application/xml");
-
-        request.send().then(message => {
-            var xmlDoc = $.parseXML(message.response), $xml = $(xmlDoc);
+        self.http.fetch(url).then(response => response.xml()).then(message => {
+            var xmlDoc = $.parseXML(message), $xml = $(xmlDoc);
 
             var packagesTotalMatchingQuery, packagesTotalPages, packagesRecords;
 
@@ -506,10 +498,10 @@ export class FeedView {
 
         var startDate = new Date();
 
-        self.http.get("api/feeds/" + self.feed.Id + "/history").then(message => {
+        self.http.fetch("api/feeds/" + self.feed.Id + "/history").then(response => response.json()).then(message => {
             var func = function() {
                 self.isLoadingHistory = false;
-                self.historyRecords = JSON.parse(message.response).Results;
+                self.historyRecords = message.Results;
             };
 
             var endDate = new Date();
@@ -523,7 +515,7 @@ export class FeedView {
             }
         },
         function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             }

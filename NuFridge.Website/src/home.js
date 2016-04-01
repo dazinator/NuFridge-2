@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
-import {HttpClient} from 'aurelia-http-client';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {HttpClient, json} from 'aurelia-fetch-client';
+import {AuthService} from 'aurelia-auth';
 
 
 @inject(HttpClient, AuthService)
@@ -76,14 +76,14 @@ export class Home {
             ]
         ];
 
-        self.http.get("api/stats/feedpackagecount").then(message => {
-            self.feedpackagecount = JSON.parse(message.response);
+        self.http.fetch("api/stats/feedpackagecount").then(response => response.json()).then(message => {
+            self.feedpackagecount = message;
             self.chartist.Bar('.ct-chart.packagesChart', self.feedpackagecount, options, overrides);
             self.isLoadingCountChart = false;
         });
 
-        self.http.get("api/stats/feeddownloadcount").then(message => {
-            self.feeddownloadcount = JSON.parse(message.response);
+        self.http.fetch("api/stats/feeddownloadcount").then(response => response.json()).then(message => {
+            self.feeddownloadcount = message;
             self.chartist.Bar('.ct-chart.downloadsChart', self.feeddownloadcount, options, overrides);
             self.isLoadingDownloadChart = false;
         });
@@ -93,11 +93,11 @@ export class Home {
     activate() {
         var self = this;
 
-        this.http.get("api/dashboard").then(message => {
-            self.dashboard = JSON.parse(message.response);
+        this.http.fetch("api/dashboard").then(response => response.json()).then(message => {
+            self.dashboard = message;
             self.isLoadingDashboard = false;
         }, function(message) {
-            if (message.statusCode === 401) {
+            if (message.status === 401) {
                 var loginRoute = self.auth.auth.getLoginRoute();
                 self.auth.logout("#" + loginRoute);
             } 

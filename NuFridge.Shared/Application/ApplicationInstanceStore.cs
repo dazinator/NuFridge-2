@@ -15,6 +15,10 @@ namespace NuFridge.Shared.Application
         {
             var instanceRecord = new ApplicationInstanceRecord();
 
+#if DEBUG
+            instanceRecord.InstallDirectory = Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName;
+#endif
+#if RELEASE
             using (RegistryKey registryKey1 = RegistryKey.OpenBaseKey(Hive, View))
             {
                 using (RegistryKey registryKey2 = registryKey1.OpenSubKey(KeyName, false))
@@ -33,10 +37,11 @@ namespace NuFridge.Shared.Application
                     }
                 }
             }
-
-#if DEBUG
-            instanceRecord.InstallDirectory = Directory.GetParent(Assembly.GetEntryAssembly().Location).FullName;
 #endif
+
+
+
+
 
             if (!instanceRecord.IsValid())
             {

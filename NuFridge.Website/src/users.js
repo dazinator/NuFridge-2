@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
-import {AuthService} from 'paulvanbladel/aurelia-auth';
+import {HttpClient, json} from 'aurelia-fetch-client';
+import {AuthService} from 'aurelia-auth';
 import {authUser} from './authuser';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {PaginationMessage} from './paginationmessage';
@@ -29,8 +29,8 @@ export class Users {
 
     loadUsers(paginationMessage) {
         var self = this;
-        self.http.get("api/accounts?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(message => {
-            self.accountData = JSON.parse(message.response);
+        self.http.fetch("api/accounts?page=" + paginationMessage.pagenumber + "&size=" + paginationMessage.pagesize).then(response => response.json()).then(message => {
+            self.accountData = message;
             self.totalResults = self.accountData.Total;
             paginationMessage.resolve();
         });

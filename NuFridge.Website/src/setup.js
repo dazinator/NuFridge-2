@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {HttpClient} from 'aurelia-http-client';
+import {HttpClient, json} from 'aurelia-fetch-client';
 
 @inject(Router, HttpClient)
 export class Setup {
@@ -23,8 +23,8 @@ export class Setup {
     activate() {
         var self = this;
 
-        this.http.get("api/setup").then(message => {
-            self.isSetup = JSON.parse(message.response);
+        this.http.fetch("api/setup").then(response => response.json()).then(data => {
+            self.isSetup = data;
 
             if (self.isSetup === true) {
                 self.router.navigate("signin");
@@ -43,8 +43,11 @@ export class Setup {
 
         self.isCreatingUser = true;
 
-        this.http.post("api/setup", self.request).then(message => {
-            if (message.statusCode === 201) {
+        this.http.fetch("api/setup", {
+            method: 'post',
+            body: json(self.request)
+        }).then(message => {
+            if (message.status === 201) {
                 self.router.navigate("signin");
             } else {
                 self.isCreatingUser = false;
