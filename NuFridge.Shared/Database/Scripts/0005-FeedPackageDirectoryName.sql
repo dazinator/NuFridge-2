@@ -1,1 +1,0 @@
-﻿EXEC sp_RENAME 'NuFridge.FeedConfiguration.PackagesDirectory', 'Directory', 'COLUMN'

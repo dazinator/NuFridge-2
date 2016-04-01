@@ -4,8 +4,6 @@ using System.Linq;
 using DbUp;
 using DbUp.Engine;
 using DbUp.Engine.Output;
-using DbUp.ScriptProviders;
-using NuFridge.Shared.Database.Scripts;
 using NuFridge.Shared.Extensions;
 using NuFridge.Shared.Logging;
 
@@ -17,20 +15,6 @@ namespace NuFridge.Shared.Database
         public void Migrate(IStore store)
         {
             _log.Debug("Checking to see if the database is up-to-date.");
-
-            DatabaseUpgradeResult namespaceMigratorResult = DeployChanges.To.SqlDatabase(store.ConnectionString)
-                .WithScripts(new EmbeddedScriptAndCodeProvider(typeof (Store).Assembly,
-                    s => s == typeof (_ScriptNamespaceMirgrator).FullName))
-                .LogScriptOutput()
-                .WithVariable("databaseName", new SqlConnectionStringBuilder(store.ConnectionString).InitialCatalog)
-                .LogTo(new LogAdapter())
-                .JournalToSqlTable("NuFridge", "Version")
-                .WithTransactionPerScript()
-                .Build()
-                .PerformUpgrade();
-
-            if (!namespaceMigratorResult.Successful)
-                throw new Exception("Database namespace migration failed: " + namespaceMigratorResult.Error.GetErrorSummary(), namespaceMigratorResult.Error);
 
             DatabaseUpgradeResult databaseUpgradeResult = DeployChanges.To.SqlDatabase(store.ConnectionString)
                 .WithScriptsEmbeddedInAssembly(typeof (Store).Assembly)

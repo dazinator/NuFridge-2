@@ -1,5 +1,0 @@
-﻿CREATE TABLE [NuFridge].[Framework]
-(
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
-    [Name] NVARCHAR(4000) NOT NULL
-)
