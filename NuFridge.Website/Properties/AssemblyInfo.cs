@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NuFridge.Website")]
+[assembly: AssemblyTitle("NuFridge.Website.New")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NuFridge.Website")]
+[assembly: AssemblyProduct("NuFridge.Website.New")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3108ead2-cfa3-491b-b0bd-8ac83a017966")]
+[assembly: Guid("8ec81cdc-60da-4d9b-be2b-09a7f68c4b8f")]
 
 // Version information for an assembly consists of the following four values:
 //

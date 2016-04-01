@@ -313,12 +313,8 @@
       <Project>{4a3ae0a8-3976-4d91-a29a-41ffef4af33c}</Project>
       <Name>NuFridge.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NuFridge.Website.New\NuFridge.Website.New.csproj">
-      <Project>{8ec81cdc-60da-4d9b-be2b-09a7f68c4b8f}</Project>
-      <Name>NuFridge.Website.New</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NuFridge.Website\NuFridge.Website.csproj">
-      <Project>{84f87acc-e6a4-4641-ac22-cf09eea9c4af}</Project>
+      <Project>{8ec81cdc-60da-4d9b-be2b-09a7f68c4b8f}</Project>
       <Name>NuFridge.Website</Name>
     </ProjectReference>
   </ItemGroup>

@@ -38,7 +38,7 @@ namespace NuFridge.Shared.Application
             var serviceFolder = Directory.GetParent(binFolder).FullName;
             var solutionFolder = Directory.GetParent(serviceFolder).FullName;
 
-            WebsiteDirectory = Path.Combine(solutionFolder, "NuFridge.Website.New");
+            WebsiteDirectory = Path.Combine(solutionFolder, "NuFridge.Website");
 #endif
 
             if (!Directory.Exists(WebsiteDirectory))
